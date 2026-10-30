@@ -128,7 +128,8 @@ def _ids(ids: Sequence[str]) -> str:
     return ", ".join(ids)
 
 
-def _claim_line(claim: Claim) -> str:
+def claim_line(claim: Claim) -> str:
+    """``- text [S1.2] (inference)``; shared with the risk assessor (S8)."""
     mark = " (inference)" if claim.kind == "inference" else ""
     return f"- {claim.text.strip()} [{_ids(claim.chunk_ids)}]{mark}"
 
@@ -137,7 +138,7 @@ def format_problem(problem: ProblemStatement) -> str:
     parts: list[str] = []
     for name in ("client_situation", "goal", "success_criteria", "constraints"):
         claims = getattr(problem, name)
-        lines = "\n".join(_claim_line(c) for c in claims) or NONE
+        lines = "\n".join(claim_line(c) for c in claims) or NONE
         parts.append(f"### {name}\n{lines}")
     return "\n\n".join(parts)
 
@@ -146,9 +147,12 @@ def _requirement_line(r: Requirement) -> str:
     return f"{r.id} [{r.strictness.value}, {r.type.value}] {r.text.strip()} ({_ids(r.chunk_ids)})"
 
 
-def format_requirements(requirements: Iterable[Requirement]) -> str:
+def format_requirements(
+    requirements: Iterable[Requirement], *, submission_heading: str = SUBMISSION_HEADING
+) -> str:
     """Mandatory, desired and optional blocks in list order, then the submission items
-    (whatever their strictness) under a heading that tells the model not to cite them."""
+    (whatever their strictness) under a heading that tells the model not to cite them.
+    The risk assessor (S8) passes its own ``submission_heading``."""
     reqs = list(requirements)
     blocks: list[str] = []
     for strictness in STRICTNESS_ORDER:
@@ -159,7 +163,7 @@ def format_requirements(requirements: Iterable[Requirement]) -> str:
         ]
         blocks.append(f"### {STRICTNESS_HEADINGS[strictness]}\n" + ("\n".join(lines) or NONE))
     submission = [_requirement_line(r) for r in reqs if r.type in COVERAGE_EXCLUDED_TYPES]
-    blocks.append(f"### {SUBMISSION_HEADING}\n" + ("\n".join(submission) or NONE))
+    blocks.append(f"### {submission_heading}\n" + ("\n".join(submission) or NONE))
     return "\n\n".join(blocks)
 
 
