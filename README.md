@@ -7,7 +7,8 @@ cites the chunk of the RFP it came from, so the summary can be checked against t
 source. The repo includes an evaluation harness and per-run observability (tokens,
 latency, cost).
 
-**Status:** scaffold (S0). The pipeline lands step by step; see `docs/ROADMAP.md`.
+**Status:** scaffold (S0) and PDF parsing (S2) are in. The pipeline lands step by
+step; see `docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -49,6 +50,19 @@ Outputs go to `runs/<run_id>/` as JSON, markdown and a run log with per-node tok
 latency and cost. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
 and is a no-op otherwise.
 
+## Parsing
+
+`rfp_agent.parsing.parse_pdf(path)` turns a PDF into a `ParsedDocument`: markdown per
+page (tables kept as markdown tables, running headers and footers removed, quotes and
+spaces normalised), the PDF outline, tables, images with captions, every http(s) link and
+every Attachment/Appendix/Exhibit/Schedule/Addendum reference with its section and
+whether its content is in the PDF, and page flags (low word count, large image, broken
+table, fragmented lines) for the parse-quality pass. No LLM is involved. To inspect it:
+
+```bash
+python -m rfp_agent.parsing data/rfps/colfax.pdf --out colfax.json
+```
+
 ## Inputs
 
 No RFP brief was provided with the assignment, so public US government RFPs stand in
@@ -62,7 +76,7 @@ See `docs/ASSUMPTIONS.md`.
 src/rfp_agent/
   config.py        provider/model setting, paths, pricing table
   schemas.py       Pydantic v2 contract between every pipeline stage
-  parsing/         PDF to markdown, page flags, referenced documents (S2, S4)
+  parsing/         PDF to markdown, page flags, referenced documents (S2), quality hook (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
   agents/          requirements, problem, solution, risk (S5 to S8)
   render/          JSON assembly and markdown rendering (S9)

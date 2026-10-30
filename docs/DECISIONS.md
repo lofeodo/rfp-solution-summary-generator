@@ -196,6 +196,57 @@ Why: a single install command and a single source of pins; no `PYTHONPATH` trick
 pydantic-settings keeps validation (ranges, types) in the same library as the schemas.
 Evidence: CI runs the same install.
 
+### D16. Parsing: layout path with OCR off, flag thresholds as constants
+Context: pymupdf4llm 1.28.2 ships a layout model (`pymupdf.layout`) that returns page
+boxes (text, section-header, table, picture, page-header, page-footer) and turns OCR on
+by default when Tesseract is installed. S4 needs flags on suspicious pages.
+Options: OCR on (default); OCR off with flags; flags from layout boxes or from pymupdf
+directly.
+Choice: `use_ocr=False`; flags from four code rules with thresholds set by inspecting
+the four RFPs: fewer than 50 words; an image covering at least 25% of the page; a table
+whose rows have different column counts or that collapsed to one column with
+`<br>`-merged cells; at least 6 prose lines of at most 2 words making up half the prose.
+Image sizes come from `get_image_info()`, not the layout boxes.
+Why: with OCR on, output would depend on whether the machine has Tesseract, so CI and a
+reviewer's laptop could disagree; image pages are what the S4 judge and the VLM hook
+exist for. The thresholds separate the known cases: Missouri's affidavit forms (54% of
+the page) and Federal Way's image table (42%) from cover logos (8% to 14%).
+Evidence: four-RFP tests; flagged pages listed in the S2 roadmap entry.
+
+### D17. Running headers and footers are stripped only when they repeat
+Context: running headers ("City of Federal Way, WA - RFP for ERP Software 5 | Page") and
+footers ("Page 6 of 22", bare numbers) pollute chunks and quotes. The layout model
+classes most of them, but sometimes calls one ordinary text, merges it with the heading
+below, or splits it in two.
+Options: keep everything; drop every box the model calls header/footer; drop only
+text that repeats.
+Choice: a box is a candidate if the model classed it header/footer or it sits in the top
+or bottom 12% of the page; a candidate is removed if its text, with digits and markup
+removed, recurs as a header/footer on at least 3 pages or is empty (a page number). A
+repeated header merged with a heading loses only the header prefix; a header-classed
+fragment of a repeated header is removed.
+Why: repetition is what makes a line a running header, so a one-off sentence the model
+misclassified survives. The author chose stripping over keeping everything.
+Evidence: Missouri, NYESD and Colfax word counts unchanged by the prefix and fragment
+cases; Federal Way pages 7, 9, 11 each lose exactly the 14-word header (F2).
+
+### D18. A referenced document is present only if its section has a body
+Context: RFPs name attachments and exhibits; some are in the PDF, some are cover pages
+saying "separate document", some are image-only forms.
+Options: present when a matching heading exists; heading plus a minimum body; always
+false in S2.
+Choice: present when a heading titled with the reference name (e.g. "ATTACHMENT F: ...")
+is followed by at least 40 words before the next heading of the same or higher level
+(author decision). References are matched by regex: keyword (attachment, appendix,
+exhibit, schedule, addendum) plus a single capital letter or number, so "Schedule of"
+and "Addendum to" do not match. Each reference keeps its first occurrence outside a
+table of contents and that line's section.
+Why: Colfax Attachment F holds the software requirements but its page only says the
+spreadsheet is provided separately; a heading-only rule would call it present and hide
+the most important gap in that RFP.
+Evidence: Colfax A-D present, E-G absent; Missouri Exhibits absent; Federal Way Exhibits
+present (tests).
+
 ---
 
 ## Part 2 — Failure modes hit
@@ -211,4 +262,26 @@ Fix:       what changed (link the prompt changelog line or commit)
 Before/after: metric, if one exists
 ```
 
-(None yet. The first pipeline run on `inputs/rfp_brief.pdf` starts this list.)
+### F1. Mangled plain-text URLs duplicated real links
+Where:     S2 hyperlink extraction, NYESD.
+Observed:  39 links where the document has 32; e.g. both
+           `.../file-your-vendor-responsibility-questionnaire` (annotation) and
+           `.../file-your-vendor-responsibilityquestionnaire` (text layer).
+Cause:     the text layer drops hyphens and inserts spaces where long URLs wrap; the
+           plain-text URL only differed from an annotation on another page.
+Fix:       compare URLs on letters and digits only, against every annotation in the
+           document, and drop a plain-text URL that equals or prefixes one.
+Before/after: 39 to 32 NYESD links; test asserts no two links share a key.
+
+### F2. Running header survived on three Federal Way pages
+Where:     S2 header/footer stripping, Federal Way p7, p9, p11.
+Observed:  "City of Federal Way, WA - RFP for ERP Software 7 | P a g e **SECTION 4..."
+           left in the page markdown.
+Cause:     the layout model merged the header with the heading below into one box (p7,
+           p9; on p9 classed as text and extending below the margin band) or split it in
+           two header boxes (p11), so the whole-box repeat rule did not match.
+Fix:       strip a repeated header as a prefix of a box that starts in the top band, and
+           strip header-classed boxes whose text is a fragment of a repeated header.
+Before/after: 3 pages with the header to 0; other documents' word counts unchanged.
+
+(The first pipeline run on `inputs/rfp_brief.pdf` continues this list.)

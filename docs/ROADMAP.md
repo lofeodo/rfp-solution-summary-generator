@@ -249,7 +249,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S2. PDF parsing (library path)
-- **Status:** in progress
+- **Status:** done
 - **Goal:** `parsing/`: pymupdf4llm to markdown per page with tables kept as markdown
   tables; use the PDF outline when present. Code heuristics flag suspicious pages (low
   word count, large image blocks, broken table rows, fragmented lines) into a
@@ -291,9 +291,66 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     NYESD Schedule A and Appendix A/B, Missouri Exhibits and the joined MoDOT URL), no
     curly quotes, header stripped, titles.
   - **Docs:** DECISIONS D16 to D17, ASSUMPTIONS lines, TIMELOG row, README parsing section.
-- **What was done:**
+- **What was done:** (branch `step-02-pdf-parsing`, PR into `core`)
+  - `parsing/pdf.py`: `parse_pdf(path) -> ParsedDocument`. One
+    `pymupdf4llm.to_markdown(doc, page_chunks=True, use_ocr=False)` call; per page:
+    header/footer strip, normalisation, `Page` with `word_count`, `Table` per pipe block,
+    `ImageBlock` per image from `get_image_info()` (clipped, >= 20 pt, caption = nearest
+    text block within 40 pt above or below), flags, link annotations with anchor text
+    (whole words under the link rectangle). Outline from `get_toc()`. Title = metadata
+    title if 60% of its words are on page 1, else first heading on page 1.
+  - `parsing/normalize.py`: NFC; curly quotes, Unicode spaces and hyphens to ASCII;
+    ligatures expanded; soft hyphen and zero-width characters dropped; en/em dashes kept;
+    bold URLs split across `<br>` in table cells rejoined; header/footer stripping (see
+    D17).
+  - `parsing/heuristics.py`: `count_words` (ignores tags, pipes, separator rows),
+    `table_blocks`, `broken_table_reason` (ragged, or one-column with `<br>`-merged
+    cells), `flag_page`; thresholds are module constants.
+  - `parsing/references.py`: `document_lines` (every line tagged with its section:
+    nearest heading, else outline entry), `document_references` (regex, first non-TOC
+    occurrence), `mark_present` (heading plus >= 40 words), `hyperlinks` (annotation URIs,
+    plus plain-text URLs no annotation covers; http(s) only).
+  - `parsing/quality.py`: `escalate(page, flags) -> Escalation | None` stub for S4.
+  - `parsing/__main__.py`: `python -m rfp_agent.parsing <pdf> [--out file.json]`.
+  - Results on the four RFPs (about 5 to 9 s each):
+
+    | RFP | pages | outline | tables | flagged pages | references (present) | links |
+    |---|---|---|---|---|---|---|
+    | Missouri | 20 | 64 | 8 | 12, 19, 20 | Exhibit A, B (both absent) | 9 |
+    | NYESD | 27 | 0 | 2 | none | Schedule A, B; Appendix A, B (all absent) | 32 |
+    | Colfax | 22 | 29 | 4 | 1, 2, 3, 20, 21, 22 | Attachments A-D present, E-G absent | 1 |
+    | Federal Way | 16 | 0 | 10 | 2, 5, 14 | Exhibit A, B (both present) | 0 |
+
+  - Tests: `tests/test_parsing_units.py` (rules on literal strings) and
+    `tests/test_parsing_rfps.py` (one session-scoped parse per RFP); 83 tests pass in
+    about 22 s, ruff clean. Shared files touched: none (`README.md` and docs only).
 - **Deviations from plan:**
+  - Hyperlinks are deduplicated across the document (one entry per URL, at its first
+    page) rather than per page: downstream steps want one gap per document, not one per
+    mention.
+  - Plain-text URLs are suppressed when an annotation anywhere in the document covers
+    them, compared on letters and digits only. NYESD's text layer mangles long URLs at
+    line breaks (lost hyphens), which otherwise produced seven bogus duplicates (F1).
+  - Header/footer stripping needed two extra cases beyond the plan: a repeated header
+    merged into the same box as the next heading (prefix removed, heading kept), and a
+    header split across two header boxes (Federal Way p7, p9, p11; F2).
+  - `escalate()` takes a page and all its flags, not one flag: S4 judges each page once.
+  - OCR is passed off explicitly (`use_ocr=False`); the layout path defaults it on (D16).
+  - Image captions use the whole nearest text block (Missouri p19's caption block starts
+    with a blank line and overlaps the image by one point).
 - **Open issues:**
+  - Colfax's title comes out as "CITY OF COLFAX" (its first heading); the RFP name is
+    in the next two headings. Good enough for display; S9 may prefer the source path.
+  - Low-word flags on cover and contents pages (Colfax p1, p3; Federal Way p2) and the
+    broken-table flag on Colfax's one-column contents table are expected false
+    positives for S4's judge to clear.
+  - Section titles can be split across two headings (Missouri "SECTION (1):" then
+    "GENERAL DESCRIPTION AND BACKGROUND"); S3 should merge a heading with no body into
+    the next.
+  - URLs without a scheme (`www.colfax-ca.gov` in text) are not recorded; Colfax's link
+    annotation is `http://www.colfax-ca.go/`, a typo in the source, kept as-is.
+  - The shared conda env's editable install points at the main checkout; in a worktree,
+    run tests with `PYTHONPATH=src` so the worktree's code is imported.
 
 ### S3. Section and chunk splitting
 - **Status:** todo
