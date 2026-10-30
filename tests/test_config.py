@@ -11,6 +11,10 @@ ENV_VARS = [
     "RFP_JUDGE_MODEL",
     "RFP_TEMPERATURE",
     "RFP_FULL_TEXT_PROBLEM",
+    "RFP_MAX_STRUCTURED_RETRIES",
+    "RFP_MAX_OUTPUT_TOKENS",
+    "RFP_REQUEST_TIMEOUT_S",
+    "RFP_LLM_TRANSPORT_RETRIES",
     "DEEPSEEK_API_KEY",
     "ANTHROPIC_API_KEY",
     "LANGFUSE_PUBLIC_KEY",
@@ -34,6 +38,9 @@ def test_defaults():
     assert s.judge_model == "anthropic:claude-sonnet-5-5"
     assert s.temperature == 0.0
     assert s.max_structured_retries == 2
+    assert s.max_output_tokens is None
+    assert s.request_timeout_s == 120.0
+    assert s.llm_transport_retries == 2
     assert s.full_text_problem is False
     assert s.single_call_extraction is False
     assert s.generator == ("deepseek", "deepseek-flash")
@@ -46,6 +53,7 @@ def test_env_overrides(monkeypatch):
     monkeypatch.setenv("RFP_MODEL", "anthropic:claude-opus-5-5")
     monkeypatch.setenv("RFP_TEMPERATURE", "0.3")
     monkeypatch.setenv("RFP_FULL_TEXT_PROBLEM", "true")
+    monkeypatch.setenv("RFP_MAX_OUTPUT_TOKENS", "4000")
     monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-test")
     monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "pk")
     monkeypatch.setenv("LANGFUSE_SECRET_KEY", "sk")
@@ -53,6 +61,7 @@ def test_env_overrides(monkeypatch):
     assert s.generator == ("anthropic", "claude-opus-5-5")
     assert s.temperature == 0.3
     assert s.full_text_problem is True
+    assert s.max_output_tokens == 4000
     assert s.deepseek_api_key == "sk-test"
     assert s.langfuse_enabled is True
 
