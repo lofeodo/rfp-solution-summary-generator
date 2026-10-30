@@ -138,6 +138,18 @@ class EscalationTrigger(StrEnum):
     MODEL = "model"  # the LLM judge confirmed or raised it
 
 
+class PageKind(StrEnum):
+    """What a flagged page is, as the parse-quality judge sees it (S4)."""
+
+    COVER = "cover"
+    CONTENTS = "contents"
+    FORM = "form"
+    TABLE = "table"
+    NARRATIVE = "narrative"
+    BLANK = "blank"
+    OTHER = "other"
+
+
 # --------------------------------------------------------------------------------------
 # Base
 # --------------------------------------------------------------------------------------
@@ -212,6 +224,37 @@ class ParsedDocument(StrictModel):
     @property
     def page_count(self) -> int:
         return len(self.pages)
+
+
+class PageJudgement(StrictModel):
+    """The parse-quality judge's verdict on one flagged page (S4 LLM output contract)."""
+
+    text_usable: bool = Field(
+        description="True if the extracted text faithfully represents the text the page shows"
+    )
+    content_missing: bool = Field(
+        description="True if the page likely holds content (an image of a table, a filled "
+        "form, a chart) that the extracted text does not contain"
+    )
+    page_kind: PageKind
+    confirmed_flags: list[FlagReason] = Field(
+        default_factory=list,
+        description="The heuristic flags on this page that describe a real problem",
+    )
+    reason: str = Field(description="One sentence explaining the verdict")
+
+    @property
+    def bad(self) -> bool:
+        return not self.text_usable or self.content_missing
+
+
+class ParseQualityReport(StrictModel):
+    """What the parse-quality pass did (S4): one judgement per judged page and one
+    escalation per flagged page. Pages whose judge call failed have no judgement."""
+
+    judged_pages: list[int] = Field(default_factory=list)
+    judgements: dict[int, PageJudgement] = Field(default_factory=dict)
+    escalations: list[Escalation] = Field(default_factory=list)
 
 
 # --------------------------------------------------------------------------------------

@@ -31,13 +31,17 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - A referenced attachment or exhibit counts as present only when its section in the PDF
   has at least 40 words; a cover page saying "provided separately" is absent (D22).
 - OCR is off: image-only pages are flagged for S4, not transcribed (D20).
+- The parse-quality judge (S4) sees the extracted text, the flags and each image's size
+  and caption, never the page image. Whether an image holds content is inferred from
+  that context; the VLM that would look at the image is stretch ST2 (D24).
+- Only flagged pages are judged. A damaged page that no heuristic flags is not caught.
 
 ## Splitting
 
 - Chunk size is measured in words, not tokens (about 1.3 tokens per English word), so
-  splitting needs no tokenizer and does not depend on the generator model (D25).
+  splitting needs no tokenizer and does not depend on the generator model (D26).
 - When a PDF has an outline, it is the authoritative structure: bold numbered lines it
-  does not list are body text, not headings (D24).
+  does not list are body text, not headings (D25).
 - Section IDs number sections in document order; `S5` is the fifth section found, not
   the RFP's own "Section 5". The section title carries the RFP's own numbering.
 
