@@ -138,7 +138,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 ## 2. Core steps
 
 ### S0. Scaffold
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** the common foundation every other step builds on: repo layout, conda env and
   pinned `requirements.txt`, `config.py` (provider/model single setting, paths, pricing
   table stub), Pydantic v2 `schemas.py` for every pipeline artefact (ParsedDocument with
@@ -153,7 +153,47 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   `rfp-solution-gen` conda env itself. Create the `core` branch.
 - **Depends on:** —
 - **Parallel with:** — (lands first)
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** generator default `deepseek:deepseek-flash`
+    (DeepSeek V4.1 Flash; `deepseek-chat` is no longer on DeepSeek's pricing page);
+    judge default `anthropic:claude-sonnet-5-5`; requirement `type` enum = functional,
+    technical, security_compliance, legal_contractual, timeline, budget_pricing,
+    submission, other; `strictness` = mandatory, desired, optional; risk `severity` and
+    `likelihood` both low/medium/high.
+  - **Branch:** `step-00-scaffold` off `core` as a worktree; one commit per unit below;
+    PR into `core`.
+  - **Packaging:** `pyproject.toml` (setuptools, `src/` layout, ruff and pytest config,
+    `llm` marker skipped by default), `requirements.txt` with exact pins plus `-e .` so
+    one `pip install -r requirements.txt` installs the package editable. Conda env
+    `rfp-solution-gen` (Python 3.12) created by the agent.
+  - **`config.py`:** pydantic-settings `Settings` (`RFP_` prefix, `.env`): `model`,
+    `judge_model` as `provider:model_id` strings, `temperature`, `max_structured_retries`,
+    the two S10 ablation flags (`full_text_problem`, `single_call_extraction`), API keys
+    and Langfuse keys under their conventional unprefixed names; `split_model_spec()`;
+    `langfuse_enabled`; path constants; `ModelPricing` + `PRICING` stub (DeepSeek peak
+    rates, Claude opus/sonnet/haiku 5.5) + `pricing_for()`. Cost arithmetic is S1's.
+  - **`schemas.py`:** Pydantic v2, `extra="forbid"`, StrEnums for every closed set, ID
+    formats enforced by regex (`S3.2` chunk, `S3` section, `R001`, `A01`, `G01`, `C01`,
+    `K01`). Models: parsing (`Page`, `Table`, `ImageBlock`, `ReferencedDocument`,
+    `PageFlag`, `OutlineEntry`, `ParsedDocument`), splitting (`Chunk`, `Section`,
+    `SplitDocument`), `Claim(text, kind=fact|inference, chunk_ids>=1)`, requirements
+    (`Requirement` with quote, `chunk_ids`, `quote_verified`, `merged_from`,
+    `conflicts_with`; `Ambiguity`; `Gap`; `RequirementsOutput`), problem (`ChunkSummary`,
+    `ProblemStatement` as four lists of `Claim`), solution (`SolutionComponent` citing
+    requirement IDs, `Coverage` computed by code, `Solution`), risk (`Risk`,
+    `RiskAssessment`), final `SolutionSummary` with `ChunkRef` index for rendering,
+    observability (`NodeMetrics`, `Escalation`, `RunLog.totals()`), and
+    `validate_ids_exist()` for the agents.
+  - **Skeleton:** `src/rfp_agent/{parsing,splitting,agents,render}/__init__.py`,
+    `prompts/README.md` (one file per agent, `{{name}}` placeholders), `inputs/rfp_brief.pdf`
+    copied from Missouri, `runs/samples/.gitkeep`, `.env.example`, GitHub Actions CI
+    (ruff check, ruff format --check, pytest on Python 3.12), README skeleton with the
+    pipeline diagram.
+  - **Tests:** `tests/test_schemas.py` (round-trip of a full `SolutionSummary` and
+    `RunLog`, ID regexes, forbid-extra, `validate_ids_exist`, totals) and
+    `tests/test_config.py` (defaults, model spec parsing, env override, pricing lookup).
+  - **Docs:** DECISIONS D13 to D15 (model ids and pricing source, schema conventions,
+    install and config mechanics), TIMELOG row, ASSUMPTIONS line on peak pricing.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
