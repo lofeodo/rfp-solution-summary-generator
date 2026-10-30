@@ -24,6 +24,11 @@ obligation.
   merges the gold requirement with others, it still matches.
 - **Different values do not match.** A candidate with a different date, amount, count or
   standard than the gold item is not a match, even on the same topic.
+- **Missing values do not match either.** When the gold item turns on a key value (a
+  date, an amount, a count, a named standard or document), a candidate that omits that
+  value does not match unless another listed candidate supplies it; then list both. "An
+  interim presentation near the mid-point" does not match "an interim presentation by
+  9/15/2025"; "accessibility per the state standard" does not match "WCAG 2.1 AA".
 - **Topic is not enough.** "Proposals must be emailed" does not match "Proposals must
   include a cost form".
 - Type and strictness labels are shown for context; do not reject a match because they

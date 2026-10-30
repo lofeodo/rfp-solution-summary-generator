@@ -1,10 +1,10 @@
 {
   "rfp": "colfax",
   "run": "3",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/colfax/3",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/colfax/3",
   "run_id": "3",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:43:28.108353Z",
+  "scored_at": "2026-10-30T22:32:11.227217Z",
   "judged": true,
   "requirements": {
     "extracted": 119,
@@ -152,14 +152,13 @@
         "gold_page": 6,
         "quote_verifiable": true,
         "matched_ids": [
-          "R010",
-          "R014"
+          "R010"
         ],
         "tier": "judge",
         "best_id": "R010",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "R010 states same questions deadline July 31, 2025; R014 covers question submission by due date."
+        "reason": "Same obligation and date: written questions by July 31, 2025."
       },
       {
         "gold_id": "GR008",
@@ -303,7 +302,7 @@
         "best_id": "R041",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "R041 requires a signed original hard copy; address delivery is not stated but this is the closest part."
+        "reason": "Signed original hard copy required; address not stated but closest, though R041 omits address."
       },
       {
         "gold_id": "GR023",
@@ -317,7 +316,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "R045 sets the same deadline but for emailed submission, not hard copy receipt."
+        "reason": "No candidate requires hard copy received by Aug 28 deadline; R045 covers email."
       },
       {
         "gold_id": "GR025",
@@ -766,7 +765,7 @@
         "best_id": "R060",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Both require completed Attachment F Software Abilities and Requirements spreadsheet."
+        "reason": "Completed Attachment F Software Abilities spreadsheet must be submitted."
       },
       {
         "gold_id": "GR057",
@@ -1006,7 +1005,7 @@
         "best_id": "R067",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "Both target July 1, 2026 go-live for new fiscal year."
+        "reason": "Go-live target July 1, 2026 for new fiscal year."
       },
       {
         "gold_id": "GR073",
@@ -4843,22 +4842,14 @@
     "calls": 18,
     "failures": 0,
     "totals": {
-      "input_tokens": 106220,
-      "output_tokens": 13186,
+      "input_tokens": 106359,
+      "output_tokens": 13168,
       "cached_input_tokens": 0,
-      "cost_usd": 0.3443,
-      "latency_s": 92.70846619992517,
+      "cost_usd": 0.3443979999999999,
+      "latency_s": 92.4480083999515,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 6087,
-        "output_tokens": 297,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.015144,
-        "latency_s": 2.836562199983746,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 33988,
         "output_tokens": 6282,
@@ -4897,6 +4888,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.133938,
         "latency_s": 32.32974299995112,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 6226,
+        "output_tokens": 279,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.015242,
+        "latency_s": 2.576104400010081,
         "retries": 0
       }
     }

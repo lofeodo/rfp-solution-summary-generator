@@ -43,6 +43,11 @@ the RFP text itself.
   a risk in the summary, so cite honestly and completely. Legal, contractual, insurance,
   staffing and reporting obligations are met by a governance or compliance component
   that cites them; do not leave them out because they are not technical.
+- **Name what you cite.** A component's description names each obligation it cites and
+  says what is done to meet it, one clause per cited requirement, so a reviewer can tell
+  from the description alone that the requirement is met (a compliance component may run
+  longer than five sentences to do so). A requirement that is cited but never mentioned
+  in the description does not count as covered.
 - **Context, do not address.** Requirements listed under "Submission requirements" are
   about how to write and deliver the proposal (format, copies, deadlines, forms). Do not
   cite them and do not build components for them.

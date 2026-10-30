@@ -160,7 +160,11 @@ claims are discouraged ("most components need no claims") because restating
 requirements as claims adds citations without evidence; assumptions must state the
 position taken, not the ambiguity, so S8 can read them as design decisions; the F6
 rule (write about the RFP, never "the inputs") is carried over; instructions come first
-so the provider prefix cache serves repeated rounds.
+so the provider prefix cache serves repeated rounds. S13 added "name what you cite":
+a description must mention each cited obligation and what meets it, because the S12
+coverage judge found bulk-cited legal and contractual clauses that no component
+described (NYESD judged coverage 78% against 100% cited); the rule lets a compliance
+component exceed the five-sentence guide so the two rules do not fight.
 Known weaknesses: proposal-process obligations that S5 typed `timeline` or
 `budget_pricing` rather than `submission` are in scope, so the revision round makes the
 model add a commercial or submission-flavoured component to cite them (Missouri R007,
@@ -218,8 +222,11 @@ Why it is written this way: "same obligation, any wording" with the bidder test 
 bidder who met the candidate would meet the gold item's core"), many-to-many explicitly
 allowed because the extractor splits and merges, labels shown but not graded so a type
 disagreement does not block a match.
-Known weaknesses: accepts candidates that omit the gold item's key value (F14); recall
-is therefore reported next to its code-only lower bound.
+Known weaknesses: the first version accepted candidates that omitted the gold item's
+key value (F14); S13 added the "missing values do not match either" rule with two
+examples from the Missouri disagreements and rescored the baseline match tier. Recall
+is still reported next to its code-only lower bound because the judge tier remains a
+judgment.
 
 ### prompts/judge_requirements.md
 Purpose: precision: is each extracted requirement stated by its chunk, a real
@@ -314,6 +321,8 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
+| 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |
 | 2026-10-30 | judge_match, judge_requirements, judge_grounding, judge_checklist, judge_solution, judge_risks, judge_pairwise | Created (S12) | First version; 34 of 40 sampled verdicts agree with hand labels |
 | 2026-10-30 | risk | Count rule under Rules: at most twelve, merge or drop, code rejects more than fifteen | All four first runs returned 13 against "six to twelve" (F12); 12, 13, 13, 12 after |

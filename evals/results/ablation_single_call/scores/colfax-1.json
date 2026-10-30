@@ -1,0 +1,4228 @@
+{
+  "rfp": "colfax",
+  "run": "1",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/ablation_single_call/colfax/1",
+  "run_id": "1",
+  "model": "deepseek:deepseek-flash",
+  "scored_at": "2026-10-30T22:45:24.638399Z",
+  "judged": true,
+  "requirements": {
+    "extracted": 92,
+    "by_type": {
+      "submission": 54,
+      "technical": 2,
+      "functional": 19,
+      "timeline": 2,
+      "budget_pricing": 9,
+      "legal_contractual": 4,
+      "other": 1,
+      "security_compliance": 1
+    },
+    "by_strictness": {
+      "mandatory": 91,
+      "desired": 1
+    },
+    "gold": 63,
+    "gold_reachable": 63,
+    "matched_gold": 61,
+    "matched_gold_reachable": 61,
+    "matched_by_code": 56,
+    "matched_by_judge": 5,
+    "recall": 0.9682539682539683,
+    "recall_reachable": 0.9682539682539683,
+    "type_accuracy": 0.8852459016393442,
+    "strictness_accuracy": 0.7704918032786885,
+    "type_confusion": {
+      "technical": {
+        "technical": 1,
+        "functional": 1
+      },
+      "functional": {
+        "functional": 16
+      },
+      "timeline": {
+        "submission": 4,
+        "timeline": 1
+      },
+      "submission": {
+        "submission": 28
+      },
+      "budget_pricing": {
+        "budget_pricing": 7
+      },
+      "legal_contractual": {
+        "submission": 2
+      },
+      "security_compliance": {
+        "security_compliance": 1
+      }
+    },
+    "precision": 0.9782608695652174,
+    "in_scope_share": 0.9565217391304348,
+    "judged": 92,
+    "unverified_quotes": 0,
+    "matches": [
+      {
+        "gold_id": "GR001",
+        "gold_text": "The vendor must provide a cloud-based accounting and financial reporting software system, acquired and implemented for the City.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R002"
+        ],
+        "tier": "code",
+        "best_id": "R002",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR002",
+        "gold_text": "The solution must capture financial transactions systematically and efficiently, including budgeting and forecasting capabilities.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R004"
+        ],
+        "tier": "code",
+        "best_id": "R004",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR003",
+        "gold_text": "The solution must be able to generate reports and analyze data to support informed decision-making.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R005"
+        ],
+        "tier": "code",
+        "best_id": "R005",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR004",
+        "gold_text": "The solution must maintain auditable records and documentation for future reference.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R006"
+        ],
+        "tier": "code",
+        "best_id": "R006",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR005",
+        "gold_text": "The vendor must provide dedicated technical support during implementation and throughout annual contract renewals.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R007"
+        ],
+        "tier": "code",
+        "best_id": "R007",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR007",
+        "gold_text": "Respondents must submit any written questions about the RFP by July 31, 2025.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R010"
+        ],
+        "tier": "judge",
+        "best_id": "R010",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Same written-question deadline of July 31, 2025."
+      },
+      {
+        "gold_id": "GR008",
+        "gold_text": "Questions should be emailed with the subject line \"Accounting Software Proposal Questions\".",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R014"
+        ],
+        "tier": "code",
+        "best_id": "R014",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR009",
+        "gold_text": "Each question must refer to the relevant section of the RFP.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R015"
+        ],
+        "tier": "code",
+        "best_id": "R015",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR016",
+        "gold_text": "Respondents must submit one signed original proposal in hard copy.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R023"
+        ],
+        "tier": "code",
+        "best_id": "R023",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR017",
+        "gold_text": "Respondents must submit one digital version of the proposal, such as an Adobe Acrobat PDF.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R023"
+        ],
+        "tier": "code",
+        "best_id": "R023",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR018",
+        "gold_text": "Proposals should not exceed 20 pages, plus two additional pages for the cover letter and five pages for appendices.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R024"
+        ],
+        "tier": "code",
+        "best_id": "R024",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR019",
+        "gold_text": "Proposals must be organized in the order specified in Section 4.2.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R025"
+        ],
+        "tier": "code",
+        "best_id": "R025",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR020",
+        "gold_text": "The proposal and all attachments must be emailed to accounting@colfax-ca.gov by the August 28, 2025, 4:00 PM PST deadline.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R026"
+        ],
+        "tier": "code",
+        "best_id": "R026",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR021",
+        "gold_text": "The email submission should use \"Accounting and Financial Software Submission\" as its subject line.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R026"
+        ],
+        "tier": "judge",
+        "best_id": "R026",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Specifies the exact subject line for the email submission."
+      },
+      {
+        "gold_id": "GR022",
+        "gold_text": "The original hard copy of the proposal and all attachments must be received at the City's mailing or office address.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R027"
+        ],
+        "tier": "judge",
+        "best_id": "R027",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Original hard copy and attachments must be received at City address."
+      },
+      {
+        "gold_id": "GR023",
+        "gold_text": "The original hard copy must be received by the submission deadline of August 28, 2025, 4:00 PM PST.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R027"
+        ],
+        "tier": "code",
+        "best_id": "R027",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR025",
+        "gold_text": "Proposals submitted by facsimile will not be accepted.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R029"
+        ],
+        "tier": "code",
+        "best_id": "R029",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR028",
+        "gold_text": "Proposals must populate all attachments that require information and include an authorized signature where requested.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R032"
+        ],
+        "tier": "code",
+        "best_id": "R032",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR029",
+        "gold_text": "Respondents should identify the types of licenses offered for different levels of use.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R034"
+        ],
+        "tier": "code",
+        "best_id": "R034",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR030",
+        "gold_text": "Respondents should describe the software's account number customization abilities.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R035"
+        ],
+        "tier": "code",
+        "best_id": "R035",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR031",
+        "gold_text": "Respondents should identify where and when additional applications or other vendors will be used to meet requirements.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R036"
+        ],
+        "tier": "code",
+        "best_id": "R036",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR032",
+        "gold_text": "Respondents should outline the availability of virtual demos of product capabilities.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R037"
+        ],
+        "tier": "code",
+        "best_id": "R037",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR033",
+        "gold_text": "Respondents must provide a proposed strategy and technical approach to meet the Section 5 scope of work requirements.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate requires a strategy and technical approach for Section 5 scope."
+      },
+      {
+        "gold_id": "GR034",
+        "gold_text": "Respondents should develop an implementation plan and timeline for execution.",
+        "gold_type": "timeline",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R038"
+        ],
+        "tier": "code",
+        "best_id": "R038",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR035",
+        "gold_text": "Respondents should identify the key personnel for implementation.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R041"
+        ],
+        "tier": "code",
+        "best_id": "R041",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR036",
+        "gold_text": "Respondents should identify training for different license levels and indicate whether it is in person, virtual, or standard recordings.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R042"
+        ],
+        "tier": "code",
+        "best_id": "R042",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR037",
+        "gold_text": "If multiple firms respond as a team, the firm information must be listed for each company.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R044"
+        ],
+        "tier": "code",
+        "best_id": "R044",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR038",
+        "gold_text": "Respondents should describe how they respond to the City's desire for participation by minority-, women-, disabled- and small-business-owned enterprises.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R049"
+        ],
+        "tier": "code",
+        "best_id": "R049",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR039",
+        "gold_text": "Proposals must include recent relevant project experience, including project location and description, key staff, and how results were measured.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R050"
+        ],
+        "tier": "code",
+        "best_id": "R050",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR040",
+        "gold_text": "The City prefers at least one local reference who is available for an in-person software demonstration.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R055"
+        ],
+        "tier": "code",
+        "best_id": "R055",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR041",
+        "gold_text": "Respondents must summarize the qualifications of key personnel and any proposed subcontractors.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R056"
+        ],
+        "tier": "code",
+        "best_id": "R056",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR042",
+        "gold_text": "The price must be the total cost to the City for all requested services, including materials, supplies and travel.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R057"
+        ],
+        "tier": "code",
+        "best_id": "R057",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR043",
+        "gold_text": "Any proposed reimbursable expenses must be capped in the price proposal.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R058"
+        ],
+        "tier": "code",
+        "best_id": "R058",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR044",
+        "gold_text": "The price proposal may be in the Respondent's own format but must reference the specific tasks and deliverables in Section 5.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R059"
+        ],
+        "tier": "code",
+        "best_id": "R059",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR045",
+        "gold_text": "The price proposal must break out the implementation fee and recurring fees in detail.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R059"
+        ],
+        "tier": "code",
+        "best_id": "R059",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR046",
+        "gold_text": "The price proposal must break out license fees.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R060"
+        ],
+        "tier": "code",
+        "best_id": "R060",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR047",
+        "gold_text": "The price proposal must identify support service fees, with implementation-period costs separate from post-implementation costs.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R061"
+        ],
+        "tier": "code",
+        "best_id": "R061",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR048",
+        "gold_text": "The price proposal must estimate costs and fees for additional applications and/or vendors.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R062"
+        ],
+        "tier": "code",
+        "best_id": "R062",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR049",
+        "gold_text": "Respondents must provide at least three references for whom similar services have been performed.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R063",
+          "R086"
+        ],
+        "tier": "code",
+        "best_id": "R063",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR050",
+        "gold_text": "Reference email addresses must be valid, and an invalid email may result in proposal rejection.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R063"
+        ],
+        "tier": "judge",
+        "best_id": "R063",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Requires references with valid email addresses."
+      },
+      {
+        "gold_id": "GR051",
+        "gold_text": "Respondents must detail where work will be performed and how workers or resources outside the United States will be used.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R064"
+        ],
+        "tier": "code",
+        "best_id": "R064",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR052",
+        "gold_text": "The Respondent must certify that it is financially stable and able to complete the scope of work.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R065"
+        ],
+        "tier": "code",
+        "best_id": "R065",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR055",
+        "gold_text": "Respondents must provide proof of insurance for the work, including workers compensation and commercial general liability.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 20,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R091",
+          "R067"
+        ],
+        "tier": "code",
+        "best_id": "R091",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR056",
+        "gold_text": "Respondents must complete the City-provided Attachment F Excel spreadsheet (Software Abilities and Requirements) and return it with the submission.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R068",
+          "R092"
+        ],
+        "tier": "code",
+        "best_id": "R068",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR057",
+        "gold_text": "Respondents must provide documentation showing the measures in place for protecting financial data and the secure access controls implemented.",
+        "gold_type": "security_compliance",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R069"
+        ],
+        "tier": "code",
+        "best_id": "R069",
+        "best_type": "security_compliance",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR059",
+        "gold_text": "The vendor must hold weekly meetings to monitor progress, budget and timeline.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R070"
+        ],
+        "tier": "code",
+        "best_id": "R070",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR060",
+        "gold_text": "The vendor must provide a personnel management plan with a dedicated project manager and technical staff.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R071"
+        ],
+        "tier": "code",
+        "best_id": "R071",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR061",
+        "gold_text": "The vendor must recommend an account structure that supports auditable reporting.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R073"
+        ],
+        "tier": "code",
+        "best_id": "R073",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR062",
+        "gold_text": "The vendor must assist the City with financial report writing.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R074"
+        ],
+        "tier": "code",
+        "best_id": "R074",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR063",
+        "gold_text": "The vendor must import the prior five years of data to preserve history.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R075"
+        ],
+        "tier": "code",
+        "best_id": "R075",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR064",
+        "gold_text": "The vendor must collaborate with the City's Accounting and IT staff to minimize disruptions.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R076"
+        ],
+        "tier": "code",
+        "best_id": "R076",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR065",
+        "gold_text": "The vendor must reduce downtime and operational impacts during the transition.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R076"
+        ],
+        "tier": "judge",
+        "best_id": "R076",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": "Requires minimizing disruptions and reducing downtime and operational impacts during transition."
+      },
+      {
+        "gold_id": "GR066",
+        "gold_text": "The vendor must provide personalized training and manuals for power users.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R077"
+        ],
+        "tier": "code",
+        "best_id": "R077",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR067",
+        "gold_text": "The vendor must provide support for the first 12 months after implementation.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R078"
+        ],
+        "tier": "code",
+        "best_id": "R078",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR068",
+        "gold_text": "The vendor must provide at least one recorded training session and a manual for all staff.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R079"
+        ],
+        "tier": "code",
+        "best_id": "R079",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR069",
+        "gold_text": "The vendor must provide automated software updates and communicate software changes.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R080"
+        ],
+        "tier": "code",
+        "best_id": "R080",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR070",
+        "gold_text": "The vendor must support annual e-filing such as 1099s and W-2s.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R081"
+        ],
+        "tier": "code",
+        "best_id": "R081",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR071",
+        "gold_text": "The vendor must provide a help desk or ticketing system for prioritizing support requests.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R082"
+        ],
+        "tier": "code",
+        "best_id": "R082",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR072",
+        "gold_text": "Implementation must be completed by July 1, 2026, for the start of the new fiscal year.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R083"
+        ],
+        "tier": "code",
+        "best_id": "R083",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR073",
+        "gold_text": "Respondents should provide a proposed timeline and task sequence based on their expertise.",
+        "gold_type": "timeline",
+        "gold_strictness": "desired",
+        "gold_page": 15,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R084"
+        ],
+        "tier": "code",
+        "best_id": "R084",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR074",
+        "gold_text": "Respondents must complete Attachment A as the cover sheet for the price proposal.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate requires Attachment A as price proposal cover sheet."
+      },
+      {
+        "gold_id": "GR075",
+        "gold_text": "Respondents should describe their levels of support for implementation and for recurring licenses and services.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R039",
+          "R040"
+        ],
+        "tier": "code",
+        "best_id": "R039",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR076",
+        "gold_text": "Respondents should describe their proposed client engagement approach, including use of an account manager.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R043"
+        ],
+        "tier": "code",
+        "best_id": "R043",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      }
+    ],
+    "verdicts": [
+      {
+        "id": "R001",
+        "text": "Proposals must be submitted by Thursday, August 28, 2025 at 4:00 PM PST.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S2.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Deadline stated in S2.1 matches."
+      },
+      {
+        "id": "R002",
+        "text": "The solution must be a cloud-based accounting and financial reporting software system.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "RFP solicits cloud-based system; constrains solution design."
+      },
+      {
+        "id": "R003",
+        "text": "The vendor must provide complete support for the initial implementation and ongoing services for all applications it provides.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Scope includes complete implementation and ongoing support."
+      },
+      {
+        "id": "R004",
+        "text": "The software must capture financial transactions systematically and efficiently, including budgeting and forecasting capabilities.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key objective stated; matches."
+      },
+      {
+        "id": "R005",
+        "text": "The software must generate reports and analyze data to support informed decision-making.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key objective reporting and analysis stated."
+      },
+      {
+        "id": "R006",
+        "text": "The software must maintain auditable records and documentation for future reference.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key objective auditable records stated."
+      },
+      {
+        "id": "R007",
+        "text": "The vendor must provide dedicated technical support during implementation and throughout annual contract renewals.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key objective dedicated support stated."
+      },
+      {
+        "id": "R008",
+        "text": "The solution must support the modules currently used: Accounts Payable (with 1099 filing, purchasing requisitions, and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing, and Business Licensing.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": false,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk lists current modules only; doesn't require new solution to support them."
+      },
+      {
+        "id": "R009",
+        "text": "The solution must accommodate the City's current five users.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": false,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Five users is current state; no requirement to accommodate stated."
+      },
+      {
+        "id": "R010",
+        "text": "Respondents must submit written questions by July 31, 2025.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Schedule date for questions matches."
+      },
+      {
+        "id": "R011",
+        "text": "Respondents must submit proposals by August 28, 2025.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Schedule date for proposals matches."
+      },
+      {
+        "id": "R012",
+        "text": "Finalists must be available for virtual finalists' interviews on September 25, 2025 if needed.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Interview date and conditional matches schedule."
+      },
+      {
+        "id": "R013",
+        "text": "Written inquiries must be emailed to accounting@colfax-ca.gov by the date and time indicated in Section 2.2.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Email address and deadline reference match."
+      },
+      {
+        "id": "R014",
+        "text": "The subject line of the questions email must read \"Accounting Software Proposal Questions.\"",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Subject line stated exactly."
+      },
+      {
+        "id": "R015",
+        "text": "Inquiries must refer to the relevant section of the RFP.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in chunk; affects question submission."
+      },
+      {
+        "id": "R016",
+        "text": "Respondents bear all costs of preparing and submitting proposals and participating in interviews, with no reimbursement from the City.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Respondents bear costs; no reimbursement stated; affects pricing."
+      },
+      {
+        "id": "R017",
+        "text": "Each page containing confidential trade secret information must be labeled \"CONFIDENTIAL\" at the top and bottom, with the specific trade secret information enclosed.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Labeling rule matches chunk; affects proposal submission."
+      },
+      {
+        "id": "R018",
+        "text": "Cost information in the proposal cannot be marked as confidential.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in chunk; constrains pricing submission."
+      },
+      {
+        "id": "R019",
+        "text": "Respondents must submit any questions, issues, or exceptions regarding RFP terms and conditions during the question period under Section 2.3 rather than in the proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S13.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported, but it is a procurement-conduct rule on routing questions, not solution-shaping."
+      },
+      {
+        "id": "R020",
+        "text": "Proposals that include additional or modified terms and conditions, or that render the proposal non-binding or subject to further negotiation, will be disregarded or rejected as nonresponsive.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S13.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported; generic terms-and-conditions boilerplate that does not shape the solution."
+      },
+      {
+        "id": "R021",
+        "text": "From proposal submission to contract award, respondents and their representatives, subcontractors and suppliers must not communicate with anyone inside or outside relevant agencies or private entities about their own or others' proposals or qualifications.",
+        "type": "other",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S16.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported; a communication restriction, which is a procurement-conduct rule."
+      },
+      {
+        "id": "R022",
+        "text": "Price proposals cannot be altered or modified as part of clarification.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S17.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Price cannot change during clarification, which affects how bidders price."
+      },
+      {
+        "id": "R023",
+        "text": "Respondents must submit one signed original hard copy proposal and one digital version such as an Adobe Acrobat PDF.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Copy counts and format match the chunk and affect submission."
+      },
+      {
+        "id": "R024",
+        "text": "Proposals must not exceed 20 pages, with an allowance for an additional two pages for the cover letter and five pages for appendices.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Page limits and allowances match the chunk and affect proposal preparation."
+      },
+      {
+        "id": "R025",
+        "text": "Proposals must be organized in the order specified in Section 4.2.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Organization order requirement is stated and affects proposal structure."
+      },
+      {
+        "id": "R026",
+        "text": "The proposal and all attachments must be emailed to accounting@colfax-ca.gov by August 28, 2025 at 4:00 PM PST with the subject line \"Accounting and Financial Software Submission.\"",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Email address, deadline and subject line match the chunk."
+      },
+      {
+        "id": "R027",
+        "text": "The original hard copy proposal and all attachments must be received at the specified City of Colfax address by the submission deadline.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Hard copy must be received by the deadline at the specified address."
+      },
+      {
+        "id": "R028",
+        "text": "Proposals received after the deadline will not be considered or evaluated.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Late proposals are not considered, which affects scheduling."
+      },
+      {
+        "id": "R029",
+        "text": "Proposals submitted by facsimile (FAX) will not be accepted.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "FAX submissions are not accepted, which constrains the delivery method."
+      },
+      {
+        "id": "R030",
+        "text": "Respondents must regularly check the City's website at www.colfax-ca.gov for any issued addenda before the proposal deadline.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Checking the website for addenda is stated and affects submission."
+      },
+      {
+        "id": "R031",
+        "text": "Withdrawal requests must be on the Respondent's letterhead and signed by an authorized agent.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S21.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported; withdrawal formalities are procedural and do not change the bid."
+      },
+      {
+        "id": "R032",
+        "text": "Proposals must include all required elements and populate all attachments of this RFP that require information, with an authorized signature where requested.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated directly in S22.1; governs proposal completeness and signatures."
+      },
+      {
+        "id": "R033",
+        "text": "The proposal must include a completed \"Software Abilities and Requirements\" spreadsheet (Attachment F).",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Attachment F spreadsheet submission stated in S23.1."
+      },
+      {
+        "id": "R034",
+        "text": "The proposal must identify the types of licenses offered for different levels of use.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "License types for levels of use stated in S23.1."
+      },
+      {
+        "id": "R035",
+        "text": "The proposal must describe the software's account number customization abilities.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Account number customization description stated in S23.1."
+      },
+      {
+        "id": "R036",
+        "text": "The proposal must identify where and when additional applications or other vendors will be used to meet requirements.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Identification of additional applications or vendors stated in S23.1."
+      },
+      {
+        "id": "R037",
+        "text": "The proposal must outline the availability of virtual demos to view product capabilities.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Virtual demo availability outline stated in S23.1."
+      },
+      {
+        "id": "R038",
+        "text": "The proposal must include an implementation plan and timeline for execution targeting a City go-live of July 1, 2026.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Implementation plan and July 1, 2026 go-live goal stated in S24.1."
+      },
+      {
+        "id": "R039",
+        "text": "The proposal must describe the levels of support for implementation.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Implementation support levels description stated in S24.1."
+      },
+      {
+        "id": "R040",
+        "text": "The proposal must describe the levels of support for recurring licenses and services.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Recurring license and services support levels stated in S24.1."
+      },
+      {
+        "id": "R041",
+        "text": "The proposal must identify the key personnel for implementation.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key personnel identification stated in S24.1."
+      },
+      {
+        "id": "R042",
+        "text": "The proposal must identify training for the software at different license levels and indicate whether training is in person, virtual, or standard recordings.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Training by license level and delivery mode stated in S24.1."
+      },
+      {
+        "id": "R043",
+        "text": "The proposal must describe the proposed client engagement approach, including the use of an account manager.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Client engagement approach with account manager stated in S24.1."
+      },
+      {
+        "id": "R044",
+        "text": "If multiple firms respond as a team, the firm information must be listed for each company.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S25.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Team responses list firm information for each company, per S25.1."
+      },
+      {
+        "id": "R045",
+        "text": "The proposal must provide the firm's name, address, phone, website, and primary contact name, title, and contact information.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Firm contact details stated in S26.1."
+      },
+      {
+        "id": "R046",
+        "text": "The proposal must describe the firm's history, state of organization or incorporation, number of full-time employees, and type of ownership.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Firm history, incorporation state, employees, ownership stated in S26.1."
+      },
+      {
+        "id": "R047",
+        "text": "The proposal must state the hours of operation during which project managers will be available for technical assistance.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Project manager availability hours stated in S26.1."
+      },
+      {
+        "id": "R048",
+        "text": "The proposal must list the office location(s) from which key individuals on the team will operate.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key individual office locations stated in S26.1."
+      },
+      {
+        "id": "R049",
+        "text": "The proposal must describe how the firm or team responds to the City's desire for participation by businesses owned by minorities, women, disabled, disabled business enterprises, and small businesses.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Response to City's business participation desire stated in S26.1."
+      },
+      {
+        "id": "R050",
+        "text": "The proposal must include recent relevant experience with project location and description, key staff who worked on the projects, and how results or effectiveness were measured.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches chunk text on experience content to include."
+      },
+      {
+        "id": "R051",
+        "text": "The proposal must describe experience implementing accounting and financial software for local governments, regional councils of government, or other federal grant-funded organizations.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated experience area."
+      },
+      {
+        "id": "R052",
+        "text": "The proposal must describe experience advising clients on streamlining procedures to improve organizational efficiency.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated experience area."
+      },
+      {
+        "id": "R053",
+        "text": "The proposal must describe experience providing continued support for improvements and/or daily operations.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated experience area."
+      },
+      {
+        "id": "R054",
+        "text": "The proposal must include a completed Attachment B: References Sheet, which may be recreated if the content remains unchanged.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Attachment B submission with recreate allowance stated."
+      },
+      {
+        "id": "R055",
+        "text": "The City prefers at least one local referral who is available for an in-person software demonstration.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated preference for local referral for in-person demo."
+      },
+      {
+        "id": "R056",
+        "text": "The proposal must provide a summary of qualifications for key personnel and any subcontractors proposed to provide services under the scope of work.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Key personnel qualifications summary stated."
+      },
+      {
+        "id": "R057",
+        "text": "The price must constitute the total cost to the City to perform all services requested, including all materials, supplies, and travel.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Price as total cost stated."
+      },
+      {
+        "id": "R058",
+        "text": "Any proposed reimbursable expenses must be capped in the price proposal.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Reimbursable expenses cap stated."
+      },
+      {
+        "id": "R059",
+        "text": "The price proposal must reference the specific tasks and deliverables outlined in Section 5 and break out implementation fees and recurring fees in detail.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Reference to Section 5 tasks and fee breakout stated."
+      },
+      {
+        "id": "R060",
+        "text": "The price proposal must break out license fees.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "License fee breakout stated."
+      },
+      {
+        "id": "R061",
+        "text": "The price proposal must identify additional fees charged for support services, separating implementation costs from post-implementation costs.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Support fees separated by phase stated."
+      },
+      {
+        "id": "R062",
+        "text": "The price proposal must estimate costs and fees for additional applications and/or vendors.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Estimate for additional applications/vendors stated."
+      },
+      {
+        "id": "R063",
+        "text": "The proposal must provide a minimum of three references for whom similar services have been performed, with valid email addresses.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Three references and valid email stated in chunk."
+      },
+      {
+        "id": "R064",
+        "text": "The proposal must detail the location(s) at which performance will occur and how resources or workers outside the United States will be used in performing the contract.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Worker location detail stated; affects staffing and evaluation."
+      },
+      {
+        "id": "R065",
+        "text": "Each Respondent must certify that it is financially stable and able to complete the scope of work outlined in this RFP.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Financial stability certification stated."
+      },
+      {
+        "id": "R066",
+        "text": "The Respondent must notify the City within thirty (30) days of any occurrence or condition that materially alters the truth of any statement made in the Certification of Financial Condition.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "30-day notification obligation stated; constrains bidder."
+      },
+      {
+        "id": "R067",
+        "text": "The proposal must attach proof of insurance for the type of work solicited, including workers compensation and commercial general liability coverage.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Proof of insurance requirement stated."
+      },
+      {
+        "id": "R068",
+        "text": "The Respondent must complete the Attachment F Excel spreadsheet and return it with the submission.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Spreadsheet completion and return stated."
+      },
+      {
+        "id": "R069",
+        "text": "The proposal must provide documentation demonstrating the measures in place for protecting financial data and the secure access controls implemented.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.2",
+          "S40.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Security documentation requirement stated in both chunks."
+      },
+      {
+        "id": "R070",
+        "text": "The vendor must hold weekly meetings for progress, budget, and timeline monitoring.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 1."
+      },
+      {
+        "id": "R071",
+        "text": "The vendor must provide a personnel management plan with a dedicated project manager and technical staff.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 1; affects staffing."
+      },
+      {
+        "id": "R072",
+        "text": "The vendor must understand the City's auditing and reporting requirements for the software implementation.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 1."
+      },
+      {
+        "id": "R073",
+        "text": "The vendor must recommend an account structure for auditable reporting.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 1."
+      },
+      {
+        "id": "R074",
+        "text": "The vendor must assist with financial report writing.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 2."
+      },
+      {
+        "id": "R075",
+        "text": "The vendor must import the prior five years of data for history.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Prior 5 years data import stated."
+      },
+      {
+        "id": "R076",
+        "text": "The vendor must collaborate with Accounting and IT to minimize disruptions and reduce downtime and operational impacts during the transition.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Combines two adjacent Task 2 bullets; both stated."
+      },
+      {
+        "id": "R077",
+        "text": "The vendor must provide personalized training and manuals for power users.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 3."
+      },
+      {
+        "id": "R078",
+        "text": "The vendor must provide support for the first 12 months post-implementation.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 3."
+      },
+      {
+        "id": "R079",
+        "text": "The vendor must provide at least one recorded training session and a manual for all staff.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 3."
+      },
+      {
+        "id": "R080",
+        "text": "The vendor must provide automated updates and software change communications.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 4."
+      },
+      {
+        "id": "R081",
+        "text": "The vendor must support annual e-filing such as 1099s and W-2s.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 4."
+      },
+      {
+        "id": "R082",
+        "text": "The vendor must provide a help desk or ticketing system for support prioritization.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Task 4."
+      },
+      {
+        "id": "R083",
+        "text": "Implementation must be completed by July 1, 2026, for the new fiscal year.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S32.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "July 1, 2026 target stated, though as a goal rather than a strict deadline."
+      },
+      {
+        "id": "R084",
+        "text": "Respondents must provide a proposed timeline and task sequence based on their expertise.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S32.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk says respondents should provide timeline and task sequence."
+      },
+      {
+        "id": "R085",
+        "text": "The price proposal must state the total price for all services and deliverables, the total reimbursable expenses cap, and the total price proposal.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S33.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Pricing form fields and capped reimbursable expenses stated."
+      },
+      {
+        "id": "R086",
+        "text": "The Respondent must provide at least three references for whom similar services have been performed, with valid email addresses, or risk rejection of its proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S34.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Three references and valid email requirement stated."
+      },
+      {
+        "id": "R087",
+        "text": "The Respondent must specify the location(s) where work will be performed and describe how it plans to use resources or workers outside the United States.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S35.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in Attachment C."
+      },
+      {
+        "id": "R088",
+        "text": "The Respondent must provide written notice to the City of any relocation of the Respondent, its employees, subcontractors, or other personnel performing services under the contract to locations outside the United States.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S35.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Written notice of relocation outside US stated; constrains staffing."
+      },
+      {
+        "id": "R089",
+        "text": "The Certification of Financial Condition must be signed by an individual authorized to represent the Respondent.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S36.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk states certification must be signed by authorized individual; affects submission."
+      },
+      {
+        "id": "R090",
+        "text": "The Respondent must notify the Contract Lead within 15 days of any material changes to the representations made in the Certification of Financial Condition.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S36.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "15-day notice of material changes is stated; constrains bidder financial disclosure obligations."
+      },
+      {
+        "id": "R091",
+        "text": "Respondents must provide proof of insurance for this RFP's work, including workers compensation and commercial general liability.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S37.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Proof of insurance including workers comp and CGL is stated; affects pricing and submission."
+      },
+      {
+        "id": "R092",
+        "text": "Respondents must complete the attached Attachment F Excel spreadsheet and return it with the submission.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S39.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Spreadsheet completion and return with submission stated; 'should' versus 'must' is a label difference."
+      }
+    ]
+  },
+  "problem": {
+    "mode": "hierarchical",
+    "claims": {
+      "client_situation": 6,
+      "goal": 7,
+      "success_criteria": 7,
+      "constraints": 8
+    },
+    "facts": 26,
+    "inferences": 2,
+    "checklist_total": 12,
+    "checklist_covered": null,
+    "checklist_partial": null,
+    "checklist_coverage": null,
+    "checklist": [
+      {
+        "gold_id": "GC01",
+        "fact": "The City of Colfax, California (a small city in Placer County with a population just under 2,000) is issuing the RFP.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC02",
+        "fact": "The City is procuring acquisition and implementation of a cloud-based accounting and financial reporting software system, including initial implementation and ongoing services for all applications provided by the selected vendor.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC03",
+        "fact": "The City currently uses Fund Balance fund accounting software from Tyler Technologies (modules: Accounts Payable, Accounts Receivable, General Ledger, Payroll, Utility Billing, Business Licensing), with five users.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC04",
+        "fact": "Key objectives include a streamlined package capturing financial transactions with budgeting and forecasting, effective reporting and data analysis, auditable records, and dedicated technical support during implementation and annual contract renewals.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC05",
+        "fact": "Proposals are due Thursday, August 28, 2025 at 4:00 PM PST, by email plus an original hard copy, and late proposals will not be considered.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC06",
+        "fact": "The RFP was issued July 1, 2025; written questions are due July 31, 2025, answers posted August 14, finalists notified September 11, interviews September 25, and contract award October 22, 2025.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC07",
+        "fact": "The City's goal is to complete implementation and go live on July 1, 2026, in coordination with the new fiscal year.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC08",
+        "fact": "Scope of work has four tasks: project management plan, software installation and implementation (including importing the prior 5 years of data), staff training with support for the first 12 months post-implementation, and ongoing technical assistance and support (including 1099 and W-2 e-filing).",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC09",
+        "fact": "Proposals are evaluated 45% on response to project goals and scope, 25% on technical support, 20% on fee proposal and implementation schedule, and 10% on information, qualifications and references.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC10",
+        "fact": "The RFP states no budget or price ceiling, but reimbursable expenses cannot be unlimited and must be capped in the price proposal.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC11",
+        "fact": "Respondents must provide documentation of measures protecting financial data and secure access controls (Attachment G), and disclose any use of workers outside the United States (Attachment C).",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC12",
+        "fact": "Attachment F (Software Abilities and Requirements spreadsheet) is a separate Excel document provided by the City and not included in this PDF; the City's standard contract is available only upon request.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      }
+    ]
+  },
+  "solution": {
+    "components": 10,
+    "assumptions": 8,
+    "rounds": 2,
+    "cited_total": 38,
+    "cited_covered": 38,
+    "cited_coverage": 1.0,
+    "stored_coverage_agrees": true,
+    "judged_covered": null,
+    "judged_coverage": null,
+    "rubric": {},
+    "calendar_components": [],
+    "component_records": [
+      {
+        "id": "C01",
+        "title": "Project management, governance and weekly reporting",
+        "description": "A dedicated project manager plus named technical staff run the engagement from contract award to go-live and through the support year, with weekly meetings covering progress, budget and timeline that the City's Accounting and IT staff attend. The plan sequences tasks against the July 1, 2026 fiscal-year start, records decisions and risks, and reports status in a form the City can use for its own audit file. A single account manager is the City's standing point of contact for escalations and for the transition from implementation to recurring service. The same team owns the bid-to-award calendar: named presenters are held available for the City's virtual finalist interviews on September 25, 2025 if the City calls them, and the account manager coordinates scheduling with City leadership.",
+        "requirement_ids": [
+          "R003",
+          "R007",
+          "R012",
+          "R070",
+          "R071",
+          "R076",
+          "R083"
+        ]
+      },
+      {
+        "id": "C02",
+        "title": "Discovery, account-structure design and audit readiness",
+        "description": "A structured discovery phase documents the City's current fund accounting practice, its auditing and reporting requirements, and the reports its auditors and Council rely on, then recommends an account structure (fund, department, object and project dimensions) that supports auditable reporting and clean year-end close. The recommendation is reviewed with Accounting before configuration begins so the chart of accounts is fixed once rather than reworked after go-live. Deliverables include a documented account structure, a reporting requirements catalogue and an audit-trail design covering who changed what and when.",
+        "requirement_ids": [
+          "R006",
+          "R072",
+          "R073",
+          "R074"
+        ]
+      },
+      {
+        "id": "C03",
+        "title": "Hosted accounting and financial reporting platform",
+        "description": "A cloud-hosted subscription platform configured for the City's six functional areas: Accounts Payable with 1099 filing, purchasing requisitions and purchase orders routed through approvals; Accounts Receivable; General Ledger; Payroll; Utility Billing; and Business Licensing. Transaction capture is systematic and efficient, with budgeting and forecasting built into the general ledger so the City can model the annual budget against actuals. Reporting and analysis tools, including financial report writing support, let staff produce Council, audit and management reports without vendor intervention, and every transaction carries an auditable record retained for future reference. Licensing is sized for the City's five current users with headroom to add users as vacancies are filled.",
+        "requirement_ids": [
+          "R002",
+          "R004",
+          "R005",
+          "R006",
+          "R008",
+          "R009",
+          "R074",
+          "R081"
+        ]
+      },
+      {
+        "id": "C04",
+        "title": "Data migration of five years of history",
+        "description": "Extraction, cleansing, mapping and import of the prior five years of financial data from the incumbent system into the new platform, covering general ledger balances and history, open payables and receivables, vendor and customer records, payroll history and utility billing accounts. Each migration cycle is reconciled to source control totals and signed off by Accounting before the next cycle runs, so opening balances at July 1, 2026 are provably correct. Migration is scheduled in parallel with configuration to protect the go-live date and to keep disruption to daily operations to a minimum.",
+        "requirement_ids": [
+          "R075",
+          "R076",
+          "R083"
+        ]
+      },
+      {
+        "id": "C05",
+        "title": "Training and change management",
+        "description": "Role-based training tiered by license level: personalized in-person or virtual sessions with written manuals for power users in Accounting and IT, plus at least one recorded training session and a manual made available to all staff so anyone can revisit the material on demand. Training is scheduled before go-live with a refresher after the first close cycle, and materials are updated when the software changes. The programme covers the workflows each role actually performs — requisitions and approvals, billing, payroll, reporting — rather than generic product tours.",
+        "requirement_ids": [
+          "R077",
+          "R079",
+          "R076"
+        ]
+      },
+      {
+        "id": "C06",
+        "title": "Go-live, parallel run and 12-month post-implementation support",
+        "description": "A cutover plan agreed with Accounting and IT that runs the new platform in parallel with the incumbent through the June 2026 close, then retires the old system at the July 1, 2026 fiscal-year start with defined rollback points. Twelve months of post-implementation support follows, with named support staff, a documented escalation path and service levels for response and resolution. Support covers the first year-end close, first audit cycle and first budget cycle on the new system, which is where most post-go-live risk sits.",
+        "requirement_ids": [
+          "R003",
+          "R007",
+          "R076",
+          "R078",
+          "R083"
+        ]
+      },
+      {
+        "id": "C07",
+        "title": "Ongoing help desk, updates and e-filing services",
+        "description": "A ticketing help desk with published prioritisation rules (severity, impact, response target) that the City uses for all support requests, staffed during stated hours of operation. Automated software updates are applied and communicated in advance, with release notes and change summaries so the City knows what changed and when retraining is needed. Annual e-filing support covers 1099 and W-2 preparation and submission, including the 1099 filing the City performs today, and recurring license and service levels are documented so the City can see what each tier includes.",
+        "requirement_ids": [
+          "R003",
+          "R007",
+          "R080",
+          "R081",
+          "R082"
+        ]
+      },
+      {
+        "id": "C08",
+        "title": "Security, data protection and audit documentation",
+        "description": "A security package documenting the controls that protect the City's financial data: encryption in transit and at rest, role-based and least-privilege access, multi-factor authentication, privileged access review, logging and monitoring, backup and recovery objectives, incident response and breach notification, and annual independent assurance (for example SOC 2 or equivalent). The package is written to be handed to the City's auditors and to satisfy the RFP's requirement for documentation of data protection measures and secure access controls, and it is refreshed annually with the contract renewal.",
+        "requirement_ids": [
+          "R069",
+          "R006"
+        ]
+      },
+      {
+        "id": "C09",
+        "title": "Pricing proposal and commercial compliance",
+        "description": "A price proposal built on Attachment A that states the total cost to the City for all services including materials, supplies and travel, with implementation fees, recurring fees, license fees by level, support services and any additional application or vendor costs broken out separately and mapped to the Section 5 tasks and deliverables. Reimbursable expenses are capped with a stated ceiling rather than left open, and the total price, the reimbursable cap and the total price proposal are stated explicitly. The price is submitted as final and is not altered during clarification, and cost information is not marked confidential.",
+        "requirement_ids": [
+          "R016",
+          "R022",
+          "R057",
+          "R058",
+          "R059",
+          "R060",
+          "R061",
+          "R062",
+          "R085"
+        ]
+      },
+      {
+        "id": "C10",
+        "title": "Contract, certification and insurance obligations",
+        "description": "A compliance workstream that handles the non-technical obligations: a signed Certification of Financial Condition by an authorised representative, with a standing notification process to the City within the required period of any change that materially alters those representations; a Certificate of Insurance evidencing workers' compensation and commercial general liability; and a statement of every location where work will be performed, including any work outside the United States, with a commitment to give written notice of any relocation of staff or subcontractors offshore. The proposal is submitted as a binding offer with no additional or modified terms, and any exceptions to the City's standard contract are raised as questions during the question period rather than attached to the proposal. A single point of contact enforces the no-contact rule from submission to award and confirms the team's availability for the September 25, 2025 virtual finalist interviews.",
+        "requirement_ids": [
+          "R020",
+          "R021",
+          "R066",
+          "R088",
+          "R090",
+          "R012"
+        ]
+      }
+    ],
+    "pairs": [
+      {
+        "component_id": "C01",
+        "requirement_id": "R003",
+        "requirement_text": "The vendor must provide complete support for the initial implementation and ongoing services for all applications it provides.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R007",
+        "requirement_text": "The vendor must provide dedicated technical support during implementation and throughout annual contract renewals.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R012",
+        "requirement_text": "Finalists must be available for virtual finalists' interviews on September 25, 2025 if needed.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R070",
+        "requirement_text": "The vendor must hold weekly meetings for progress, budget, and timeline monitoring.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R071",
+        "requirement_text": "The vendor must provide a personnel management plan with a dedicated project manager and technical staff.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R076",
+        "requirement_text": "The vendor must collaborate with Accounting and IT to minimize disruptions and reduce downtime and operational impacts during the transition.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R083",
+        "requirement_text": "Implementation must be completed by July 1, 2026, for the new fiscal year.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R006",
+        "requirement_text": "The software must maintain auditable records and documentation for future reference.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R072",
+        "requirement_text": "The vendor must understand the City's auditing and reporting requirements for the software implementation.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R073",
+        "requirement_text": "The vendor must recommend an account structure for auditable reporting.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R074",
+        "requirement_text": "The vendor must assist with financial report writing.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R002",
+        "requirement_text": "The solution must be a cloud-based accounting and financial reporting software system.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R004",
+        "requirement_text": "The software must capture financial transactions systematically and efficiently, including budgeting and forecasting capabilities.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R005",
+        "requirement_text": "The software must generate reports and analyze data to support informed decision-making.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R006",
+        "requirement_text": "The software must maintain auditable records and documentation for future reference.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R008",
+        "requirement_text": "The solution must support the modules currently used: Accounts Payable (with 1099 filing, purchasing requisitions, and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing, and Business Licensing.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R009",
+        "requirement_text": "The solution must accommodate the City's current five users.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R074",
+        "requirement_text": "The vendor must assist with financial report writing.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R081",
+        "requirement_text": "The vendor must support annual e-filing such as 1099s and W-2s.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R075",
+        "requirement_text": "The vendor must import the prior five years of data for history.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R076",
+        "requirement_text": "The vendor must collaborate with Accounting and IT to minimize disruptions and reduce downtime and operational impacts during the transition.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R083",
+        "requirement_text": "Implementation must be completed by July 1, 2026, for the new fiscal year.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R077",
+        "requirement_text": "The vendor must provide personalized training and manuals for power users.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R079",
+        "requirement_text": "The vendor must provide at least one recorded training session and a manual for all staff.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R076",
+        "requirement_text": "The vendor must collaborate with Accounting and IT to minimize disruptions and reduce downtime and operational impacts during the transition.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R003",
+        "requirement_text": "The vendor must provide complete support for the initial implementation and ongoing services for all applications it provides.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R007",
+        "requirement_text": "The vendor must provide dedicated technical support during implementation and throughout annual contract renewals.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R076",
+        "requirement_text": "The vendor must collaborate with Accounting and IT to minimize disruptions and reduce downtime and operational impacts during the transition.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R078",
+        "requirement_text": "The vendor must provide support for the first 12 months post-implementation.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R083",
+        "requirement_text": "Implementation must be completed by July 1, 2026, for the new fiscal year.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R003",
+        "requirement_text": "The vendor must provide complete support for the initial implementation and ongoing services for all applications it provides.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R007",
+        "requirement_text": "The vendor must provide dedicated technical support during implementation and throughout annual contract renewals.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R080",
+        "requirement_text": "The vendor must provide automated updates and software change communications.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R081",
+        "requirement_text": "The vendor must support annual e-filing such as 1099s and W-2s.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R082",
+        "requirement_text": "The vendor must provide a help desk or ticketing system for support prioritization.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R069",
+        "requirement_text": "The proposal must provide documentation demonstrating the measures in place for protecting financial data and the secure access controls implemented.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R006",
+        "requirement_text": "The software must maintain auditable records and documentation for future reference.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R016",
+        "requirement_text": "Respondents bear all costs of preparing and submitting proposals and participating in interviews, with no reimbursement from the City.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R022",
+        "requirement_text": "Price proposals cannot be altered or modified as part of clarification.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R057",
+        "requirement_text": "The price must constitute the total cost to the City to perform all services requested, including all materials, supplies, and travel.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R058",
+        "requirement_text": "Any proposed reimbursable expenses must be capped in the price proposal.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R059",
+        "requirement_text": "The price proposal must reference the specific tasks and deliverables outlined in Section 5 and break out implementation fees and recurring fees in detail.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R060",
+        "requirement_text": "The price proposal must break out license fees.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R061",
+        "requirement_text": "The price proposal must identify additional fees charged for support services, separating implementation costs from post-implementation costs.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R062",
+        "requirement_text": "The price proposal must estimate costs and fees for additional applications and/or vendors.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R085",
+        "requirement_text": "The price proposal must state the total price for all services and deliverables, the total reimbursable expenses cap, and the total price proposal.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R020",
+        "requirement_text": "Proposals that include additional or modified terms and conditions, or that render the proposal non-binding or subject to further negotiation, will be disregarded or rejected as nonresponsive.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R021",
+        "requirement_text": "From proposal submission to contract award, respondents and their representatives, subcontractors and suppliers must not communicate with anyone inside or outside relevant agencies or private entities about their own or others' proposals or qualifications.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R066",
+        "requirement_text": "The Respondent must notify the City within thirty (30) days of any occurrence or condition that materially alters the truth of any statement made in the Certification of Financial Condition.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R088",
+        "requirement_text": "The Respondent must provide written notice to the City of any relocation of the Respondent, its employees, subcontractors, or other personnel performing services under the contract to locations outside the United States.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R090",
+        "requirement_text": "The Respondent must notify the Contract Lead within 15 days of any material changes to the representations made in the Certification of Financial Condition.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R012",
+        "requirement_text": "Finalists must be available for virtual finalists' interviews on September 25, 2025 if needed.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      }
+    ]
+  },
+  "risks": {
+    "risks": 12,
+    "severity": {
+      "high": 5,
+      "medium": 5,
+      "low": 2
+    },
+    "likelihood": {
+      "medium": 10,
+      "low": 1,
+      "high": 1
+    },
+    "source": {
+      "rfp": 9,
+      "solution": 3
+    },
+    "severity_agreement": null,
+    "likelihood_agreement": null,
+    "findings": 3,
+    "findings_code_covered": 3,
+    "findings_judge_covered": null,
+    "risk_verdicts": [
+      {
+        "id": "K01",
+        "title": "Attachment F not in the RFP and not yet obtained",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K02",
+        "title": "City's standard contract unseen before a binding, no-exception offer",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K03",
+        "title": "July 1, 2026 go-live is a goal, not a settled milestone",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K04",
+        "title": "Five years of history may not extract cleanly from the incumbent system",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K05",
+        "title": "Hard-copy original must physically arrive by the deadline",
+        "severity": "high",
+        "likelihood": "low",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K06",
+        "title": "Parallel run through the June 2026 close with a small City team",
+        "severity": "medium",
+        "likelihood": "high",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K07",
+        "title": "Attachments E and G referenced but not provided",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K08",
+        "title": "Twenty-page limit against a broad submission scope",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K09",
+        "title": "Offshore resourcing disclosure invites cost and risk loading",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K10",
+        "title": "Five-user licence baseline may understate real seat demand",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K11",
+        "title": "Conflicting 15-day and 30-day financial-condition notice periods",
+        "severity": "low",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K12",
+        "title": "Finalist interview availability reserved but not committed",
+        "severity": "low",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      }
+    ],
+    "finding_verdicts": [
+      {
+        "id": "F1",
+        "kind": "absent_document",
+        "label": "Attachment E (referenced on page 14, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K07"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F2",
+        "kind": "absent_document",
+        "label": "Attachment F (referenced on page 12, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K01"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F3",
+        "kind": "absent_document",
+        "label": "Attachment G (referenced on page 14, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K07"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      }
+    ]
+  },
+  "grounding": {
+    "by_output": {
+      "problem": {
+        "items": 28,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 2,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "solution": {
+        "items": 17,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 1,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "risks": {
+        "items": 12,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 11,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      }
+    },
+    "items": [
+      {
+        "where": "problem.client_situation[0]",
+        "output": "problem",
+        "text": "The City of Colfax, California, a city of just under 2,000 residents in the Sierra Nevada foothills of Placer County, issued this RFP on July 1, 2025 for accounting and financial reporting software.",
+        "kind": "fact",
+        "cited": [
+          "S2.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[1]",
+        "output": "problem",
+        "text": "The City operates on annual budgeted revenues of $6 million with 11 full-time employees (one position vacant) plus 1 part-time/seasonal/contract employee, and its fiscal year ends June 30.",
+        "kind": "fact",
+        "cited": [
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[2]",
+        "output": "problem",
+        "text": "The City currently runs Fund Balance fund accounting software from Tyler Technologies with modules for Accounts Payable (including 1099 filing, purchasing requisitions and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing and Business Licensing, used by five users.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[3]",
+        "output": "problem",
+        "text": "The City wants a streamlined software package that captures financial transactions systematically and efficiently, including budgeting and forecasting capabilities.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[4]",
+        "output": "problem",
+        "text": "The City needs to generate reports and analyze data to support informed decision-making and to maintain auditable records and documentation for future reference.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[5]",
+        "output": "problem",
+        "text": "The City is replacing its current Tyler Technologies Fund Balance system with a cloud-based accounting and financial reporting system, so the incumbent platform is the baseline the new solution must supersede.",
+        "kind": "inference",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[0]",
+        "output": "problem",
+        "text": "The City seeks a cloud-based accounting and financial reporting software system with complete support for both initial implementation and ongoing services for all applications provided by the selected vendor.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[1]",
+        "output": "problem",
+        "text": "The City's goal is to go live on July 1, 2026, in coordination with the start of the new fiscal year, with the project starting soon after contract award and negotiation.",
+        "kind": "fact",
+        "cited": [
+          "S24.1",
+          "S32.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[2]",
+        "output": "problem",
+        "text": "Task 1 requires an approach and project management plan with weekly progress/budget/timeline meetings, a dedicated project manager and technical staff, understanding of auditing and reporting requirements, and a recommended account structure for auditable reporting.",
+        "kind": "fact",
+        "cited": [
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[3]",
+        "output": "problem",
+        "text": "Task 2 requires software installation and implementation support including financial report writing, import of the prior five years of data for history, and collaboration with Accounting and IT to minimize downtime and operational disruption during transition.",
+        "kind": "fact",
+        "cited": [
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[4]",
+        "output": "problem",
+        "text": "Task 3 requires personalized training and manuals for power users, at least one recorded training session and manual for all staff, and support for the first 12 months post-implementation.",
+        "kind": "fact",
+        "cited": [
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[5]",
+        "output": "problem",
+        "text": "Task 4 requires ongoing technical assistance including automated updates and software change communications, support for annual e-filing such as 1099s and W-2s, and a help desk or ticketing system for support prioritization.",
+        "kind": "fact",
+        "cited": [
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[6]",
+        "output": "problem",
+        "text": "Respondents must describe their implementation plan and timeline, levels of support for implementation and for recurring licenses and services, key implementation personnel, training options by license level (in person, virtual, or standard recordings), and a client engagement approach including an account manager.",
+        "kind": "fact",
+        "cited": [
+          "S24.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[0]",
+        "output": "problem",
+        "text": "Proposals are scored on four weighted criteria: 45% response to project goals and scope, 25% technical support during implementation and ongoing, 20% fee proposal and implementation schedule, and 10% information, qualifications and references.",
+        "kind": "fact",
+        "cited": [
+          "S18.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[1]",
+        "output": "problem",
+        "text": "Written questions are due July 31, 2025, with the City's responses posted on www.colfax-ca.gov by August 14, 2025.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[2]",
+        "output": "problem",
+        "text": "Proposals are due August 28, 2025 at 4:00 PM PST, with finalists notified September 11, 2025, virtual finalist interviews (if needed) on September 25, 2025, and contract award by October 22, 2025.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "4",
+          "00",
+          "PM",
+          "PST"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[3]",
+        "output": "problem",
+        "text": "Proposals must include at least three references for similar services with valid e-mail addresses, and failure to provide a valid email may result in rejection of the proposal.",
+        "kind": "fact",
+        "cited": [
+          "S28.1",
+          "S34.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[4]",
+        "output": "problem",
+        "text": "Respondents must complete and submit Attachment F, the Software Abilities and Requirements spreadsheet, and identify the types of licenses offered, account number customization abilities, and availability of virtual demos of product capabilities.",
+        "kind": "fact",
+        "cited": [
+          "S23.1",
+          "S28.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[5]",
+        "output": "problem",
+        "text": "The City may select a finalist group for interviews with City leadership or make a final selection without interviews, and price proposals cannot be altered or modified as part of clarification.",
+        "kind": "fact",
+        "cited": [
+          "S17.1",
+          "S17.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[6]",
+        "output": "problem",
+        "text": "The City prefers at least one local referral available for an in-person software demonstration.",
+        "kind": "fact",
+        "cited": [
+          "S27.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[0]",
+        "output": "problem",
+        "text": "Proposals must not exceed 20 pages, with an additional two pages allowed for the cover letter and five pages for appendices, submitted as one signed original hard copy plus one digital version.",
+        "kind": "fact",
+        "cited": [
+          "S21.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[1]",
+        "output": "problem",
+        "text": "The digital copy and all attachments must be emailed to accounting@colfax-ca.gov with the subject line \"Accounting and Financial Software Submission\", and the hard copy must reach Attn: Shanna Stahl, City of Colfax, PO Box 702, Colfax, CA 95713 (USPS) or 33 S. Main Street, Colfax, CA 95713, by the deadline; late and FAX submissions will not be accepted.",
+        "kind": "fact",
+        "cited": [
+          "S21.1",
+          "S21.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "USPS"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[2]",
+        "output": "problem",
+        "text": "The City will not accept unlimited reimbursable expenses, so any reimbursable expenses must be capped in the price proposal, and cost information cannot be marked confidential.",
+        "kind": "fact",
+        "cited": [
+          "S28.1",
+          "S33.1",
+          "S11.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[3]",
+        "output": "problem",
+        "text": "Attachment A (Pricing Proposal) must state the total cost to the City for all services including materials, supplies and travel, with implementation fees, recurring fees, license fees, support services and additional application/vendor costs broken out in detail.",
+        "kind": "fact",
+        "cited": [
+          "S28.1",
+          "S33.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[4]",
+        "output": "problem",
+        "text": "Attachment C requires the Respondent to state whether any work will be performed outside the United States and to list those locations, which the City will evaluate for additional risks and costs before award.",
+        "kind": "fact",
+        "cited": [
+          "S35.1",
+          "S28.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[5]",
+        "output": "problem",
+        "text": "Respondents must submit Attachment D (Certification of Financial Condition), Attachment E (Certificate of Insurance covering workers compensation and commercial general liability), and Attachment G documentation of measures protecting financial data and secure access controls.",
+        "kind": "fact",
+        "cited": [
+          "S28.2",
+          "S37.1",
+          "S40.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[6]",
+        "output": "problem",
+        "text": "Attachment F is an Excel spreadsheet provided separately by the City and is not included in the RFP, so the bidder must obtain it from the City before submitting.",
+        "kind": "inference",
+        "cited": [
+          "S39.1",
+          "S28.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[7]",
+        "output": "problem",
+        "text": "The City's standard contract with terms and conditions is available upon request and is not included in the RFP; any exceptions must be raised as questions during the question period, and modified terms submitted with a proposal will be disregarded or cause rejection as nonresponsive.",
+        "kind": "fact",
+        "cited": [
+          "S13.1",
+          "S13.2",
+          "S29.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C01.claims[0]",
+        "output": "solution",
+        "text": "The City's fiscal year ends June 30 and it wants to go live on July 1, 2026, so the implementation schedule is built backwards from that date.",
+        "kind": "fact",
+        "cited": [
+          "S6.1",
+          "S24.1",
+          "S32.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C01.claims[1]",
+        "output": "solution",
+        "text": "The City has 11 full-time employees (one position vacant) plus one part-time/seasonal/contract employee, which bounds the size of the implementation team the City can commit to weekly meetings.",
+        "kind": "fact",
+        "cited": [
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C01.claims[2]",
+        "output": "solution",
+        "text": "The City may hold virtual finalist interviews on September 25, 2025 and may instead select without interviews, so presenter availability must be reserved rather than assumed.",
+        "kind": "fact",
+        "cited": [
+          "S9.1",
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C02.claims[0]",
+        "output": "solution",
+        "text": "The City currently runs Tyler Technologies Fund Balance fund accounting software, so the new account structure must map from an existing fund-based chart rather than start from a blank sheet.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C03.claims[0]",
+        "output": "solution",
+        "text": "The City currently uses five users across its Tyler Technologies modules, which sets the baseline license count.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C03.claims[1]",
+        "output": "solution",
+        "text": "The City operates on annual budgeted revenues of $6 million, which sets the scale of the budgeting and forecasting configuration.",
+        "kind": "fact",
+        "cited": [
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C04.claims[0]",
+        "output": "solution",
+        "text": "The prior five years of data must come from the City's existing Tyler Technologies Fund Balance system, which is the only source of that history.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C07.claims[0]",
+        "output": "solution",
+        "text": "The City's current Accounts Payable module includes 1099 filing, so annual e-filing support must cover at minimum 1099s alongside W-2s.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C09.claims[0]",
+        "output": "solution",
+        "text": "The City will not accept unlimited reimbursable expenses, so the price proposal must carry a stated cap.",
+        "kind": "fact",
+        "cited": [
+          "S28.1",
+          "S33.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[0]",
+        "output": "solution",
+        "text": "The July 1, 2026 go-live is treated as a firm delivery milestone with the implementation schedule and resourcing built to hit it, and the contract is assumed to start in time to allow a full implementation window after the October 22, 2025 award.",
+        "kind": "assumption",
+        "cited": [
+          "S24.1",
+          "S32.1",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[1]",
+        "output": "solution",
+        "text": "The financial-condition notification period is assumed to be the shorter 15-day period, with the 30-day period treated as an outer limit, so the City receives notice within 15 days of any material change.",
+        "kind": "assumption",
+        "cited": [
+          "S28.2",
+          "S36.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[2]",
+        "output": "solution",
+        "text": "Attachment F is assumed to be obtainable from the City on request before the August 28, 2025 deadline and to align with the functional scope in Section 5, so the completed spreadsheet can be submitted with the proposal.",
+        "kind": "assumption",
+        "cited": [
+          "S28.2",
+          "S39.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "28",
+          "2025",
+          "5"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[3]",
+        "output": "solution",
+        "text": "The City's standard contract is assumed to be obtainable on request during the question period, and the solution is priced and scoped on the basis that no exceptions to it are taken.",
+        "kind": "assumption",
+        "cited": [
+          "S13.1",
+          "S29.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[4]",
+        "output": "solution",
+        "text": "The five-user count is assumed to be the licensed seat baseline, with the platform priced to add seats as the City's vacant position is filled.",
+        "kind": "assumption",
+        "cited": [
+          "S5.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[5]",
+        "output": "solution",
+        "text": "The prior five years of history are assumed to be extractable from the incumbent Tyler Technologies system in a usable electronic form, with the City supplying extract access and validating control totals.",
+        "kind": "assumption",
+        "cited": [
+          "S5.1",
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[6]",
+        "output": "solution",
+        "text": "The proposal is assumed to be delivered as a signed hard copy physically received by the 4:00 PM PST August 28, 2025 deadline alongside the emailed digital copy, with no reliance on postmark.",
+        "kind": "assumption",
+        "cited": [
+          "S21.1",
+          "S2.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[7]",
+        "output": "solution",
+        "text": "The finalist interview is assumed to be a virtual session on September 25, 2025 that the City may or may not call, so the bid team reserves presenter time for that date without treating it as a committed cost line.",
+        "kind": "assumption",
+        "cited": [
+          "S9.1",
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K01",
+        "output": "risks",
+        "text": "Attachment F not in the RFP and not yet obtained. Attachment F, the Software Abilities and Requirements spreadsheet, is a mandatory submission item that the City provides separately and that is not in the RFP. Without it the bidder cannot complete a required attachment, and an incomplete submission risks being scored down or rejected as nonresponsive. The proposed solution assumes the City will supply it before the August 28, 2025 deadline. Attachment F is mandatory (R033, R068, R092) and the RFP does not include it, so the bidder depends on the City responding to a request; the solution treats availability as an assumption rather than a confirmed fact.",
+        "kind": "risk",
+        "cited": [
+          "R033",
+          "R068",
+          "R092",
+          "S28.2",
+          "S39.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "28",
+          "2025",
+          "033",
+          "068",
+          "092",
+          "R068",
+          "R092"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K02",
+        "output": "risks",
+        "text": "City's standard contract unseen before a binding, no-exception offer. The City's standard contract is available only on request and is not in the RFP, yet proposals must be binding with no additional or modified terms and any exceptions raised only during the question period. If the contract contains terms the bidder cannot accept (indemnity, liability caps, data ownership, termination), the bidder is either bound to them or forced to withdraw after award. R020 rejects modified or non-binding proposals and R019 confines exceptions to the question period, so the bidder must price and commit to unseen terms; the solution assumes no exceptions will be needed.",
+        "kind": "risk",
+        "cited": [
+          "R019",
+          "R020",
+          "S13.1",
+          "S29.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "020",
+          "019",
+          "R019"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K03",
+        "output": "risks",
+        "text": "July 1, 2026 go-live is a goal, not a settled milestone. The City states July 1, 2026 as its goal and describes the contract start only as soon after the October 22, 2025 award. If award slips or the City treats the date as contractual with remedies, the bidder either compresses discovery, configuration, migration and parallel run into a shorter window or carries schedule risk it did not price. The proposed solution builds the whole plan backwards from that date. R083 and R038 make the date central to the proposal while the RFP does not make it binding or fix the contract start, so the schedule risk turns on facts the RFP leaves open.",
+        "kind": "risk",
+        "cited": [
+          "R038",
+          "R083",
+          "R084",
+          "S24.1",
+          "S32.1",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "083",
+          "038",
+          "R038"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K04",
+        "output": "risks",
+        "text": "Five years of history may not extract cleanly from the incumbent system. Migration of five years of general ledger, payroll, utility billing and open-item history depends on the City and Tyler Technologies providing a usable electronic extract and on the City validating control totals. If the extract is incomplete, in a poor format, or the City cannot supply it promptly, migration rework pushes against the go-live date and opening balances at July 1, 2026 may not reconcile. R075 makes the five-year import mandatory and the solution assumes extract access and City validation without confirmation; the incumbent vendor's cooperation is outside the bidder's control.",
+        "kind": "risk",
+        "cited": [
+          "R075",
+          "R076",
+          "R083",
+          "S5.1",
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "075"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K05",
+        "output": "risks",
+        "text": "Hard-copy original must physically arrive by the deadline. The RFP requires one signed original hard copy plus a digital copy, with late submissions not considered and no reliance on postmark stated. A courier or mail delay to the Colfax address would disqualify an otherwise compliant proposal regardless of the emailed copy. Rejection is fatal to the bid, but the bidder controls dispatch timing and can send by tracked courier well ahead of August 28, 2025.",
+        "kind": "risk",
+        "cited": [
+          "R023",
+          "R027",
+          "R028",
+          "S21.1",
+          "S2.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K06",
+        "output": "risks",
+        "text": "Parallel run through the June 2026 close with a small City team. The solution runs the new platform in parallel with the incumbent through the June 2026 fiscal-year close. The City has 11 full-time employees with one vacancy, so the same Accounting staff must close the year twice, attend weekly meetings, test, and be trained in the same window. Slippage in the parallel run would land directly on the July 1, 2026 start. The parallel-run design is the bidder's choice and the City's staffing is documented at 11 FTE with a vacancy, so the capacity constraint is expected rather than unusual.",
+        "kind": "risk",
+        "cited": [
+          "R076",
+          "R083",
+          "R070",
+          "S6.1",
+          "S31.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "FTE"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K07",
+        "output": "risks",
+        "text": "Attachments E and G referenced but not provided. The RFP points to Attachment E (Certificate of Insurance, Tab 3.3 Key Personnel Experience) and Attachment G (data protection and secure access documentation, Tab 3.3) but neither is in the PDF. The bidder cannot see the exact format or content the City expects for the insurance certificate or the security documentation, so the submitted versions may be judged incomplete. Both attachments are mandatory submission items (R067, R069, R091) and their absence leaves the required format unsettled; the content itself is within the bidder's control, which caps the impact at rework.",
+        "kind": "risk",
+        "cited": [
+          "R067",
+          "R069",
+          "R091"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "3.3",
+          "067",
+          "069",
+          "091",
+          "E",
+          "G",
+          "Attachment",
+          "Tab",
+          "Key",
+          "Personnel",
+          "Experience",
+          "PDF",
+          "R069",
+          "R091"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K08",
+        "output": "risks",
+        "text": "Twenty-page limit against a broad submission scope. The proposal must cover implementation plan, support levels, key personnel, training by license level, engagement approach, firm history, references, experience and pricing, all within 20 pages plus two for the cover letter and five for appendices. Content pushed into appendices or trimmed to fit risks losing points on the 45% goals-and-scope criterion. R024 caps length while R025 and the Section 4.2 content list demand wide coverage, and the heaviest scoring weight sits on the section most likely to be compressed.",
+        "kind": "risk",
+        "cited": [
+          "R024",
+          "R025",
+          "R032",
+          "S21.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "45",
+          "024",
+          "025",
+          "R025"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K09",
+        "output": "risks",
+        "text": "Offshore resourcing disclosure invites cost and risk loading. The RFP requires the bidder to state every location where work will be performed, including outside the United States, and the City will evaluate offshore locations for additional risks and costs before award. If any support or development is delivered offshore, the disclosure may reduce the score or prompt the City to add cost or conditions; if the bidder understates locations, the notice obligation is breached. R064, R087 and R088 make location disclosure mandatory and the City states it will weigh offshore work against the bid, so the outcome depends on the bidder's delivery model and the City's unpublished evaluation.",
+        "kind": "risk",
+        "cited": [
+          "R064",
+          "R087",
+          "R088",
+          "S35.1",
+          "S28.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "064",
+          "087",
+          "088",
+          "R087",
+          "R088"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K10",
+        "output": "risks",
+        "text": "Five-user licence baseline may understate real seat demand. The solution prices licences for the City's five current users with headroom to add seats. If the City expects the vacant position and seasonal staff to be licensed within the quoted price, or if utility billing and payroll require more concurrent users than assumed, the bidder either absorbs unplanned licence cost or the City faces a price increase after award. R009 sets five users as the requirement while the City has 11 FTE plus a part-time employee and one vacancy, so the licensed population is not settled by the RFP.",
+        "kind": "risk",
+        "cited": [
+          "R009",
+          "R034",
+          "R060",
+          "S5.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "009",
+          "FTE"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K11",
+        "output": "risks",
+        "text": "Conflicting 15-day and 30-day financial-condition notice periods. The RFP requires notice of material changes to the Certification of Financial Condition within 30 days in one place and 15 days in another. If the bidder commits to the wrong period it breaches a contractual notification obligation; the solution assumes the shorter 15-day period applies. The obligation is administrative and easily met once the period is known, but the RFP states two different periods (R066, R090) and the solution resolves the conflict by assumption.",
+        "kind": "risk",
+        "cited": [
+          "R066",
+          "R090",
+          "S28.2",
+          "S36.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "066",
+          "090",
+          "R090"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K12",
+        "output": "risks",
+        "text": "Finalist interview availability reserved but not committed. The City may call virtual finalist interviews on September 25, 2025 and may select without them. The solution reserves presenter time without treating it as a committed cost, so if the City calls the interview the bid team must field the right people on short notice, and if it does not the reserved time is lost. R012 makes availability mandatory and the City's decision is discretionary, but the exposure is a day of presenter time rather than a delivery or budget impact.",
+        "kind": "risk",
+        "cited": [
+          "R012",
+          "S9.1",
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "012"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      }
+    ]
+  },
+  "cost": {
+    "calls": 51,
+    "input_tokens": 91445,
+    "output_tokens": 25467,
+    "cached_input_tokens": 51321,
+    "cached_share": 0.5612225928153535,
+    "cost_usd": 0.04290552599999999,
+    "wall_s": 84.020086,
+    "retries": 0,
+    "stages": [
+      {
+        "stage": "parse",
+        "status": "finished",
+        "wall_s": 4.117060999997193,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "parse_quality",
+        "status": "finished",
+        "wall_s": 8.11552349998965,
+        "calls": 6,
+        "input_tokens": 7723,
+        "output_tokens": 834,
+        "cached_input_tokens": 6528,
+        "cost_usd": 0.001398468,
+        "retries": 0
+      },
+      {
+        "stage": "split",
+        "status": "finished",
+        "wall_s": 0.011093200009781867,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "requirements",
+        "status": "finished",
+        "wall_s": 24.052887499972712,
+        "calls": 1,
+        "input_tokens": 10043,
+        "output_tokens": 7280,
+        "cached_input_tokens": 1664,
+        "cost_usd": 0.011259683999999999,
+        "retries": 0
+      },
+      {
+        "stage": "problem",
+        "status": "finished",
+        "wall_s": 24.7367602000013,
+        "calls": 41,
+        "input_tokens": 47830,
+        "output_tokens": 8478,
+        "cached_input_tokens": 33529,
+        "cost_usd": 0.014665073999999997,
+        "retries": 0
+      },
+      {
+        "stage": "solution",
+        "status": "finished",
+        "wall_s": 29.741218299983302,
+        "calls": 2,
+        "input_tokens": 16173,
+        "output_tokens": 6019,
+        "cached_input_tokens": 8064,
+        "cost_usd": 0.009703884,
+        "retries": 0
+      },
+      {
+        "stage": "risk",
+        "status": "finished",
+        "wall_s": 17.27790489999461,
+        "calls": 1,
+        "input_tokens": 9676,
+        "output_tokens": 2856,
+        "cached_input_tokens": 1536,
+        "cost_usd": 0.005878415999999999,
+        "retries": 0
+      },
+      {
+        "stage": "assemble",
+        "status": "finished",
+        "wall_s": 0.003243600018322468,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      }
+    ],
+    "retried": []
+  },
+  "judge": {
+    "model": "anthropic:claude-sonnet-5-5",
+    "calls": 7,
+    "failures": 0,
+    "totals": {
+      "input_tokens": 30242,
+      "output_tokens": 5260,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.11308399999999999,
+      "latency_s": 38.30661730002612,
+      "retries": 0
+    },
+    "per_node": {
+      "judge_match": {
+        "input_tokens": 5098,
+        "output_tokens": 350,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.013696,
+        "latency_s": 2.8649308000167366,
+        "retries": 0
+      },
+      "judge_requirements": {
+        "input_tokens": 25144,
+        "output_tokens": 4910,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.09938799999999999,
+        "latency_s": 35.44168650000938,
+        "retries": 0
+      }
+    }
+  }
+}

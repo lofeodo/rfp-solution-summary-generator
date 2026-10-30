@@ -1,10 +1,10 @@
 {
   "rfp": "federal_way",
   "run": "3",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/federal_way/3",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/federal_way/3",
   "run_id": "3",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:39:50.732905Z",
+  "scored_at": "2026-10-30T22:32:26.221570Z",
   "judged": true,
   "requirements": {
     "extracted": 89,
@@ -23,18 +23,18 @@
     },
     "gold": 54,
     "gold_reachable": 46,
-    "matched_gold": 43,
-    "matched_gold_reachable": 43,
+    "matched_gold": 44,
+    "matched_gold_reachable": 44,
     "matched_by_code": 39,
-    "matched_by_judge": 4,
-    "recall": 0.7962962962962963,
-    "recall_reachable": 0.9347826086956522,
-    "type_accuracy": 0.8604651162790697,
-    "strictness_accuracy": 0.8604651162790697,
+    "matched_by_judge": 5,
+    "recall": 0.8148148148148148,
+    "recall_reachable": 0.9565217391304348,
+    "type_accuracy": 0.8636363636363636,
+    "strictness_accuracy": 0.8636363636363636,
     "type_confusion": {
       "submission": {
         "timeline": 2,
-        "submission": 20
+        "submission": 21
       },
       "functional": {
         "functional": 3,
@@ -153,12 +153,14 @@
         "gold_strictness": "mandatory",
         "gold_page": 3,
         "quote_verifiable": true,
-        "matched_ids": [],
-        "tier": "none",
-        "best_id": null,
-        "best_type": null,
-        "best_strictness": null,
-        "reason": "No candidate covers best-of-breed vendors completing Section 6 template; R044 is general ERP requirements."
+        "matched_ids": [
+          "R044"
+        ],
+        "tier": "judge",
+        "best_id": "R044",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Complete Requirements document per Section 6 instructions; R007 differs (integration)."
       },
       {
         "gold_id": "GR008",
@@ -254,7 +256,7 @@
         "best_id": "R023",
         "best_type": "functional",
         "best_strictness": "mandatory",
-        "reason": "Both require demos following the City's pre-defined script."
+        "reason": "Demos must follow City's pre-defined script."
       },
       {
         "gold_id": "GR014",
@@ -270,7 +272,7 @@
         "best_id": "R028",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "100-page limit excluding sample contract; format order and PDF not stated."
+        "reason": "100-page limit excluding sample contract; format/PDF partially missing but core matches."
       },
       {
         "gold_id": "GR015",
@@ -334,7 +336,7 @@
         "best_id": "R004",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "Same question deadline of August 28, 2024, 3:00 p.m. PT."
+        "reason": "Same question deadline August 28, 2024 3:00 p.m. PT."
       },
       {
         "gold_id": "GR021",
@@ -444,7 +446,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate requires pricing software for the defined user counts."
+        "reason": "No candidate requires pricing software for defined user counts."
       },
       {
         "gold_id": "GR028",
@@ -682,7 +684,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate states responses are incorporated into contract."
+        "reason": "No candidate states responses incorporated into contract."
       },
       {
         "gold_id": "GR044",
@@ -698,7 +700,7 @@
         "best_id": "R045",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Each requirement must have rating and comment."
+        "reason": "Each requirement needs rating and comment."
       },
       {
         "gold_id": "GR045",
@@ -808,7 +810,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate lists Eden financial modules to be replaced."
+        "reason": "No candidate lists Eden financial modules to replace."
       },
       {
         "gold_id": "GR054",
@@ -822,7 +824,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate mentions replacing Eden HR/payroll modules."
+        "reason": "No candidate covers replacing Eden HR/payroll modules."
       },
       {
         "gold_id": "GR055",
@@ -850,7 +852,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate mentions replacing Excel budget process."
+        "reason": "No candidate mentions Excel budget replacement."
       },
       {
         "gold_id": "GR057",
@@ -892,7 +894,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "OpenGov and SharePoint not mentioned."
+        "reason": "No candidate mentions OpenGov or SharePoint."
       },
       {
         "gold_id": "GR060",
@@ -906,7 +908,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "Asset and fleet management not mentioned."
+        "reason": "No candidate mentions asset or fleet management review."
       }
     ],
     "verdicts": [
@@ -4111,22 +4113,14 @@
     "calls": 17,
     "failures": 0,
     "totals": {
-      "input_tokens": 111850,
-      "output_tokens": 12110,
+      "input_tokens": 111989,
+      "output_tokens": 12104,
       "cached_input_tokens": 0,
-      "cost_usd": 0.34479999999999994,
-      "latency_s": 86.0533592000138,
+      "cost_usd": 0.345018,
+      "latency_s": 86.13111069999286,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 6589,
-        "output_tokens": 714,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.020318,
-        "latency_s": 4.551767299999483,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 30920,
         "output_tokens": 4893,
@@ -4165,6 +4159,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.148802,
         "latency_s": 32.07753060001414,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 6728,
+        "output_tokens": 708,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.020536,
+        "latency_s": 4.629518799978541,
         "retries": 0
       }
     }

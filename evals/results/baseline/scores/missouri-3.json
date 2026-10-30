@@ -1,10 +1,10 @@
 {
   "rfp": "missouri",
   "run": "3",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/missouri/3",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/missouri/3",
   "run_id": "3",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:41:05.248293Z",
+  "scored_at": "2026-10-30T22:31:50.363470Z",
   "judged": true,
   "requirements": {
     "extracted": 118,
@@ -25,18 +25,17 @@
     },
     "gold": 71,
     "gold_reachable": 71,
-    "matched_gold": 67,
-    "matched_gold_reachable": 67,
+    "matched_gold": 62,
+    "matched_gold_reachable": 62,
     "matched_by_code": 58,
-    "matched_by_judge": 9,
-    "recall": 0.9436619718309859,
-    "recall_reachable": 0.9436619718309859,
-    "type_accuracy": 0.746268656716418,
-    "strictness_accuracy": 0.8955223880597015,
+    "matched_by_judge": 4,
+    "recall": 0.8732394366197183,
+    "recall_reachable": 0.8732394366197183,
+    "type_accuracy": 0.7903225806451613,
+    "strictness_accuracy": 0.8870967741935484,
     "type_confusion": {
       "submission": {
         "submission": 13,
-        "timeline": 1,
         "other": 1
       },
       "budget_pricing": {
@@ -45,8 +44,7 @@
       },
       "timeline": {
         "timeline": 5,
-        "submission": 1,
-        "functional": 3
+        "functional": 1
       },
       "functional": {
         "functional": 11,
@@ -63,7 +61,7 @@
         "legal_contractual": 6
       },
       "security_compliance": {
-        "security_compliance": 4
+        "security_compliance": 3
       }
     },
     "precision": 0.9576271186440678,
@@ -85,7 +83,7 @@
         "best_id": "R001",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Same email address, deadline, and time."
+        "reason": "Same email address, deadline and time."
       },
       {
         "gold_id": "GR002",
@@ -95,14 +93,13 @@
         "gold_page": 1,
         "quote_verifiable": true,
         "matched_ids": [
-          "R028",
-          "R043"
+          "R028"
         ],
         "tier": "judge",
         "best_id": "R028",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Project plan/work plan requirement covered; team and related projects only partially."
+        "reason": "Only the work plan part matches; team background and related projects missing, weak partial."
       },
       {
         "gold_id": "GR003",
@@ -111,14 +108,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 10,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R074"
-        ],
-        "tier": "judge",
-        "best_id": "R074",
-        "best_type": "timeline",
-        "best_strictness": "mandatory",
-        "reason": "Questions deadline requirement, though it points to a section instead of the date."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R074 omits the 7/17/2024 4 p.m. value; R019 does not state the deadline."
       },
       {
         "gold_id": "GR005",
@@ -226,7 +221,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "Primary contact details not covered; R009 is general proposal contact info."
+        "reason": "No candidate asks for the primary contact person's details."
       },
       {
         "gold_id": "GR013",
@@ -340,7 +335,7 @@
         "best_id": "R006",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Fee proposal on price page covers cost estimate for services, roughly."
+        "reason": "Fee proposal on the price page; covers cost estimate but not explicitly all Scope services."
       },
       {
         "gold_id": "GR020",
@@ -356,7 +351,7 @@
         "best_id": "R006",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Cost on the Price Page required; signing and return not explicit."
+        "reason": "Fee proposal must be on the Price Page."
       },
       {
         "gold_id": "GR022",
@@ -397,14 +392,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 6,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R030"
-        ],
-        "tier": "judge",
-        "best_id": "R030",
-        "best_type": "submission",
-        "best_strictness": "mandatory",
-        "reason": "Quarterly updates required, but the last-working-day deadline is missing; partial match."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R030 lacks the March/June/September/December due dates."
       },
       {
         "gold_id": "GR026",
@@ -692,7 +685,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate on draft Synthesis Report and Research Summary."
+        "reason": "No candidate covers the draft Synthesis Report and Research Summary."
       },
       {
         "gold_id": "GR044",
@@ -706,7 +699,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate says drafts should be final products apart from MoDOT revisions."
+        "reason": "No candidate says drafts should be final products apart from review revisions."
       },
       {
         "gold_id": "GR045",
@@ -1117,14 +1110,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R054"
-        ],
-        "tier": "judge",
-        "best_id": "R054",
-        "best_type": "functional",
-        "best_strictness": "mandatory",
-        "reason": "Demonstrating AI/ML draft LLD creation; date not stated."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R054 lacks the 4/25/2025 date."
       },
       {
         "gold_id": "GR080",
@@ -1133,15 +1124,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R055",
-          "R056"
-        ],
-        "tier": "judge",
-        "best_id": "R055",
-        "best_type": "functional",
-        "best_strictness": "mandatory",
-        "reason": "Training ROW staff and user manual after system finalized."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R055 and R056 lack the 7/25/2025 date."
       },
       {
         "gold_id": "GR081",
@@ -1166,14 +1154,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 18,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R150"
-        ],
-        "tier": "judge",
-        "best_id": "R150",
-        "best_type": "security_compliance",
-        "best_strictness": "mandatory",
-        "reason": "Web accessibility standard requirement for web applications, WCAG conformance."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R150 gives WCAG 2.1 AA but not the State of Missouri standard or Section 508."
       },
       {
         "gold_id": "GR083",
@@ -5237,22 +5223,14 @@
     "calls": 21,
     "failures": 0,
     "totals": {
-      "input_tokens": 119486,
-      "output_tokens": 14297,
+      "input_tokens": 119625,
+      "output_tokens": 14277,
       "cached_input_tokens": 0,
-      "cost_usd": 0.381942,
-      "latency_s": 103.49447100004181,
+      "cost_usd": 0.38202,
+      "latency_s": 103.34606630005874,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 6881,
-        "output_tokens": 673,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.020492,
-        "latency_s": 4.530478200002108,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 43293,
         "output_tokens": 6635,
@@ -5291,6 +5269,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.135194,
         "latency_s": 32.523511200008215,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 7020,
+        "output_tokens": 653,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.02057,
+        "latency_s": 4.3820735000190325,
         "retries": 0
       }
     }

@@ -7,6 +7,9 @@
     python -m evals.harness sample --label baseline     # hand-labelling sample
     python -m evals.harness agree --label baseline      # judge vs hand labels
     python -m evals.harness compare RUN_A RUN_B --what problem --rfp missouri     # paid
+    python -m evals.harness run --label ablation_full_text --all --full-text-problem
+    python -m evals.harness score --label baseline --only match        # one judge, merged
+    python -m evals.harness diff baseline ablation_full_text --what problem        # free
 
 Eval runs live under ``runs/evals/<label>/<rfp>/<k>/`` (gitignored); scores, summaries,
 judge logs and the agreement files under ``evals/results/<label>/`` (committed).
@@ -26,8 +29,9 @@ from rich.console import Console
 from evals.gold.label import RFPS, final_path, load_gold
 from evals.harness import agreement as agreement_mod
 from evals.harness.load import EvalRun
-from evals.harness.report import render_markdown, summarise
-from evals.harness.score import load_scores, score_run
+from evals.harness.report import DIFF_COLUMNS, LabelSummary, render_diff, render_markdown, summarise
+from evals.harness.report import diff as do_diff
+from evals.harness.score import JUDGE_NODES, SECTIONS, load_scores, parse_sections, score_run
 
 ROOT = Path(__file__).resolve().parents[2]
 EVAL_RUNS = ROOT / "runs" / "evals"
@@ -52,12 +56,19 @@ def root(verbose: Annotated[bool, typer.Option("--verbose", "-v")] = False) -> N
         logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
+def _gold_name(rfp: str) -> str:
+    """The RFP name as the gold files and eval run directories spell it, matched
+    case-insensitively (Linux CI is case-sensitive, Windows is not)."""
+    for name in RFPS:
+        if name.lower() == rfp.lower():
+            return name
+    raise typer.BadParameter(f"--rfp must be one of {RFPS}")
+
+
 def _rfps(rfp: str | None, all_: bool) -> list[str]:
     if all_ or rfp is None:
         return RFPS
-    if rfp not in RFPS:
-        raise typer.BadParameter(f"--rfp must be one of {RFPS}")
-    return [rfp]
+    return [_gold_name(rfp)]
 
 
 def _rel(path: Path) -> Path:
@@ -106,6 +117,20 @@ def run(
     reuse_samples: Annotated[
         bool, typer.Option("--reuse-samples", help="Copy runs/samples/<rfp> in as run 1")
     ] = False,
+    full_text_problem: Annotated[
+        bool | None,
+        typer.Option(
+            "--full-text-problem/--no-full-text-problem",
+            help="Problem statement from one full-text call (ablation); default: Settings",
+        ),
+    ] = None,
+    single_call_extraction: Annotated[
+        bool | None,
+        typer.Option(
+            "--single-call-extraction/--no-single-call-extraction",
+            help="Requirements from one whole-document call (ablation); default: Settings",
+        ),
+    ] = None,
 ) -> None:
     """Run the pipeline (paid) into runs/evals/<label>/<rfp>/<k>/."""
     from rfp_agent.config import DATA_DIR
@@ -132,7 +157,13 @@ def run(
                 continue
             pdf = _rel(DATA_DIR / "rfps" / f"{name}.pdf")
             try:
-                result = run_pipeline(pdf, runs_dir=base, run_id=str(k))
+                result = run_pipeline(
+                    pdf,
+                    runs_dir=base,
+                    run_id=str(k),
+                    full_text_problem=full_text_problem,
+                    single_call_extraction=single_call_extraction,
+                )
             except MissingApiKeyError as exc:
                 console.print(f"[red]{exc}[/red]")
                 raise typer.Exit(2) from exc
@@ -156,11 +187,27 @@ def score(
         list[Path] | None, typer.Argument(help="Score these run dirs instead of the label's")
     ] = None,
     rfp: RfpOpt = None,
-    only: Annotated[str | None, typer.Option("--run", help="Only this run key, e.g. 1")] = None,
+    run_key: Annotated[str | None, typer.Option("--run", help="Only this run key, e.g. 1")] = None,
+    only: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--only",
+            help="Rescore only these sections (comma list or repeated): "
+            + ", ".join(SECTIONS)
+            + ". Merged into the existing score file and judge log.",
+        ),
+    ] = None,
     no_judge: Annotated[bool, typer.Option("--no-judge", help="Code metrics only (free)")] = False,
     force: Annotated[bool, typer.Option("--force", help="Rescore existing score files")] = False,
 ) -> None:
     """Score runs into evals/results/<label>/scores/<rfp>-<k>.json."""
+    from evals.harness.judge import judge_cost_from_log, merge_judge_logs
+    from rfp_agent.schemas import RunLog
+
+    try:
+        sections = parse_sections(only)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
     if run_dirs:
         targets = []
         for d in run_dirs:
@@ -168,31 +215,64 @@ def score(
             targets.append((f"{run_.rfp}-{d.name}", d))
     else:
         targets = _run_dirs(label, _rfps(rfp, False))
-    if only:
-        targets = [(k, d) for k, d in targets if k.rsplit("-", 1)[1] == only]
+    if run_key:
+        targets = [(k, d) for k, d in targets if k.rsplit("-", 1)[1] == run_key]
     if not targets:
         console.print(f"[red]no run directories found for label {label!r}[/red]")
         raise typer.Exit(1)
     out_dir = _results(label) / "scores"
     log_dir = _results(label) / "judge_logs"
     out_dir.mkdir(parents=True, exist_ok=True)
+    log_dir.mkdir(parents=True, exist_ok=True)
     for key, d in targets:
         out = out_dir / f"{key}.json"
-        if out.exists() and not force:
-            console.print(f"{key}: scored already, skipping (use --force)")
-            continue
+        log_path = log_dir / f"{key}.json"
+        previous = None
+        if out.exists():
+            if sections is None and not force:
+                console.print(f"{key}: scored already, skipping (use --force)")
+                continue
+            if sections is not None and not force:
+                previous = load_scores(out)
+            elif sections is not None:
+                console.print(
+                    f"[yellow]{key}: --only with --force resets the other sections to "
+                    "code-only values and replaces the judge log[/yellow]"
+                )
         judge = None if no_judge else _judge()
         run_ = EvalRun.load(d)
-        scores = score_run(run_, judge, key=key.rsplit("-", 1)[1])
-        out.write_text(scores.model_dump_json(indent=2) + "\n", encoding="utf-8")
+        try:
+            scores = score_run(
+                run_, judge, key=key.rsplit("-", 1)[1], only=sections, previous=previous
+            )
+        except ValueError as exc:
+            console.print(f"[red]{key}: {exc}[/red]")
+            raise typer.Exit(1) from exc
         if judge is not None:
             judge.recorder.finish()
-            judge.recorder.write(log_dir / f"{key}.json")
+            if previous is not None and previous.judge is not None and log_path.exists():
+                # One log per run holding exactly the calls behind the verdicts in the
+                # score file: the kept sections' old calls plus this pass's new ones.
+                old = RunLog.model_validate_json(log_path.read_text(encoding="utf-8"))
+                replaced = {JUDGE_NODES[s] for s in (sections or ()) if s in JUDGE_NODES}
+                merged = merge_judge_logs(old, judge.recorder.log, replaced)
+                scores = scores.model_copy(
+                    update={
+                        "judge": judge_cost_from_log(
+                            judge.spec, merged, previous.judge.failures + judge.failures
+                        )
+                    }
+                )
+                log_path.write_text(merged.model_dump_json(indent=2) + "\n", encoding="utf-8")
+            else:
+                judge.recorder.write(log_path)
+        out.write_text(scores.model_dump_json(indent=2) + "\n", encoding="utf-8")
         r = scores.requirements
         jc = f", judge ${scores.judge.totals.cost_usd:.3f}" if scores.judge else ""
+        part = f" only={','.join(sorted(sections))}" if sections else ""
         console.print(
             f"{key}: recall {r.recall:.0%} (reachable {r.recall_reachable:.0%}), "
-            f"precision {'–' if r.precision is None else f'{r.precision:.0%}'}{jc}"
+            f"precision {'–' if r.precision is None else f'{r.precision:.0%}'}{jc}{part}"
         )
 
 
@@ -270,7 +350,7 @@ def compare(
         load_output(a, what),  # type: ignore[arg-type]
         load_output(b, what),  # type: ignore[arg-type]
         what=what,  # type: ignore[arg-type]
-        gold=load_gold(final_path(rfp)),
+        gold=load_gold(final_path(_gold_name(rfp))),
         judge=judge,
         a_name=a.as_posix(),
         b_name=b.as_posix(),
@@ -280,6 +360,51 @@ def compare(
     console.print(f"judge cost ${judge.cost().totals.cost_usd:.4f}")
     if out:
         out.write_text(text + "\n", encoding="utf-8")
+
+
+@app.command()
+def diff(
+    a: Annotated[str, typer.Argument(help="Baseline label")],
+    b: Annotated[str, typer.Argument(help="Candidate label")],
+    what: Annotated[
+        str | None,
+        typer.Option("--what", help="Column set: " + ", ".join(DIFF_COLUMNS) + " (default: all)"),
+    ] = None,
+    columns: Annotated[
+        list[str] | None,
+        typer.Option(
+            "--columns",
+            "-c",
+            help="Row columns instead (comma list or repeated); dict columns as "
+            "unsupported.problem or rubric.specificity",
+        ),
+    ] = None,
+    out: Annotated[Path | None, typer.Option("--out", "-o")] = None,
+) -> None:
+    """Per-RFP mean ± sd of two labels' summary.json side by side, with the delta (free)."""
+    summaries = []
+    for label in (a, b):
+        path = _results(label) / "summary.json"
+        if not path.exists():
+            console.print(f"[red]no summary.json for label {label!r}; run report first[/red]")
+            raise typer.Exit(1)
+        summaries.append(LabelSummary.model_validate_json(path.read_text(encoding="utf-8")))
+    if columns:
+        cols = [c.strip() for entry in columns for c in entry.split(",") if c.strip()]
+    elif what is not None:
+        if what not in DIFF_COLUMNS:
+            raise typer.BadParameter(f"--what must be one of {', '.join(DIFF_COLUMNS)}")
+        cols = DIFF_COLUMNS[what]
+    else:
+        cols = [c for group in DIFF_COLUMNS.values() for c in group]
+    try:
+        rows = do_diff(summaries[0], summaries[1], cols)
+    except KeyError as exc:
+        raise typer.BadParameter(f"unknown column {exc}") from exc
+    md = render_diff(summaries[0], summaries[1], rows)
+    typer.echo(md)
+    if out:
+        out.write_text(md, encoding="utf-8")
 
 
 if __name__ == "__main__":

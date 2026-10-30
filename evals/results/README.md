@@ -3,7 +3,16 @@
 One directory per results set (`<label>`), produced by the S12 harness
 (`evals/harness/`). `baseline/` is the pipeline as merged after S10: three runs per
 RFP, the committed sample (`runs/samples/<rfp>`) as run 1 and two fresh runs, all
-scored by the judge (`anthropic:claude-sonnet-5-5`, effort `medium`).
+scored by the judge (`anthropic:claude-sonnet-5-5`, effort `medium`); its gold-match
+tier was rescored in S13 under the F14 `judge_match` rule. The S13 labels each hold
+two fresh runs per RFP scored only on the sections their change touches (the other
+columns are code-only, shown as `–`), plus a `diff_*.md` against the baseline:
+
+| Label | What changed | Scored sections | Decision |
+|---|---|---|---|
+| `ablation_full_text/` | `--full-text-problem`: one synthesis call over the whole text instead of per-chunk summaries | problem, grounding, cost; `pairwise_<rfp>_problem.json` against baseline run 1 | D39 |
+| `ablation_single_call/` | `--single-call-extraction` with `RFP_MAX_OUTPUT_TOKENS=16000` (F16) | match, precision, cost | D39 |
+| `fix_solution_naming/` | `prompts/solution.md` "name what you cite" rule | solution | D40 |
 
 | File | What it is |
 |---|---|
@@ -31,6 +40,28 @@ python -m evals.harness compare runs/samples/missouri runs/evals/pairwise/missou
 
 `score --no-judge` gives the code metrics only, for free. `score` skips runs that
 already have a score file unless `--force`, so an interrupted scoring run resumes.
+
+### Partial rescoring and label comparison (S13)
+
+```
+python -m evals.harness score --label baseline --only match          # one judge, ~$0.40
+python -m evals.harness run --label ablation_full_text --all --runs 2 --full-text-problem
+python -m evals.harness score --label ablation_full_text --only problem,grounding,cost
+python -m evals.harness diff baseline ablation_full_text --what problem -o diff_problem.md
+```
+
+`--only` names the sections to (re)compute: `match` (gold matching, code tier then
+judge tier), `precision` (the per-item judge), `problem`, `solution`, `risks`,
+`grounding`, `cost`. The other sections are copied from the run's existing score file
+(or computed code-only when there is none), and the run's judge log is merged: the
+replaced judge's old calls are dropped and the new ones appended. The *judge $* column
+therefore always means the cost of the calls behind the verdicts in the score file, not
+the spend of the last invocation; *judge failures* is summed over passes. `--only`
+with `--force` ignores the existing file instead (the other sections reset to
+code-only). `diff` reads two labels' `summary.json` and prints per-RFP mean ± sd (sd
+only when a label has several runs) with the delta, `b` minus `a`; `--what` picks a
+column set (`problem`, `requirements`, `solution`) and `--columns` any `Row` field,
+with `unsupported.problem` or `rubric.specificity` for the dict columns.
 
 ## How to read the tables
 

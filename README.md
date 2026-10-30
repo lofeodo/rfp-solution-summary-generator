@@ -11,9 +11,10 @@ latency, cost).
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
 (S5), problem statement (S6), solution generator (S7), risk assessor (S8),
 renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11), the evaluation
-harness with baseline results (S12), the UI backend (S14) and the UI frontend (S15).
-Sample outputs for the four RFPs are under `runs/samples/`, eval results under
-`evals/results/baseline/`. Next: ablations and fixes driven by the evals (S13); see
+harness with baseline results (S12), the UI backend (S14), the UI frontend (S15) and
+the eval-driven ablations and fixes (S13). Sample outputs for the four RFPs are under
+`runs/samples/`, eval results under `evals/results/` (baseline, two ablations, one
+prompt fix). Next: documentation, Dockerfile and demo script (S16); see
 `docs/ROADMAP.md`.
 
 ## Pipeline
@@ -375,7 +376,16 @@ python -m evals.harness score --label baseline            # judge, ~$5 for 12 ru
 python -m evals.harness score --label baseline --no-judge # code metrics only, free
 python -m evals.harness report --label baseline           # summary.md and summary.json
 python -m evals.harness compare RUN_A RUN_B --what problem --rfp missouri   # pairwise
+python -m evals.harness score --label baseline --only match   # re-run one judge, merged
+python -m evals.harness run --label ablation_full_text --all --full-text-problem   # ablation
+python -m evals.harness diff baseline ablation_full_text --what problem     # before/after
 ```
+
+`--only` takes `match`, `precision`, `problem`, `solution`, `risks`, `grounding` and
+`cost`; the other sections are kept from the existing score file, so a prompt change to
+one judge costs one judge. `diff` prints per-RFP mean ± sd of two labels with the delta
+(free); `run` takes the same `--full-text-problem` and `--single-call-extraction` flags
+as the pipeline CLI.
 
 Baseline (`evals/results/baseline/summary.md`): three runs per RFP, recall 80 to 100%,
 with 61 to 94% matched by code alone. Federal Way's lower figure is its image-only page 5;
