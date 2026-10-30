@@ -14,8 +14,9 @@ One markdown file per agent, named after the agent that uses it:
 
 Conventions:
 
-- Variables are written `{{name}}` and substituted by the prompt loader in `llm.py` (S1).
-  Literal braces elsewhere in the prompt (for example JSON examples) are left alone.
+- Variables are written `{{name}}` and substituted by `load_prompt(name).render(...)` in
+  `llm.py`. A missing or unused variable is an error. Single braces elsewhere in the
+  prompt (for example JSON examples) are left alone.
 - The loader records a SHA-256 hash of every prompt file in the run log, so a changed
   prompt is visible in observability without reading the file.
 - Every prompt that emits factual claims about the RFP must instruct the model to cite
