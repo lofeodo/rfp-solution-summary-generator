@@ -109,13 +109,13 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S14,S15 done
-    class S13 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15 done
+    class S16 ready
 ```
 
-**Progress (2026-10-30):** done S0 to S12, S14 and S15 (green). Ready now, all
-dependencies done (amber): S13; S16 follows it. Update the two `class` lines in
-the diagram whenever a step is marked `done`.
+**Progress (2026-10-30):** done S0 to S15 (green). Ready now, all dependencies done
+(amber): S16, the last core step. Update the two `class` lines in the diagram whenever
+a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
 | ------------------------------------ | ---------- | ------------------------ | ---------------------------------------------------- |
@@ -1828,7 +1828,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     matcher) would make prompt iterations on one judge cheaper in S13.
 
 ### S13. Ablations and fixes driven by evals
-- **Status:** in progress
+- **Status:** done
 - **Goal:** run and commit: hierarchical vs full-text problem statement (several runs
   each, variance), per-chunk vs single-call extraction. Fix the failure modes the evals
   expose (prompt edits logged in `docs/PROMPTS.md`, code fixes), each with a
@@ -1868,9 +1868,62 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     reference), D40 (critic / revision loop decision from the numbers), F14 fixed;
     PROMPTS rows for `judge_match` and `solution`; results README rows for the labels,
     `--only`, `diff`; roadmap, time log, README eval section.
-- **What was done:**
+- **What was done:** (branch `step-13-ablations`, PR into `core`)
+  - Harness (`evals/harness/`): `run --full-text-problem/--single-call-extraction`
+    (tri-state, forwarded to `run_pipeline`); `score --only <sections>` with
+    `score_requirements` split into `match_gold`, `judge_items`,
+    `assemble_requirements`, `score_run(only=, previous=)` copying the untouched
+    sections from the existing score file, `merge_judge_logs` and
+    `judge_cost_from_log` so the per-run judge log and cost always describe the verdicts
+    in the file; `diff <a> <b> [--what] [--columns]` (`report.cell`, `diff`,
+    `render_diff`, per-RFP mean ± sd with deltas); `_gold_name` makes `--rfp`
+    case-insensitive. 10 new tests in `tests/test_harness.py` (40 there, 388 in all).
+  - F14 fix: `judge_match` "missing values do not match either"; baseline match tier
+    rescored for $0.40 with merged logs: Missouri combined recall 99 / 100 / 94% →
+    93 / 93 / 87%, other RFPs within one point.
+  - `ablation_full_text` (8 runs, $0.45, judge $1.0): checklist coverage within one sd
+    of the baseline on every RFP (Colfax +1.5, Missouri +0.7, Federal Way +0.2, NYESD
+    −0.8 of 12), unsupported problem claims 5 to 9 either way, pipeline cost −10 to
+    −25%; pairwise against baseline run 1: full text preferred on Colfax and Missouri,
+    hierarchical on Federal Way, NYESD a tie with position bias.
+  - `ablation_single_call` (8 runs, $0.34, judge $0.8): combined recall within 2 pp on
+    every RFP, 33 to 129 fewer items, in-scope share +6 to +8 pp on three RFPs, cost
+    −30 to −45%, wall −6 to −36 s; code-only recall −7 to −8 pp on Colfax and Missouri;
+    its misses are whole obligations (Missouri's page-5 description rules, MBE/WBE,
+    royalties, library review), per-chunk's are omitted dates; the first attempt
+    truncated at the default output cap (F16), rerun with `RFP_MAX_OUTPUT_TOKENS=16000`.
+  - `fix_solution_naming` (8 runs, $0.58, judge $0.35): `solution.md` "name what you
+    cite"; NYESD judged coverage 78 → 94%, Colfax 96 → 99%, Missouri 97 → 96%, Federal
+    Way 100 → 98%, cited coverage 100% throughout, descriptions 30 to 50% longer
+    (compliance component up to 500 words), NYESD specificity 4 → 3 on the same
+    unnamed details the baseline reasons list.
+  - Docs: D39 (ablations: defaults kept for scale and traceability, not quality), D40
+    (no critic or free revision loop, with the threshold for revisiting), F14 fixed,
+    F16; D5 and D28 evidence lines; PROMPTS rows and notes for `judge_match` and
+    `solution`; `evals/results/README.md` label table and the `--only` / `diff` section;
+    README status and eval section; time log. Spend this step about $4.3.
 - **Deviations from plan:**
+  - The single-call ablation needed a raised output cap to run at all (F16); the cap
+    applies to that label only and is recorded in the results README.
+  - The S7 fix was measured on fresh full runs rather than a re-run solution stage over
+    baseline inputs: scoring reads the assembled `summary.json`, so a spliced
+    `solution.json` would have needed its own re-assembly path; the matched-gold
+    Jaccard of 0.96 to 0.98 between runs says the inputs barely differ.
+  - The S8 scale sharpening was skipped on the author's decision (D40 gives the reason).
+  - Two problem-statement edges S6 noted (Federal Way's page-5 gap flagged only by the
+    hierarchical path) did not show on these runs; neither statement mentions it.
 - **Open issues:**
+  - Two runs per ablation arm show the differences sit inside run-to-run variance; a
+    ranking would need more runs than the budget allows and is not worth it on
+    documents that fit one call.
+  - One NYESD fix run skipped chunk S41.1 after three extraction attempts returned no
+    tool call (the F11 path); the chunk is logged and the run finished. A per-chunk
+    retry with a different seed or model would be the fix if it recurs.
+  - The baseline's `judge $` column now mixes S12's calls with the S13 match rerun by
+    design (results README); the S12 agreement sample was drawn before the rescore and
+    its match verdicts are not re-labelled.
+  - `diff` compares means; a paired comparison per run key would be sharper for the
+    fix label, where run 1 of each arm shares nothing but the RFP.
 
 ### S14. UI backend (FastAPI)
 - **Status:** done

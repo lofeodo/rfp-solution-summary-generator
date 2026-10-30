@@ -817,6 +817,33 @@ Evidence: `diff_requirements.md` and `diff_problem.md` under each label, the fou
 `pairwise_*_problem.json` files, and the spot-checked unmatched gold items in the
 single-call score files. D5 and D28 point here.
 
+### D40. No critic or free revision loop: the evals show prompt-shaped faults, and the one revision loop with a code-computed target already exists
+Context: the roadmap kept a critic agent, a general revision loop and ReAct on the back
+burner, to be added only if the evals showed a weakness they would fix. S13 had the
+S12 baseline, the two ablations and one prompt fix to judge that by.
+Options: a critic that reviews each output and sends it back; a revision loop over the
+problem statement or risks like S7's coverage loop; neither, with a stated threshold.
+Choice: neither. The S7 generate/check/revise loop (D32) stays the only revision loop,
+because it has what a loop needs: a target computed by code (uncovered mandatory IDs)
+that the model cannot talk its way past.
+Why: the failure modes the evals exposed were each fixed by a rule in a prompt or a
+judge, and each fix was measured in one judge rerun: judge-tier recall leniency (F14,
+Missouri 99 → 93%), bulk-cited clauses no component described (`solution.md` "name
+what you cite": NYESD judged coverage 78 → 94%, Colfax 96 → 99%, Missouri and Federal
+Way within 2 pp, descriptions 30 to 50% longer, specificity on NYESD 4 → 3 from
+unnamed cohort sizes and stipends the baseline also lacked). What is left is not the
+kind of fault a critic catches: precision is 96 to 99% by construction (quotes verified
+by code), unsupported claims are 5 to 10 per output and mostly `partially` (a detail
+the cited chunk does not carry), checklist coverage is capped by an image-only page
+(GC12) and by compound gold facts, and risk level agreement is bounded by the judge's
+own consistency (D37). A critic would be a second judgment on top of a first, with no
+code-computed ground truth to anchor it, at one more call per output; the run-to-run
+variance the consistency block shows (checklist Jaccard 0.74 to 0.88) would swallow
+its effect. The threshold for revisiting: a metric a code check can compute, the way
+coverage is, that sits well below 90% after prompt work; today none does.
+Evidence: `evals/results/baseline/summary.md` (precision, unsupported, consistency),
+`fix_solution_naming/diff_solution.md`, F14's before/after, D39.
+
 ---
 
 ---
