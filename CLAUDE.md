@@ -55,7 +55,11 @@ logged, PR merged into `core`, step branch deleted.
 - When all core steps are done: merge `core` into `main`, delete `core` locally and
   remotely, sync `main`. **This merge into `main` is the author's call: open the PR and
   stop.** Stretch goals get their own branches off `main`.
-- Never push to `main` directly. Never force-push.
+- **Never check out `main`.** The agent lives on `core` and on step branches off it
+  until every core step is done. `main` is touched once, by the final `core` into
+  `main` sync that the author drives; until then, if you find yourself on `main`,
+  switch back to `core` before doing anything. Never push to `main` directly. Never
+  force-push.
 
 ## Environment
 
