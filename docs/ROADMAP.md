@@ -233,7 +233,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     rate if cost accuracy matters for the eval tables.
 
 ### S1. LLM layer and observability core
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `llm.py`: chat-model factory from config (DeepSeek default, Claude and any
   LangChain model swappable), a `structured_call()` helper that enforces a Pydantic
   schema with bounded retry feeding the validation error back, and records the retry
@@ -243,7 +243,49 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   through LangChain and a no-op when keys are absent. Unit tests with a fake model.
 - **Depends on:** S0
 - **Parallel with:** S2, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** `structured_call` uses provider-native
+    `with_structured_output(include_raw=True)` inside a bounded retry loop (not code-side
+    JSON parsing); one `NodeMetrics` per logical LLM call (retries included), tagged with
+    the node, aggregated in code; `.env` created with empty placeholders, live smoke test
+    `@pytest.mark.llm` self-skips without a key; cost is a simple upper bound (peak
+    DeepSeek rates, cache reads at the cached rate, cache writes at the input rate,
+    unknown model costs 0 with a warning).
+  - **Verified library facts:** `init_chat_model("deepseek:...")` builds `ChatDeepSeek`
+    with kwargs unfiltered; `ChatDeepSeek` raises at construction without a key and both
+    providers read keys from `os.environ` only, so the factory passes `api_key` from
+    `Settings`; `ChatAnthropic` raises for Sonnet 5.5 / Fable 5 if temperature is set, so
+    temperature goes to non-Anthropic providers only; DeepSeek rewrites `json_schema` to
+    `function_calling`, where no tool call gives `parsed=None, parsing_error=None`;
+    Anthropic uses `method="json_schema"`; both report `usage_metadata` with
+    `input_token_details.cache_read`; Langfuse without keys is a no-op but
+    `get_trace_url()` raises, so it is guarded.
+  - **Branch:** `step-01-llm-observability` off `core` as a worktree; one commit per unit.
+  - **`config.py` (shared):** `max_output_tokens` (None = provider default),
+    `request_timeout_s` (120), `llm_transport_retries` (2, SDK-level 429/5xx retries,
+    distinct from `max_structured_retries`); `.env.example` updated.
+  - **`llm.py`:** `get_chat_model(spec=None, settings=None, **overrides)`,
+    `get_judge_model()`, `MissingApiKeyError`; `structured_method(model)` (json_schema
+    for Anthropic, function_calling otherwise); `structured_call(model, schema, messages,
+    node=..., recorder=None, max_retries=None, config=None) -> StructuredResult` that
+    appends the bad AIMessage plus a HumanMessage with the validation error and retries,
+    refuses to retry a truncated output (`finish_reason == "length"` /
+    `stop_reason == "max_tokens"`), raises `StructuredOutputError` with all attempts on
+    exhaustion, and records one `NodeMetrics`; `load_prompt(name) -> Prompt` with
+    `{{var}}` rendering (missing or unused variables are errors) and SHA-256 recorded on
+    the active run.
+  - **`observability.py`:** `estimate_cost()`, `usage_from_message()`, `new_run_id()`,
+    `RunRecorder` (holds the `RunLog`; `record`, `record_prompt`, `record_escalation`,
+    `per_node()`, `finish()`, `write()` to `runs/<run_id>/run_log.json`, `activate()`
+    context manager setting a contextvar so nodes need no plumbing),
+    `current_recorder()`; `make_langfuse_handler()`, `langfuse_trace_url()`,
+    `shutdown_langfuse()`, all no-ops without keys and without importing `langfuse`.
+  - **Tests:** scripted fake chat model; structured-call retry paths (success, bad args,
+    no tool call, exhaustion, truncation, recording); factory per provider; prompt
+    loader; cost arithmetic, recorder round-trip, Langfuse on/off; live smoke test
+    marked `llm`.
+  - **Docs:** DECISIONS D16 to D18, TIMELOG, ASSUMPTIONS (cache-write pricing), README
+    configuration and observability sections.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
