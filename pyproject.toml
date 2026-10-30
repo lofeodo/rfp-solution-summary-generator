@@ -17,7 +17,7 @@ where = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["src", "tests"]
+src = ["src", "tests", "."]
 extend-exclude = ["data", "inputs", "runs", "docs"]
 
 [tool.ruff.lint]
@@ -27,7 +27,7 @@ select = ["E", "F", "I", "UP", "B"]
 testpaths = ["tests"]
 # Import the package from this checkout's src/, not wherever the editable install points,
 # so each worktree tests its own code.
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 addopts = "-m 'not llm'"
 markers = [
     "llm: calls a paid LLM API; skipped by default, run with -m llm",
