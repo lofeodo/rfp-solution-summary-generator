@@ -681,7 +681,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     install points at the main checkout (same as S1's note).
 
 ### S5. Requirements extractor
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `agents/requirements.py`: per-chunk structured extraction (ID, text, type,
   strictness as a separate field, verbatim quote, chunk ID) plus an ambiguities list.
   Around the LLM, code does: schema validation with bounded retry, quote verification
@@ -693,7 +693,50 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   with design notes in `docs/PROMPTS.md`. Tests with a fake model for the code paths.
 - **Depends on:** S1, S3
 - **Parallel with:** S4, S6, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** **core-only scope**, the same
+    include/exclude rule as `prompts/gold_requirements.md` (D23), so recall against gold
+    is like for like and S7 is not flooded with boilerplate; a fuzzy-merged requirement
+    keeps the **representative's quote only** (chunk IDs unioned, absorbed IDs in
+    `merged_from`; no schema change); the **single-call ablation path**
+    (`Settings.single_call_extraction`) is implemented now; a **live run on all four
+    RFPs** fills the results table (DeepSeek Flash, under $0.30).
+  - **Taken without asking:** ambiguities and gaps come from the per-chunk call (code
+    assigns IDs; gaps deduped by normalised document name); an unverified quote gets one
+    code-level retry with feedback naming the quote, then the item is kept with
+    `quote_verified=False` (the requirement is real even if the quote is sloppy); chunk
+    calls run in a thread pool (`Settings.extract_concurrency`, default 4) with the
+    recorder passed explicitly (contextvars do not cross threads); `.gitattributes`
+    pins `prompts/**`, `tests/fixtures/**` and `evals/gold/*.json` to LF (S3's open issue).
+  - **Branch:** `step-05-requirements` off `core` as a worktree; PR into `core`.
+  - **Files:** `textmatch.py` (`normalise`, `find_quote` moved from `evals/gold/`, which
+    becomes a re-export shim); `schemas.py` (Requirements section: LLM output contracts
+    `ExtractedRequirement`, `ExtractedAmbiguity`, `ExtractedGap`, `ChunkExtraction`,
+    `Cited*` + `DocumentExtraction` for single-call, `DedupeGroup`,
+    `RequirementConflict`, `DedupeOutput`; existing models unchanged); `config.py`
+    (`extract_concurrency`); `agents/requirements.py`; `prompts/requirements_extract.md`,
+    `prompts/requirements_dedupe.md`; debug CLI `python -m rfp_agent.agents.requirements`.
+  - **Pipeline:** per chunk, one `structured_call(node="requirements_extract")` →
+    `verify_quotes` with `find_quote` → feedback retry if any quote is unverified (retry
+    accepted only if it verifies at least as many items) → a failed chunk yields nothing
+    and is counted. Code assigns `R001…` in document order, maps ambiguity indexes to
+    IDs, then **exact dedupe** on normalised text or quote (the overlap sentence makes
+    this common). One `structured_call(node="requirements_dedupe")` returns groups
+    (representative + members) and conflict pairs; code checks every ID exists, no ID in
+    two groups, representative not a member, no conflict pair inside a group; violations
+    get one feedback retry, then **fallback**: unknown IDs ignored, first membership
+    wins, ungrouped IDs are singletons, so "every original ID lands in exactly one group"
+    holds by construction and the report records the fallback. Merge keeps the
+    representative's id, text, quote, type; unions chunk IDs; max strictness; conflicts
+    set `conflicts_with` symmetrically and add an `Ambiguity`. Single-call mode: one
+    call over all chunks labelled by ID, quotes verified against the cited chunk,
+    unknown chunk IDs rejected with feedback then dropped, grouping call skipped.
+  - **Tests:** fake-model unit tests per stage (prompt rendering, quote retry paths,
+    chunk failure, assemble, exact dedupe, group checks and fallback, conflict split,
+    the exactly-one-group invariant, end-to-end with recorder, single-call path,
+    concurrency order); a live `llm` test on Missouri.
+  - **Docs:** DECISIONS D28 to D30 plus any failure modes hit, PROMPTS notes and
+    changelog, ASSUMPTIONS, TIMELOG, README requirements section, `.env.example`.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
