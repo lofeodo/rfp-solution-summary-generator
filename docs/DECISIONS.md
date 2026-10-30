@@ -196,7 +196,28 @@ Why: a single install command and a single source of pins; no `PYTHONPATH` trick
 pydantic-settings keeps validation (ranges, types) in the same library as the schemas.
 Evidence: CI runs the same install.
 
-### D16. Structured output: provider-native mode inside a code-owned retry loop
+### D16. Markdown layout, citation format, strict assembly
+Context: S9 turns the JSON into the markdown a reviewer reads, and is the last place a
+broken citation can be caught before it ships.
+Options: citations as "section, page" only vs with the chunk ID; requirements as one
+table vs grouped lists; assembler that annotates vs raises on dangling IDs; snapshot
+tests vs assertion-only tests.
+Choice: citations render as `(Section title, p. 4 [S3.2])`, grouping IDs that share a
+section and page range; requirements grouped by type with the verbatim quote as a
+blockquote; risks as a table sorted by severity then likelihood, then per-risk details;
+`assemble()` raises `CitationError` listing every dangling ID with its location unless
+`strict=False`, while the renderer prints a bare `[S9.9]` for an unknown ID and never
+raises; one golden-file test over a fixture that hits every render branch, refreshed
+with `pytest --update-golden` (author decisions, 2026-10-30).
+Why: the chunk ID keeps the markdown traceable to the JSON and the UI's source reveal,
+at the cost of a few characters. Quotes are long and break table rows, so a list keeps
+them inline. Raising by default means a citation bug fails the run loudly instead of
+shipping an unverifiable claim; the non-strict path exists so the eval harness can still
+score a run with a bad citation and count it. A golden file makes any render change
+show up as a reviewable diff.
+Evidence: `tests/fixtures/summary_sample.md`.
+
+### D17. Structured output: provider-native mode inside a code-owned retry loop
 Context: every agent emits a Pydantic schema; providers differ in how they enforce one.
 DeepSeek silently turns JSON-schema mode into tool calling, returns `parsed=None` with no
 error when the model makes no tool call, and in thinking mode (its default) rejects forced
@@ -219,7 +240,7 @@ Evidence: live smoke tests on DeepSeek Flash pass with thinking off (389 in / 80
 tokens, 0.9 s) and on (251 in / 115 out, 1.4 s), no retries; unit tests cover every retry
 path. Thinking on vs off quality is open for S13.
 
-### D17. Observability recording: explicit recorder in a context variable
+### D18. Observability recording: explicit recorder in a context variable
 Context: per-node tokens, latency and cost must land in a local JSON run log without
 threading a logger through every agent and graph state.
 Options: a LangChain callback that aggregates usage by `langgraph_node`; an explicit
@@ -236,7 +257,7 @@ tables and the UI. Langfuse is lazy-imported and its trace-URL lookup is guarded
 without keys it raises.
 Evidence: unit tests write and re-read the run log; live smoke test writes one.
 
-### D18. Sampling and cost settings per provider
+### D19. Sampling and cost settings per provider
 Context: one temperature setting for every provider; Claude Sonnet 5.5 rejects a
 non-default temperature (LangChain raises before sending), DeepSeek accepts one.
 Choice: the factory sends `RFP_TEMPERATURE` to every provider except Anthropic, which runs
@@ -270,5 +291,5 @@ Cause: thinking mode is on by default for DeepSeek's current models, and LangCha
 tool-calling `with_structured_output` forces the tool.
 Fix: `RFP_DEEPSEEK_THINKING` (default off) sets `extra_body.thinking`; with thinking off
 the forced tool call works, with thinking on `structured_call` switches DeepSeek to JSON
-mode with the schema in the prompt (D16).
+mode with the schema in the prompt (D17).
 Before/after: live smoke test failed, then passed in both modes.

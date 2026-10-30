@@ -7,8 +7,8 @@ cites the chunk of the RFP it came from, so the summary can be checked against t
 source. The repo includes an evaluation harness and per-run observability (tokens,
 latency, cost).
 
-**Status:** scaffold (S0) and LLM layer with observability (S1). The pipeline lands step by step;
-see `docs/ROADMAP.md`.
+**Status:** scaffold (S0), LLM layer with observability (S1) and renderer (S9).
+The pipeline lands step by step; see `docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -38,6 +38,7 @@ conda activate rfp-solution-gen
 pip install -r requirements.txt          # also installs the package in editable mode
 cp .env.example .env                     # then fill in DEEPSEEK_API_KEY (and ANTHROPIC_API_KEY for evals)
 pytest                                   # unit tests; nothing here calls a paid API
+pytest --update-golden                   # rewrite golden files after an intended render change
 ```
 
 Run the pipeline on the default brief (lands in step S10):
@@ -46,8 +47,10 @@ Run the pipeline on the default brief (lands in step S10):
 python -m rfp_agent run inputs/rfp_brief.pdf
 ```
 
-Outputs go to `runs/<run_id>/` as JSON, markdown and a run log with per-node tokens,
-latency and cost. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
+Outputs go to `runs/<run_id>/`: `summary.json` (the source of truth), `summary.md`
+(rendered from the JSON by code) and a run log with per-node tokens, latency and cost.
+Citations in the markdown read `(Section title, p. 4 [S3.2])`; the bracketed chunk ID
+is the key into the JSON. A sample rendering lives in `tests/fixtures/summary_sample.md`. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
 and is a no-op otherwise.
 
 ## Configuration
