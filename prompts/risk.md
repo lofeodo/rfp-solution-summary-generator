@@ -60,6 +60,9 @@ Likelihood is the chance it happens given the RFP and the solution as written:
   meet WCAG 2.1 AA" is a requirement; "the legacy content has never been audited, so
   WCAG 2.1 AA may need unplanned remediation" is a risk). Do not list the same cause
   twice under different titles.
+- **Count.** Return at most twelve risks. If you have more, two of them share a cause
+  or one restates a requirement: merge or drop before answering. Code rejects more than
+  fifteen.
 - **Cite only IDs that are shown.** Requirement IDs (`R012`) come from the requirement
   list; chunk IDs (`S4.2`) from the labels in brackets or parentheses. Ambiguity IDs
   (`A01`), gap IDs (`G01`) and component IDs (`C01`) are never cited in `chunk_ids`.
