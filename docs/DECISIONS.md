@@ -438,6 +438,65 @@ Evidence: Missouri agreement clauses 21/25 requirement-bearing (the four left sa
 or "encouraged"); Colfax 1.1 and Federal Way Section 2 background narrative; NYESD
 "C. Project Plan" requirement-bearing (tests).
 
+### D28. Quote verification: one feedback turn, then keep the item as unverified
+Context: every requirement carries a verbatim quote that code must be able to find in
+the cited chunk (traceability rule); models paraphrase, fix typos and join table cells.
+Options: drop items whose quote is not found; keep them silently; retry with the failing
+quotes named, then drop; retry, then keep flagged.
+Choice: after the schema-valid reply, code checks each quote with `find_quote` (the S11
+normaliser, now in `rfp_agent.textmatch`). If any fails, the model gets one more turn
+with the failing quotes listed; the retry is kept only if it has no more problems than
+the first reply. Items still unverified stay in the output with `quote_verified=False`.
+Why: a sloppy quote does not make the obligation disappear, and dropping it would hide
+a real requirement from the solution step; flagging it keeps the evidence honest and
+lets the renderer and the eval treat it differently. The "no worse" rule stops a second
+turn from regressing a mostly-good first reply. One turn is enough in practice (below)
+and bounds the cost at two calls per chunk.
+Evidence: on the four RFPs (198 chunks) one feedback turn fired and fixed its quote;
+zero unverified items shipped. The check also catches table-cell joins
+(`"Submission of Proposals(date and time)|October 1,2025<br>by2:00 PM ET"` verifies
+because the normaliser strips pipes and tags).
+
+### D29. Grouping contract checked by code, violations fed back once, then sanitised
+Context: D6 chose one LLM grouping pass for fuzzy dedupe and demanded that every ID land
+in exactly one group. Models put an ID in two groups, invent IDs, or list the
+representative among its members.
+Options: trust the grouping; assert and abort; retry until clean; retry once, then make
+the answer valid in code.
+Choice: `check_groups` lists violations in plain sentences; the model gets one feedback
+turn; whatever comes back goes through `sanitise_groups` (unknown IDs dropped, first
+membership wins, a conflicting member leaves the group, empty groups vanish) so the
+merge step only ever sees a valid grouping. The report records the violations and
+whether the fallback was used. Conflicts are never merged: the pair is marked on both
+items and surfaced as an ambiguity.
+Why: the invariant must hold for S7's coverage arithmetic, and it is cheaper to hold it
+by construction than by looping. "First membership wins" loses at most a merge, never a
+requirement. The feedback turn is worth its one extra call: on three of four RFPs the
+first grouping violated the contract and the second was clean.
+Evidence: first Missouri run: `R030 appears in group 6 and group 9`, `... group 10`,
+`R031 ...`, `R127 ...` on both turns, fallback used, output still valid (the 60-round
+random-grouping test asserts the invariant). After the dedupe prompt gained "an ID may
+appear once across the whole answer", all four reruns were clean after at most one turn.
+
+### D30. Extraction scope mirrors the gold scope; everything else is left to S12
+Context: the gold labels are core-only (D23). An extractor that lists every clause of
+Missouri's 24-clause agreement section would bury S7 in boilerplate, and an extractor
+that is stricter than gold loses recall S12 cannot see.
+Options: extract everything and filter later; extract core-only with the gold prompt's
+include/exclude rule; two passes (all, then classify).
+Choice: the extraction prompt carries the gold prompt's include/exclude list verbatim,
+with the boilerplate examples expanded after the first live run (assignment,
+independent-contractor status, audit rights, transparency reporting, one item per form
+rather than per field). Every chunk is still sent (D5); only the prompt's notion of
+"requirement" narrows.
+Why: recall against gold becomes like for like, and S7 reads a list a bidder would
+recognise. Precision is judged per item in S12, so a kept boilerplate clause costs
+nothing in the score; the surplus (90 to 216 items against 46 to 71 gold) is a quality
+question for S13, not a correctness one.
+Evidence: Missouri 144 → 131 requirements after the expanded exclusions (legal 33 → 20),
+crude recall 89% → 86% (within run-to-run noise: the "lost" items are the same
+requirements with different spans). Four-RFP table in the roadmap, S5.
+
 ---
 
 ## Part 2 — Failure modes hit
@@ -505,3 +564,32 @@ Fix:       drafting cap raised to 32,000 with a 600 s timeout (drafting only; pi
            settings unchanged).
 Before/after: failed to 61 requirements drafted.
 
+
+### F6. Extractor reported other sections of the same RFP as ambiguities and gaps
+Where:     S5 `requirements_extract` prompt, Missouri (first live run).
+Observed:  105 ambiguities and 39 gaps for 144 requirements. Typical: "The specific
+           data items required are in paragraph (B), which is not included in this
+           chunk"; gap "Section (3), paragraph I ... is referenced but not included in
+           this chunk"; blank affidavit forms that are in the PDF listed as gaps.
+Cause:     the chunk-local prompt said "work only from the text you are given", and the
+           model took "not in this chunk" as "missing from the RFP". The gap definition
+           ("a document referred to but not included here") invited it.
+Fix:       ambiguities and gaps each got a "not this" list: content defined in another
+           part of the same RFP (other chunks are handled separately) and ordinary lack
+           of detail are neither; gaps are documents outside the RFP only; "most chunks
+           have none". Boilerplate exclusions expanded at the same time (D30).
+Before/after: Missouri 144 / 105 / 39 (requirements / ambiguities / gaps) to
+           131 / 53 / 12; crude recall 89% to 86% (same items, different spans).
+
+### F7. NYESD gaps listed every form twice, by name and by URL
+Where:     S5 `requirements_extract` prompt, NYESD (63 hyperlinks, most to forms).
+Observed:  50 gaps; "Executive Order 16 Certification" (G12) and
+           "https://esd.ny.gov/sites/default/files/EO16-certification.pdf" (G29) are
+           the same document; code dedupes by normalised name, so neither folded.
+Cause:     `referenced_document` was described as "the name as written (or the link
+           text)", and link text in NYESD is the URL.
+Fix:       prompt: "the document's name as written, never its URL; a document named
+           once with its link is one gap". Code: gaps whose names are prefixes of each
+           other at a word boundary fold ("Attachment F" with
+           "ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS", a Colfax pair).
+Before/after: NYESD 50 to 38 gaps (the rest are distinct forms the RFP really links).
