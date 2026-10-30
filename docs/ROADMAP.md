@@ -106,7 +106,16 @@ flowchart TD
     S14 --> S15[S15 UI frontend]
     S13 --> S16[S16 Docs, Dockerfile, demo script]
     S15 --> S16
+
+    classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
+    classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
+    class S0,S1,S2,S9 done
+    class S3,S4,S11 ready
 ```
+
+**Progress (2026-10-30):** done S0, S1, S2, S9 (green). Ready now, all dependencies
+done (amber): S3, S4, S11, which may run in parallel with each other. Update the two
+`class` lines in the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
 |---|---|---|---|
