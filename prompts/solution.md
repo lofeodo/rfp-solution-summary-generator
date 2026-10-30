@@ -26,11 +26,13 @@ the RFP text itself.
     statement or the requirements. Most components need no claims; leave the list empty
     rather than restate requirements as claims.
 - `assumptions`: the positions the approach takes where the RFP is ambiguous or
-  incomplete: one sentence each, `kind` `inference`, `chunk_ids` copied from the
-  ambiguity or gap it resolves (or from the problem statement). State the assumption,
-  not the ambiguity: "The Attachment F software requirements are assumed to match the
-  functional scope described in Section 3" rather than "Attachment F is missing".
-  Include only assumptions that change the design or the price; skip the rest.
+  incomplete: one sentence each, `kind` `inference`, `chunk_ids` holding the chunk IDs
+  (`S4.2`) listed in parentheses after the ambiguity or gap it resolves, or shown after
+  a problem-statement claim. Ambiguity IDs (`A01`) and gap IDs (`G01`) are not chunk
+  IDs and are never cited. State the assumption, not the ambiguity: "The Attachment F
+  software requirements are assumed to match the functional scope described in
+  Section 3" rather than "Attachment F is missing". Include only assumptions that
+  change the design or the price; skip the rest.
 
 ## Rules
 
