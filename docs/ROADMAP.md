@@ -1029,7 +1029,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     to expose the flag.
 
 ### S7. Solution generator
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `agents/solution.py`: inputs problem statement, requirements with quotes
   and chunk IDs, ambiguities. Output a structured approach whose components cite the
   requirement IDs they address so mandatory coverage is computable by code; factual
@@ -1037,7 +1037,56 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   requirements and lists uncovered ones. Prompt `prompts/solution.md`.
 - **Depends on:** S5, S6
 - **Parallel with:** S4, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** mandatory coverage counts every mandatory
+    requirement **except type `submission`** (page limits, copies, forms are shown to the
+    model as context but a component cannot "address" them); the coverage check is a
+    **LangGraph loop**: generate → code computes coverage → revise with the uncovered IDs
+    fed back while any in-scope mandatory requirement is uncovered, **capped at
+    `RFP_SOLUTION_MAX_ITERATIONS` (default 3)**; requirements go into the prompt as
+    `R012 [mandatory, technical] text (S4.2)` **without the quote** (the text is already a
+    verified one-sentence statement, quotes would double the block); **live run on all
+    four RFPs**, prompt tuned once if a failure mode shows.
+  - **Taken without asking:** no chunk text is sent; the evidence is the problem
+    statement (claims labelled with their chunk IDs), the requirements, the ambiguities
+    and the gaps, and the model may cite only requirement IDs from the list and chunk IDs
+    that appear in that evidence; component IDs `C01…` are assigned by code (D28), so the
+    LLM contract is `SolutionDraft(summary, components: [ComponentDraft(title,
+    description, requirement_ids, claims)], assumptions)`; a per-call subclass built with
+    `create_model` rejects an empty component list, a component with no requirement IDs,
+    an unknown requirement ID or an unknown chunk ID inside the `structured_call` retry
+    loop (the S6 pattern); the revision happens in the same conversation (prompt, reply,
+    feedback, reply, …) so the model sees its own answer; the draft with the fewest
+    uncovered requirements is kept, so a worse revision cannot regress the output; the
+    remaining uncovered IDs are listed in `Coverage` for S8 to turn into risks; node names
+    `solution_generate` (first round) and `solution_revise` (later rounds).
+  - **Branch:** `step-07-solution` off `core` as a worktree; PR into `core`.
+  - **Files:** `schemas.py` (Solution section, S7-owned: `ComponentDraft`,
+    `SolutionDraft`; `Solution`, `SolutionComponent`, `Coverage` unchanged); `config.py`
+    (`solution_max_iterations`) and `.env.example`; `agents/solution.py`;
+    `agents/__main__.py` (`solution` command: `python -m rfp_agent.agents solution <pdf>
+    [--requirements f.json] [--problem f.json] [--max-iterations n] [--out f.json]`,
+    running S5 and S6 first when no JSON is given); `prompts/solution.md`
+    (`{{title}}`, `{{problem}}`, `{{requirements}}`, `{{ambiguities}}`, `{{gaps}}`,
+    instructions first for the prefix cache).
+  - **Pipeline:** `format_problem`, `format_requirements` (mandatory, desired, optional
+    blocks; submission items in a "context, do not address" block), `format_ambiguities`,
+    `format_gaps`, `allowed_chunk_ids` → `build_graph(...)` binds model, settings,
+    recorder, prompt and allowed IDs in closures; state holds messages, latest and best
+    draft, uncovered IDs, iteration and the per-round coverage history; nodes `generate`
+    and `check`, conditional edge to `revise` (feedback lists each uncovered ID with its
+    text) or `END`; `compute_coverage` is a pure function; `build_solution(requirements,
+    problem, *, title, model, settings, recorder, config, max_iterations=None) ->
+    SolutionResult(solution, rounds, iterations)`. Retry exhaustion in any round raises.
+  - **Tests:** fake-model unit tests (prompt placeholders and content, allowed-ID union,
+    coverage scope and order, validator feedback on unknown requirement and chunk IDs,
+    empty components and component without requirements rejected, exhaustion raises,
+    `C01…` numbering, one call when round one covers everything, revise then covered,
+    worse revision discarded, cap from setting and argument, recorder nodes and prompt
+    hash, assembled summary passes `dangling_citations` and renders); a live `llm` test
+    on Missouri; `test_config.py` default.
+  - **Docs:** DECISIONS D32 plus any failure mode hit, PROMPTS note and changelog,
+    ASSUMPTIONS, TIMELOG, README solution section and config row.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
