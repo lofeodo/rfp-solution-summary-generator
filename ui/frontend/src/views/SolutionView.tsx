@@ -54,7 +54,7 @@ export default function SolutionView({ data }: { data: RunData }) {
         ) : (
           <>
             <div className="grid grid-cols-12 lg:gap-x-10 gap-y-6">
-              <p className="col-span-12 max-w-[62ch] text-lg leading-relaxed first-letter:float-left first-letter:mr-2 first-letter:font-display first-letter:text-6xl first-letter:font-extrabold first-letter:leading-[0.8] first-letter:text-accent md:text-xl xl:col-span-8">
+              <p className="col-span-12 max-w-[62ch] text-lg leading-relaxed first-letter:float-left first-letter:mr-1 first-letter:mt-1 first-letter:font-display first-letter:text-[3.4em] first-letter:font-extrabold first-letter:leading-[0.8] first-letter:text-accent md:text-xl xl:col-span-8">
                 {sol.summary}
               </p>
               <Coverage data={data} />
