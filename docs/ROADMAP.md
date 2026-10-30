@@ -117,25 +117,25 @@ flowchart TD
 now, all dependencies done (amber): S8. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
-| Step | Depends on | Can run in parallel with | Main files touched |
-|---|---|---|---|
-| S0 Scaffold | — | — (must land first) | everything top-level, `schemas.py`, `config.py` |
-| S1 LLM layer + observability | S0 | S2, S9, S11 | `llm.py`, `observability.py`, `config.py` (pricing) |
-| S2 PDF parsing | S0 | S1, S9, S11 | `parsing/` |
-| S3 Splitting | S2 | S1, S4, S9, S11 | `splitting/` |
-| S4 Parse quality pass | S1, S2 | S3, S5, S6, S9, S11 | `parsing/quality.py`, `prompts/parse_quality.md` |
-| S5 Requirements extractor | S1, S3 | S4, S6, S9, S11 | `agents/requirements.py`, `prompts/requirements*.md` |
-| S6 Problem statement | S1, S3 | S4, S5, S9, S11 | `agents/problem.py`, `prompts/problem*.md` |
-| S7 Solution generator | S5, S6 | S4, S9, S11 | `agents/solution.py`, `prompts/solution.md` |
-| S8 Risk assessor | S7 | S4, S9, S11 | `agents/risk.py`, `prompts/risk.md` |
-| S9 JSON assembly + markdown renderer | S0 | S1 to S8, S11 | `render/` |
-| S10 Graph wiring + CLI | S4, S8, S9 | S11 | `graph.py`, `cli.py` |
-| S11 Gold labels | S2 | S1, S3 to S10 | `evals/gold/` |
-| S12 Eval harness | S10, S11 | S14 | `evals/` |
-| S13 Ablations + fixes | S12 | S14, S15 | prompts, agents, `evals/results/` |
-| S14 UI backend | S10 | S12, S13 | `ui/backend/` |
-| S15 UI frontend | S14 | S12, S13 | `ui/frontend/` |
-| S16 Docs, Dockerfile, demo script | S13, S15 | — | `README.md`, `Dockerfile`, `docs/` |
+| Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
+| ------------------------------------ | ---------- | ------------------------ | ---------------------------------------------------- |
+| S0 Scaffold                          | —          | — (must land first)      | everything top-level, `schemas.py`, `config.py`      |
+| S1 LLM layer + observability         | S0         | S2, S9, S11              | `llm.py`, `observability.py`, `config.py` (pricing)  |
+| S2 PDF parsing                       | S0         | S1, S9, S11              | `parsing/`                                           |
+| S3 Splitting                         | S2         | S1, S4, S9, S11          | `splitting/`                                         |
+| S4 Parse quality pass                | S1, S2     | S3, S5, S6, S9, S11      | `parsing/quality.py`, `prompts/parse_quality.md`     |
+| S5 Requirements extractor            | S1, S3     | S4, S6, S9, S11          | `agents/requirements.py`, `prompts/requirements*.md` |
+| S6 Problem statement                 | S1, S3     | S4, S5, S9, S11          | `agents/problem.py`, `prompts/problem*.md`           |
+| S7 Solution generator                | S5, S6     | S4, S9, S11              | `agents/solution.py`, `prompts/solution.md`          |
+| S8 Risk assessor                     | S7         | S4, S9, S11              | `agents/risk.py`, `prompts/risk.md`                  |
+| S9 JSON assembly + markdown renderer | S0         | S1 to S8, S11            | `render/`                                            |
+| S10 Graph wiring + CLI               | S4, S8, S9 | S11                      | `graph.py`, `cli.py`                                 |
+| S11 Gold labels                      | S2         | S1, S3 to S10            | `evals/gold/`                                        |
+| S12 Eval harness                     | S10, S11   | S14                      | `evals/`                                             |
+| S13 Ablations + fixes                | S12        | S14, S15                 | prompts, agents, `evals/results/`                    |
+| S14 UI backend                       | S10        | S12, S13                 | `ui/backend/`                                        |
+| S15 UI frontend                      | S14        | S12, S13                 | `ui/frontend/`                                       |
+| S16 Docs, Dockerfile, demo script    | S13, S15   | —                        | `README.md`, `Dockerfile`, `docs/`                   |
 
 Parallel work rule: two agents may run concurrently only on steps listed as parallel
 with each other, and must not edit each other's "main files". Shared files
@@ -1190,7 +1190,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     subgraph if S10 prefers one graph.
 
 ### S8. Risk assessor
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `agents/risk.py`: reads the solution and everything before it; covers
   risks inherent in the RFP (timelines, vague or conflicting requirements, missing
   budget, referenced-but-absent documents, flagged pages) and risks created by the
@@ -1199,7 +1199,54 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   `prompts/risk.md`.
 - **Depends on:** S7
 - **Parallel with:** S4, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** the validator **enforces must-address for
+    the uncovered mandatory requirement IDs** from S7's coverage (every one must be cited
+    by at least one risk, missing IDs fed back by name); conflict pairs, absent
+    referenced documents and judged parse flags are shown in a "code-detected findings"
+    block but not enforced (a `Risk` has no field that can cite them). **Scales:**
+    severity is the impact if it happens: `high` = the project fails, misses a
+    contractual date, or overruns budget by more than a quarter; `medium` = material
+    rework, slip or cost that contingency absorbs; `low` = handled in normal delivery.
+    Likelihood, given the RFP and the solution as written: `high` = expected unless
+    someone acts; `medium` = plausible, turns on facts the RFP does not settle; `low` =
+    needs an unusual event. **Numbering:** stable sort by severity then likelihood
+    (both descending), then `K01…`, so K01 is the top risk and the JSON order equals
+    S9's table order. **Count:** prompt asks for six to twelve risks, most important
+    first; validator rejects fewer than three or more than fifteen. No new setting.
+  - **Taken without asking:** no RFP text (the S7 rule); inputs are the problem
+    statement, all requirements including the submission block (deadlines are risks, so
+    it is headed "Submission requirements" rather than "do not address"), ambiguities,
+    gaps, the solution (summary, components with requirement IDs and claims,
+    assumptions, coverage) and the findings block (uncovered mandatory IDs, conflict
+    pairs, absent non-hyperlink referenced documents, flagged pages, count of
+    `budget_pricing` requirements). Flags are whatever the caller passes; the debug CLI
+    runs the S4 quality pass first so only judged flags reach the model. A risk about a
+    flagged page or an absent document may cite no chunk; every cited ID must exist.
+    `source` (`rfp` / `solution`) is the model's call with one-line definitions.
+    Mitigation is asked for on every risk, optional in the schema. One structured call,
+    node `risk_assess`; the validator is the feedback loop, no LangGraph loop. Allowed
+    chunk IDs = S7's union plus the solution's claims and assumptions. Live run on all
+    four RFPs, prompt tuned at most once.
+  - **Branch:** `step-08-risk` off `core` as a worktree; PR into `core`.
+  - **Files:** `schemas.py` (Risk section, S8-owned: LLM contracts `RiskDraft`,
+    `RiskAssessmentDraft`; `Risk`, `RiskAssessment` unchanged); `agents/risk.py`
+    (`Findings`, `detect_findings`, `format_solution`, `format_findings`,
+    `allowed_chunk_ids`, `render_prompt`, `risk_schema(requirement_ids, chunk_ids,
+    must_cite)`, `to_assessment`, `RiskResult(assessment, findings)`,
+    `build_risks(requirements, problem, solution, *, title, referenced_documents, flags,
+    model, settings, recorder, config)`); `agents/solution.py` (`format_requirements`
+    gains `submission_heading=`, `claim_line` made public); `agents/__main__.py` (`risk`
+    command with `-r/-p/-s` JSON inputs and `-o`); `prompts/risk.md` (instructions and
+    scales first, then title, findings, solution, problem, requirements, ambiguities,
+    gaps).
+  - **Tests:** fake-model unit tests (placeholders, prompt content, findings detection,
+    allowed-ID union, five validator rejections, must-cite fed back then accepted,
+    exhaustion raises, sort-then-number with stable ties and ID dedupe, recorder node and
+    prompt hash, JSON round trip, assembled summary renders through S9 in K order); a
+    live `llm` test on Missouri running S5 to S8.
+  - **Docs:** DECISIONS D33 plus any failure mode hit, PROMPTS note and changelog,
+    ASSUMPTIONS risks section, TIMELOG, README risk section and CLI line.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
