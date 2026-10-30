@@ -5,6 +5,8 @@ every conversation it was sent. Works with LangChain's tool-calling
 from __future__ import annotations
 
 import itertools
+import threading
+from collections.abc import Callable
 from typing import Any
 
 from langchain_core.language_models import BaseChatModel
@@ -13,6 +15,7 @@ from langchain_core.outputs import ChatGeneration, ChatResult
 from pydantic import Field
 
 _ids = itertools.count(1)
+_lock = threading.Lock()  # the S5 extractor calls the model from a thread pool
 
 
 def usage(inp: int, out: int, cached: int = 0) -> dict:
@@ -51,7 +54,11 @@ def text_msg(
 
 
 class ScriptedChatModel(BaseChatModel):
-    responses: list[AIMessage]
+    """Replies with ``responses`` in order, or, when ``responder`` is set, with whatever it
+    returns for the conversation (for tests where call order is not deterministic)."""
+
+    responses: list[AIMessage] = Field(default_factory=list)
+    responder: Callable[[list[BaseMessage]], AIMessage] | None = None
     calls: list[list[BaseMessage]] = Field(default_factory=list)
     model_name: str = "scripted"
 
@@ -63,7 +70,12 @@ class ScriptedChatModel(BaseChatModel):
         return self
 
     def _generate(self, messages: list[BaseMessage], stop=None, run_manager=None, **kwargs):
-        self.calls.append(list(messages))
-        if not self.responses:
-            raise AssertionError("ScriptedChatModel ran out of responses")
-        return ChatResult(generations=[ChatGeneration(message=self.responses.pop(0))])
+        with _lock:
+            self.calls.append(list(messages))
+            if self.responder is not None:
+                message = self.responder(list(messages))
+            elif self.responses:
+                message = self.responses.pop(0)
+            else:
+                raise AssertionError("ScriptedChatModel ran out of responses")
+        return ChatResult(generations=[ChatGeneration(message=message)])
