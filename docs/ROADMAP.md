@@ -1699,7 +1699,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S14. UI backend (FastAPI)
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `ui/backend/`: upload a PDF, start a run, stream LangGraph node events over
   SSE with per-node latency, tokens and cost, serve every intermediate output (parsed
   markdown, chunks, requirements, ambiguities and gaps, problem statement, solution,
@@ -1708,7 +1708,52 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   contract up front so S15 can start against it.
 - **Depends on:** S10
 - **Parallel with:** S12, S13
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** one run at a time, extra uploads wait as
+    `queued`; the backend also lists and serves past runs under `runs/` and the committed
+    samples under `runs/samples/` (demo and tests need no key); the upload form exposes the
+    four CLI flags (`model`, `full_text_problem`, `single_call_extraction`,
+    `max_iterations`); the backend mounts `ui/frontend/dist` when present (SPA catch-all)
+    and allows CORS from the Vite dev server; entry point `python -m ui.backend --port 8000`.
+  - **Taken without asking:** no cancel or delete (LangGraph threads cannot be interrupted
+    cleanly); no auth (local single-user tool); hand-written SSE over `StreamingResponse`
+    (no `sse-starlette`), plain `uvicorn`; `rfp_agent` stays free of web dependencies; run
+    IDs carry no `samples/` prefix, an ID resolves in `runs/<id>` first, then
+    `runs/samples/<id>` (generated IDs are `YYYYMMDD-HHMMSS-hex`, samples are words);
+    terminal status comes from `run_log.json` so live-finished runs and samples share one
+    code path; the chat model is built at submit time so a missing key is an immediate 503
+    and nothing is written.
+  - **Branch:** `step-14-ui-backend` off `core` (worktree); PR into `core`.
+  - **Files:** `ui/backend/{models,store,runs,app,__main__}.py` and `ui/backend/README.md`
+    (the API contract for S15). `store.py`: `RunStore(runs_dir, samples_dir)` resolves IDs
+    (regex, containment), reads `run_log.json`, lists run directories, maps artifact names
+    to files, finds the source PDF (`source.pdf`, else `run_log.source_path` under the repo),
+    caches the parsed `split.json` per run for chunk lookup; `stages_from_log`,
+    `status_from_log`, `list_item_from_log`. `runs.py`: `RunEntry` (status, events list,
+    `threading.Condition`; `on_event` is the pipeline callback, `wait(cursor, timeout)`
+    serves replay and live from one list) and `RunRegistry` (`ThreadPoolExecutor(1)`,
+    `submit` applies overrides, builds the model, enqueues `run_pipeline`; `PipelineError`
+    and any other exception mark the entry `failed`). `app.py`: `create_app(runs_dir,
+    samples_dir, settings, frontend_dist)`; routes under `/api`: `GET /health`,
+    `POST /runs` (multipart PDF, 50 MB cap, `%PDF` check, 202), `GET /runs`,
+    `GET /runs/{id}` (status, stages as `StageEvent`s, totals, per-node metrics, Langfuse
+    URL, artifacts present), `GET /runs/{id}/events` (SSE: `stage` events replayed then live
+    via `asyncio.to_thread(entry.wait)`, keepalive comments, final `done`),
+    `GET /runs/{id}/artifacts/{name}` (FileResponse), `summary.md`, `download/{name}`
+    (attachment), `source.pdf`, `chunks` and `chunks/{chunk_id}`; CORS for `localhost:5173`;
+    catch-all SPA route registered last when `dist` exists.
+  - **Tests (`tests/test_ui_backend.py`):** `Stubs`, `PDF`, `SETTINGS` move from
+    `test_graph.py` into `tests/pipeline_stubs.py` and `chunk_id` into `conftest.py`
+    (session scope); the backend tests patch `ui.backend.runs.get_chat_model`, build the
+    app on temp dirs and a stub-generated sample run, use `wait_terminal` (no polling), and
+    fetch the SSE stream only after the run ends (TestClient buffers bodies). Cases: health,
+    full run with every artifact, events replay, `RunEntry.wait` live semantics, failed
+    stage, listing with samples, bad inputs, missing key 503, queueing, SPA catch-all,
+    `__main__`.
+  - **Shared files:** `requirements.txt` (fastapi, uvicorn, python-multipart, httpx pinned),
+    `README.md` (UI backend section, layout).
+  - **Docs:** DECISIONS D35, ASSUMPTIONS (UI), TIMELOG; PROMPTS unchanged.
+  - **Live smoke:** one real run through the API (~$0.05) to confirm the thread-to-SSE path.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
