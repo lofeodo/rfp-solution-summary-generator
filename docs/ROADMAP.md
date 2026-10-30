@@ -463,7 +463,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     annotation is `http://www.colfax-ca.go/`, a typo in the source, kept as-is.
 
 ### S3. Section and chunk splitting
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `splitting/`: split on the RFP's own headings (outline first, heading
   detection fallback for documents without an outline), keep the title attached; split
   each section into citable chunks by subsection where present, otherwise by a size cap
@@ -474,7 +474,39 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   fixtures for both an outlined and a non-outlined RFP.
 - **Depends on:** S2
 - **Parallel with:** S1, S4, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** 300-word cap (`count_words`), split at
+    paragraph boundaries, sentences only inside an over-cap paragraph, tables atomic,
+    tail under 50 words merges back, **one-sentence overlap** between consecutive chunks
+    of a section (prose only), so coverage is "every body line in at least one chunk";
+    **every heading is a Section** (outline subsections included; flat list, `level` and
+    `path` give the tree; containers with no own body have zero chunks); short bold-only
+    lines are **promoted to headings** when their label matches a numbering scheme an
+    existing heading uses; **golden split JSON** for Missouri and NYESD under
+    `tests/fixtures/` with `--update-golden`.
+  - **Taken without asking:** unlocated outline entries are dropped; text before the first
+    heading becomes a synthetic level-1 `Front matter` section; `#` lines over 20 words or
+    ending in a period are body text; section IDs number sections in document order
+    (`S5` is not the RFP's "Section 5").
+  - **Findings that shape the design:** Missouri's outline has 64 entries but only about
+    35 render as `#` lines; the rest are bold run-in labels (`**(A) Services:** The
+    Offeror shall ...`), so outline titles are located in page text by key prefix; split
+    titles (`## SECTION (1):` + `## GENERAL DESCRIPTION ...`, `## Task 1` +
+    `## Project Management`); outline entry "Expenses" is a table cell. Federal Way
+    "SECTION 4" and NYESD criterion "A." are bold lines, not headings.
+  - **Branch:** `step-03-splitting` off `core` as a worktree; PR into `core`. No schema
+    change, no new dependency.
+  - **Files:** `splitting/headings.py` (markdown headings with demotion and split-title
+    merge, outline location in text, bold-line promotion, `detect_headings`),
+    `splitting/chunker.py` (blocks, greedy cap fill, sentence split, tail merge, overlap),
+    `splitting/kind.py` (modal-verb cue density plus enumerations), `splitting/split.py`
+    (`split_document(parsed) -> SplitDocument`), `splitting/__main__.py` (debug dump).
+  - **Tests:** unit tests on literal strings for every rule; four-RFP tests for
+    determinism, line coverage, size bounds, ID sequence, page ranges, round-trip, known
+    sections (Missouri Section (5) with (A) to (Y), no "Expenses"; Colfax Tabs; NYESD X.
+    and promoted "A."; Federal Way SECTION 4), kinds; two goldens.
+  - **Docs:** DECISIONS D24 to D26, TIMELOG row, ASSUMPTIONS line (words stand in for
+    tokens), README splitting section.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
