@@ -147,10 +147,10 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   Ambiguity; ProblemStatement with cited claims; Solution with requirement coverage;
   Risk with severity, likelihood, justification, IDs; RunLog with per-node tokens,
   latency, cost), `.env.example`, GitHub Actions CI (ruff + pytest), `prompts/`
-  directory with a README, `inputs/rfp_brief.pdf` copied from `data/rfps/missouri.pdf`,
-  `data/rfps/` un-ignored and committed (currently `.gitignore` has `data/*`), README
-  skeleton with the pipeline diagram, `tests/` with a schema round-trip test. Create
-  the `core` branch.
+  directory with a README, `inputs/rfp_brief.pdf` copied from `data/rfps/missouri.pdf`
+  (the four RFPs are already committed under `data/rfps/`), README skeleton with the
+  pipeline diagram, `tests/` with a schema round-trip test. The agent creates the
+  `rfp-solution-gen` conda env itself. Create the `core` branch.
 - **Depends on:** —
 - **Parallel with:** — (lands first)
 - **Detailed plan:** _(fill in when the step starts)_

@@ -53,9 +53,11 @@ logged, PR opened.
 
 ## Environment
 
-- Conda env `rfp-solution-gen` (create with `conda create -n rfp-solution-gen python=3.12`
-  and `pip install -r requirements.txt`). Keep `requirements.txt` up to date whenever a
-  dependency is added; pin versions.
+- Conda env `rfp-solution-gen`. The agent creates it in the scaffold step
+  (`conda create -n rfp-solution-gen python=3.12` then `pip install -r requirements.txt`)
+  and runs all Python through it (`conda run -n rfp-solution-gen ...`). Keep
+  `requirements.txt` up to date whenever a dependency is added; pin versions.
+- `assignment.pdf` is gitignored; the public RFPs under `data/rfps/` are committed.
 - Keys live only in `.env` (never committed). `.env.example` lists every variable.
 - Provider and model are a single config setting. Default generator: DeepSeek.
   Judge for evals: Claude. Langfuse is optional and must become a no-op when its keys
