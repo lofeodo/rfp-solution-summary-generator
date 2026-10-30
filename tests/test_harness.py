@@ -22,16 +22,16 @@ from evals.harness import __main__ as cli
 from evals.harness import agreement
 from evals.harness.consistency import consistency, jaccard_mean, stats
 from evals.harness.grounding import entities, missing_entities
-from evals.harness.judge import Judge, exact_ids
+from evals.harness.judge import Judge, exact_ids, judge_cost_from_log, merge_judge_logs
 from evals.harness.load import EvalRun, rfp_name
-from evals.harness.match import ItemVerdicts, code_score
+from evals.harness.match import ItemVerdicts, code_score, score_requirements
 from evals.harness.pairwise import compare, load_output
-from evals.harness.report import render_markdown, summarise
-from evals.harness.score import load_scores, score_run
+from evals.harness.report import cell, diff, render_diff, render_markdown, summarise
+from evals.harness.score import load_scores, parse_sections, score_run
 from evals.harness.sections import score_problem
 from fakes import ScriptedChatModel, tool_call_msg
 from rfp_agent.config import Settings
-from rfp_agent.schemas import Requirement, RequirementType, Strictness
+from rfp_agent.schemas import Requirement, RequirementType, RunLog, Strictness
 
 SAMPLES = Path(__file__).resolve().parents[1] / "runs" / "samples"
 SAMPLE_NAMES = ["missouri", "nyesd", "colfax", "federal_way"]
@@ -359,6 +359,71 @@ def test_failed_judge_call_leaves_fields_empty_and_is_counted(fw_run):
 
 
 # --------------------------------------------------------------------------------------
+# Partial rescoring (score --only)
+# --------------------------------------------------------------------------------------
+
+
+def _prompts(model: ScriptedChatModel) -> list[str]:
+    return [str(c[0].content) for c in model.calls]
+
+
+def test_requirement_halves_rescore_independently(fw_run, fw_judged):
+    s, _, _ = fw_judged
+    gold = fw_run.gold()
+    judge, model = make_judge()
+    r = score_requirements(fw_run, gold, judge, match=False, previous=s.requirements)
+    assert not any("against a gold standard" in p for p in _prompts(model))
+    assert r.matches == s.requirements.matches and r.recall == s.requirements.recall
+    assert r.verdicts == s.requirements.verdicts and r.precision == s.requirements.precision
+    judge, model = make_judge()
+    r = score_requirements(fw_run, gold, judge, precision=False, previous=s.requirements)
+    assert not any("grading the output" in p for p in _prompts(model))
+    assert r.matches == s.requirements.matches and r.verdicts == s.requirements.verdicts
+    code_only = score_requirements(fw_run, gold, make_judge()[0], match=False, precision=False)
+    assert code_only.matched_by_judge == 0 and code_only.precision is None
+
+
+def test_score_run_only_keeps_the_other_sections(fw_run, fw_judged):
+    s, _, _ = fw_judged
+    judge, _ = make_judge()
+    t = score_run(fw_run, judge, key="1", only={"problem"}, previous=s)
+    assert set(judge.cost().per_node) == {"judge_checklist"}
+    assert t.judged and t.judge == judge.cost()
+    assert (t.requirements, t.solution, t.risks, t.grounding) == (
+        s.requirements, s.solution, s.risks, s.grounding)  # fmt: skip
+    assert t.problem.checklist_coverage is not None
+    judge, model = make_judge()
+    c = score_run(fw_run, judge, key="1", only={"cost"})
+    assert not model.calls and not c.judged and c.judge is None
+    assert c.requirements.precision is None and c.problem.checklist_coverage is None
+    with pytest.raises(ValueError, match="previous scores are for run"):
+        score_run(fw_run, None, only={"cost"}, previous=s.model_copy(update={"run_id": "x"}))
+
+
+def test_merge_judge_logs(fw_run, fw_judged):
+    _, judge, _ = fw_judged
+    old = judge.recorder.log
+    fresh, _ = make_judge()
+    score_problem(fw_run, fw_run.gold(), fresh)
+    new = fresh.recorder.log
+    merged = merge_judge_logs(old, new, {"judge_checklist"})
+    nodes = [n.node for n in merged.nodes]
+    kept = [n.node for n in old.nodes if n.node != "judge_checklist"]
+    assert nodes == kept + [n.node for n in new.nodes]
+    assert nodes.count("judge_checklist") == len(new.nodes) >= 1
+    assert merged.prompt_hashes["judge_checklist"] == new.prompt_hashes["judge_checklist"]
+    cost = judge_cost_from_log(judge.spec, merged, failures=0)
+    assert cost.calls == len(nodes) and set(cost.per_node) == set(nodes)
+
+
+def test_parse_sections():
+    assert parse_sections(["match,precision", "cost"]) == {"match", "precision", "cost"}
+    assert parse_sections(None) is None and parse_sections([""]) is None
+    with pytest.raises(ValueError, match="unknown section 'bogus'"):
+        parse_sections(["bogus"])
+
+
+# --------------------------------------------------------------------------------------
 # Consistency, pairwise, agreement, report
 # --------------------------------------------------------------------------------------
 
@@ -418,6 +483,34 @@ def test_agreement_sample_hides_the_judge_and_agree_scores_it(fw_judged):
     assert result["disagreements"][0]["id"] == items[0].id
 
 
+def test_report_mixes_judged_and_code_only_rows(fw_run, fw_judged):
+    s, _, _ = fw_judged
+    summary = summarise("t", [s, score_run(fw_run, None, key="2")])
+    assert "federal_way-2" in render_markdown(summary)
+    assert summary.consistency[0].metrics["precision"].n == 1
+
+
+def test_diff_cells_and_table(fw_judged):
+    s, _, _ = fw_judged
+    a = summarise("a", [s])
+    other = s.model_copy(update={"run": "2"}, deep=True)
+    other.requirements.recall = 0.5
+    b = summarise("b", [s, other])
+    r = a.rows[0]
+    assert cell(r, "unsupported.problem") == 1.0 and cell(r, "rubric.specificity") == 4.0
+    assert cell(r, "rubric.missing") is None and cell(r, "recall") == s.requirements.recall
+    for bad in ("nope", "rubric", "recall.x"):
+        with pytest.raises(KeyError):
+            cell(r, bad)
+    rows = diff(a, b, ["recall", "unsupported.problem"])
+    rec = rows[0]
+    assert (rec.rfp, rec.column, rec.a.n, rec.b.n) == ("federal_way", "recall", 1, 2)
+    assert rec.delta == pytest.approx((s.requirements.recall + 0.5) / 2 - s.requirements.recall)
+    md = render_diff(a, b, rows)
+    assert "| federal_way | recall |" in md and "(n=1)" in md and "± " in md and " pp |" in md
+    assert "| unsupported, problem |" in md
+
+
 def test_report_renders_every_section(fw_judged):
     s, _, _ = fw_judged
     summary = summarise("t", [s], {"items": 1, "agree": 1, "rate": 1.0, "by_kind": {
@@ -448,15 +541,16 @@ def cli_dirs(tmp_path, monkeypatch):
     return runs, results
 
 
-def test_cli_run_reuses_the_sample_and_adds_fresh_runs(cli_dirs, monkeypatch):
-    runs, _ = cli_dirs
+def _stub_pipeline(monkeypatch) -> list[tuple[str, str, dict]]:
+    """Replace ``run_pipeline`` with a stub that writes the Federal Way sample summary
+    and records ``(pdf, run_id, extra kwargs)``."""
     import rfp_agent.graph as graph
 
     summary = EvalRun.load(SAMPLES / "federal_way").summary
-    calls = []
+    calls: list[tuple[str, str, dict]] = []
 
-    def fake_run_pipeline(pdf, *, runs_dir, run_id):
-        calls.append((Path(pdf).as_posix(), run_id))
+    def fake_run_pipeline(pdf, *, runs_dir, run_id, **kw):
+        calls.append((Path(pdf).as_posix(), run_id, kw))
         out = runs_dir / run_id
         out.mkdir(parents=True)
         (out / "summary.json").write_text(summary.model_dump_json(), encoding="utf-8")
@@ -474,6 +568,12 @@ def test_cli_run_reuses_the_sample_and_adds_fresh_runs(cli_dirs, monkeypatch):
         return Result()
 
     monkeypatch.setattr(graph, "run_pipeline", fake_run_pipeline)
+    return calls
+
+
+def test_cli_run_reuses_the_sample_and_adds_fresh_runs(cli_dirs, monkeypatch):
+    runs, _ = cli_dirs
+    calls = _stub_pipeline(monkeypatch)
     result = CliRunner().invoke(
         cli.app, ["run", "--label", "t", "--rfp", "federal_way", "--runs", "2", "--reuse-samples"]
     )
@@ -481,6 +581,70 @@ def test_cli_run_reuses_the_sample_and_adds_fresh_runs(cli_dirs, monkeypatch):
     assert sorted(p.name for p in (runs / "t" / "federal_way").iterdir()) == ["1", "2", "3"]
     assert [c[1] for c in calls] == ["2", "3"]
     assert calls[0][0].endswith("data/rfps/federal_way.pdf")
+    assert calls[0][2] == {"full_text_problem": None, "single_call_extraction": None}
+
+
+def test_cli_run_forwards_the_ablation_flags(cli_dirs, monkeypatch):
+    calls = _stub_pipeline(monkeypatch)
+    result = CliRunner().invoke(
+        cli.app,
+        ["run", "--label", "t", "--rfp", "Federal_Way", "--runs", "1", "--full-text-problem",
+         "--no-single-call-extraction"],
+    )  # fmt: skip
+    assert result.exit_code == 0, result.output
+    assert [c[2] for c in calls] == [{"full_text_problem": True, "single_call_extraction": False}]
+
+
+def test_gold_name_is_case_insensitive():
+    import typer
+
+    assert cli._gold_name("nyesd") == "NYESD" and cli._rfps("federal_way", False) == ["federal_way"]
+    with pytest.raises(typer.BadParameter):
+        cli._gold_name("x")
+
+
+def test_cli_score_only_merges_the_scores_and_the_judge_log(cli_dirs, monkeypatch):
+    runs, results = cli_dirs
+    shutil.copytree(SAMPLES / "federal_way", runs / "t" / "federal_way" / "1")
+    monkeypatch.setattr(cli, "_judge", lambda: make_judge()[0])
+    runner = CliRunner()
+    r = runner.invoke(cli.app, ["score", "--label", "t"])
+    assert r.exit_code == 0, r.output
+    path = results / "t" / "scores" / "federal_way-1.json"
+    log_path = results / "t" / "judge_logs" / "federal_way-1.json"
+    before = load_scores(path)
+    before_nodes = [n.node for n in RunLog.model_validate_json(log_path.read_text("utf-8")).nodes]
+
+    r = runner.invoke(cli.app, ["score", "--label", "t", "--only", "problem,cost"])
+    assert r.exit_code == 0 and "only=cost,problem" in r.output, r.output
+    after = load_scores(path)
+    assert after.requirements == before.requirements and after.judged
+    assert after.judge.per_node.keys() == before.judge.per_node.keys()
+    assert after.judge.calls == before.judge.calls
+    after_nodes = [n.node for n in RunLog.model_validate_json(log_path.read_text("utf-8")).nodes]
+    assert sorted(after_nodes) == sorted(before_nodes)
+    assert after_nodes[-1] == "judge_checklist" and after_nodes[0] != "judge_checklist"
+
+    r = runner.invoke(cli.app, ["score", "--label", "t", "--only", "bogus"])
+    assert r.exit_code == 2
+
+
+def test_cli_diff(cli_dirs, fw_judged):
+    _, results = cli_dirs
+    s, _, _ = fw_judged
+    for label in ("a", "b"):
+        (results / label).mkdir(parents=True)
+        (results / label / "summary.json").write_text(
+            summarise(label, [s]).model_dump_json(), encoding="utf-8"
+        )
+    runner = CliRunner()
+    r = runner.invoke(cli.app, ["diff", "a", "b", "--what", "requirements"])
+    assert r.exit_code == 0, r.output
+    assert "| federal_way | recall (code only) |" in r.output and "+0 pp" in r.output
+    r = runner.invoke(cli.app, ["diff", "a", "b", "-c", "recall,rubric.specificity"])
+    assert r.exit_code == 0 and "| rubric: specificity |" in r.output
+    assert runner.invoke(cli.app, ["diff", "a", "nope"]).exit_code == 1
+    assert runner.invoke(cli.app, ["diff", "a", "b", "-c", "nope"]).exit_code == 2
 
 
 def test_cli_score_no_judge_then_report(cli_dirs):

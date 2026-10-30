@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 
 from pydantic import BaseModel, Field
 
@@ -221,7 +221,9 @@ def _rate(num: int, den: int) -> float:
     return num / den if den else 0.0
 
 
-def score_requirements(run: EvalRun, gold: GoldSet, judge: Judge | None) -> RequirementScores:
+def match_gold(run: EvalRun, gold: GoldSet, judge: Judge | None) -> list[MatchRecord]:
+    """One record per gold requirement: the code tier, then the judge tier on the gold
+    items code could not pair (when a judge is given)."""
     reqs = run.summary.requirements.requirements
     by_id = {r.id: r for r in reqs}
     code = code_matches(gold, reqs)
@@ -251,17 +253,14 @@ def score_requirements(run: EvalRun, gold: GoldSet, judge: Judge | None) -> Requ
             best = by_id[record.best_id]
             record.best_type, record.best_strictness = best.type.value, best.strictness.value
         records.append(record)
+    return records
 
-    matched = [m for m in records if m.tier != "none"]
-    reachable = [m for m in records if m.quote_verifiable]
-    matched_reachable = [m for m in matched if m.quote_verifiable]
-    confusion: dict[str, dict[str, int]] = {}
-    for m in matched:
-        row = confusion.setdefault(m.gold_type, {})
-        row[m.best_type or "?"] = row.get(m.best_type or "?", 0) + 1
 
+def judge_items(run: EvalRun, judge: Judge | None) -> list[RequirementVerdict]:
+    """One verdict per extracted requirement; the judged fields stay ``None`` without a
+    judge."""
+    reqs = run.summary.requirements.requirements
     verdicts: list[RequirementVerdict] = []
-    precision = in_scope_share = None
     item_verdicts = judge_precision(run, judge) if judge else {}
     for r in reqs:
         v = item_verdicts.get(r.id)
@@ -278,6 +277,24 @@ def score_requirements(run: EvalRun, gold: GoldSet, judge: Judge | None) -> Requ
                 reason=v.reason if v else None,
             )
         )
+    return verdicts
+
+
+def assemble_requirements(
+    reqs: Sequence[Requirement],
+    records: Sequence[MatchRecord],
+    verdicts: Sequence[RequirementVerdict],
+) -> RequirementScores:
+    """The requirement scores from the two judged halves and the run's own counts."""
+    matched = [m for m in records if m.tier != "none"]
+    reachable = [m for m in records if m.quote_verifiable]
+    matched_reachable = [m for m in matched if m.quote_verifiable]
+    confusion: dict[str, dict[str, int]] = {}
+    for m in matched:
+        row = confusion.setdefault(m.gold_type, {})
+        row[m.best_type or "?"] = row.get(m.best_type or "?", 0) + 1
+
+    precision = in_scope_share = None
     judged_items = [v for v in verdicts if v.correct is not None]
     if judged_items:
         precision = _rate(sum(bool(v.correct) for v in judged_items), len(judged_items))
@@ -302,9 +319,33 @@ def score_requirements(run: EvalRun, gold: GoldSet, judge: Judge | None) -> Requ
         in_scope_share=in_scope_share,
         judged=len(judged_items),
         unverified_quotes=sum(not r.quote_verified for r in reqs),
-        matches=records,
-        verdicts=verdicts,
+        matches=list(records),
+        verdicts=list(verdicts),
     )
+
+
+def score_requirements(
+    run: EvalRun,
+    gold: GoldSet,
+    judge: Judge | None,
+    *,
+    match: bool = True,
+    precision: bool = True,
+    previous: RequirementScores | None = None,
+) -> RequirementScores:
+    """Gold matching and the per-item precision judge, either half reusable from
+    ``previous`` (scores of the same run) when it is switched off, so one judge prompt
+    can be re-run without paying for the other."""
+    reqs = run.summary.requirements.requirements
+    if match or previous is None:
+        records = match_gold(run, gold, judge if match else None)
+    else:
+        records = previous.matches
+    if precision or previous is None:
+        verdicts = judge_items(run, judge if precision else None)
+    else:
+        verdicts = previous.verdicts
+    return assemble_requirements(reqs, records, verdicts)
 
 
 def _accuracy(matched: Iterable[MatchRecord], gold_field: str, best_field: str) -> float | None:

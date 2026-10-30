@@ -29,6 +29,7 @@ from rfp_agent.llm import (
     structured_call,
 )
 from rfp_agent.observability import RunRecorder, per_node_totals
+from rfp_agent.schemas import RunLog
 
 logger = logging.getLogger(__name__)
 
@@ -152,11 +153,27 @@ class Judge:
             return list(pool.map(safe, items))
 
     def cost(self) -> JudgeCost:
-        log = self.recorder.log
-        return JudgeCost(
-            model=self.spec,
-            calls=len(log.nodes),
-            failures=self.failures,
-            totals=log.totals(),
-            per_node=per_node_totals(log),
-        )
+        return judge_cost_from_log(self.spec, self.recorder.log, self.failures)
+
+
+def judge_cost_from_log(spec: str, log: RunLog, failures: int) -> JudgeCost:
+    return JudgeCost(
+        model=spec,
+        calls=len(log.nodes),
+        failures=failures,
+        totals=log.totals(),
+        per_node=per_node_totals(log),
+    )
+
+
+def merge_judge_logs(old: RunLog, new: RunLog, replaced: set[str]) -> RunLog:
+    """``old`` with the calls of the judges in ``replaced`` dropped and ``new``'s calls
+    appended, so a partial rescore leaves one log holding exactly the calls behind the
+    verdicts in the score file."""
+    return old.model_copy(
+        update={
+            "nodes": [n for n in old.nodes if n.node not in replaced] + list(new.nodes),
+            "prompt_hashes": {**old.prompt_hashes, **new.prompt_hashes},
+            "finished_at": new.finished_at or old.finished_at,
+        }
+    )
