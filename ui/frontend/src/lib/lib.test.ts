@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Requirement, Risk, StageEvent, SplitDocument, SolutionSummary } from "../api/types";
+import type { Requirement, Risk, RiskResult, StageEvent, SplitDocument, SolutionSummary } from "../api/types";
 import { fromList, reduceStage, stageRows, stagesDone } from "./stages";
 import { highlightQuote, plainText } from "./highlight";
 import { EMPTY_FILTER, filterRequirements, toggle } from "./requirements";
@@ -129,9 +129,18 @@ describe("format and ids", () => {
     expect(["S3.2", "R001", "C01", "K12", "A01", "G03", "X1"].map(idKind)).toEqual([
       "chunk", "requirement", "component", "risk", "ambiguity", "gap", null,
     ]);
-    const idx = buildIndex(summary as SolutionSummary);
+    const s = summary as SolutionSummary;
+    const idx = buildIndex({
+      split: split as SplitDocument,
+      requirements: s.requirements,
+      solution: { solution: s.solution, rounds: [] },
+      risks: { assessment: s.risks, findings: {} as RiskResult["findings"] },
+    });
     expect(idx.requirements.size).toBe(120);
     expect(idx.chunks.get("S9.1")?.page_start).toBe(5);
+    expect(idx.chunks.size).toBe(s.chunks.length);
     expect(idx.addressedBy.get("R005")).toContain("C01");
+    expect(idx.risks.get("K01")?.severity).toBe("high");
+    expect(buildIndex({}).chunks.size).toBe(0);
   });
 });
