@@ -375,7 +375,16 @@ python -m evals.harness score --label baseline            # judge, ~$5 for 12 ru
 python -m evals.harness score --label baseline --no-judge # code metrics only, free
 python -m evals.harness report --label baseline           # summary.md and summary.json
 python -m evals.harness compare RUN_A RUN_B --what problem --rfp missouri   # pairwise
+python -m evals.harness score --label baseline --only match   # re-run one judge, merged
+python -m evals.harness run --label ablation_full_text --all --full-text-problem   # ablation
+python -m evals.harness diff baseline ablation_full_text --what problem     # before/after
 ```
+
+`--only` takes `match`, `precision`, `problem`, `solution`, `risks`, `grounding` and
+`cost`; the other sections are kept from the existing score file, so a prompt change to
+one judge costs one judge. `diff` prints per-RFP mean ± sd of two labels with the delta
+(free); `run` takes the same `--full-text-problem` and `--single-call-extraction` flags
+as the pipeline CLI.
 
 Baseline (`evals/results/baseline/summary.md`): three runs per RFP, recall 80 to 100%,
 with 61 to 94% matched by code alone. Federal Way's lower figure is its image-only page 5;

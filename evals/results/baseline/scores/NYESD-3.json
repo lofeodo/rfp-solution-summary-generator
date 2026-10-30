@@ -1,10 +1,10 @@
 {
   "rfp": "NYESD",
   "run": "3",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/NYESD/3",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/NYESD/3",
   "run_id": "3",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:41:27.451612Z",
+  "scored_at": "2026-10-30T22:32:02.981837Z",
   "judged": true,
   "requirements": {
     "extracted": 235,
@@ -148,15 +148,13 @@
         "gold_page": 5,
         "quote_verifiable": true,
         "matched_ids": [
-          "R007",
-          "R014",
-          "R015"
+          "R007"
         ],
         "tier": "judge",
         "best_id": "R007",
         "best_type": "functional",
         "best_strictness": "mandatory",
-        "reason": "Track B connects low-income New Yorkers to AI jobs via training; R014/R015 cover industry-informed delivery."
+        "reason": "Track B must connect low-income New Yorkers with barriers to AI jobs via training."
       },
       {
         "gold_id": "GR009",
@@ -172,7 +170,7 @@
         "best_id": "R019",
         "best_type": "functional",
         "best_strictness": "mandatory",
-        "reason": "Online AI courses with industry input on curriculum."
+        "reason": "Online AI courses with industry input in curriculum."
       },
       {
         "gold_id": "GR010",
@@ -301,7 +299,7 @@
         "best_id": "R035",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "Initial term up to 18 months."
+        "reason": "Initial term of up to 18 months."
       },
       {
         "gold_id": "GR018",
@@ -434,7 +432,7 @@
         "best_id": "R081",
         "best_type": "submission",
         "best_strictness": "desired",
-        "reason": "Each candidate covers one required process/timeline activity."
+        "reason": "Each candidate covers one required process and timeline activity."
       },
       {
         "gold_id": "GR026",
@@ -638,14 +636,13 @@
         "quote_verifiable": true,
         "matched_ids": [
           "R066",
-          "R136",
-          "R137"
+          "R136"
         ],
         "tier": "judge",
         "best_id": "R066",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "Questions must be submitted by deadline; R002 lacks page citation, written format partly covered."
+        "reason": "Questions deadline supplied by R066; R136 covers deadline; email routing partly in R002."
       },
       {
         "gold_id": "GR040",
@@ -935,7 +932,7 @@
         "best_id": "R260",
         "best_type": "legal_contractual",
         "best_strictness": "mandatory",
-        "reason": "Commercial Automobile insurance, $1 million if vehicle used."
+        "reason": "Commercial Automobile insurance at least $1 million if vehicle used."
       }
     ],
     "verdicts": [
@@ -7041,22 +7038,14 @@
     "calls": 24,
     "failures": 0,
     "totals": {
-      "input_tokens": 182040,
-      "output_tokens": 19963,
+      "input_tokens": 182179,
+      "output_tokens": 19945,
       "cached_input_tokens": 0,
-      "cost_usd": 0.56371,
-      "latency_s": 136.70353279999108,
+      "cost_usd": 0.563808,
+      "latency_s": 135.8913488999824,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 10716,
-        "output_tokens": 460,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.026032,
-        "latency_s": 4.424670000007609,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 78044,
         "output_tokens": 12665,
@@ -7095,6 +7084,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.169362,
         "latency_s": 34.88512389996322,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 10855,
+        "output_tokens": 442,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.02613,
+        "latency_s": 3.6124860999989323,
         "retries": 0
       }
     }

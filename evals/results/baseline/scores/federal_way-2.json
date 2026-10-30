@@ -1,10 +1,10 @@
 {
   "rfp": "federal_way",
   "run": "2",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/federal_way/2",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/federal_way/2",
   "run_id": "2",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:39:02.920075Z",
+  "scored_at": "2026-10-30T22:32:21.351105Z",
   "judged": true,
   "requirements": {
     "extracted": 104,
@@ -80,7 +80,7 @@
         "best_id": "R001",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Same deadline date and time."
+        "reason": "Same deadline: September 17, 2024 3:00 p.m. PT."
       },
       {
         "gold_id": "GR003",
@@ -160,7 +160,7 @@
         "best_id": "R042",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Complete Requirements document per Section 6 instructions; closest match, though not best-of-breed specific."
+        "reason": "Complete Requirements document per Section 6 instructions; best-of-breed context only partly stated."
       },
       {
         "gold_id": "GR008",
@@ -570,7 +570,7 @@
         "best_id": "R064",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Candidates split support services overview elements."
+        "reason": "Support services overview items split across candidates."
       },
       {
         "gold_id": "GR035",
@@ -593,7 +593,7 @@
         "best_id": "R071",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Candidates split technology overview elements."
+        "reason": "Technology overview components split across candidates."
       },
       {
         "gold_id": "GR036",
@@ -613,7 +613,7 @@
         "best_id": "R079",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Candidates together cover security model, standards, SSO/SAML, MFA, breach response."
+        "reason": "Candidates split the security overview into model, standards, SSO/SAML, MFA and breach response."
       },
       {
         "gold_id": "GR037",
@@ -707,7 +707,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate states responses are incorporated into the signed contract."
+        "reason": "No candidate says Requirements responses are incorporated into the signed contract."
       },
       {
         "gold_id": "GR044",
@@ -723,7 +723,7 @@
         "best_id": "R043",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Each requirement must carry a rating and a comment."
+        "reason": "Requires a rating and comment for each requirement in the Requirements document."
       },
       {
         "gold_id": "GR045",
@@ -847,7 +847,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate mentions replacing Eden HR/payroll modules."
+        "reason": "No candidate covers replacing Eden HR/payroll modules."
       },
       {
         "gold_id": "GR055",
@@ -861,7 +861,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate mentions Quadrant cashiering replacement."
+        "reason": "No candidate mentions replacing Quadrant cashiering."
       },
       {
         "gold_id": "GR056",
@@ -875,7 +875,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate mentions Excel budget replacement."
+        "reason": "No candidate mentions replacing Excel budget process."
       },
       {
         "gold_id": "GR057",
@@ -889,7 +889,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate mentions ACFR replacement."
+        "reason": "No candidate mentions replacing Excel ACFR preparation."
       },
       {
         "gold_id": "GR058",
@@ -903,7 +903,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate names retained systems for integration."
+        "reason": "No candidate lists retained systems for integration."
       },
       {
         "gold_id": "GR059",
@@ -4352,22 +4352,14 @@
     "calls": 18,
     "failures": 0,
     "totals": {
-      "input_tokens": 118096,
-      "output_tokens": 12985,
+      "input_tokens": 118374,
+      "output_tokens": 13018,
       "cached_input_tokens": 0,
-      "cost_usd": 0.366042,
-      "latency_s": 95.95083389998763,
+      "cost_usd": 0.3669279999999999,
+      "latency_s": 95.3776446999691,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 10964,
-        "output_tokens": 918,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.031108000000000004,
-        "latency_s": 7.293915499991272,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 32631,
         "output_tokens": 5544,
@@ -4406,6 +4398,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.14728000000000002,
         "latency_s": 33.24111570001696,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 11242,
+        "output_tokens": 951,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.031994,
+        "latency_s": 6.720726299972739,
         "retries": 0
       }
     }

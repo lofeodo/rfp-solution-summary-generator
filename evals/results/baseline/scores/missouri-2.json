@@ -1,10 +1,10 @@
 {
   "rfp": "missouri",
   "run": "2",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/missouri/2",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/missouri/2",
   "run_id": "2",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:40:16.712510Z",
+  "scored_at": "2026-10-30T22:31:45.597957Z",
   "judged": true,
   "requirements": {
     "extracted": 128,
@@ -25,14 +25,14 @@
     },
     "gold": 71,
     "gold_reachable": 71,
-    "matched_gold": 71,
-    "matched_gold_reachable": 71,
+    "matched_gold": 66,
+    "matched_gold_reachable": 66,
     "matched_by_code": 64,
-    "matched_by_judge": 7,
-    "recall": 1.0,
-    "recall_reachable": 1.0,
-    "type_accuracy": 0.8028169014084507,
-    "strictness_accuracy": 0.8732394366197183,
+    "matched_by_judge": 2,
+    "recall": 0.9295774647887324,
+    "recall_reachable": 0.9295774647887324,
+    "type_accuracy": 0.8484848484848485,
+    "strictness_accuracy": 0.8636363636363636,
     "type_confusion": {
       "submission": {
         "submission": 16,
@@ -42,8 +42,7 @@
         "budget_pricing": 3
       },
       "timeline": {
-        "timeline": 5,
-        "functional": 4
+        "timeline": 4
       },
       "functional": {
         "functional": 13,
@@ -82,7 +81,7 @@
         "best_id": "R001",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Same email, date, and time for proposal submission."
+        "reason": "Same email address, deadline date and time."
       },
       {
         "gold_id": "GR002",
@@ -430,14 +429,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R029"
-        ],
-        "tier": "judge",
-        "best_id": "R029",
-        "best_type": "timeline",
-        "best_strictness": "mandatory",
-        "reason": "Interim presentation to update MoDOT on progress; candidate lacks date but same obligation."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "Candidate R029 gives only mid-point timing, omitting the 9/15/2025 date."
       },
       {
         "gold_id": "GR028",
@@ -462,14 +459,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R055"
-        ],
-        "tier": "judge",
-        "best_id": "R055",
-        "best_type": "functional",
-        "best_strictness": "mandatory",
-        "reason": "Draft Synthesis Report and Research Summary preparation; no date given."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate gives the 11/3/2025 draft report due date."
       },
       {
         "gold_id": "GR030",
@@ -478,16 +473,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R059",
-          "R060",
-          "R061"
-        ],
-        "tier": "judge",
-        "best_id": "R059",
-        "best_type": "functional",
-        "best_strictness": "mandatory",
-        "reason": "Final report, research summary, and presentation deliverables; no dates stated."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate gives the 1/1/2026 final deliverables date."
       },
       {
         "gold_id": "GR031",
@@ -1122,14 +1113,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R052"
-        ],
-        "tier": "judge",
-        "best_id": "R052",
-        "best_type": "functional",
-        "best_strictness": "mandatory",
-        "reason": "Demonstrate how technology creates draft legal land descriptions."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R052 covers demonstrating draft LLDs but lacks the 4/25/2025 date."
       },
       {
         "gold_id": "GR080",
@@ -1138,15 +1127,12 @@
         "gold_strictness": "mandatory",
         "gold_page": 7,
         "quote_verifiable": true,
-        "matched_ids": [
-          "R053",
-          "R054"
-        ],
-        "tier": "judge",
-        "best_id": "R053",
-        "best_type": "functional",
-        "best_strictness": "mandatory",
-        "reason": "Training ROW staff and user manual provision."
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R053/R054 cover training and manual but lack the 7/25/2025 date."
       },
       {
         "gold_id": "GR081",
@@ -1178,7 +1164,7 @@
         "best_id": "R148",
         "best_type": "security_compliance",
         "best_strictness": "mandatory",
-        "reason": "Web applications must meet WCAG accessibility conformance."
+        "reason": "Web applications must meet WCAG 2.1 AA accessibility standard."
       },
       {
         "gold_id": "GR083",
@@ -5630,22 +5616,14 @@
     "calls": 23,
     "failures": 0,
     "totals": {
-      "input_tokens": 129216,
-      "output_tokens": 15543,
+      "input_tokens": 129355,
+      "output_tokens": 15541,
       "cached_input_tokens": 0,
-      "cost_usd": 0.41386200000000006,
-      "latency_s": 109.83292240000446,
+      "cost_usd": 0.41412000000000004,
+      "latency_s": 109.58761780001805,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 5992,
-        "output_tokens": 375,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.015734,
-        "latency_s": 3.104279699997278,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 44148,
         "output_tokens": 7229,
@@ -5684,6 +5662,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.15902,
         "latency_s": 38.778561800019816,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 6131,
+        "output_tokens": 373,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.015992,
+        "latency_s": 2.8589751000108663,
         "retries": 0
       }
     }

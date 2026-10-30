@@ -1,10 +1,10 @@
 {
   "rfp": "NYESD",
   "run": "1",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/NYESD/1",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/NYESD/1",
   "run_id": "NYESD",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:39:12.512982Z",
+  "scored_at": "2026-10-30T22:31:55.070448Z",
   "judged": true,
   "requirements": {
     "extracted": 223,
@@ -24,26 +24,25 @@
     },
     "gold": 54,
     "gold_reachable": 54,
-    "matched_gold": 52,
-    "matched_gold_reachable": 52,
+    "matched_gold": 53,
+    "matched_gold_reachable": 53,
     "matched_by_code": 43,
-    "matched_by_judge": 9,
-    "recall": 0.9629629629629629,
-    "recall_reachable": 0.9629629629629629,
-    "type_accuracy": 0.9423076923076923,
-    "strictness_accuracy": 0.75,
+    "matched_by_judge": 10,
+    "recall": 0.9814814814814815,
+    "recall_reachable": 0.9814814814814815,
+    "type_accuracy": 0.9622641509433962,
+    "strictness_accuracy": 0.7547169811320755,
     "type_confusion": {
       "submission": {
-        "submission": 18,
-        "timeline": 1
+        "submission": 19
       },
       "functional": {
         "functional": 16,
         "submission": 1
       },
       "other": {
-        "legal_contractual": 1,
-        "other": 1
+        "other": 2,
+        "legal_contractual": 1
       },
       "budget_pricing": {
         "budget_pricing": 5
@@ -138,7 +137,7 @@
         "best_id": "R025",
         "best_type": "functional",
         "best_strictness": "mandatory",
-        "reason": "Online AI courses with industry input; mentorship partly in R016 but R025 is core."
+        "reason": "Online AI courses with industry input; mentorship/projects part missing but core matches."
       },
       {
         "gold_id": "GR008",
@@ -227,12 +226,14 @@
         "gold_strictness": "mandatory",
         "gold_page": 6,
         "quote_verifiable": true,
-        "matched_ids": [],
-        "tier": "none",
-        "best_id": null,
-        "best_type": null,
-        "best_strictness": null,
-        "reason": "No candidate states the track-record eligibility; R045 requires different domain experience."
+        "matched_ids": [
+          "R045"
+        ],
+        "tier": "judge",
+        "best_id": "R045",
+        "best_type": "other",
+        "best_strictness": "mandatory",
+        "reason": "Applicant experience requirement; related qualification of track record, though specifics differ."
       },
       {
         "gold_id": "GR014",
@@ -280,7 +281,7 @@
         "best_id": "R034",
         "best_type": "budget_pricing",
         "best_strictness": "mandatory",
-        "reason": "$2M per track, $4M both tracks cap."
+        "reason": "Same $2M per track, $4M both cap."
       },
       {
         "gold_id": "GR017",
@@ -296,7 +297,7 @@
         "best_id": "R035",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "Up to 18 months term."
+        "reason": "Up to 18 months term stated."
       },
       {
         "gold_id": "GR018",
@@ -429,7 +430,7 @@
         "best_id": "R080",
         "best_type": "submission",
         "best_strictness": "desired",
-        "reason": "Each lists a required process and timeline activity."
+        "reason": "Split candidates cover each listed process and timeline activity."
       },
       {
         "gold_id": "GR026",
@@ -541,7 +542,7 @@
         "best_id": "R102",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Must submit Diversity Practices Questionnaire Appendix B with response."
+        "reason": "Diversity Practices Questionnaire Appendix B must be submitted with response."
       },
       {
         "gold_id": "GR033",
@@ -619,7 +620,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate requires the two subfolders; R130 covers folder naming only."
+        "reason": "No candidate mentions the two subfolders for Administrative and Technical Proposals."
       },
       {
         "gold_id": "GR039",
@@ -629,14 +630,14 @@
         "gold_page": 12,
         "quote_verifiable": true,
         "matched_ids": [
-          "R066",
-          "R002"
+          "R002",
+          "R066"
         ],
         "tier": "judge",
-        "best_id": "R066",
-        "best_type": "timeline",
+        "best_id": "R002",
+        "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Questions by email and deadline; R002 covers email, R066 the deadline."
+        "reason": "Email questions plus deadline; page/section citation not stated."
       },
       {
         "gold_id": "GR040",
@@ -862,7 +863,7 @@
         "best_id": "R016",
         "best_type": "functional",
         "best_strictness": "mandatory",
-        "reason": "Participant stipends and wrap-around supports including career coaches."
+        "reason": "Stipends and wrap-around supports including career coaches."
       },
       {
         "gold_id": "GR067",
@@ -926,7 +927,7 @@
         "best_id": "R262",
         "best_type": "legal_contractual",
         "best_strictness": "mandatory",
-        "reason": "Commercial Auto insurance of at least $1M if vehicle used."
+        "reason": "Commercial Automobile insurance of at least $1 million if vehicle used."
       }
     ],
     "verdicts": [
@@ -6936,22 +6937,14 @@
     "calls": 24,
     "failures": 0,
     "totals": {
-      "input_tokens": 194984,
-      "output_tokens": 19720,
+      "input_tokens": 195123,
+      "output_tokens": 19724,
       "cached_input_tokens": 0,
-      "cost_usd": 0.587168,
-      "latency_s": 140.18680190006853,
+      "cost_usd": 0.5874860000000001,
+      "latency_s": 139.73570030007977,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 10859,
-        "output_tokens": 590,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.027618,
-        "latency_s": 4.544389599992428,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 81976,
         "output_tokens": 12358,
@@ -6990,6 +6983,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.19255,
         "latency_s": 34.93729600001825,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 10998,
+        "output_tokens": 594,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.027936,
+        "latency_s": 4.0932880000036675,
         "retries": 0
       }
     }

@@ -218,8 +218,11 @@ Why it is written this way: "same obligation, any wording" with the bidder test 
 bidder who met the candidate would meet the gold item's core"), many-to-many explicitly
 allowed because the extractor splits and merges, labels shown but not graded so a type
 disagreement does not block a match.
-Known weaknesses: accepts candidates that omit the gold item's key value (F14); recall
-is therefore reported next to its code-only lower bound.
+Known weaknesses: the first version accepted candidates that omitted the gold item's
+key value (F14); S13 added the "missing values do not match either" rule with two
+examples from the Missouri disagreements and rescored the baseline match tier. Recall
+is still reported next to its code-only lower bound because the judge tier remains a
+judgment.
 
 ### prompts/judge_requirements.md
 Purpose: precision: is each extracted requirement stated by its chunk, a real

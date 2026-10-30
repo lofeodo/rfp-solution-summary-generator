@@ -1,10 +1,10 @@
 {
   "rfp": "colfax",
   "run": "1",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/colfax/1",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/colfax/1",
   "run_id": "colfax",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:44:39.959276Z",
+  "scored_at": "2026-10-30T22:32:05.440291Z",
   "judged": true,
   "requirements": {
     "extracted": 120,
@@ -151,14 +151,13 @@
         "gold_page": 6,
         "quote_verifiable": true,
         "matched_ids": [
-          "R011",
-          "R015"
+          "R011"
         ],
         "tier": "judge",
         "best_id": "R011",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "R011 states same question deadline; R015 covers question submission timing."
+        "reason": "Same obligation and date: questions by July 31, 2025."
       },
       {
         "gold_id": "GR008",
@@ -302,7 +301,7 @@
         "best_id": "R048",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Hard copy with attachments must be received at City address."
+        "reason": "Hard copy and attachments must be received at City address."
       },
       {
         "gold_id": "GR023",
@@ -767,7 +766,7 @@
         "best_id": "R061",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "Completed Attachment F Software Abilities and Requirements spreadsheet must be included."
+        "reason": "Completed Attachment F Software Abilities and Requirements spreadsheet included in proposal."
       },
       {
         "gold_id": "GR057",
@@ -4745,22 +4744,14 @@
     "calls": 17,
     "failures": 0,
     "totals": {
-      "input_tokens": 123054,
-      "output_tokens": 17365,
+      "input_tokens": 123193,
+      "output_tokens": 17362,
       "cached_input_tokens": 0,
-      "cost_usd": 0.4197580000000001,
-      "latency_s": 118.96912010002416,
+      "cost_usd": 0.4200060000000001,
+      "latency_s": 118.74705620002351,
       "retries": 2
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 5764,
-        "output_tokens": 222,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.013748,
-        "latency_s": 2.336769199988339,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 34237,
         "output_tokens": 6377,
@@ -4800,6 +4791,14 @@
         "cost_usd": 0.208942,
         "latency_s": 57.82675760000711,
         "retries": 2
+      },
+      "judge_match": {
+        "input_tokens": 5903,
+        "output_tokens": 219,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.013996,
+        "latency_s": 2.1147052999876905,
+        "retries": 0
       }
     }
   }

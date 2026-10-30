@@ -1,10 +1,10 @@
 {
   "rfp": "colfax",
   "run": "2",
-  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-12-eval-harness/runs/evals/baseline/colfax/2",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/baseline/colfax/2",
   "run_id": "2",
   "model": "deepseek:deepseek-flash",
-  "scored_at": "2026-10-30T20:42:45.697324Z",
+  "scored_at": "2026-10-30T22:32:08.259510Z",
   "judged": true,
   "requirements": {
     "extracted": 120,
@@ -172,7 +172,7 @@
         "best_id": null,
         "best_type": null,
         "best_strictness": null,
-        "reason": "No candidate states the question email subject line; R046 is the proposal submission subject."
+        "reason": "No candidate gives the question email subject line; R046 is the submission subject line, a different value."
       },
       {
         "gold_id": "GR009",
@@ -300,7 +300,7 @@
         "best_id": "R047",
         "best_type": "submission",
         "best_strictness": "mandatory",
-        "reason": "R047 states hard copy and attachments must be received at City address."
+        "reason": "R047 requires the hard copy and attachments to be received at the City address."
       },
       {
         "gold_id": "GR023",
@@ -1005,7 +1005,7 @@
         "best_id": "R068",
         "best_type": "timeline",
         "best_strictness": "mandatory",
-        "reason": "R068 states go-live target of July 1, 2026 for new fiscal year."
+        "reason": "R068 sets go-live of July 1, 2026 with the new fiscal year."
       },
       {
         "gold_id": "GR073",
@@ -1021,7 +1021,7 @@
         "best_id": "R067",
         "best_type": "submission",
         "best_strictness": "desired",
-        "reason": "R067 requires implementation plan and timeline in proposal."
+        "reason": "R067 requires an implementation plan and timeline in the proposal."
       },
       {
         "gold_id": "GR074",
@@ -4719,22 +4719,14 @@
     "calls": 18,
     "failures": 0,
     "totals": {
-      "input_tokens": 105062,
-      "output_tokens": 12516,
+      "input_tokens": 105201,
+      "output_tokens": 12525,
       "cached_input_tokens": 0,
-      "cost_usd": 0.335284,
-      "latency_s": 87.78599979987484,
+      "cost_usd": 0.335652,
+      "latency_s": 88.05683019987191,
       "retries": 0
     },
     "per_node": {
-      "judge_match": {
-        "input_tokens": 5107,
-        "output_tokens": 215,
-        "cached_input_tokens": 0,
-        "cost_usd": 0.012364,
-        "latency_s": 2.2014589000027627,
-        "retries": 0
-      },
       "judge_requirements": {
         "input_tokens": 33713,
         "output_tokens": 6370,
@@ -4773,6 +4765,14 @@
         "cached_input_tokens": 0,
         "cost_usd": 0.130326,
         "latency_s": 27.82142729993211,
+        "retries": 0
+      },
+      "judge_match": {
+        "input_tokens": 5246,
+        "output_tokens": 224,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.012732,
+        "latency_s": 2.4722892999998294,
         "retries": 0
       }
     }
