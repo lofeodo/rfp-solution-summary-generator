@@ -352,7 +352,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     inside nodes.
 
 ### S2. PDF parsing (library path)
-- **Status:** todo
+- **Status:** done
 - **Goal:** `parsing/`: pymupdf4llm to markdown per page with tables kept as markdown
   tables; use the PDF outline when present. Code heuristics flag suspicious pages (low
   word count, large image blocks, broken table rows, fragmented lines) into a
@@ -365,10 +365,93 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   references (Colfax Attachments A to G). Leave a `escalate(page)` hook stub for S4.
 - **Depends on:** S0
 - **Parallel with:** S1, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** a referenced document is `present` only when
+    a matching heading exists and its section body has at least 40 words; the four-RFP
+    tests always run (one session-scoped parse per file, about 45 s); repeated page
+    headers and footers are stripped; `mailto:` links are not recorded.
+  - **Findings that shape the design** (pymupdf4llm 1.28.2): `to_markdown(page_chunks=True)`
+    returns per-page `text` plus layout `page_boxes` (classes text, section-header,
+    list-item, table, picture, page-header, page-footer, each with bbox and char span);
+    no separate tables or images keys. About 10 s per document. Merged-cell tables render
+    as one column with `<br>`-joined cells (Missouri p12, Federal Way p14). Bold URLs split
+    inside table cells (Missouri p6). Real link targets live only in link annotations.
+  - **Branch:** `step-02-pdf-parsing` off `core`; PR into `core`.
+  - **Files:** `parsing/pdf.py` (`parse_pdf`, orchestration), `parsing/normalize.py`
+    (NFC, curly quotes and Unicode spaces to ASCII, ligatures, split-URL join, header and
+    footer strip), `parsing/heuristics.py` (flag thresholds as constants, table blocks,
+    broken-table rules), `parsing/references.py` (hyperlinks from annotations and plain
+    text, Attachment/Appendix/Exhibit/Schedule/Addendum regex, section lookup, `present`),
+    `parsing/quality.py` (`escalate()` stub for S4), `parsing/__main__.py` (debug dump).
+  - **Heuristics:** low word count < 50; picture box >= 25% of page area; broken table =
+    ragged pipe counts or a one-column block with `<br>`-merged cells; fragmented lines =
+    at least 6 lines of <= 2 words making up >= 50% of prose lines.
+  - **Title:** PDF metadata title if most of its words occur on page 1, else the first
+    heading on page 1.
+  - **Tests:** unit tests on literal strings for every rule; four-RFP tests for page,
+    outline and table counts, known flags (Missouri p12, p19, p20; Federal Way p5, p14;
+    NYESD none), image sizes and captions, references (Colfax A to G with E/F/G absent,
+    NYESD Schedule A and Appendix A/B, Missouri Exhibits and the joined MoDOT URL), no
+    curly quotes, header stripped, titles.
+  - **Docs:** DECISIONS D20 to D22, ASSUMPTIONS lines, TIMELOG row, README parsing section.
+- **What was done:** (branch `step-02-pdf-parsing`, PR into `core`)
+  - `parsing/pdf.py`: `parse_pdf(path) -> ParsedDocument`. One
+    `pymupdf4llm.to_markdown(doc, page_chunks=True, use_ocr=False)` call; per page:
+    header/footer strip, normalisation, `Page` with `word_count`, `Table` per pipe block,
+    `ImageBlock` per image from `get_image_info()` (clipped, >= 20 pt, caption = nearest
+    text block within 40 pt above or below), flags, link annotations with anchor text
+    (whole words under the link rectangle). Outline from `get_toc()`. Title = metadata
+    title if 60% of its words are on page 1, else first heading on page 1.
+  - `parsing/normalize.py`: NFC; curly quotes, Unicode spaces and hyphens to ASCII;
+    ligatures expanded; soft hyphen and zero-width characters dropped; en/em dashes kept;
+    bold URLs split across `<br>` in table cells rejoined; header/footer stripping (see
+    D21).
+  - `parsing/heuristics.py`: `count_words` (ignores tags, pipes, separator rows),
+    `table_blocks`, `broken_table_reason` (ragged, or one-column with `<br>`-merged
+    cells), `flag_page`; thresholds are module constants.
+  - `parsing/references.py`: `document_lines` (every line tagged with its section:
+    nearest heading, else outline entry), `document_references` (regex, first non-TOC
+    occurrence), `mark_present` (heading plus >= 40 words), `hyperlinks` (annotation URIs,
+    plus plain-text URLs no annotation covers; http(s) only).
+  - `parsing/quality.py`: `escalate(page, flags) -> Escalation | None` stub for S4.
+  - `parsing/__main__.py`: `python -m rfp_agent.parsing <pdf> [--out file.json]`.
+  - Results on the four RFPs (about 5 to 9 s each):
+
+    | RFP | pages | outline | tables | flagged pages | references (present) | links |
+    |---|---|---|---|---|---|---|
+    | Missouri | 20 | 64 | 8 | 12, 19, 20 | Exhibit A, B (both absent) | 9 |
+    | NYESD | 27 | 0 | 2 | none | Schedule A, B; Appendix A, B (all absent) | 32 |
+    | Colfax | 22 | 29 | 4 | 1, 2, 3, 20, 21, 22 | Attachments A-D present, E-G absent | 1 |
+    | Federal Way | 16 | 0 | 10 | 2, 5, 14 | Exhibit A, B (both present) | 0 |
+
+  - Tests: `tests/test_parsing_units.py` (rules on literal strings) and
+    `tests/test_parsing_rfps.py` (one session-scoped parse per RFP); 83 tests pass in
+    about 22 s, ruff clean. Shared files touched: none (`README.md` and docs only).
 - **Deviations from plan:**
+  - Hyperlinks are deduplicated across the document (one entry per URL, at its first
+    page) rather than per page: downstream steps want one gap per document, not one per
+    mention.
+  - Plain-text URLs are suppressed when an annotation anywhere in the document covers
+    them, compared on letters and digits only. NYESD's text layer mangles long URLs at
+    line breaks (lost hyphens), which otherwise produced seven bogus duplicates (F2).
+  - Header/footer stripping needed two extra cases beyond the plan: a repeated header
+    merged into the same box as the next heading (prefix removed, heading kept), and a
+    header split across two header boxes (Federal Way p7, p9, p11; F3).
+  - `escalate()` takes a page and all its flags, not one flag: S4 judges each page once.
+  - OCR is passed off explicitly (`use_ocr=False`); the layout path defaults it on (D20).
+  - Image captions use the whole nearest text block (Missouri p19's caption block starts
+    with a blank line and overlaps the image by one point).
 - **Open issues:**
+  - Colfax's title comes out as "CITY OF COLFAX" (its first heading); the RFP name is
+    in the next two headings. Good enough for display; S9 may prefer the source path.
+  - Low-word flags on cover and contents pages (Colfax p1, p3; Federal Way p2) and the
+    broken-table flag on Colfax's one-column contents table are expected false
+    positives for S4's judge to clear.
+  - Section titles can be split across two headings (Missouri "SECTION (1):" then
+    "GENERAL DESCRIPTION AND BACKGROUND"); S3 should merge a heading with no body into
+    the next.
+  - URLs without a scheme (`www.colfax-ca.gov` in text) are not recorded; Colfax's link
+    annotation is `http://www.colfax-ca.go/`, a typo in the source, kept as-is.
 
 ### S3. Section and chunk splitting
 - **Status:** todo

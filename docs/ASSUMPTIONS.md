@@ -22,6 +22,16 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   pipeline records these references and treats absent ones as gaps; it does not fetch
   them.
 
+## Parsing
+
+- Running headers and footers carry no requirement content; they are stripped when they
+  repeat on at least three pages (D21).
+- `mailto:` links are contact addresses, not documents; only http(s) links are recorded
+  as referenced documents. The addresses stay in the page text.
+- A referenced attachment or exhibit counts as present only when its section in the PDF
+  has at least 40 words; a cover page saying "provided separately" is absent (D22).
+- OCR is off: image-only pages are flagged for S4, not transcribed (D20).
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do

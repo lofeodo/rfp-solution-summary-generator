@@ -7,8 +7,8 @@ cites the chunk of the RFP it came from, so the summary can be checked against t
 source. The repo includes an evaluation harness and per-run observability (tokens,
 latency, cost).
 
-**Status:** scaffold (S0), LLM layer with observability (S1) and renderer (S9).
-The pipeline lands step by step; see `docs/ROADMAP.md`.
+**Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2)
+and renderer (S9). The pipeline lands step by step; see `docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -52,6 +52,19 @@ Outputs go to `runs/<run_id>/`: `summary.json` (the source of truth), `summary.m
 Citations in the markdown read `(Section title, p. 4 [S3.2])`; the bracketed chunk ID
 is the key into the JSON. A sample rendering lives in `tests/fixtures/summary_sample.md`. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
 and is a no-op otherwise.
+
+## Parsing
+
+`rfp_agent.parsing.parse_pdf(path)` turns a PDF into a `ParsedDocument`: markdown per
+page (tables kept as markdown tables, running headers and footers removed, quotes and
+spaces normalised), the PDF outline, tables, images with captions, every http(s) link and
+every Attachment/Appendix/Exhibit/Schedule/Addendum reference with its section and
+whether its content is in the PDF, and page flags (low word count, large image, broken
+table, fragmented lines) for the parse-quality pass. No LLM is involved. To inspect it:
+
+```bash
+python -m rfp_agent.parsing data/rfps/colfax.pdf --out colfax.json
+```
 
 ## Configuration
 
@@ -97,7 +110,7 @@ See `docs/ASSUMPTIONS.md`.
 src/rfp_agent/
   config.py        provider/model setting, paths, pricing table
   schemas.py       Pydantic v2 contract between every pipeline stage
-  parsing/         PDF to markdown, page flags, referenced documents (S2, S4)
+  parsing/         PDF to markdown, page flags, referenced documents (S2), quality hook (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
   agents/          requirements, problem, solution, risk (S5 to S8)
   render/          JSON assembly and markdown rendering (S9)
