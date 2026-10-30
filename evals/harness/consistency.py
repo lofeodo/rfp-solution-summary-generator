@@ -35,6 +35,9 @@ def _rubric(name: str) -> Metric:
 METRICS: dict[str, Metric] = {
     "requirements": lambda s: s.requirements.extracted,
     "recall": lambda s: s.requirements.recall,
+    "recall_code": lambda s: (
+        s.requirements.matched_by_code / s.requirements.gold if s.requirements.gold else None
+    ),
     "recall_reachable": lambda s: s.requirements.recall_reachable,
     "precision": lambda s: s.requirements.precision,
     "in_scope_share": lambda s: s.requirements.in_scope_share,

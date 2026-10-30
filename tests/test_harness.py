@@ -294,9 +294,7 @@ def test_grounding_verdicts_fill_every_cited_item(fw_judged):
     assert sum(t.judged for t in tallies.values()) == len(cited)
     assert sum(t.unsupported for t in tallies.values()) == 1  # only I000
     assert tallies["problem"].unsupported_claims == 1
-    assert all(
-        i.reasonable_inference is None for i in cited if i.kind in ("fact", "risk")
-    )
+    assert all(i.reasonable_inference is None for i in cited if i.kind in ("fact", "risk"))
     assumptions = [i for i in cited if i.where.startswith("solution.assumptions")]
     assert assumptions and all(i.kind == "assumption" for i in assumptions)
     assert all(i.reasonable_inference is True for i in assumptions)

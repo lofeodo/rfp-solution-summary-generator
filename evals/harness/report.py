@@ -23,6 +23,7 @@ class Row(BaseModel):
     requirements: int
     gold: int
     recall: float
+    recall_code: float = Field(description="Code-tier matches only: the lower bound")
     recall_reachable: float
     matched_by_judge: int
     precision: float | None
@@ -65,6 +66,9 @@ def row(s: RunScores) -> Row:
         requirements=s.requirements.extracted,
         gold=s.requirements.gold,
         recall=s.requirements.recall,
+        recall_code=s.requirements.matched_by_code / s.requirements.gold
+        if s.requirements.gold
+        else 0.0,
         recall_reachable=s.requirements.recall_reachable,
         matched_by_judge=s.requirements.matched_by_judge,
         precision=s.requirements.precision,
@@ -151,6 +155,7 @@ def table(headers: list[str], rows: list[list[str]]) -> str:
 METRIC_LABELS = {
     "requirements": ("requirements", 0, False),
     "recall": ("recall", 0, True),
+    "recall_code": ("recall (code only)", 0, True),
     "recall_reachable": ("recall (reachable)", 0, True),
     "precision": ("precision", 0, True),
     "in_scope_share": ("in-scope share", 0, True),
@@ -190,11 +195,12 @@ def render_markdown(summary: LabelSummary) -> str:
     out += ["", "## Requirements", ""]
     out.append(
         table(
-            ["run", "extracted", "gold", "recall", "recall (reachable)", "by judge", "precision",
-             "in scope", "type acc", "strictness acc"],
+            ["run", "extracted", "gold", "recall", "recall (code only)", "recall (reachable)",
+             "by judge", "precision", "in scope", "type acc", "strictness acc"],
             [
-                [r.key, str(r.requirements), str(r.gold), pct(r.recall), pct(r.recall_reachable),
-                 str(r.matched_by_judge), pct(r.precision), pct(r.in_scope_share),
+                [r.key, str(r.requirements), str(r.gold), pct(r.recall), pct(r.recall_code),
+                 pct(r.recall_reachable), str(r.matched_by_judge), pct(r.precision),
+                 pct(r.in_scope_share),
                  pct(r.type_accuracy), pct(r.strictness_accuracy)]
                 for r in rows
             ],

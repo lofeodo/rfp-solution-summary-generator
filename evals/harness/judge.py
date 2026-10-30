@@ -38,7 +38,8 @@ PROMPTS_DIR = Path(__file__).resolve().parents[2] / "prompts"
 # Verdicts are classification-like; the default effort would spend far more thinking
 # tokens across hundreds of batched calls for little gain (D35).
 JUDGE_EFFORT = "medium"
-JUDGE_MAX_TOKENS = 16000
+# Thinking counts toward the cap; one Colfax grounding batch truncated at 16000 (F13).
+JUDGE_MAX_TOKENS = 32000
 JUDGE_TIMEOUT_S = 300.0
 
 
