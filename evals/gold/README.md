@@ -61,4 +61,31 @@ recall rather than hiding it.
 "Corrected" = drafted items the human pass edited (text, type, strictness or quote) or
 removed, over drafted items. Items the draft missed are counted separately as added.
 
-CORRECTION_TABLE
+Drafted with `anthropic:claude-sonnet-5-5` on 2026-10-30, corrected by the coding agent
+against the full parsed text, spot-checked by the author in the PR. Output of
+`python -m evals.gold.label diff --all`:
+
+| RFP | Req drafted | Req edited | Req removed | Req added | Req corrected | Checklist drafted | Checklist corrected | Checklist added |
+|---|---|---|---|---|---|---|---|---|
+| missouri | 78 | 2 | 13 | 6 | 19% | 12 | 8% | 0 |
+| NYESD | 61 | 0 | 16 | 9 | 26% | 12 | 8% | 0 |
+| colfax | 74 | 2 | 13 | 2 | 20% | 12 | 0% | 0 |
+| federal_way | 52 | 5 | 6 | 8 | 21% | 12 | 8% | 0 |
+
+Final gold: Missouri 71, NYESD 54, Colfax 63, Federal Way 54 requirements; 12 checklist
+facts each.
+
+What the human pass changed:
+
+- **Almost all corrections are removals for scope.** The draft was accurate but
+  over-inclusive: standard state certifications (E-Verify, Iran Divestment, W-9,
+  Vend-Rep), post-award compliance reporting, procurement-conduct rules and public-records
+  clauses. Type and strictness were rarely wrong (5 edits across 265 drafted items).
+- **Misses were concrete delivery obligations** (Missouri's dated demo and training
+  milestones and IT standards; NYESD's track-level program duties) and, for Federal Way,
+  the image-only ERP table (8 hand labels).
+- **Checklist edits** replaced one low-value procedural fact per RFP with a
+  referenced-but-absent document (Missouri EPG 236.4.6.2, NYESD Appendices A and B and
+  Schedule A) or with the image-only system inventory (Federal Way).
+- The first draft run returned only 3 checklist facts for Missouri and NYESD; the size is
+  now validated in code and a short list is sent back for a retry (DECISIONS F4).
