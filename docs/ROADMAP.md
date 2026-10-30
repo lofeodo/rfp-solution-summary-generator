@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S9 done
-    class S3,S4,S11 ready
+    class S0,S1,S2,S9,S11 done
+    class S3,S4 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S9 (green). Ready now, all dependencies
-done (amber): S3, S4, S11, which may run in parallel with each other. Update the two
+**Progress (2026-10-30):** done S0, S1, S2, S9, S11 (green). Ready now, all dependencies
+done (amber): S3, S4, which may run in parallel with each other. Update the two
 `class` lines in the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
@@ -650,7 +650,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S11. Gold labels
-- **Status:** todo
+- **Status:** done
 - **Goal:** `evals/gold/`: for each of the four RFPs, gold requirements (text, type,
   strictness, quote) and a problem-statement checklist of 8 to 12 must-mention facts,
   drafted by Claude from the parsed text and hand-corrected; record the fraction of
@@ -658,10 +658,93 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   the known parsing miss is visible. A labelling script and a README on the format.
 - **Depends on:** S2
 - **Parallel with:** S1, S3 to S10
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** wait for S2 and verify gold quotes against
+    its parsed text (S2 merged before implementation started); drafts come from the
+    configured judge (`anthropic:claude-sonnet-5-5`) through a labelling script; the agent
+    corrects every drafted item against the full text and the author spot-checks the diff
+    in the PR; **gold is core-only**: requirements that shape the solution (functional,
+    technical, security_compliance, timeline, budget_pricing, submission; legal_contractual
+    only when it constrains the solution), about 25 to 50 per RFP, generic legal
+    boilerplate excluded. Consequence for S12: recall is measured against gold, precision
+    by a judge (an extracted boilerplate clause is not a false positive).
+  - **Branch:** `step-11-gold-labels` off `core` (worktree); PR into `core`.
+  - **Format (`evals/gold/schema.py`):** `GoldSet(rfp, source_pdf, drafted_with,
+    drafted_at, requirements, checklist, notes)`; `GoldRequirement(id GR001, text, type,
+    strictness, quote, page, section, source, quote_verifiable, note)`;
+    `GoldChecklistItem(id GC01, fact, quote, page, source, quote_verifiable, note)`;
+    `source` = draft | corrected | hand. Reuses the pipeline enums; own ID prefixes so gold
+    and pipeline IDs never collide; no chunk IDs (gold must survive re-chunking).
+  - **Quote matching (`evals/gold/textmatch.py`):** `normalise` (NFKC, quote and dash
+    style, `<br>`, markdown markers and pipes, whitespace, case) applied to both sides;
+    `find_quote`. S12 reuses it.
+  - **Script (`python -m evals.gold.label`):** `draft` (S2 parse, pages joined with
+    `[page N]` markers, two judge calls via S1's `structured_call` with prompts
+    `gold_requirements` and `gold_checklist`, items whose quote is not in the text are
+    dropped and reported, writes `<rfp>.draft.json`), `init` (draft to `<rfp>.json`,
+    appends `<rfp>.hand.json` items, refuses to overwrite), `diff` (draft vs final per
+    field; corrected fraction = (edited + removed) / drafted, additions counted
+    separately), `check` (every verifiable quote is in the parsed text, checklist has 8
+    to 12 items).
+  - **Federal Way p5:** the ERP environment table is an image; labelled by hand from the
+    page render in `federal_way.hand.json` with `quote_verifiable=false`.
+  - **Tests (`tests/test_gold.py`):** schema, quote matching, draft with the scripted fake
+    model, init, diff, and a check over every committed final gold file (parses the PDF).
+  - **Docs:** `evals/gold/README.md` (format, workflow, scope rule, correction table),
+    DECISIONS D23, PROMPTS design notes for both prompts, ASSUMPTIONS, TIMELOG, README.
+- **What was done:** (branch `step-11-gold-labels`, PR into `core`)
+  - `evals/gold/schema.py`: `GoldSet`, `GoldRequirement` (`GR001`), `GoldChecklistItem`
+    (`GC01`), `GoldSource` (draft, corrected, hand), unique-ID validator,
+    `checklist_size_ok()` (8 to 12). Pipeline enums reused; `rfp_agent/schemas.py`
+    unchanged.
+  - `evals/gold/textmatch.py`: `normalise` (NFKC, quote and dash style, any HTML tag,
+    markdown markers and pipes, whitespace, case) and `find_quote`, for S12 to reuse.
+  - `evals/gold/label.py` (`python -m evals.gold.label`): `draft` (S2 parse, `[page N]`
+    markers, two `structured_call`s on the judge with `DRAFT_MAX_TOKENS=32000` and a
+    600 s timeout, drops items whose quote is not in the text), `init` (draft to final,
+    appends `<rfp>.hand.json` with fresh IDs, refuses to overwrite), `diff` (per-field
+    draft vs final, corrected fraction = (edited + removed) / drafted), `check` (quotes
+    and checklist size; exit 1 on failure). Prompts load from this checkout's `prompts/`.
+  - Prompts `prompts/gold_requirements.md` and `prompts/gold_checklist.md`.
+  - Gold data: `<rfp>.draft.json` (untouched Claude Sonnet 5.5 drafts) and `<rfp>.json`
+    (final) for missouri, NYESD, colfax, federal_way; `federal_way.hand.json` (8 labels
+    for the page 5 image table, `quote_verifiable=false`). Final counts: 71, 54, 63, 54
+    requirements; 12 checklist facts each. Corrected fraction 19%, 26%, 20%, 21%;
+    almost all removals for scope (table in `evals/gold/README.md`). Drafting cost about
+    $1.6 including the failed and repeated runs.
+  - `evals/gold/README.md` (format, workflow, scope, Federal Way exception, correction
+    table and what the human pass changed).
+  - Tests: `tests/test_gold.py` (schema, quote matching, draft with the scripted fake
+    model incl. short-checklist retry, init, diff, unverified quotes, and a check of every
+    committed final file against the parsed PDF).
+  - Shared files: `pyproject.toml` (pytest `pythonpath` and ruff `src` gain `.` so
+    `evals` imports), `README.md` (gold labels section), `prompts/README.md` (two rows).
+  - Docs: DECISIONS D23, F4, F5; PROMPTS design notes and changelog; ASSUMPTIONS (gold
+    scope, quotes tied to S2 text); TIMELOG.
 - **Deviations from plan:**
+  - S1 was already merged, so the script reuses `structured_call` and `load_prompt`
+    instead of a local prompt loader. `load_prompt` gets an explicit `prompts_dir`
+    because the editable install points at the main checkout.
+  - The first run returned 3 checklist facts for Missouri and NYESD (F4); a validator now
+    enforces 8 to 12 through the retry loop, and both RFPs were redrafted. The NYESD
+    redraft hit the 16,000-token cap (F5); the drafting cap is 32,000.
+  - `normalise` strips every HTML tag, not only `<br>`: NYESD and Missouri quotes sit
+    next to `<u>` and `<mark>` tags left by the parser.
+  - Corrections were applied with a throwaway script from a per-RFP spec (remove, edit,
+    add); the committed draft-vs-final diff is the record, so the script is not kept.
+  - Scope rulings applied consistently across RFPs: standard state certifications and
+    affidavits, procurement-conduct and contact rules, public-records clauses, late-
+    submission consequences and post-award compliance reporting are out; diversity
+    participation goals, insurance amounts, deliverable ownership, key-personnel and
+    subcontracting limits are in.
 - **Open issues:**
+  - Gold was corrected by the coding agent, not the author; the author spot-checks the
+    diff in this PR. Any author edits should keep `source=corrected` and rerun `diff`.
+  - S12 must judge precision per extracted item (gold is core-only) and should treat
+    `quote_verifiable=false` items as recall the pipeline cannot reach without S4's VLM.
+  - Colfax's Attachment D notification window conflicts (30 days p14 vs 15 days p19);
+    noted in `colfax.json`, out of gold scope, a good ambiguity test for S5.
+  - `tests/test_gold.py` parses all four PDFs for the committed-gold check (about 25 s).
 
 ### S12. Evaluation harness
 - **Status:** todo

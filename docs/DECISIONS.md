@@ -320,6 +320,27 @@ the most important gap in that RFP.
 Evidence: Colfax A-D present, E-G absent; Missouri Exhibits absent; Federal Way Exhibits
 present (tests).
 
+### D23. Gold labels: core-only scope, Claude drafts, agent corrects, diff is the record
+Context: S12 needs reference requirements and problem-statement facts for four RFPs.
+Hand-labelling ~250 requirements from scratch would take most of a day; an unchecked model
+draft would grade the pipeline against another model's opinion.
+Options: exhaustive gold (every shall-sentence, boilerplate tagged); core-only gold;
+judge-only evaluation with no gold.
+Choice: core-only gold (author decision): requirements that change how a bidder designs,
+staffs, prices, schedules or submits; generic contract boilerplate, standard state
+certifications and post-award compliance reporting are out. Claude Sonnet 5.5 drafts
+from S2's parsed text (pages marked `[page N]`), items whose quote is not in the text are
+dropped by code, the coding agent corrects every item against the full text, the author
+spot-checks the diff in the PR. The untouched draft is committed next to the final file.
+Gold has its own IDs (`GR`, `GC`) and no chunk IDs, so it survives re-chunking.
+Why: recall against a core set measures what matters for the solution; precision against
+a core set would punish correct extraction of boilerplate, so S12 judges precision per
+item instead. Keeping the draft makes the human contribution measurable rather than
+asserted.
+Evidence: 19 to 26% of drafted requirements corrected per RFP, almost all removals for
+scope; 5 type or strictness edits in 265 drafted items; 0 drafted quotes failed
+verification (evals/gold/README.md).
+
 ---
 
 ## Part 2 — Failure modes hit
@@ -366,3 +387,24 @@ Cause:     the layout model merged the header with the heading below into one bo
 Fix:       strip a repeated header as a prefix of a box that starts in the top band, and
            strip header-classed boxes whose text is a fragment of a repeated header.
 Before/after: 3 pages with the header to 0; other documents' word counts unchanged.
+
+### F4. Judge returned 3 checklist facts instead of 8 to 12
+Where:     S11 `gold_checklist` prompt, Missouri and NYESD (first draft run).
+Observed:  3 facts each (who, need, goal) although the prompt asks for 8 to 12; Colfax
+           and Federal Way returned 12.
+Cause:     the count was only an instruction; nothing in the schema or code enforced it, so
+           structured_call accepted the short list.
+Fix:       a field validator on the draft model (not minItems in the JSON schema, which
+           provider structured output supports unevenly) rejects a list outside 8 to 12;
+           structured_call feeds the error back and retries. Test added.
+Before/after: 3 to 12 facts for Missouri and NYESD on redraft.
+
+### F5. NYESD requirements draft truncated at 16,000 output tokens
+Where:     S11 `gold_requirements` on NYESD (redraft), Claude Sonnet 5.5.
+Observed:  `StructuredOutputError: output truncated by the token cap; not retrying`.
+Cause:     the longest RFP (10k words) plus adaptive thinking, which counts toward
+           max_tokens, exceeded 16,000.
+Fix:       drafting cap raised to 32,000 with a 600 s timeout (drafting only; pipeline
+           settings unchanged).
+Before/after: failed to 61 requirements drafted.
+
