@@ -45,6 +45,19 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - Section IDs number sections in document order; `S5` is the fifth section found, not
   the RFP's own "Section 5". The section title carries the RFP's own numbering.
 
+## Problem statement
+
+- Every chunk is summarised; the model decides relevance (no code-side skipping). A
+  chunk marked irrelevant cannot be cited by the synthesis, so an over-strict stage one
+  loses facts silently; the prompt errs on the generous side (D28).
+- A fact is something a cited chunk states; anything derived is labelled an inference.
+  The split is the model's; S12's grounding judge checks it.
+- The full-text baseline uses the same synthesis prompt over every chunk's own text with
+  the same chunk labels, so the only difference from the hierarchical path is the
+  evidence. It assumes the document fits one call (true for the four RFPs).
+- Stage-one calls run four at a time by default (`RFP_LLM_CONCURRENCY`); the provider's
+  rate limits are assumed to allow that.
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do
