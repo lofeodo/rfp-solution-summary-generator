@@ -41,6 +41,11 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - Default generator `deepseek-flash` (DeepSeek V4.1 Flash) and judge
   `claude-sonnet-5-5`. The pricing table uses DeepSeek's peak-hour rates as an upper
   bound; off-peak is half, so reported DeepSeek cost may overstate actual spend.
+- Cache-write tokens are costed at the normal input rate. Anthropic bills them at
+  1.25x, so Claude cost is slightly under-counted on calls that write the cache;
+  DeepSeek has no cache-write surcharge.
+- DeepSeek runs with thinking mode off by default (`RFP_DEEPSEEK_THINKING`); its API
+  default is on. Whether thinking improves output quality is measured in S13.
 
 ## Scope
 

@@ -217,6 +217,58 @@ score a run with a bad citation and count it. A golden file makes any render cha
 show up as a reviewable diff.
 Evidence: `tests/fixtures/summary_sample.md`.
 
+### D17. Structured output: provider-native mode inside a code-owned retry loop
+Context: every agent emits a Pydantic schema; providers differ in how they enforce one.
+DeepSeek silently turns JSON-schema mode into tool calling, returns `parsed=None` with no
+error when the model makes no tool call, and in thinking mode (its default) rejects forced
+tool choice. Current Claude models reject forced tool choice but support native JSON-schema
+output.
+Options: provider-native `with_structured_output` per provider; one code-side path (schema
+in the prompt, parse JSON text in code) for every provider.
+Choice: provider-native (author decision), method picked per model by
+`structured_method`: Anthropic `json_schema`; DeepSeek forced tool calling with thinking
+off (default), JSON mode with the schema in the prompt when thinking is on. Around it,
+code owns the loop: on a validation error or missing output the model's reply and the
+error go back into the conversation (as tool results when the reply made tool calls),
+bounded by `RFP_MAX_STRUCTURED_RETRIES`; a reply truncated by the output cap is not
+retried; exhaustion raises with every attempt.
+Why: native modes give the strongest guarantee each provider offers (forced tool calling
+and Claude's JSON-schema output rarely fail validation), while the loop gives one uniform
+failure contract for every agent. `extra="forbid"` on the schemas means hallucinated
+fields reach the loop as errors instead of being dropped.
+Evidence: live smoke tests on DeepSeek Flash pass with thinking off (389 in / 80 out
+tokens, 0.9 s) and on (251 in / 115 out, 1.4 s), no retries; unit tests cover every retry
+path. Thinking on vs off quality is open for S13.
+
+### D18. Observability recording: explicit recorder in a context variable
+Context: per-node tokens, latency and cost must land in a local JSON run log without
+threading a logger through every agent and graph state.
+Options: a LangChain callback that aggregates usage by `langgraph_node`; an explicit
+recorder that `structured_call` writes to.
+Choice: `RunRecorder` holds the `RunLog`; `RunRecorder.activate()` puts it in a context
+variable for the duration of a run, and `structured_call` and `load_prompt` record into
+whichever recorder is active. One `NodeMetrics` per logical call (retries summed into it,
+recorded on failure too), aggregated per node in code. Langfuse rides alongside as a
+LangChain callback, built only when both keys are set.
+Why: explicit recording is testable without a graph, keeps retries and validation
+failures attached to the call that caused them, and does not depend on callback
+propagation details. Per-call entries keep the latency distribution visible for the eval
+tables and the UI. Langfuse is lazy-imported and its trace-URL lookup is guarded because
+without keys it raises.
+Evidence: unit tests write and re-read the run log; live smoke test writes one.
+
+### D19. Sampling and cost settings per provider
+Context: one temperature setting for every provider; Claude Sonnet 5.5 rejects a
+non-default temperature (LangChain raises before sending), DeepSeek accepts one.
+Choice: the factory sends `RFP_TEMPERATURE` to every provider except Anthropic, which runs
+at its default with adaptive thinking left at the model default. Cost is an upper bound:
+DeepSeek peak rates, cache reads at the cached rate, cache writes at the input rate,
+unknown models cost 0 with one warning (author decision).
+Why: a judge must run with whatever sampling its model allows; determinism for the
+generator comes from temperature 0 on DeepSeek. A clock-dependent DeepSeek price would make
+the same run cost different amounts depending on when it ran, which muddies eval tables.
+Evidence: factory unit tests; live smoke test cost matches the table.
+
 ---
 
 ## Part 2 — Failure modes hit
@@ -232,4 +284,12 @@ Fix:       what changed (link the prompt changelog line or commit)
 Before/after: metric, if one exists
 ```
 
-(None yet. The first pipeline run on `inputs/rfp_brief.pdf` starts this list.)
+### F1. DeepSeek thinking mode rejects forced tool choice
+Where: `structured_call` on `deepseek:deepseek-flash`, S1 live smoke test.
+Observed: `400 - Thinking mode does not support this tool_choice`.
+Cause: thinking mode is on by default for DeepSeek's current models, and LangChain's
+tool-calling `with_structured_output` forces the tool.
+Fix: `RFP_DEEPSEEK_THINKING` (default off) sets `extra_body.thinking`; with thinking off
+the forced tool call works, with thinking on `structured_call` switches DeepSeek to JSON
+mode with the schema in the prompt (D17).
+Before/after: live smoke test failed, then passed in both modes.
