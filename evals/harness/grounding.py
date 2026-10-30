@@ -96,13 +96,15 @@ def missing_entities(text: str, source: str) -> list[str]:
 # --------------------------------------------------------------------------------------
 
 
-def _claim_items(output: str, prefix: str, claims: Iterable[Claim]) -> list[GroundingItem]:
+def _claim_items(
+    output: str, prefix: str, claims: Iterable[Claim], kind: str | None = None
+) -> list[GroundingItem]:
     return [
         GroundingItem(
             where=f"{prefix}[{n}]",
             output=output,  # type: ignore[arg-type]
             text=c.text,
-            kind=c.kind.value,
+            kind=kind or c.kind.value,
             cited=list(c.chunk_ids),
         )
         for n, c in enumerate(claims)
@@ -116,7 +118,11 @@ def collect_items(run: EvalRun) -> list[GroundingItem]:
         items += _claim_items("problem", f"problem.{name}", getattr(s.problem_statement, name))
     for comp in s.solution.components:
         items += _claim_items("solution", f"solution.{comp.id}.claims", comp.claims)
-    items += _claim_items("solution", "solution.assumptions", s.solution.assumptions)
+    # Assumptions are positions the bidder takes where the RFP is silent or ambiguous;
+    # they are judged on the facts they state and on whether the gap is real.
+    items += _claim_items(
+        "solution", "solution.assumptions", s.solution.assumptions, kind="assumption"
+    )
     for k in s.risks.risks:
         items.append(
             GroundingItem(
@@ -200,7 +206,9 @@ def judge_grounding(run: EvalRun, items: list[GroundingItem], judge: Judge) -> N
         for v in answer or []:
             it = by_id[v.id]
             it.verdict = v.verdict  # type: ignore[assignment]
-            it.reasonable_inference = v.reasonable_inference if it.kind == "inference" else None
+            it.reasonable_inference = (
+                v.reasonable_inference if it.kind in ("inference", "assumption") else None
+            )
             it.reason = v.reason
 
 

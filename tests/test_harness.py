@@ -126,7 +126,8 @@ def judge_reply(messages: list[BaseMessage]):
             },
         )  # fmt: skip
     if "review the risk register" in p:
-        risks = ids(r"^(K\d{2}) \[", block(p, "risks"))
+        risks = ids(r"^(K\d{2}) ", block(p, "risks"))
+        assert "severity" not in block(p, "risks")  # levels hidden from the judge
         findings = ids(r"^(F\d+) \(", block(p, "findings"))
         return tool_call_msg(
             "RiskVerdicts",
@@ -293,7 +294,12 @@ def test_grounding_verdicts_fill_every_cited_item(fw_judged):
     assert sum(t.judged for t in tallies.values()) == len(cited)
     assert sum(t.unsupported for t in tallies.values()) == 1  # only I000
     assert tallies["problem"].unsupported_claims == 1
-    assert all(i.reasonable_inference is None for i in cited if i.kind != "inference")
+    assert all(
+        i.reasonable_inference is None for i in cited if i.kind in ("fact", "risk")
+    )
+    assumptions = [i for i in cited if i.where.startswith("solution.assumptions")]
+    assert assumptions and all(i.kind == "assumption" for i in assumptions)
+    assert all(i.reasonable_inference is True for i in assumptions)
 
 
 def test_checklist_solution_and_risk_judges(fw_judged):

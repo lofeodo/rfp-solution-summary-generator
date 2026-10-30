@@ -102,7 +102,7 @@ class GroundingItem(ScoreModel):
     where: str = Field(description="e.g. problem.goal[0], solution.C01.claims[0], risks.K01")
     output: Literal["problem", "solution", "risks"]
     text: str
-    kind: str = Field(description="fact | inference | risk")
+    kind: str = Field(description="fact | inference | assumption | risk")
     cited: list[str] = Field(default_factory=list, description="Chunk and requirement IDs")
     dangling: list[str] = Field(default_factory=list, description="Cited IDs that do not exist")
     missing_entities: list[str] = Field(

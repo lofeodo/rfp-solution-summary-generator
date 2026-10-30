@@ -380,9 +380,10 @@ def score_risks(run: EvalRun, judge: Judge | None) -> RiskScores:
     blocks = []
     for k in risks:
         cites = "".join(f"\n    {_req_line(by_id[r])}" for r in k.requirement_ids if r in by_id)
+        # The pipeline's levels and its justification (which argues for them) are not
+        # shown, so the judge rates from the description instead of anchoring (S12 tune).
         blocks.append(
-            f"{k.id} [severity {k.severity.value}, likelihood {k.likelihood.value}] {k.title}\n"
-            f"  {k.description}\n  Justification: {k.justification}"
+            f"{k.id} {k.title}\n  {k.description}"
             + (f"\n  Mitigation: {k.mitigation}" if k.mitigation else "")
             + (f"\n  Cites:{cites}" if cites else "")
         )
