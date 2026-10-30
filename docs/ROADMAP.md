@@ -138,7 +138,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 ## 2. Core steps
 
 ### S0. Scaffold
-- **Status:** in progress
+- **Status:** done
 - **Goal:** the common foundation every other step builds on: repo layout, conda env and
   pinned `requirements.txt`, `config.py` (provider/model single setting, paths, pricing
   table stub), Pydantic v2 `schemas.py` for every pipeline artefact (ParsedDocument with
@@ -194,9 +194,43 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `tests/test_config.py` (defaults, model spec parsing, env override, pricing lookup).
   - **Docs:** DECISIONS D13 to D15 (model ids and pricing source, schema conventions,
     install and config mechanics), TIMELOG row, ASSUMPTIONS line on peak pricing.
-- **What was done:**
+- **What was done:** (branch `step-00-scaffold`, PR into `core`)
+  - Conda env `rfp-solution-gen` (Python 3.12) created; `requirements.txt` pins
+    langgraph 1.2.18, langchain 1.4.7, langchain-core 1.7.3, langchain-deepseek 1.1.1,
+    langchain-anthropic 1.7.7, langfuse 5.0.4, pymupdf4llm 1.28.2, pymupdf 1.28.2,
+    pydantic 2.14.2, pydantic-settings 2.16.2, python-dotenv 1.2.4, typer 0.27.3,
+    rich 15.0.0, pytest 9.2.0, ruff 0.17.3, and `-e .` (editable install of the package).
+  - `pyproject.toml`: setuptools `src/` layout; ruff (line 100, py312, E/F/I/UP/B);
+    pytest (`testpaths=tests`, `llm` marker, `addopts=-m 'not llm'`).
+  - `src/rfp_agent/config.py`: `Settings` (pydantic-settings, `RFP_` prefix, reads
+    `REPO_ROOT/.env`): `model`, `judge_model`, `temperature`, `max_structured_retries`,
+    `full_text_problem`, `single_call_extraction`, provider keys and Langfuse keys under
+    their unprefixed names; `generator`/`judge` properties; `langfuse_enabled`;
+    `split_model_spec()`; path constants; `ModelPricing`, `PRICING`, `pricing_for()`;
+    `get_settings()` (lru_cache).
+  - `src/rfp_agent/schemas.py`: as planned. Extra helpers beyond the plan:
+    `STRICTNESS_RANK` (for S5's keep-the-stricter merge), `SplitDocument.chunk_by_id()`,
+    `RequirementsOutput.requirement_ids()/mandatory()`, `ProblemStatement.claims()`,
+    `ParsedDocument.page_count`, `RunTotals` model returned by `RunLog.totals()`.
+  - Empty packages `parsing/`, `splitting/`, `agents/`, `render/`; `prompts/README.md`;
+    `inputs/rfp_brief.pdf`; `runs/samples/.gitkeep`; `.env.example`;
+    `.github/workflows/ci.yml` (ruff check, ruff format --check, pytest on 3.12);
+    README skeleton with the pipeline diagram and quickstart.
+  - Tests: `tests/test_schemas.py` (10 tests incl. 9 parametrised bad-ID cases) and
+    `tests/test_config.py`; 29 pass, ruff clean. Shared files touched: all of them
+    (this is the scaffold).
 - **Deviations from plan:**
+  - `pymupdf4llm==2.0` and `pymupdf==2.0` on PyPI are empty placeholder releases
+    (dist-info only, no modules). Pinned both to 1.28.2 and added `pymupdf` as a
+    direct dependency since S2 will call it for links and images.
+  - Status set to `done` in the same commit as the docs, before the PR is opened,
+    to avoid a second docs-only commit on the branch.
 - **Open issues:**
+  - `langchain-openai` arrives transitively via `langchain-deepseek`; harmless, not pinned.
+  - langchain/langgraph 1.x APIs: S1 must verify `init_chat_model("deepseek:...")`
+    resolves to `langchain_deepseek` in these versions.
+  - DeepSeek peak vs off-peak pricing: `PRICING` holds peak; S1 may add a time-aware
+    rate if cost accuracy matters for the eval tables.
 
 ### S1. LLM layer and observability core
 - **Status:** todo

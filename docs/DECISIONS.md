@@ -152,6 +152,50 @@ Why: the roadmap's dependency table lets independent steps run concurrently with
 file conflicts; the docs folder keeps the reviewer-facing files in one place.
 Evidence: n/a.
 
+### D13. Model ids and pricing source
+Context: the scaffold fixes the default generator and judge and a pricing table for
+cost accounting. DeepSeek's documented API ids changed: `deepseek-chat` is no longer on
+the pricing page; the current ids are `deepseek-flash` (V4.1 Flash) and `deepseek-v4-pro`.
+Options: deepseek-flash vs deepseek-v4-pro as generator; claude-opus-5-5 vs
+claude-sonnet-5-5 as judge; peak vs off-peak DeepSeek rates in the table.
+Choice: `deepseek:deepseek-flash` generator, `anthropic:claude-sonnet-5-5` judge (author
+decisions, 2026-10-30); DeepSeek peak rates in `PRICING` as the upper bound, Claude
+first-party rates (opus 5.5 $4/$20, sonnet 5.5 $2/$10, haiku 5.5 $0.10/$0.50 per 1M).
+Why: Flash is the cheapest model with a 1M context, enough for structured extraction over
+documents that fit one window; the model is one env var away if evals show it is too
+weak. Sonnet halves judge cost against Opus and keeps the judge in a different family
+from the generator (D3). Peak pricing never under-reports cost.
+Evidence: none yet; S12 reads the run logs.
+
+### D14. Schema conventions
+Context: `schemas.py` is the contract between every step and the thing most likely to be
+changed live in the follow-up interview.
+Choice: every model forbids extra fields; closed sets are `StrEnum`s; IDs are
+regex-checked strings (`S3.2`, `R001`, `A01`, `G01`, `C01`, `K01`); `Claim` is the one
+citation unit (`text`, `kind` fact|inference, `chunk_ids` at least one); `Requirement`
+carries the verbatim quote, `quote_verified`, `merged_from` and `conflicts_with`;
+`Coverage` is a separate model so code, not the LLM, fills it; `RunLog.totals()` sums
+per-node metrics. Requirement types: 8 values; strictness: mandatory/desired/optional;
+risk severity and likelihood: low/medium/high.
+Why: `extra="forbid"` makes a hallucinated field a validation error that the
+structured-call retry can feed back, instead of silent data loss. Regex IDs make a bad
+citation fail at parse time. Three-level scales are easier for a judge to agree with
+than numeric ones. Adding a requirement type is a one-line enum change, which is the
+planned live-change rehearsal.
+Evidence: n/a.
+
+### D15. Install and config mechanics
+Context: one env for the author, reviewers and CI; config must be one setting for
+provider and model.
+Choice: `requirements.txt` pins every direct dependency and ends with `-e .`, so one
+`pip install -r requirements.txt` yields an importable `rfp_agent`; `pyproject.toml`
+holds no dependency list. Config is pydantic-settings with an `RFP_` prefix for app
+settings and the providers' own names for keys; the model spec is `provider:model_id`,
+the format LangChain's `init_chat_model` accepts.
+Why: a single install command and a single source of pins; no `PYTHONPATH` tricks.
+pydantic-settings keeps validation (ranges, types) in the same library as the schemas.
+Evidence: CI runs the same install.
+
 ---
 
 ## Part 2 — Failure modes hit
