@@ -699,7 +699,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S6. Problem statement (hierarchical)
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `agents/problem.py`: stage one summarises each chunk ("what is being built,
   for whom, why, under what constraints") tagged with its chunk ID, near-empty for
   irrelevant chunks; stage two synthesises client situation, goal, success criteria,
@@ -708,7 +708,65 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   that cited IDs exist. Prompts `prompts/problem_chunk.md`, `prompts/problem_synthesis.md`.
 - **Depends on:** S1, S3
 - **Parallel with:** S4, S5, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** stage one is **one call per chunk, run
+    concurrently** in a thread pool (new setting `RFP_LLM_CONCURRENCY`, default 4); code
+    sets the chunk ID on each summary, so the model never writes a citation in stage one.
+    In synthesis a claim citing a chunk ID that was not among the summaries shown is
+    caught by a **validator on the output schema**, so `structured_call` feeds the bad IDs
+    back and retries (the S11 F4 pattern); when the budget is exhausted the node raises
+    and the run log shows why, no silent drops. The same validator rejects an **empty
+    claim list** (an RFP always has a situation, goal, success criteria and constraints);
+    the prompt asks for 3 to 8 claims per list but the upper bound is not enforced.
+    A **`.gitattributes`** forces LF on `prompts/` and `tests/fixtures/` (S3's open
+    issue: CRLF checkouts on Windows broke one S4 test and made prompt hashes differ by OS).
+  - **Taken without asking:** every chunk is summarised, no code-side skipping (tiny
+    front-matter chunks such as "Issued: August 8, 2025" carry facts); synthesis sees only
+    summaries marked relevant, in document order, each with its chunk ID, section path and
+    pages; the **full-text baseline** (`Settings.full_text_problem`) sends every chunk's
+    own text (overlap stripped with `own_text`) with the same IDs through the same
+    synthesis prompt, so the evidence is the only variable in the S13 comparison;
+    `problem_synthesis.md` therefore takes `{{evidence}}` plus a one-line
+    `{{evidence_kind}}`; a chunk whose stage-one call fails after its retries is kept as
+    `relevant=False` with the error recorded on the summary (one flaky call must not kill a
+    70-call stage), while a synthesis failure raises; the recorder and the prompt are
+    resolved in the main thread before dispatch because contextvars do not cross
+    `ThreadPoolExecutor`; node names `problem_chunk`, `problem_synthesis`,
+    `problem_full_text` so per-node cost is visible.
+  - **Branch:** `step-06-problem` off `core` as a worktree; one commit per unit; PR into
+    `core`.
+  - **`schemas.py` (shared, Problem statement section):** `ChunkSummaryDraft(summary,
+    relevant)` as the stage-one LLM contract; `ChunkSummary` gains `error: str | None`.
+    `ProblemStatement` itself stays permissive (S9 assembles empty ones); the validators
+    live on a per-call subclass built with `pydantic.create_model` from the allowed IDs.
+  - **`config.py` (shared):** `llm_concurrency` (`RFP_LLM_CONCURRENCY`, default 4);
+    `.env.example` and the README table gain the row.
+  - **`agents/problem.py`:** `render_chunk_prompt`, `summarise_chunk` (one call, node
+    `problem_chunk`), `summarise_chunks` (thread pool, document order preserved),
+    `format_evidence` (relevant summaries) and `format_full_text` (own text of every
+    chunk), `problem_schema(allowed_ids)`, `synthesise` (one call, returns a plain
+    `ProblemStatement`), `build_problem_statement(split, *, title, model, settings,
+    recorder, config, full_text=None) -> ProblemResult(statement, chunk_summaries, mode)`;
+    debug CLI `python -m rfp_agent.agents.problem <pdf> [--full-text] [--out]`.
+  - **Prompts:** `prompts/problem_chunk.md` (what is being built, for whom, why, under
+    what constraints; keep every number, date, amount, name and referenced document;
+    `relevant=false` for contents, signature blocks and boilerplate that would apply to
+    any contract) and `prompts/problem_synthesis.md` (four lists, one sentence per claim
+    with the concrete value, `fact` vs `inference`, cite only IDs present in the evidence).
+  - **Tests (`tests/test_problem.py`, fake model):** chunk prompt content and
+    placeholders; chunk ID set by code; irrelevant chunk; failed chunk kept with error;
+    concurrency preserves order; evidence lists only relevant summaries in order with
+    section path; unknown ID rejected then accepted on retry; exhaustion raises; empty list
+    rejected; full-text evidence has every ID and no overlap sentence; settings flag picks
+    the mode; nodes recorded on the recorder. `tests/test_problem_live.py` (`-m llm`) on
+    Missouri. The CRLF fix makes the failing S4 test pass on Windows.
+  - **Live run:** both modes on the four RFPs once each; table of relevant chunks, claims
+    per list, inferences, retries, cost and latency; spot check of each statement against
+    the gold checklist by eye (S12 does it properly).
+  - **Docs:** DECISIONS D28 (stage-one IDs set by code, citations checked by a schema
+    validator inside the retry loop, concurrency) plus any failure mode hit; PROMPTS design
+    notes and changelog; ASSUMPTIONS; TIMELOG; README problem-statement section, config
+    row, layout line.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
