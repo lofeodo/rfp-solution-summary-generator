@@ -361,13 +361,46 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S9. JSON assembly and markdown renderer
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `render/`: assemble the final `SolutionSummary` JSON (source of truth) and
   render markdown from it in code with citations shown as "section title, page" and
   requirement quotes inline. Golden-file tests from fixture JSON. No LLM.
 - **Depends on:** S0
 - **Parallel with:** S1 to S8, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** citations render as
+    `(Section title, p. 4 [S3.2])`, with the chunk ID kept so the markdown traces back to
+    the JSON and UI; `assemble()` raises `CitationError` on dangling IDs by default
+    (`strict=False` opts out) and the renderer falls back to the raw ID so it never
+    crashes; requirements grouped by type, verbatim quote as a blockquote; risks as an
+    overview table sorted by severity then likelihood, then per-risk details.
+  - **Branch:** `step-09-render` off `core` as a worktree; one commit per unit; PR into
+    `core`. No schema change, no new dependency.
+  - **`render/assemble.py`:** `assemble(*, run_id, model, parsed, split, requirements,
+    problem_statement, solution, risks, generated_at=None, strict=True)` builds
+    `ChunkRef`s from `SplitDocument` (owning section title, chunk pages), copies
+    `source_path`, `title`, `referenced_documents`, `flags` from `ParsedDocument`.
+    `dangling_citations(summary)` walks every citation site (claims, requirement
+    `chunk_ids` and `conflicts_with`, ambiguities, gaps, component `requirement_ids`,
+    `uncovered_requirement_ids`, risk IDs) and returns `(location, id)` pairs;
+    `merged_from` is not checked (pre-merge IDs are gone by design). Coverage stays S7's.
+  - **`render/markdown.py`:** `render_markdown(summary)`, pure and deterministic. Order:
+    title and metadata; problem statement (four subsections, claim bullets, inference
+    marked); requirements (count line, one subsection per type present, quote
+    blockquote, merged/conflicts lines, unverified-quote marker, ambiguities, gaps);
+    proposed solution (summary, coverage line and uncovered IDs, components, assumptions);
+    risks (sorted table, then details with why, mitigation, related requirements);
+    referenced documents table; parse flags. Empty sections print "None." so the shape is
+    stable. Citations group chunk IDs that share section title and page range.
+  - **`render/io.py`:** `write_summary(summary, out_dir)` writes `summary.json` and
+    `summary.md`; S10 decides the directory.
+  - **Tests:** `tests/fixtures/summary_sample.json` hand-built to hit every render
+    branch, golden `tests/fixtures/summary_sample.md`, `--update-golden` pytest option in
+    `tests/conftest.py`; tests for determinism, risk sort, unknown-chunk fallback, table
+    escaping, assembler chunk refs and metadata, strict and non-strict dangling
+    citations, file writing. No LLM.
+  - **Docs:** DECISIONS D16 (layout, citation format, strict assembler, golden tests),
+    TIMELOG row, README render section. PROMPTS untouched (no prompt).
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
