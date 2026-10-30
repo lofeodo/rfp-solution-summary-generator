@@ -143,5 +143,82 @@ def requirements(
         console.print(f"\nwrote {out}")
 
 
+@app.command()
+def solution(
+    pdf: Annotated[Path, typer.Argument(exists=True, dir_okay=False, help="RFP PDF")],
+    requirements: Annotated[
+        Path | None,
+        typer.Option("--requirements", "-r", exists=True, help="S5 output JSON (skips S5)"),
+    ] = None,
+    problem: Annotated[
+        Path | None,
+        typer.Option("--problem", "-p", exists=True, help="S6 output JSON (skips S6)"),
+    ] = None,
+    max_iterations: Annotated[
+        int | None, typer.Option("--max-iterations", min=1, help="Rounds, default from settings")
+    ] = None,
+    out: Annotated[Path | None, typer.Option("--out", "-o", help="Write JSON here")] = None,
+) -> None:
+    """Solution generator (S7): generate, check mandatory coverage, revise up to a cap."""
+    from rfp_agent.agents.problem import ProblemResult, build_problem_statement
+    from rfp_agent.agents.requirements import extract_requirements
+    from rfp_agent.agents.solution import build_solution
+    from rfp_agent.parsing import parse_pdf
+    from rfp_agent.schemas import RequirementsOutput
+
+    parsed = parse_pdf(pdf)
+    title = parsed.title or pdf.name
+    recorder = RunRecorder.from_settings(pdf)
+    with recorder.activate(write=False):
+        if requirements is None or problem is None:
+            from rfp_agent.splitting import split_document
+
+            split = split_document(parsed)
+        if requirements is not None:
+            reqs = RequirementsOutput.model_validate_json(requirements.read_text(encoding="utf-8"))
+        else:
+            reqs, _ = extract_requirements(split, title=title, recorder=recorder)
+        if problem is not None:
+            statement = ProblemResult.model_validate_json(
+                problem.read_text(encoding="utf-8")
+            ).statement
+        else:
+            statement = build_problem_statement(split, title=title, recorder=recorder).statement
+        result = build_solution(
+            reqs, statement, title=title, recorder=recorder, max_iterations=max_iterations
+        )
+
+    sol = result.solution
+    console.print(
+        f"[bold]{pdf.name}[/bold]: {len(reqs.requirements)} requirements, "
+        f"{len(sol.components)} components, {result.iterations} round(s), coverage "
+        f"{sol.coverage.mandatory_covered}/{sol.coverage.mandatory_total}"
+    )
+    for r in result.rounds:
+        c = r.coverage
+        console.print(
+            f"  round {r.iteration}: {c.mandatory_covered}/{c.mandatory_total} covered, "
+            f"uncovered {', '.join(c.uncovered_requirement_ids) or '-'}"
+        )
+    print_metrics(recorder)
+    console.print(f"\n[bold]Summary[/bold]\n{sol.summary}")
+    for comp in sol.components:
+        console.print(f"\n[bold]{comp.id}. {comp.title}[/bold] ({', '.join(comp.requirement_ids)})")
+        console.print(comp.description)
+        for claim in comp.claims:
+            console.print(f"  - {claim.text} [{', '.join(claim.chunk_ids)}] ({claim.kind})")
+    console.print("\n[bold]Assumptions[/bold]")
+    for claim in sol.assumptions:
+        console.print(f"- {claim.text} [{', '.join(claim.chunk_ids)}]")
+    if sol.coverage.uncovered_requirement_ids:
+        console.print(
+            f"\n[red]Uncovered:[/red] {', '.join(sol.coverage.uncovered_requirement_ids)}"
+        )
+
+    if out:
+        out.write_text(result.model_dump_json(indent=2), encoding="utf-8")
+        console.print(f"\nwrote {out}")
+
+
 if __name__ == "__main__":
     app()
