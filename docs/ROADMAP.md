@@ -249,7 +249,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S2. PDF parsing (library path)
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `parsing/`: pymupdf4llm to markdown per page with tables kept as markdown
   tables; use the PDF outline when present. Code heuristics flag suspicious pages (low
   word count, large image blocks, broken table rows, fragmented lines) into a
@@ -262,7 +262,35 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   references (Colfax Attachments A to G). Leave a `escalate(page)` hook stub for S4.
 - **Depends on:** S0
 - **Parallel with:** S1, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** a referenced document is `present` only when
+    a matching heading exists and its section body has at least 40 words; the four-RFP
+    tests always run (one session-scoped parse per file, about 45 s); repeated page
+    headers and footers are stripped; `mailto:` links are not recorded.
+  - **Findings that shape the design** (pymupdf4llm 1.28.2): `to_markdown(page_chunks=True)`
+    returns per-page `text` plus layout `page_boxes` (classes text, section-header,
+    list-item, table, picture, page-header, page-footer, each with bbox and char span);
+    no separate tables or images keys. About 10 s per document. Merged-cell tables render
+    as one column with `<br>`-joined cells (Missouri p12, Federal Way p14). Bold URLs split
+    inside table cells (Missouri p6). Real link targets live only in link annotations.
+  - **Branch:** `step-02-pdf-parsing` off `core`; PR into `core`.
+  - **Files:** `parsing/pdf.py` (`parse_pdf`, orchestration), `parsing/normalize.py`
+    (NFC, curly quotes and Unicode spaces to ASCII, ligatures, split-URL join, header and
+    footer strip), `parsing/heuristics.py` (flag thresholds as constants, table blocks,
+    broken-table rules), `parsing/references.py` (hyperlinks from annotations and plain
+    text, Attachment/Appendix/Exhibit/Schedule/Addendum regex, section lookup, `present`),
+    `parsing/quality.py` (`escalate()` stub for S4), `parsing/__main__.py` (debug dump).
+  - **Heuristics:** low word count < 50; picture box >= 25% of page area; broken table =
+    ragged pipe counts or a one-column block with `<br>`-merged cells; fragmented lines =
+    at least 6 lines of <= 2 words making up >= 50% of prose lines.
+  - **Title:** PDF metadata title if most of its words occur on page 1, else the first
+    heading on page 1.
+  - **Tests:** unit tests on literal strings for every rule; four-RFP tests for page,
+    outline and table counts, known flags (Missouri p12, p19, p20; Federal Way p5, p14;
+    NYESD none), image sizes and captions, references (Colfax A to G with E/F/G absent,
+    NYESD Schedule A and Appendix A/B, Missouri Exhibits and the joined MoDOT URL), no
+    curly quotes, header stripped, titles.
+  - **Docs:** DECISIONS D16 to D17, ASSUMPTIONS lines, TIMELOG row, README parsing section.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
