@@ -46,6 +46,7 @@ def test_defaults():
     assert s.llm_concurrency == 4
     assert s.full_text_problem is False
     assert s.single_call_extraction is False
+    assert s.solution_max_iterations == 3
     assert s.generator == ("deepseek", "deepseek-flash")
     assert s.judge == ("anthropic", "claude-sonnet-5-5")
     assert s.langfuse_enabled is False

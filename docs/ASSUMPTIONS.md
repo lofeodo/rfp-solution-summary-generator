@@ -58,6 +58,23 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - Stage-one calls run four at a time by default (`RFP_LLM_CONCURRENCY`); the provider's
   rate limits are assumed to allow that.
 
+## Solution
+
+- The solution generator never sees the RFP text. Its evidence is the problem
+  statement, the requirements, the ambiguities and the gaps, and it may cite only the
+  requirement IDs in that list and the chunk IDs labelled there. A fact the earlier
+  steps did not surface cannot reach the solution except as a labelled assumption.
+- "Mandatory coverage" counts mandatory requirements of every type except `submission`:
+  proposal format, copies, forms and deadlines are shown to the model as context but a
+  solution component cannot address them. Desired and optional requirements are not
+  counted; the prompt asks the model to cite them where the approach meets them.
+- Coverage is cited coverage: a component that lists a requirement ID is taken to meet
+  it. Whether the description actually meets the requirement is a quality question for
+  S12's judge, not something code can check.
+- The revision loop stops at `RFP_SOLUTION_MAX_ITERATIONS` rounds (default 3) or when
+  every in-scope mandatory requirement is cited. What remains uncovered is listed in the
+  output for the risk assessor rather than hidden.
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do

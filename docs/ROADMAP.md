@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S9,S11 done
-    class S7 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S9,S11 done
+    class S8 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S9, S11 (green). Ready
-now, all dependencies done (amber): S7. Update the two `class` lines in
+**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S7, S9, S11 (green). Ready
+now, all dependencies done (amber): S8. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
@@ -1029,7 +1029,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     to expose the flag.
 
 ### S7. Solution generator
-- **Status:** todo
+- **Status:** done
 - **Goal:** `agents/solution.py`: inputs problem statement, requirements with quotes
   and chunk IDs, ambiguities. Output a structured approach whose components cite the
   requirement IDs they address so mandatory coverage is computable by code; factual
@@ -1037,10 +1037,157 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   requirements and lists uncovered ones. Prompt `prompts/solution.md`.
 - **Depends on:** S5, S6
 - **Parallel with:** S4, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** mandatory coverage counts every mandatory
+    requirement **except type `submission`** (page limits, copies, forms are shown to the
+    model as context but a component cannot "address" them); the coverage check is a
+    **LangGraph loop**: generate → code computes coverage → revise with the uncovered IDs
+    fed back while any in-scope mandatory requirement is uncovered, **capped at
+    `RFP_SOLUTION_MAX_ITERATIONS` (default 3)**; requirements go into the prompt as
+    `R012 [mandatory, technical] text (S4.2)` **without the quote** (the text is already a
+    verified one-sentence statement, quotes would double the block); **live run on all
+    four RFPs**, prompt tuned once if a failure mode shows.
+  - **Taken without asking:** no chunk text is sent; the evidence is the problem
+    statement (claims labelled with their chunk IDs), the requirements, the ambiguities
+    and the gaps, and the model may cite only requirement IDs from the list and chunk IDs
+    that appear in that evidence; component IDs `C01…` are assigned by code (D28), so the
+    LLM contract is `SolutionDraft(summary, components: [ComponentDraft(title,
+    description, requirement_ids, claims)], assumptions)`; a per-call subclass built with
+    `create_model` rejects an empty component list, a component with no requirement IDs,
+    an unknown requirement ID or an unknown chunk ID inside the `structured_call` retry
+    loop (the S6 pattern); the revision happens in the same conversation (prompt, reply,
+    feedback, reply, …) so the model sees its own answer; the draft with the fewest
+    uncovered requirements is kept, so a worse revision cannot regress the output; the
+    remaining uncovered IDs are listed in `Coverage` for S8 to turn into risks; node names
+    `solution_generate` (first round) and `solution_revise` (later rounds).
+  - **Branch:** `step-07-solution` off `core` as a worktree; PR into `core`.
+  - **Files:** `schemas.py` (Solution section, S7-owned: `ComponentDraft`,
+    `SolutionDraft`; `Solution`, `SolutionComponent`, `Coverage` unchanged); `config.py`
+    (`solution_max_iterations`) and `.env.example`; `agents/solution.py`;
+    `agents/__main__.py` (`solution` command: `python -m rfp_agent.agents solution <pdf>
+    [--requirements f.json] [--problem f.json] [--max-iterations n] [--out f.json]`,
+    running S5 and S6 first when no JSON is given); `prompts/solution.md`
+    (`{{title}}`, `{{problem}}`, `{{requirements}}`, `{{ambiguities}}`, `{{gaps}}`,
+    instructions first for the prefix cache).
+  - **Pipeline:** `format_problem`, `format_requirements` (mandatory, desired, optional
+    blocks; submission items in a "context, do not address" block), `format_ambiguities`,
+    `format_gaps`, `allowed_chunk_ids` → `build_graph(...)` binds model, settings,
+    recorder, prompt and allowed IDs in closures; state holds messages, latest and best
+    draft, uncovered IDs, iteration and the per-round coverage history; nodes `generate`
+    and `check`, conditional edge to `revise` (feedback lists each uncovered ID with its
+    text) or `END`; `compute_coverage` is a pure function; `build_solution(requirements,
+    problem, *, title, model, settings, recorder, config, max_iterations=None) ->
+    SolutionResult(solution, rounds, iterations)`. Retry exhaustion in any round raises.
+  - **Tests:** fake-model unit tests (prompt placeholders and content, allowed-ID union,
+    coverage scope and order, validator feedback on unknown requirement and chunk IDs,
+    empty components and component without requirements rejected, exhaustion raises,
+    `C01…` numbering, one call when round one covers everything, revise then covered,
+    worse revision discarded, cap from setting and argument, recorder nodes and prompt
+    hash, assembled summary passes `dangling_citations` and renders); a live `llm` test
+    on Missouri; `test_config.py` default.
+  - **Docs:** DECISIONS D32 plus any failure mode hit, PROMPTS note and changelog,
+    ASSUMPTIONS, TIMELOG, README solution section and config row.
+- **What was done:** (branch `step-07-solution`, PR into `core`)
+  - `schemas.py` (shared, Solution section): LLM output contracts `ComponentDraft(title,
+    description, requirement_ids, claims)` and `SolutionDraft(summary, components,
+    assumptions)`. `Solution`, `SolutionComponent`, `Coverage` unchanged.
+  - `config.py` (shared): `solution_max_iterations` (`RFP_SOLUTION_MAX_ITERATIONS`,
+    default 3, `ge=1`); `.env.example` and the README table gain the row.
+  - `agents/solution.py`: `format_problem` (four claim lists, `- text [S1.2] (inference)`),
+    `format_requirements` (Mandatory / Desired / Optional blocks, `ID [strictness, type]
+    text (chunk IDs)`, then "Submission requirements (context, do not address)"),
+    `format_ambiguities`, `format_gaps`, `allowed_chunk_ids` (union of every chunk ID
+    labelled in the inputs), `render_prompt`; `in_scope` and `compute_coverage` (pure:
+    mandatory, type not `submission`, uncovered IDs in list order);
+    `solution_schema(requirement_ids, chunk_ids)` (per-call `SolutionDraft` subclass via
+    `create_model`, validator rejects empty components, a component citing no
+    requirement, unknown requirement IDs, unknown chunk IDs in component claims or
+    assumptions, with messages naming the component index and the IDs);
+    `coverage_feedback` (one line per uncovered requirement with its text);
+    `build_graph` (LangGraph `StateGraph` over a `LoopState` of messages, iteration,
+    latest draft and coverage, best draft and coverage, rounds; nodes `generate`
+    (`structured_call`, node name `solution_generate` on round one, `solution_revise`
+    after, `config` injected by LangGraph so Langfuse nests the rounds), `check` (coverage,
+    best-draft rule: kept when not worse), conditional edge to `revise` (appends the
+    feedback `HumanMessage`) or `END`; model, settings, recorder and the requirement index
+    bound in closures); `to_solution` (numbers `C01…`, folds duplicate IDs);
+    `build_solution(requirements, problem, *, title, model, settings, recorder, config,
+    max_iterations=None) -> SolutionResult(solution, rounds)` with `iterations` as a
+    property. Retry exhaustion in any round raises.
+  - `agents/__main__.py` (shared CLI): `python -m rfp_agent.agents solution <pdf>
+    [-r req.json] [-p problem.json] [--max-iterations n] [-o out.json]`; runs S5 and S6
+    first when the JSON files are not given; prints coverage per round, per-node metrics,
+    summary, components with their requirement IDs and claims, assumptions, uncovered IDs.
+  - `prompts/solution.md`: instructions first (what to return, coverage rule, context
+    block rule, cite-only-shown, no invented facts, F6 tone rule), then title, problem
+    statement, requirements, ambiguities, gaps. Tuned once after the first four-RFP run
+    (F10: assumptions cited `A02`/`G06` as chunk IDs on Colfax and Federal Way).
+  - Tests: `tests/test_solution.py` (23 fake-model tests: prompt placeholders and content,
+    submission block placement, allowed-ID union, scope and coverage arithmetic, feedback
+    text, schema name, five validator rejections, unknown requirement ID fed back then
+    accepted, exhaustion raises, `C01…` numbering with duplicate folding, one call when
+    round one covers everything with recorder nodes and prompt hash, revision in the same
+    conversation with the feedback naming the ID and text, worse revision discarded and
+    best kept, cap from setting and from argument, JSON round trip, assembled summary with
+    no dangling citation rendering through S9); `tests/test_solution_live.py` (`-m llm`,
+    Missouri, runs S5 + S6 + S7). `tests/test_config.py` default. 291 unit tests pass,
+    ruff clean.
+  - Live results, DeepSeek Flash, thinking off, default cap 3, S5 and S6 outputs from one
+    fresh run per RFP (`python -m rfp_agent.agents requirements|problem ... -o`), then the
+    solution twice: on the first prompt and on the tuned prompt. Final rows are the tuned
+    prompt; "in scope" is mandatory minus `submission`; latency is summed call latency.
+
+    | RFP | requirements | in scope | components | rounds | coverage r1 → final | tokens in / out | cost | retries | latency | first prompt |
+    |---|---|---|---|---|---|---|---|---|---|---|
+    | Missouri | 130 | 76 | 9 | 1 | 76/76 | 12.4k / 3.7k | $0.008 | 0 | 20 s | 12 comps, 2 rounds 74 → 76, $0.017, 0 retries |
+    | NYESD | 221 | 103 | 10 | 1 | 103/103 | 18.7k / 4.2k | $0.010 | 0 | 24 s | 10 comps, 1 round 103/103, $0.010, 0 retries |
+    | Colfax | 124 | 50 | 10 | 1 | 50/50 | 11.0k / 3.1k | $0.007 | 0 | 19 s | 10 comps, 2 rounds 46 → 50, $0.015, 1 retry (F10) |
+    | Federal Way | 104 | 39 | 10 | 2 | 38 → 39 | 21.8k / 7.6k | $0.013 | 0 | 34 s | 11 comps, 2 rounds 38 → 39, $0.021, 2 retries (F10, F11) |
+
+    Every citation resolves (the validator guarantees it) and every uncovered requirement
+    was closed by the revision round where one ran. Read by eye: components are concrete
+    (Missouri names the IS-approval gate before the proof of concept, the Oracle 19C
+    default, the EPG 236.4.6.2 rule the generator must encode; Colfax the six Fund Balance
+    modules and the July 1, 2026 go-live; NYESD the two programme tracks; Federal Way the
+    Exhibit A pricing and ten-year cost of ownership); no output mentions "the inputs" or
+    "the evidence"; assumptions resolve the real gaps (Colfax Attachments F and G, Federal
+    Way's absent requirements document, Missouri's "MHTC parameters"). Every requirement a
+    revision round added (Missouri R007, R019; Colfax R011, R013, R050; Federal Way R013) is
+    a procurement-calendar obligation S5 typed `timeline`, which the model then cites from
+    a "procurement schedule" component.
+  - Docs: DECISIONS D32, F10, F11; PROMPTS note and changelog; ASSUMPTIONS solution
+    section; TIMELOG; README solution section, config row, status and layout lines.
+    Shared files touched: `schemas.py`, `config.py`, `.env.example`, `README.md`,
+    `tests/test_config.py`, `agents/__main__.py`.
 - **Deviations from plan:**
+  - Prompt tuned once after the first four-RFP run, as the plan allowed: the assumption
+    rule said "chunk_ids copied from the ambiguity or gap it resolves" and the model
+    copied the ambiguity's own ID on two of four RFPs (F10). The validator caught it
+    both times; the wording fix removed the retry on the rerun.
+  - `SolutionResult.iterations` is a property over `rounds`, not a stored field.
+  - Round-one coverage varies between runs at temperature 0: Missouri needed a revision
+    on the first run (74/76) and none on the rerun (76/76), with the same inputs.
 - **Open issues:**
+  - Scope boundary: proposal-calendar obligations ("questions due by", "finalists must
+    be available on") are typed `timeline` by S5, so they count as mandatory scope and
+    force a "procurement schedule participation" component (Colfax C10, Federal Way C10).
+    Either S5 types them `submission` (the gold prompt's definition would support it) or
+    S7 excludes `timeline` items whose text is about the proposal; S13 decides, with S12
+    judging whether such components are noise.
+  - Assumption lists are long (12 to 13 per RFP) and some restate facts the problem
+    statement already carries; the prompt's "only assumptions that change the design or
+    the price" is applied loosely. A cap or a tighter rule is an S13 experiment.
+  - Coverage is cited coverage: a component that lists an ID is counted as meeting it.
+    S12's judge should sample component / requirement pairs for "actually addressed".
+  - The revision round re-sends the whole conversation (prompt, 4k-token answer,
+    feedback), so a second round costs about as much as the first; fine at this size,
+    and the provider prefix cache serves most of the prompt.
+  - F11 (DeepSeek answered a revision turn without the tool call) was seen once in eight
+    calls; `structured_call` retried it. Worth watching in S12's retry counts.
+  - S10 wiring: the solution node calls `build_solution(requirements, problem.statement,
+    title=parsed.title, config=config)`; keep `SolutionResult.rounds` in the graph state
+    for the UI's coverage-per-round view. The compiled loop can also be nested as a
+    subgraph if S10 prefers one graph.
 
 ### S8. Risk assessor
 - **Status:** todo

@@ -9,7 +9,7 @@ latency, cost).
 
 **Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
-(S5), problem statement (S6),
+(S5), problem statement (S6), solution generator (S7),
 renderer (S9) and gold labels (S11). The pipeline lands step by step; see
 `docs/ROADMAP.md`.
 
@@ -151,6 +151,34 @@ python -m rfp_agent.agents problem data/rfps/colfax.pdf --out colfax_problem.jso
 python -m rfp_agent.agents -v problem data/rfps/colfax.pdf --full-text   # -v logs retries
 ```
 
+## Solution generator
+
+`rfp_agent.agents.solution.build_solution(requirements, problem_statement, title=...)`
+writes the proposed approach: a short summary, four to ten components that each cite
+the requirement IDs they satisfy, and the assumptions the design takes where the RFP is
+ambiguous or incomplete. The model sees the problem statement, the requirements (one
+line each), the ambiguities and the gaps, never the RFP text (prompt
+`prompts/solution.md`), so it can only cite requirement IDs from the list and chunk IDs
+labelled in those inputs; the output schema rejects anything else inside the retry.
+
+Coverage is computed by code, not reported by the model: the share of mandatory
+requirements (type `submission` excluded) cited by at least one component. A small
+LangGraph loop generates, checks coverage, and when mandatory requirements are left
+uncovered feeds their IDs and text back for a revision in the same conversation, up to
+`RFP_SOLUTION_MAX_ITERATIONS` rounds (default 3). The draft with the fewest uncovered
+requirements is kept and the rest are listed in `coverage.uncovered_requirement_ids`
+for the risk assessor. Component IDs `C01…` are assigned by code.
+
+On the four RFPs: 9 to 10 components, full mandatory coverage after one or two rounds,
+$0.007 to $0.013 and 20 to 35 s per RFP on DeepSeek Flash. To run it on its own
+(paid; without the JSON options it runs the extractor and the problem statement first):
+
+```bash
+python -m rfp_agent.agents solution data/rfps/colfax.pdf \
+    --requirements colfax_requirements.json --problem colfax_problem.json --out colfax_solution.json
+python -m rfp_agent.agents -v solution data/rfps/colfax.pdf --max-iterations 1   # no revision round
+```
+
 ## Configuration
 
 All settings live in `.env` (see `.env.example`); `RFP_*` variables override defaults.
@@ -167,6 +195,7 @@ All settings live in `.env` (see `.env.example`); `RFP_*` variables override def
 | `RFP_DEEPSEEK_THINKING` | `false` | DeepSeek thinking mode (structured output switches to JSON mode when on) |
 | `RFP_LLM_CONCURRENCY` | `4` | parallel calls in per-chunk stages (requirement extraction, problem-statement summaries) |
 | `RFP_FULL_TEXT_PROBLEM` | `false` | problem statement from one full-text call instead of per-chunk summaries (ablation) |
+| `RFP_SOLUTION_MAX_ITERATIONS` | `3` | solution rounds: one generation plus revisions while mandatory requirements are uncovered; `1` disables revision |
 
 ## Observability
 
@@ -211,8 +240,8 @@ src/rfp_agent/
   schemas.py       Pydantic v2 contract between every pipeline stage
   parsing/         PDF to markdown, page flags, referenced documents (S2), quality pass (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
-  agents/          requirements extractor with dedupe (S5), problem (S6), solution,
-                   risk; `python -m rfp_agent.agents` debug CLI
+  agents/          requirements extractor with dedupe (S5), problem (S6), solution
+                   with its coverage loop (S7), risk; `python -m rfp_agent.agents` debug CLI
   textmatch.py     quote matching tolerant of markdown and typography (S5, gold labels)
   render/          JSON assembly and markdown rendering (S9)
 prompts/           one markdown prompt per agent

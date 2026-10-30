@@ -138,12 +138,43 @@ non-conflicts after Missouri's Oracle/SQL Server and Section 508/WCAG pairs were
 Known weaknesses: the first answer still breaks the contract on most RFPs (the feedback
 turn fixes it); alternatives are still sometimes flagged as conflicts.
 
+### prompts/solution.md
+Purpose: the proposed approach: a summary, components that cite the requirement IDs
+they satisfy, and the assumptions the design rests on (D32).
+Inputs it receives: `{{title}}`, `{{problem}}` (the four claim lists, each claim with
+its chunk IDs and an `(inference)` mark), `{{requirements}}` (mandatory, desired and
+optional blocks, one line per item `ID [strictness, type] text (chunk IDs)`, then the
+submission items under "context, do not address"), `{{ambiguities}}`, `{{gaps}}`. No
+RFP text and no quotes.
+Output contract (schema): `SolutionDraft`; a per-call subclass rejects empty components,
+a component with no requirement IDs, and unknown requirement or chunk IDs. Code assigns
+`C01…`, computes coverage, and feeds the uncovered mandatory IDs back in a revision
+round (same conversation) while any remain, up to the round cap.
+Why it is written this way: the coverage rule is explicit and says that code computes
+it and that misses become risks, so the model has a reason to cite completely rather
+than describe elegantly; legal, insurance and reporting obligations are named as things
+a governance component cites, because a model left alone writes only the technical
+components and the uncovered list fills with contract terms; the submission block is
+labelled "do not address" so the model does not build a "proposal writing" component;
+claims are discouraged ("most components need no claims") because restating
+requirements as claims adds citations without evidence; assumptions must state the
+position taken, not the ambiguity, so S8 can read them as design decisions; the F6
+rule (write about the RFP, never "the inputs") is carried over; instructions come first
+so the provider prefix cache serves repeated rounds.
+Known weaknesses: proposal-process obligations that S5 typed `timeline` or
+`budget_pricing` rather than `submission` are in scope, so the revision round makes the
+model add a commercial or submission-flavoured component to cite them (Missouri R007,
+R019); the assumption list runs long (Missouri 8) and some assumptions restate facts the
+problem statement already carries.
+
 ## Changelog
 
 One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-10-30 | solution | Assumptions: `chunk_ids` are the `S4.2` IDs listed after the ambiguity or gap; `A01`/`G01` are never cited | Colfax and Federal Way first runs cited ambiguity and gap IDs as chunks, caught by the validator (F10); 0 retries on the four-RFP rerun |
+| 2026-10-30 | solution | Created (S7) | First version; full mandatory coverage on four RFPs after at most one revision round |
 | 2026-10-30 | requirements_extract | Gaps: name the document, never its URL; a document named with its link is one gap | NYESD listed 50 gaps, most forms twice (name and URL) (F9); 38 after |
 | 2026-10-30 | requirements_extract | Expanded boilerplate exclusions, one item per form; ambiguities and gaps exclude content defined elsewhere in the same RFP and ordinary lack of detail | Missouri first run: 144 requirements, 105 ambiguities, 39 gaps, most "not in this chunk" (F8); 131 / 53 / 12 after |
 | 2026-10-30 | requirements_dedupe | "An ID may appear once across the whole answer; check before answering"; alternatives and a standard next to its stricter version are not conflicts | Missouri first run: R030 in three groups on both turns (fallback used); clean after one turn on all reruns |

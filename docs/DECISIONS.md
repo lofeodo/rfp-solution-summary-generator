@@ -523,6 +523,39 @@ Evidence: Missouri 144 → 131 requirements after the expanded exclusions (legal
 crude recall 89% → 86% (within run-to-run noise: the "lost" items are the same
 requirements with different spans). Four-RFP table in the roadmap, S5.
 
+### D32. Solution coverage computed by code, revised in a capped LangGraph loop
+Context: the solution generator is where a model most easily writes a confident
+approach that silently skips half the obligations. The roadmap demands that coverage of
+mandatory requirements be computable by code, and the assignment grades agentic depth.
+Options: one call and report whatever coverage results; ask the model to self-report
+coverage; a code-checked feedback turn (the S5 `verified_call` pattern); a LangGraph
+loop that revises while uncovered requirements remain, with a round cap.
+Choice: the model sees the problem statement, the requirements (one line each, no
+quote), the ambiguities and the gaps, never the RFP text, and returns a `SolutionDraft`
+whose components cite requirement IDs. A per-call schema subclass rejects an empty
+component list, a component citing nothing, and any requirement or chunk ID outside the
+inputs inside the `structured_call` retry (D28). `compute_coverage` counts the mandatory
+requirements cited by at least one component, with type `submission` excluded (the
+author's call: proposal format and copies are context, not scope). A three-node
+LangGraph (`generate` → `check` → `revise` → `generate`) feeds the uncovered IDs with
+their text back in the same conversation while any remain and the round cap
+(`RFP_SOLUTION_MAX_ITERATIONS`, default 3) is not reached; the draft with the fewest
+uncovered requirements is kept, and what is still uncovered is listed for the risk
+assessor. Component IDs are assigned by code.
+Why: coverage is the one solution metric code can own, so it drives the only loop. The
+loop is LangGraph rather than a hand-written `for` so S10 nests it as a subgraph and the
+Langfuse trace shows each round as a node; the cap keeps cost bounded and the
+best-draft rule makes a bad revision harmless. Sending no chunk text keeps the solution
+honest about its sources: everything it can say about the client is already a cited
+claim or requirement, so a fact it needs and does not have must become a labelled
+assumption. Quotes were left out because the normalised text is already verified and
+the block would double in size for no design signal.
+Evidence: Missouri, DeepSeek Flash: round one covered 74 of 76 in-scope mandatory
+requirements, the revision covered 76 of 76; two calls, $0.017, 44 s summed latency, no
+validator retry. The two IDs the revision added (R007, R019) are proposal-process
+obligations typed `timeline` by S5, so the model wrapped them in a commercial
+component; see S7 open issues. Four-RFP table in the roadmap, S7.
+
 ---
 
 ## Part 2 — Failure modes hit
@@ -644,3 +677,31 @@ Fix:       prompt: "the document's name as written, never its URL; a document na
            other at a word boundary fold ("Attachment F" with
            "ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS", a Colfax pair).
 Before/after: NYESD 50 to 38 gaps (the rest are distinct forms the RFP really links).
+
+### F10. Solution assumptions cited ambiguity and gap IDs as chunk IDs
+Where:     S7 `solution` prompt, `solution_generate`, Colfax and Federal Way (not
+           Missouri or NYESD).
+Observed:  `assumptions cites chunk IDs that are not shown in the inputs: ['A02', 'A03',
+           ..., 'G06', 'G07', ...]` on attempt one; attempt two, with the validator's
+           message fed back, cited the chunk IDs and passed.
+Cause:     the prompt said "`chunk_ids` copied from the ambiguity or gap it resolves",
+           and the nearest ID on that line is the ambiguity's own `A02`.
+Fix:       prompt: `chunk_ids` holds the chunk IDs `(S4.2)` listed in parentheses after
+           the ambiguity or gap; ambiguity and gap IDs are never cited (changelog
+           2026-10-30). The validator already made the output safe; the fix saves the
+           retry.
+Before/after: 2 of 4 first runs needed the retry; four-RFP rerun on the tuned prompt in
+           the roadmap, S7.
+
+### F11. DeepSeek returned no tool call on a revision turn
+Where:     S7 `solution_revise`, Federal Way, the revision round (history: prompt, the
+           model's own 6k-token answer, the coverage feedback).
+Observed:  `attempt 1 failed: No structured output was returned. Reply with exactly one
+           output that matches the required schema.`; attempt two returned the tool
+           call and passed.
+Cause:     not known; a plain-text reply instead of the forced tool call on a long
+           multi-turn history. Seen once in eight solution calls.
+Fix:       none needed: `structured_call` already treats a missing tool call as a
+           retryable attempt and feeds the instruction back. Noted so S12's retry
+           counts have a known cause.
+Before/after: one retry, $0.01.

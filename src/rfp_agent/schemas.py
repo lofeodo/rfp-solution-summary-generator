@@ -507,6 +507,36 @@ class Solution(StrictModel):
     coverage: Coverage
 
 
+# LLM output contract for the generator (S7). Component IDs and coverage are assigned by
+# code; the per-call subclass built in ``agents/solution.py`` checks the cited IDs.
+
+
+class ComponentDraft(StrictModel):
+    title: str = Field(description="Short name of the component")
+    description: str = Field(
+        description="What is delivered and how it meets the requirements it addresses"
+    )
+    requirement_ids: list[str] = Field(
+        default_factory=list,
+        description="IDs of every requirement this component satisfies, copied from the list",
+    )
+    claims: list[Claim] = Field(
+        default_factory=list,
+        description="Facts about the client or project this component relies on, each "
+        "citing chunk IDs shown in the problem statement or requirements",
+    )
+
+
+class SolutionDraft(StrictModel):
+    summary: str = Field(description="Three to six sentences on the overall approach")
+    components: list[ComponentDraft] = Field(default_factory=list)
+    assumptions: list[Claim] = Field(
+        default_factory=list,
+        description="Inferences the approach rests on where the RFP is ambiguous or "
+        "incomplete, each citing the chunk IDs of the ambiguity or gap it resolves",
+    )
+
+
 # --------------------------------------------------------------------------------------
 # Risks (S8)
 # --------------------------------------------------------------------------------------
