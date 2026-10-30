@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11 done
-    class S12,S14 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S14 done
+    class S12,S15 ready
 ```
 
-**Progress (2026-10-30):** done S0 to S11 (green). Ready now, all dependencies done
-(amber): S12 and S14, which may run in parallel. Update the two `class` lines in
+**Progress (2026-10-30):** done S0 to S11 and S14 (green). Ready now, all
+dependencies done (amber): S12 and S15, which may run in parallel. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
@@ -1699,7 +1699,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S14. UI backend (FastAPI)
-- **Status:** in progress
+- **Status:** done
 - **Goal:** `ui/backend/`: upload a PDF, start a run, stream LangGraph node events over
   SSE with per-node latency, tokens and cost, serve every intermediate output (parsed
   markdown, chunks, requirements, ambiguities and gaps, problem statement, solution,
@@ -1754,9 +1754,116 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `README.md` (UI backend section, layout).
   - **Docs:** DECISIONS D35, ASSUMPTIONS (UI), TIMELOG; PROMPTS unchanged.
   - **Live smoke:** one real run through the API (~$0.05) to confirm the thread-to-SSE path.
-- **What was done:**
+- **What was done:** (branch `step-14-ui-backend`, PR into `core`)
+  - `ui/backend/models.py`: `RunState` (queued, running, finished, failed),
+    `ARTIFACTS` (ten names to files), `DOWNLOADS`, `RunCreated`, `RunListItem`,
+    `RunStatus`, `Health`. The per-stage shape is the pipeline's own `StageEvent`, both
+    in SSE and in status.
+  - `ui/backend/store.py`: `RunStore(runs_dir, samples_dir)` with `locate` (ID regex
+    `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$`, `runs/` then `runs/samples/`, containment
+    check), `new_run_dir`, `list_on_disk` (directories holding `run_log.json`),
+    `read_log`, `artifact_path`, `file_path`, `available_artifacts`, `source_name`
+    (from `upload.json`, else the log's source path), `source_pdf` (`source.pdf`, else
+    the log's path if it lies inside the repo), `split` (parsed once and cached).
+    `stages_from_log`, `state_from_log` (failed if a stage failed or `assemble` never
+    finished), `status_from_log`, `list_item_from_log`.
+  - `ui/backend/runs.py`: `RunEntry` (events list under a `threading.Condition`;
+    `on_event` is the pipeline callback, `wait(cursor, timeout)` returns new events and
+    whether the run has ended and been drained, `wait_terminal`, `stages_so_far`,
+    `totals`). `RunRegistry` uses `ThreadPoolExecutor(max_workers=1)`. `submit`
+    applies the per-run overrides, builds the chat model (a missing key raises here)
+    and enqueues `run_pipeline`. `PipelineError` or any other exception marks the run
+    `failed`. `shutdown` drops queued runs.
+  - `ui/backend/app.py`: `create_app(runs_dir, samples_dir, settings, frontend_dist)`.
+    uvicorn runs it as a factory, so importing the module has no side effects. Routes
+    under `/api`:
+    - `GET /health`.
+    - `POST /runs`: multipart PDF with the four CLI options. It checks the `%PDF` header
+      and the 50 MB cap, writes `source.pdf` and `upload.json`, and returns 202. A
+      missing key returns 503, an unknown model 400, and the directory is removed on
+      any rejection.
+    - `GET /runs`: registry entries over disk runs; own runs newest first, then samples.
+    - `GET /runs/{id}`: status from the registry while queued or running, then from the
+      run log. A directory with no log and no live run reads `failed` "interrupted".
+    - `GET /runs/{id}/events`: SSE with replay, live events, a 15 s keepalive and a
+      final `done`. Runs from disk replay their stage records.
+    - `GET /runs/{id}/artifacts/{name}`, `summary.md`, `download/{summary.json|summary.md}`
+      as an attachment, `source.pdf`, `chunks` and `chunks/{chunk_id}`.
+
+    CORS allows the Vite dev server, and an SPA catch-all serves `ui/frontend/dist`
+    when it exists. That route is registered last and never answers `api/...`.
+  - `ui/backend/__main__.py`: `python -m ui.backend [--host] [--port] [--reload]`.
+  - `ui/backend/README.md`: the API contract for S15. It has the endpoint table, the
+    run states, the stage-to-file map, the SSE format with a real event from the live
+    run, and the source-reveal recipe (`chunk_ids` plus `chunks/{id}` plus the quote).
+  - Tests: `tests/pipeline_stubs.py` holds the S10 stage stubs (`PDF`, `SETTINGS`,
+    `fixtures`, `metric`, `Stubs`, `first_chunk_id`), moved out of `test_graph.py`.
+    `chunk_id` is a session fixture in `conftest.py`. `tests/test_ui_backend.py` has 27
+    tests:
+    - health, and a full run serving every artifact, the markdown, the downloads, the
+      PDF and the chunks;
+    - form options reaching the stages, and events replayed after the run;
+    - a live subscription mid-run while a gate holds the quality pass, and
+      `RunEntry.wait` semantics;
+    - a failed stage keeping the earlier outputs, and queueing behind a gated run;
+    - listing across live runs, disk runs and samples, a fresh app on the same
+      directories, and an interrupted directory;
+    - a sample's PDF served from the repo, and refused when the log points outside it;
+    - bad uploads leaving nothing, nine 404 cases, missing key 503, unknown provider
+      400, CORS, the SPA fallback, and `__main__`.
+
+    The full suite passes: 348 tests, 9 `llm` tests deselected. Ruff is clean.
+  - Live smoke: the server listed the four samples with their costs and wall times,
+    served Missouri's chunk `S1.1`, and served the NYESD PDF from `data/rfps/`. One
+    Federal Way upload ran end to end through the API, with `curl -N` on the event
+    stream:
+
+    | Result | Value |
+    |---|---|
+    | Cost | $0.0497 |
+    | Wall time | 82 s |
+    | LLM calls | 51 |
+    | Artifacts written | all 10 |
+
+    Events arrived as each stage ran. `requirements` and `problem` started in the same
+    instant and finished 0.2 s apart. Keepalives came during the 23 s branch stage and
+    the 32 s solution stage, and the stream closed on `done`.
+  - Shared files: `requirements.txt` (`fastapi==0.162.0`, `uvicorn==0.54.0`,
+    `python-multipart==0.0.32`, `httpx==0.28.1`; pip also upgraded `click` to 8.5.0
+    and `pip check` is clean), `README.md` (status line, UI backend section, layout),
+    `tests/conftest.py`, `tests/test_graph.py` (imports only).
+  - Docs: DECISIONS D35, ASSUMPTIONS (UI section), TIMELOG. PROMPTS is unchanged
+    because no prompt changed.
 - **Deviations from plan:**
+  - Uploads also write `upload.json` (original file name, time, options), so listings
+    show `federal_way.pdf` rather than `source.pdf` and the options of a run stay on
+    record.
+  - uvicorn runs `create_app` as a factory (`factory=True`) instead of a module-level
+    `app`, so importing `ui.backend.app` in tests reads no `.env`.
+  - The upload route is a plain `def`, which FastAPI runs on its threadpool. The 50 MB
+    cap applies once python-multipart has spooled the body, which is acceptable for a
+    local tool and recorded in ASSUMPTIONS.
+  - Additions beyond the plan:
+    - an unknown provider or model spec returns 400;
+    - `max_iterations` is capped at 10;
+    - a run directory with neither a log nor a live entry reads `failed` "interrupted"
+      instead of 404;
+    - the per-stage `calls` for a disk run come from `stage_totals`, so samples show
+      the same metrics as live runs.
+  - The live SSE path is also tested over HTTP. A reader thread subscribes while the
+    run is gated, then the gate opens. TestClient buffers the body, so this checks
+    content and closing rather than timing. Timing was checked by the live run.
 - **Open issues:**
+  - The Langfuse link is still unexercised because there are no keys. `RunStatus`
+    carries `langfuse_trace_url`, and it is null in every run so far.
+  - There is no cancel or delete, and a restart loses a run in flight (D35). If the
+    demo needs a reset, delete `runs/<id>` by hand.
+  - The backend tests take about 65 s, because every upload parses Federal Way for
+    real. They could share one parse through a stubbed `parse_pdf` if CI time matters.
+  - The `StageEvent` from a disk replay has no `started` events. S15 should render a
+    stage from its latest event, keyed by `stage`, which the contract states.
+  - S12 runs in parallel and may also touch `README.md` and `requirements.txt`; expect
+    a small merge there.
 
 ### S15. UI frontend (Vite, React, Tailwind)
 - **Status:** todo

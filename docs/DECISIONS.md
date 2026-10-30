@@ -638,6 +638,46 @@ prove they run concurrently, and a forced failure in the solution stage leaves t
 log with the stage marked failed, the error text, and the requirements and problem
 JSON on disk. Table in the roadmap, S10; samples under `runs/samples/`.
 
+### D35. UI backend: a thin FastAPI layer over `run_pipeline`, one worker, events through a condition variable
+Context: S15 needs to start a run, watch it live with per-stage metrics, and read every
+intermediate output, the summary and the cited chunks. S10 already writes each stage's
+JSON as it finishes and calls back with `StageEvent`s from LangGraph's executor threads.
+Options: for execution, one worker thread, a thread per run, or refusing uploads while
+busy (409). For streaming, per-subscriber `asyncio.Queue`s fed by
+`loop.call_soon_threadsafe`, or one event list under a `threading.Condition` read with a
+cursor from `asyncio.to_thread`. For SSE, `sse-starlette` or a hand-written
+`StreamingResponse`. For run status, track it in memory only, or read it from
+`run_log.json` once the run ends.
+Choice: `ui/backend/` is a FastAPI app built by `create_app`. A
+`ThreadPoolExecutor(max_workers=1)` runs one pipeline at a time, and later uploads wait
+as `queued`. Each run's registry entry holds the events in a list under a `Condition`.
+The pipeline callback appends and notifies. An SSE reader calls `wait(cursor, 15 s)`
+on a worker thread and yields what came after its cursor, a keepalive comment when
+nothing came, and `done` at the end. The SSE is about 20 lines over
+`StreamingResponse`. The chat model is built when the upload is accepted, so a missing
+key is a 503 before anything is written. Once a run ends, its status comes from
+`run_log.json`, the same path that serves the committed samples and runs from earlier
+processes. Artifacts are served from disk with `FileResponse`. Only `split.json` is
+parsed, and it is cached, for chunk lookup. The four samples resolve as runs, so the
+UI and the demo work with no key. `rfp_agent` gains no web dependency.
+Why: one worker keeps rate limits and spend predictable, since a run already makes up
+to eight concurrent LLM calls. Queueing is friendlier than a 409 and costs one line.
+The single cursor-indexed list makes replay and live delivery one code path. A client
+that connects mid-run gets every earlier event and no duplicates. The worker thread
+needs no event-loop reference, which is exactly what S10's thread-safe-callback
+contract asks for. The cost is one blocked thread per open stream for at most 15 s,
+which does not matter for a single-user tool. Reading status from the log means a
+finished live run, a sample and a run from yesterday look the same to the frontend.
+Hand-written SSE and plain `uvicorn` avoid two dependencies for about 20 lines of code.
+Not done: cancel and delete, because LangGraph threads cannot be stopped cleanly; auth,
+because this is a local tool; and resuming runs across restarts.
+Evidence: 27 tests with the LLM stages stubbed. A run held at a gate proves queueing
+and a mid-run subscription that receives the replayed and live events and closes on
+`done`. A forced failure keeps the earlier outputs. One live Federal Way run through
+the API cost $0.050 over 82 s. `curl -N` printed every stage as it happened, with
+keepalives during the 32 s solution stage and the two branches starting together.
+Details in the roadmap, S14.
+
 ---
 
 ---

@@ -15,8 +15,8 @@ the end of every step. Times are estimates to the nearest half hour.
 | 4. Observability | 1.5 | S1 run recorder, cost, Langfuse handler; S10 stage records, stage events, per-stage cost 0.5 |
 | 5. DECISIONS.md and other docs | 2.5 | S0 plan, decisions, README skeleton; S9 plan and D16; S6 plan, D28, F6, F7; S7 plan, D32, F10, F11 0.5; S10 plan, D34, README run section 0.5 |
 | 6. Demo | | |
-| UI (part of 1, tracked separately) | | |
-| **Total** | **26.5** | |
+| UI (part of 1, tracked separately) | 1.5 | S14 backend: API, run queue, SSE, tests, live run, API contract, D35 |
+| **Total** | **28.0** | |
 
 ## Per step
 
@@ -36,3 +36,4 @@ the end of every step. Times are estimates to the nearest half hour.
 | 2026-10-30 | S7 | 2.5 | 1, 2, 5 | Solution generator: no RFP text, citations checked in the schema, code-computed coverage, LangGraph generate/check/revise loop with a round cap, debug CLI, 23 fake-model tests, live runs on four RFPs twice (first prompt and tuned prompt, $0.45 including S5 and S6 inputs), D32, F10, F11 |
 | 2026-10-30 | S8 | 2.5 | 1, 2, 5 | Risk assessor: code-computed findings block, must-cite and count band in the schema, sort-then-number, debug CLI with the S4 pass, 18 fake-model tests, live runs on four RFPs twice ($0.08), D33, F12 |
 | 2026-10-30 | S10 | 2.0 | 1, 4, 5 | Pipeline graph with the S5/S6 fan-out, stage wrappers with events and stage records, run CLI with ablation flags, 13 stubbed-stage tests, live runs on four RFPs, committed samples, D34 |
+| 2026-10-30 | S14 | 1.5 | UI, 5 | UI backend: FastAPI app over run_pipeline, one-worker queue, condition-backed SSE, samples served as runs, stubs shared with the graph tests, 27 tests, one live run through the API ($0.05), API contract, D35 |

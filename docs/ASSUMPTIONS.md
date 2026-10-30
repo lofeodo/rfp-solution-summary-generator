@@ -123,6 +123,19 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - DeepSeek runs with thinking mode off by default (`RFP_DEEPSEEK_THINKING`); its API
   default is on. Whether thinking improves output quality is measured in S13.
 
+## UI
+
+- The UI is a local single-user tool, so it has no authentication and listens on
+  `127.0.0.1` by default.
+- One pipeline run executes at a time, and later uploads queue. Runs cannot be
+  cancelled or deleted from the UI. A restart or a `--reload` during a run loses that
+  run, which is reported as interrupted.
+- The committed samples are served as ordinary finished runs. Their source PDF is the
+  file in `data/rfps/` named by the run log, and is served only if it lies inside the
+  repository.
+- Uploads must be PDFs (checked by the `%PDF` header) of at most 50 MB. The limit is
+  checked after the upload has been received, which is fine for local use.
+
 ## Scope
 
 - Five pipeline outputs are the deliverable: parsed document, requirements (with
