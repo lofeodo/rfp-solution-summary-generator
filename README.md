@@ -66,6 +66,22 @@ table, fragmented lines) for the parse-quality pass. No LLM is involved. To insp
 python -m rfp_agent.parsing data/rfps/colfax.pdf --out colfax.json
 ```
 
+### Parse-quality pass
+
+The flags are suspicions. `rfp_agent.parsing.quality.run_quality_pass(parsed)` sends each
+flagged page to the generator model once (prompt `prompts/parse_quality.md`), which says
+whether the text is usable and whether content is missing (for example a table that is
+only an image). Code then clears false alarms, keeps confirmed flags, and records an
+escalation per page in the run log, noting whether a heuristic (`code`) or the judge
+(`model`) found the problem. Confirmed-bad pages go to a VLM hook that, in core, only
+records "would escalate to VLM". A judge failure keeps the page's flags. On the four RFPs
+it clears 9 of 12 flagged pages and escalates Missouri p19 and p20 and Federal Way p5,
+for about half a cent in total. To see the verdicts (paid, needs `DEEPSEEK_API_KEY`):
+
+```bash
+python -m rfp_agent.parsing data/rfps/federal_way.pdf --judge --out federal_way.json
+```
+
 ## Configuration
 
 All settings live in `.env` (see `.env.example`); `RFP_*` variables override defaults.
@@ -122,7 +138,7 @@ python -m evals.gold.label diff --all    # draft vs final correction table
 src/rfp_agent/
   config.py        provider/model setting, paths, pricing table
   schemas.py       Pydantic v2 contract between every pipeline stage
-  parsing/         PDF to markdown, page flags, referenced documents (S2), quality hook (S4)
+  parsing/         PDF to markdown, page flags, referenced documents (S2), quality pass (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
   agents/          requirements, problem, solution, risk (S5 to S8)
   render/          JSON assembly and markdown rendering (S9)

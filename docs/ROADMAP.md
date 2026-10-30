@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S9,S11 done
-    class S3,S4 ready
+    class S0,S1,S2,S4,S9,S11 done
+    class S3 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S9, S11 (green). Ready now, all dependencies
-done (amber): S3, S4, which may run in parallel with each other. Update the two
+**Progress (2026-10-30):** done S0, S1, S2, S4, S9, S11 (green). Ready now, all
+dependencies done (amber): S3. Update the two
 `class` lines in the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
@@ -480,7 +480,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S4. Parse quality pass (LLM judge of flagged pages, VLM hook)
-- **Status:** in progress
+- **Status:** done
 - **Goal:** for pages flagged by S2 heuristics, one LLM call judges whether the page's
   extracted text is usable; pages confirmed bad are passed to a VLM hook that in core
   only records "would escalate" (transcription is stretch). Log for every escalation
@@ -518,9 +518,61 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     cleared); one live run on all four RFPs for the results table.
   - **Docs:** DECISIONS D24 plus failure modes hit, PROMPTS design note and changelog,
     ASSUMPTIONS (judge sees text only), TIMELOG, README parsing section.
-- **What was done:**
+- **What was done:** (branch `step-04-parse-quality`, PR into `core`)
+  - `schemas.py` (shared file, Parsing section): `PageKind` enum (cover, contents, form,
+    table, narrative, blank, other); `PageJudgement` (`text_usable`, `content_missing`,
+    `page_kind`, `confirmed_flags: list[FlagReason]`, `reason`; property `bad`);
+    `ParseQualityReport` (`judged_pages`, `judgements: dict[int, PageJudgement]`,
+    `escalations`). Existing models unchanged.
+  - `prompts/parse_quality.md`: one template, sent as one `HumanMessage`; lists each flag's
+    typical false alarm and asks for the two booleans separately.
+  - `parsing/quality.py` (replaces the S2 stub): `format_flags`, `format_images`,
+    `render_prompt`; `judge_page(...) -> PageJudgement` (one `structured_call`, node
+    `parse_quality`); `escalate(page, flags, judgement, hook=) -> (Escalation, kept_flags)`
+    implementing the attribution rule, with `confirmed_flags` intersected with the page's
+    real flags; `EscalationHook` type and `record_only_hook`; `run_quality_pass(parsed,
+    model=None, settings=None, recorder=None, config=None, hook=) -> (ParsedDocument,
+    ParseQualityReport)`: groups flags by page, one call per flagged page, records each
+    escalation on the recorder, catches `StructuredOutputError` per page (flags kept,
+    escalation `code`/bad with "judge failed after N attempts"), returns a deep copy with
+    only surviving flags. No flags means no model is built and no call is made.
+  - `parsing/__main__.py`: `--judge` runs the pass under a non-writing recorder and prints
+    one row per judged page plus tokens, cost, latency and retries; the flags table and
+    JSON afterwards show only surviving flags.
+  - Tests: `tests/test_quality.py` (18 fake-model tests: no flags, cleared, confirmed,
+    model-raised, shared call for several flags, invented flag name, confirmed flags on a
+    fine page ignored, judge failure, prompt content and placeholders, recorder and
+    written run log, custom hook, direct `escalate`, `bad` property, report JSON round
+    trip, forbid-extra and unknown flag); `tests/test_quality_live.py` (`-m llm`, Federal
+    Way, passes live). S2's obsolete `test_escalate_stub_returns_none` removed. 177 unit
+    tests pass, ruff clean.
+  - Live results, DeepSeek Flash, thinking off, 0 retries:
+
+    | RFP | judged | cleared | escalated (trigger) | calls cost | latency |
+    |---|---|---|---|---|---|
+    | Missouri | 12, 19, 20 | 12 (merged cost table readable) | 19, 20 affidavit images (code) | $0.0013 | 4.1 s |
+    | NYESD | none | — | — | $0 | 0 s |
+    | Colfax | 1, 2, 3, 20, 21, 22 | all six (cover, contents, blank dividers) | none | $0.0026 | 8.4 s |
+    | Federal Way | 2, 5, 14 | 2 (contents), 14 (pricing form readable) | 5 ERP table image (code) | $0.0007 | 4.5 s |
+
+  - Docs: DECISIONS D24, PROMPTS design note and changelog line, ASSUMPTIONS (judge sees
+    text only; unflagged pages are not judged), TIMELOG, README parse-quality subsection
+    and layout line. Shared files touched: `schemas.py`, `README.md`.
 - **Deviations from plan:**
+  - The plan's "image page-area fraction" in the prompt was dropped: `ImageBlock` has no
+    page size, and the `large_image_block` flag detail already carries the fraction.
+  - S2's unit test for the stub was deleted, since the stub's contract (return None) no
+    longer exists.
+  - Status set to `done` in the docs commit, before the PR, as in S0.
 - **Open issues:**
+  - The `model` trigger (judge finds a problem no heuristic named) never fired on the four
+    RFPs; it is covered by unit tests only.
+  - Missouri p19 and p20 are escalated correctly by the rule, but they are blank affidavit
+    forms, so ST2's VLM would add little there; Federal Way p5 is the page that matters.
+  - S10 runs `run_quality_pass` as the node after parsing and passes the returned
+    document on; S14 can serve `ParseQualityReport` as the parse-quality view.
+  - Outside pytest, scripts in a worktree need `PYTHONPATH=src` because the editable
+    install points at the main checkout (same as S1's note).
 
 ### S5. Requirements extractor
 - **Status:** todo
