@@ -1866,7 +1866,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     a small merge there.
 
 ### S15. UI frontend (Vite, React, Tailwind)
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `ui/frontend/`: upload and view the source PDF alongside; live per-node
   progress with metrics (doubles as the metrics dashboard); main view of the rendered
   solution; views for every intermediate output, requirements table filterable by type
@@ -1879,7 +1879,55 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   polish is stretch ST1.
 - **Depends on:** S14
 - **Parallel with:** S12, S13
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:**
+    - The main view is built from `summary.json` in React, and every chunk, requirement,
+      component and risk ID is a clickable chip. `summary.md` stays a download.
+    - The PDF shows in the browser's own viewer (iframe `source.pdf#page=N`) beside a
+      chunk panel, which highlights the verbatim quote. No pdf.js.
+    - Type: Bricolage Grotesque for display, Newsreader for the body serif, JetBrains Mono
+      for IDs and numbers. One red-orange accent on off-white paper. The fonts are
+      self-hosted with `@fontsource`.
+    - TypeScript, with Vitest on the pure logic. A new CI job runs npm ci, typecheck,
+      test and build.
+    - A Playwright MCP screenshot, critique and adjust loop runs after each build unit,
+      at desktop and phone widths, not only at the end.
+  - **Taken without asking:**
+    - React 18, Vite, Tailwind and react-router. The backend already has the SPA
+      catch-all, and the Vite proxy sends `/api` to `:8000`.
+    - No state library. `dist/` stays out of git, and S16's Dockerfile builds it.
+    - Native `EventSource`, with stages keyed by `stage` from their latest event, so
+      replays without `started` events render.
+    - Quote markup (`**`, `<u>`) is stripped and rendered as text, with no raw HTML.
+    - Risks use the same severity sort as `render/markdown.py`.
+  - **Files (`ui/frontend/`):**
+    - `src/api/{types,client}.ts`: TS mirrors of the backend and artifact models, plus
+      fetch helpers.
+    - `src/lib/{stages,highlight,requirements,risks,format}.ts`: pure logic with Vitest
+      tests. It covers the SSE reducer, quote highlighting with normalisation and a "not
+      found" fallback, the requirement filters, the risk sort and number formats.
+    - `src/hooks/{useRun,useArtifact}.ts`.
+    - `src/components/`: `Masthead`, `UploadForm` (the four CLI options), `RunList`,
+      `StageTimeline` (live per-stage metrics), `NodeTable`, `RunSummaryBar` (totals,
+      Langfuse, downloads), `CiteChip`, and `SourcePanel` (chunk text, quote highlight and
+      the PDF at the page).
+    - `src/views/`: `Solution` (main), `Requirements` (filters, ambiguities, gaps),
+      `Risks`, `Problem` (chunk summaries), `Parse` (pages, flags, quality, referenced
+      documents), `Chunks`, and `Metrics`.
+    - Routes `/` and `/runs/:id/:tab?`.
+  - **Shared files:** `.github/workflows/ci.yml` (frontend job) and `README.md` (UI section,
+    status, layout).
+  - **Order:**
+    1. Scaffold.
+    2. Types, client and logic with tests.
+    3. Run list, upload and timeline, then MCP pass 1.
+    4. Solution, chips and source panel, then MCP pass 2.
+    5. The other views and downloads, then MCP pass 3.
+    6. The Emigre visual pass, then MCP pass 4 at phone width.
+    7. Docs, PR and merge.
+  - **Verify:** typecheck, Vitest and build. Pytest and ruff stay green. The MCP passes run
+    on the four samples. One live upload through the UI (~$0.05). The built `dist` is then
+    served by `python -m ui.backend` alone.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
