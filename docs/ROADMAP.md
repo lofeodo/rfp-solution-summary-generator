@@ -1415,7 +1415,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - S14/S15 may want per-claim anchors in the markdown for click-to-source; not added.
 
 ### S10. LangGraph wiring and CLI
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `graph.py`: the pipeline as a LangGraph graph with the parallel fan-out
   (S5 and S6), per-node observability from S1, event streaming usable by the UI.
   `cli.py`: `python -m rfp_agent run inputs/rfp_brief.pdf` writes JSON, markdown and the
@@ -1424,7 +1424,43 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   under `runs/samples/`; start the failure-modes list in `docs/DECISIONS.md`.
 - **Depends on:** S4, S8, S9
 - **Parallel with:** S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** the live run covers **all four RFPs**,
+    each committed under `runs/samples/<rfp>/` (about $0.50 in total), with a four-row
+    results table here; a run writes **every stage's JSON as it finishes** (`parsed`,
+    `quality`, `split`, `requirements` plus its report, `problem`, `solution`, `risks`)
+    next to `summary.json`, `summary.md` and `run_log.json`, and `RunLog` gains a
+    **`stages` list** (name, status, wall time, error) so S12 reads one file and S14
+    serves the intermediates; progress reaches the UI through a **callback**
+    (`build_pipeline(on_event=...)`): each node wrapper emits started / finished /
+    failed with wall time and the stage's tokens and cost, which works from the parallel
+    branches without S14 parsing LangGraph stream modes; unit tests **stub the five LLM
+    stages** over a real parse and split of Federal Way (order, fan-out, files, events,
+    failure path, ablation flags, CLI), plus one live `-m llm` Missouri test.
+  - **Taken without asking:** node order `parse` → `parse_quality` → `split` →
+    (`requirements` ‖ `problem`) → `solution` → `risk` → `assemble`, the quality pass
+    before the split as the S8 CLI does and always on (no call when nothing is flagged);
+    the S7 revision loop stays a function call (`build_solution` already invokes its
+    compiled graph with `config`, so Langfuse nests it); one chat model built once and
+    shared; recorder, settings, model and the callback bound in closures rather than read
+    from the contextvar inside nodes, because the fan-out runs on executor threads; CLI
+    flags `--full-text-problem`, `--single-call-extraction`, `--max-iterations`,
+    `--model`, `--runs-dir`, `--run-id`, `-v`, applied to a copy of `Settings` and passed
+    as explicit arguments; Langfuse handler in `config["callbacks"]`, trace URL set on
+    the recorder, flush on exit (keys are empty locally, so only the no-op path runs
+    live); on a stage failure the exception propagates, `activate()` still writes the run
+    log with the stage marked `failed`, earlier intermediates stay, the CLI exits 1.
+  - **Branch:** `step-10-graph-cli` off `core` as a worktree; PR into `core`.
+  - **Files:** `graph.py` (`PipelineState`, `StageEvent`, `build_pipeline(*, settings,
+    recorder, model, config, out_dir, on_event)`, `run_pipeline(pdf, *, settings,
+    runs_dir, run_id, full_text_problem, single_call_extraction, max_iterations,
+    on_event) -> PipelineResult`; stage LLM totals from `recorder.per_node()` by node
+    prefix); `cli.py` (typer `run` command, rich stage lines, per-node table, totals,
+    paths) and `__main__.py`; `schemas.py` (shared, Observability section: `StageRecord`,
+    `RunLog.stages`); `observability.py` (`RunRecorder.record_stage`); `runs/samples/`.
+  - **Tests:** `tests/test_graph.py` (stubbed stages) and `tests/test_graph_live.py`.
+  - **Docs:** DECISIONS D34 plus any failure mode hit, TIMELOG, README (status, run
+    command, flags, `RFP_SINGLE_CALL_EXTRACTION` row, layout, samples).
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
