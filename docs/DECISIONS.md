@@ -678,6 +678,41 @@ the API cost $0.050 over 82 s. `curl -N` printed every stage as it happened, wit
 keepalives during the 32 s solution stage and the two branches starting together.
 Details in the roadmap, S14.
 
+### D36. UI frontend: views built from per-stage artifacts, source reveal in a slide-over, the browser's PDF viewer
+Context: S15 must show a run live, every intermediate output, and the source of any
+cited claim, on top of the S14 API. The author chose a React view built from JSON over
+rendering `summary.md`, and the browser's PDF viewer over pdf.js.
+Options: for data, read `summary.json` once the run ends, or each stage's artifact as it
+appears. For source reveal, navigate to a source page, use a modal, or use a
+slide-over that keeps the reading position. For highlighting, mark the quote on the PDF
+(pdf.js text layer), or in the chunk text beside the PDF. For state, use a store
+library, or hooks and one context.
+Choice: each tab reads the artifact of the stage that writes it, fetched as soon as it
+appears in `status.artifacts`. A run index (chunks from `split.json`, requirements,
+components, risks, ambiguities, gaps) is rebuilt from whatever exists. Every ID renders
+as a chip that opens a right-hand slide-over with a history stack. The panel shows the
+item, its cited chunks and the quote highlighted in the chunk text, and the PDF in an
+iframe at `#page=N`. Quote matching folds case, curly quotes, dashes, whitespace and
+`*` and maps back to the original indices. Live progress is one `EventSource` feeding
+a latest-event-per-stage reducer, which is idempotent, so reconnects and disk replays
+need no special case. There is no store library: two hooks and a `SourceContext`.
+Why: per-stage artifacts make the live run useful before it ends. Requirements are
+readable 30 s in, while the solution is still being written. They also let the
+backend's chunk text come from one 90 kB file instead of one request per click. The
+slide-over keeps the user's place in a long table, which matters for 120 to 223
+requirements. Highlighting in text works the same in every browser and is testable on
+real data. Highlighting on the PDF would need pdf.js and coordinate matching for a
+small gain. A latest-event reducer matches the API's replay-then-live contract exactly.
+Not done: pdf.js highlighting, cancel and delete (the API has none), an SSE stream for
+the run list (polling while busy), and visual polish beyond four Playwright passes
+(ST1).
+Evidence: 11 Vitest tests, including quote highlighting for at least 95% of Missouri's
+verified quotes in a cited chunk, and the index built from the committed sample.
+Playwright MCP passes at 1440 px and 390 px fixed 13 issues, among them a 456 px
+overflow on phones and a blank page from F13. One live Colfax upload through the UI
+cost $0.0556 over 83 s, and the timeline and every tab filled in without a reload.
+Details in the roadmap, S15.
+
 ---
 
 ---
@@ -845,3 +880,14 @@ Fix:       a **Count** rule under Rules ("at most twelve; merge or drop; code re
            advice. S13 can tighten the band if the judge finds the tail risks weak.
 Before/after: 13, 13, 13, 13 → 12, 13, 13, 12; cost and latency unchanged ($0.04 for
            the rerun).
+
+
+### F13. Vite's dev transform dropped an exported function named `displayName`
+Where:     S15 frontend, `RunList.tsx`, in the dev server only (`npm run build` was fine).
+Observed:  a blank home page; console `ReferenceError: displayName is not defined`.
+           The served module called `displayName(...)` but no longer defined it.
+Cause:     React Fast Refresh treats `displayName` as a component property, and the
+           dev transform did not keep a module-level function with that name.
+Fix:       renamed to `prettySource` in `lib/format.ts`, with a unit test, and added
+           error boundaries so a render error shows a message instead of a blank page.
+Before/after: blank page, then the run list rendered.
