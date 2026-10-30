@@ -34,21 +34,9 @@ def root(
 
 
 def print_metrics(recorder: RunRecorder) -> None:
-    table = Table("node", "calls", "in", "out", "cost $", "latency s", "retries")
-    counts: dict[str, int] = {}
-    for n in recorder.log.nodes:
-        counts[n.node] = counts.get(n.node, 0) + 1
-    for node, t in recorder.per_node().items():
-        table.add_row(
-            node,
-            str(counts[node]),
-            str(t.input_tokens),
-            str(t.output_tokens),
-            f"{t.cost_usd:.4f}",
-            f"{t.latency_s:.1f}",
-            str(t.retries),
-        )
-    console.print(table)
+    from rfp_agent.cli import print_metrics as print_log_metrics
+
+    print_log_metrics(recorder.log)
 
 
 @app.command()

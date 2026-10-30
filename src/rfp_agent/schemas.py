@@ -654,6 +654,24 @@ class RunTotals(StrictModel):
     retries: int = 0
 
 
+class StageStatus(StrEnum):
+    STARTED = "started"
+    FINISHED = "finished"
+    FAILED = "failed"
+
+
+class StageRecord(StrictModel):
+    """One pipeline stage (graph node) of a run: wall time and outcome (S10). LLM calls
+    inside the stage are the ``NodeMetrics`` whose node name starts with the stage's
+    prefix."""
+
+    stage: str
+    status: StageStatus
+    started_at: datetime
+    latency_s: float = Field(ge=0, default=0.0, description="Wall time of the stage")
+    error: str | None = None
+
+
 class RunLog(StrictModel):
     run_id: str
     source_path: str
@@ -665,6 +683,7 @@ class RunLog(StrictModel):
         default_factory=dict, description="prompt file name -> sha256"
     )
     nodes: list[NodeMetrics] = Field(default_factory=list)
+    stages: list[StageRecord] = Field(default_factory=list)
     escalations: list[Escalation] = Field(default_factory=list)
     langfuse_trace_url: str | None = None
 
