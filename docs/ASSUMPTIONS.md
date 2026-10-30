@@ -75,6 +75,29 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   every in-scope mandatory requirement is cited. What remains uncovered is listed in the
   output for the risk assessor rather than hidden.
 
+## Risks
+
+- The risk assessor never sees the RFP text either. Its evidence is the earlier steps'
+  labelled output plus a findings block code computes: uncovered mandatory
+  requirements, conflict pairs, referenced documents the parser marked absent
+  (hyperlinks excluded, since presence is only judged for attachments and appendices),
+  the parse flags the caller passes, and the budget-requirement count.
+- "Flagged pages" means the flags the caller passes. The debug CLI runs the S4 judge
+  first so only confirmed flags reach the model; S10 should do the same. A risk about a
+  flagged page or a missing document carries no chunk citation, since neither has one;
+  the page number is in the text.
+- Severity is the impact if the risk happens (high: the project fails, misses a
+  contractual date or overruns budget by more than a quarter; medium: rework or cost
+  that contingency absorbs; low: normal delivery). Likelihood is judged given the RFP
+  and the solution as written (high: expected unless someone acts; medium: turns on
+  facts the RFP does not settle; low: an unusual event). Both are the model's judgment;
+  code checks IDs and counts, not levels.
+- Only the uncovered mandatory requirement IDs are enforced as must-address. A conflict,
+  an absent document or a flagged page has no field a risk can cite, so the prompt asks
+  for them and S12's judge checks whether they were covered.
+- Risk IDs `K01…` follow a severity-then-likelihood sort, so K01 is the top risk and
+  the JSON order equals the rendered table order.
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do

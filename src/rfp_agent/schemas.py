@@ -559,6 +559,37 @@ class RiskAssessment(StrictModel):
     risks: list[Risk] = Field(default_factory=list)
 
 
+# LLM output contract for the risk assessor (S8). Risk IDs are assigned by code after a
+# severity/likelihood sort; the per-call subclass built in ``agents/risk.py`` checks the
+# cited IDs, the count band and that every uncovered mandatory requirement is addressed.
+
+
+class RiskDraft(StrictModel):
+    title: str = Field(description="Short name of the risk")
+    description: str = Field(description="What could go wrong and its consequence")
+    severity: Severity = Field(description="Impact if it happens: low, medium or high")
+    likelihood: Likelihood = Field(
+        description="Chance it happens given the RFP and the solution as written"
+    )
+    justification: str = Field(description="Why this severity and likelihood")
+    source: RiskSource = Field(
+        description="rfp when the risk is inherent in the RFP, solution when the "
+        "proposed approach creates it"
+    )
+    requirement_ids: list[str] = Field(
+        default_factory=list,
+        description="Requirement IDs the risk relates to, copied from the list",
+    )
+    chunk_ids: list[str] = Field(
+        default_factory=list, description="Chunk IDs shown in the inputs that support the risk"
+    )
+    mitigation: str | None = Field(default=None, description="What the bidder would do about it")
+
+
+class RiskAssessmentDraft(StrictModel):
+    risks: list[RiskDraft] = Field(default_factory=list)
+
+
 # --------------------------------------------------------------------------------------
 # Final assembly (S9)
 # --------------------------------------------------------------------------------------

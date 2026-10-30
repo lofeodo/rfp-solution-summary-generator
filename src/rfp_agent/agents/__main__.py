@@ -220,5 +220,106 @@ def solution(
         console.print(f"\nwrote {out}")
 
 
+@app.command()
+def risk(
+    pdf: Annotated[Path, typer.Argument(exists=True, dir_okay=False, help="RFP PDF")],
+    requirements: Annotated[
+        Path | None,
+        typer.Option("--requirements", "-r", exists=True, help="S5 output JSON (skips S5)"),
+    ] = None,
+    problem: Annotated[
+        Path | None,
+        typer.Option("--problem", "-p", exists=True, help="S6 output JSON (skips S6)"),
+    ] = None,
+    solution: Annotated[
+        Path | None,
+        typer.Option("--solution", "-s", exists=True, help="S7 output JSON (skips S7)"),
+    ] = None,
+    out: Annotated[Path | None, typer.Option("--out", "-o", help="Write JSON here")] = None,
+) -> None:
+    """Risk assessor (S8): findings computed by code, one validated call, risks sorted
+    by severity then likelihood. Runs the S4 quality pass first so only judged parse
+    flags reach the model."""
+    from rfp_agent.agents.problem import ProblemResult, build_problem_statement
+    from rfp_agent.agents.requirements import extract_requirements
+    from rfp_agent.agents.risk import build_risks
+    from rfp_agent.agents.solution import SolutionResult, build_solution
+    from rfp_agent.parsing import parse_pdf
+    from rfp_agent.parsing.quality import run_quality_pass
+    from rfp_agent.schemas import RequirementsOutput
+
+    parsed = parse_pdf(pdf)
+    title = parsed.title or pdf.name
+    recorder = RunRecorder.from_settings(pdf)
+    with recorder.activate(write=False):
+        parsed, _ = run_quality_pass(parsed, recorder=recorder)
+        if requirements is None or problem is None or solution is None:
+            from rfp_agent.splitting import split_document
+
+            split = split_document(parsed)
+        if requirements is not None:
+            reqs = RequirementsOutput.model_validate_json(requirements.read_text(encoding="utf-8"))
+        else:
+            reqs, _ = extract_requirements(split, title=title, recorder=recorder)
+        if problem is not None:
+            statement = ProblemResult.model_validate_json(
+                problem.read_text(encoding="utf-8")
+            ).statement
+        else:
+            statement = build_problem_statement(split, title=title, recorder=recorder).statement
+        if solution is not None:
+            sol = SolutionResult.model_validate_json(solution.read_text(encoding="utf-8")).solution
+        else:
+            sol = build_solution(reqs, statement, title=title, recorder=recorder).solution
+        result = build_risks(
+            reqs,
+            statement,
+            sol,
+            title=title,
+            referenced_documents=parsed.referenced_documents,
+            flags=parsed.flags,
+            recorder=recorder,
+        )
+
+    f = result.findings
+    risks = result.assessment.risks
+    console.print(
+        f"[bold]{pdf.name}[/bold]: {len(risks)} risks; findings: "
+        f"{len(f.uncovered_requirement_ids)} uncovered mandatory, {len(f.conflicts)} conflict "
+        f"pair(s), {len(f.absent_documents)} absent document(s), {len(f.flags)} flagged "
+        f"page(s), {f.budget_requirement_count} budget requirement(s)"
+    )
+    if f.uncovered_requirement_ids:
+        console.print(f"  uncovered: {', '.join(f.uncovered_requirement_ids)}")
+    for a, b in f.conflicts:
+        console.print(f"  conflict: {a} <-> {b}")
+    for d in f.absent_documents:
+        console.print(f"  absent: {d.name} (p. {d.page})")
+    for flag in f.flags:
+        console.print(f"  flag: p. {flag.page} {flag.reason.value}")
+    print_metrics(recorder)
+    table = Table("id", "risk", "severity", "likelihood", "source", "requirements")
+    for k in risks:
+        table.add_row(
+            k.id,
+            k.title,
+            k.severity.value,
+            k.likelihood.value,
+            k.source.value,
+            ", ".join(k.requirement_ids) or "-",
+        )
+    console.print(table)
+    for k in risks:
+        console.print(f"\n[bold]{k.id}. {k.title}[/bold] [{k.severity.value}/{k.likelihood.value}]")
+        console.print(k.description)
+        console.print(f"  why: {k.justification} [{', '.join(k.chunk_ids) or '-'}]")
+        if k.mitigation:
+            console.print(f"  mitigation: {k.mitigation}")
+
+    if out:
+        out.write_text(result.model_dump_json(indent=2), encoding="utf-8")
+        console.print(f"\nwrote {out}")
+
+
 if __name__ == "__main__":
     app()
