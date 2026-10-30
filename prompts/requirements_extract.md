@@ -23,10 +23,13 @@ Include:
   subcontracting limits (`legal_contractual`)
 
 Exclude:
-- generic legal boilerplate that any contract carries (indemnification, governing law,
-  termination for convenience, non-discrimination, conflict-of-interest clauses,
-  standard affidavits and certifications) unless it imposes something specific to this
-  project
+- generic legal boilerplate that any contract carries: indemnification, governing law,
+  termination for convenience, non-discrimination, conflict-of-interest and contingent-fee
+  warranties, independent-contractor status, assignment and subcontracting consent,
+  compliance with all applicable laws, audit and records-retention rights, public-records
+  and transparency reporting, standard affidavits and certifications. Keep a legal term
+  only when it imposes something specific to this project (an insurance amount, who owns
+  the deliverables, a named key-personnel or subcontracting limit)
 - background, history and descriptions of the issuing organisation
 - statements of what the issuer will do (evaluation process, how questions are
   answered), unless they impose a deadline or format on the vendor
@@ -34,6 +37,8 @@ Exclude:
   "Security Requirements" is not itself a requirement
 - the same obligation stated twice in the text you were given: list it once, quoting the
   most specific statement
+- one item per field of a form: "the submission form must carry signature, date, name,
+  address and phone" is one requirement, not five
 
 Many chunks contain no requirement at all. Returning empty lists is the correct answer
 for them; do not invent obligations to fill the output.
@@ -57,21 +62,27 @@ for them; do not invent obligations to fill the output.
 ## Ambiguities
 
 An ambiguity is something in this text a bidder would have to ask the issuer about
-before committing: a vague or undefined term ("timely", "adequate"), a quantity, date or
-scope left open, two statements in this text that disagree, or an obligation whose
-owner is unclear. Describe each in one or two sentences saying what is unclear and what
-the bidder would ask. In `requirement_indexes`, list the 0-based positions, in your own
-`requirements` list, of the requirements it affects (empty if none). Do not report
-ordinary RFP generality as an ambiguity; only things that would change the bid.
+before committing, because the answer changes the price, the schedule or the design: a
+vague or undefined term that gates acceptance ("timely", "adequate"), a quantity, date or
+scope left open, two statements in this text that disagree, or an obligation whose owner
+is unclear. Describe each in one or two sentences saying what is unclear and what the
+bidder would ask. In `requirement_indexes`, list the 0-based positions, in your own
+`requirements` list, of the requirements it affects (empty if none).
+
+Not ambiguities: content that another part of the same RFP defines (another section,
+paragraph, table, price page, schedule or exhibit; those parts are handled separately),
+and ordinary lack of detail, such as an unspecified format, length or meeting cadence,
+that a bidder would simply propose. Most chunks have no ambiguity; two is a lot.
 
 ## Gaps
 
-A gap is something the RFP needs the bidder to know but that this text does not provide,
-typically a document referred to but not included here (an attachment, appendix, exhibit,
-schedule, pricing form, or a URL that holds requirements). Give `referenced_document` the
-name as written (for example "Attachment F") when the gap is a document, otherwise leave
-it null. Only report a gap when the text makes clear the content is elsewhere; do not
-report the ordinary absence of detail.
+A gap is a document outside this RFP that the bidder needs and the text says exists
+elsewhere: an attachment, appendix or exhibit provided separately, or a web page,
+template or form reached by link that holds requirements, forms or pricing. Give
+`referenced_document` the document's name as written (for example "Attachment F" or
+"Form OCSD-2"), never its URL; a document named once with its link is one gap. Never
+report another section, page, paragraph or table of the same RFP as a gap, and never
+report missing detail as a gap. Most chunks have no gap.
 
 ## Document
 

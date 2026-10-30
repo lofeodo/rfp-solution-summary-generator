@@ -350,9 +350,16 @@ def test_gaps_dedupe_by_document_name():
     doc = split(["S2.1", "S2.2"])
     g1 = {"description": "Software requirements elsewhere", "referenced_document": "Attachment F"}
     g2 = {"description": "Pricing elsewhere", "referenced_document": "attachment f"}
-    _, out, _ = run(doc, [reply([BUDGET], gaps=[g1]), reply([PM], gaps=[g2]), dedupe()])
-    (g,) = out.gaps
-    assert (g.id, g.chunk_ids, g.description) == ("G01", ["S2.1", "S2.2"], g1["description"])
+    g3 = {"description": "Spreadsheet", "referenced_document": "ATTACHMENT F: SOFTWARE ABILITIES"}
+    g4 = {"description": "Other", "referenced_document": "Attachment FF"}
+    _, out, _ = run(doc, [reply([BUDGET], gaps=[g1]), reply([PM], gaps=[g2, g3, g4]), dedupe()])
+    assert [(g.id, g.referenced_document) for g in out.gaps] == [
+        ("G01", "Attachment F"),
+        ("G02", "Attachment FF"),
+    ]
+    assert (
+        out.gaps[0].chunk_ids == ["S2.1", "S2.2"] and out.gaps[0].description == g1["description"]
+    )
 
 
 def test_calls_land_on_the_active_recorder(tmp_path):

@@ -18,14 +18,18 @@ duty to "provide a user manual in PDF" are different items).
 For each group choose as `representative_id` the item whose text is the most specific
 and complete statement of the obligation, and list every other ID of the group in
 `member_ids`. Do not put the representative in `member_ids`. Every ID may appear in at
-most one group. IDs that are unique need no group; do not create single-member groups.
+most one group across the whole answer, as representative or as member; if three items
+say the same thing, make one group of three, not two groups that share an ID. IDs that
+are unique need no group; do not create single-member groups. Before answering, check
+that no ID appears twice.
 
 ## Conflicts
 
 Report a conflict when two or more items contradict each other: different deadlines or
 amounts for the same thing, incompatible formats, or one item forbidding what another
 requires. Give the IDs and a one-sentence reason. Conflicting items must never be in the
-same group.
+same group. Alternatives the RFP offers as options (Oracle or, with approval, SQL Server)
+and a standard next to a more specific version of the same standard are not conflicts.
 
 If nothing duplicates and nothing conflicts, return empty lists.
 
