@@ -138,6 +138,12 @@ class Settings(BaseSettings):
     single_call_extraction: bool = Field(
         default=False, description="Requirements from one full-document call"
     )
+    solution_max_iterations: int = Field(
+        default=3,
+        ge=1,
+        description="Solution generator rounds: one generation plus revisions while "
+        "mandatory requirements are uncovered (S7); 1 means no revision",
+    )
 
     # Provider keys (no RFP_ prefix: these are the names the SDKs expect)
     deepseek_api_key: str | None = Field(default=None, validation_alias="DEEPSEEK_API_KEY")
