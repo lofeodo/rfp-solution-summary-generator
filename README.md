@@ -10,9 +10,9 @@ latency, cost).
 **Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
 (S5), problem statement (S6), solution generator (S7), risk assessor (S8),
-renderer (S9), the end-to-end graph and CLI (S10) and gold labels (S11). Sample
-outputs for the four RFPs are under `runs/samples/`. Next: the eval harness (S12); see
-`docs/ROADMAP.md`.
+renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11) and the UI
+backend (S14). Sample outputs for the four RFPs are under `runs/samples/`. Next: the
+eval harness (S12) and the UI frontend (S15); see `docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -82,8 +82,31 @@ Exit codes: 0 on success, 1 when a stage fails (the run log and the intermediate
 written so far are kept, and the failing stage is named), 2 when the provider key is
 missing. The graph is importable too: `rfp_agent.graph.run_pipeline(pdf, on_event=...)`
 calls back with a `StageEvent` (`started`, `finished`, `failed`, wall time, the stage's
-calls and cost) from each node, which is what the UI (S14) streams. Per-agent debug
+calls and cost) from each node, which is what the UI backend streams. Per-agent debug
 commands with JSON reuse of upstream outputs live in `python -m rfp_agent.agents`.
+
+## UI backend
+
+`python -m ui.backend --port 8000` serves a FastAPI app over the same pipeline. It
+uploads a PDF, runs it on one worker thread (later uploads wait as `queued`), and
+streams every stage event over SSE. It also serves each intermediate output, the
+rendered markdown, downloads, the source PDF and a chunk lookup for source reveal. The
+four committed samples are listed as runs (`missouri`, `nyesd`, `colfax`,
+`federal_way`), so the UI works without an API key. The full API contract is in
+`ui/backend/README.md`, and OpenAPI docs are at `/docs`.
+
+```
+python -m ui.backend --port 8000
+curl -F file=@data/rfps/federal_way.pdf http://127.0.0.1:8000/api/runs   # -> {"run_id": ...}
+curl -N http://127.0.0.1:8000/api/runs/<run_id>/events                    # live stage events
+curl http://127.0.0.1:8000/api/runs/missouri/chunks/S1.1                  # a cited chunk
+```
+
+The upload form takes the CLI's options as fields: `model`, `full_text_problem`,
+`single_call_extraction` and `max_iterations`. A missing provider key returns 503
+before anything is written. When `ui/frontend/dist` exists, the same process serves the
+built frontend. `--reload` is for development only, because a reload loses a run that
+is in flight.
 
 ## Parsing
 
@@ -318,6 +341,7 @@ prompts/           one markdown prompt per agent
 tests/             pytest; `@pytest.mark.llm` tests are skipped by default
 evals/             gold labels, harness, results (S11 to S13)
 runs/samples/      committed end-to-end outputs for the four RFPs (S10)
+ui/backend/        FastAPI app: uploads, run queue, SSE events, run outputs (S14)
 docs/              ROADMAP, DECISIONS, ASSUMPTIONS, TIMELOG, PROMPTS
 ```
 
