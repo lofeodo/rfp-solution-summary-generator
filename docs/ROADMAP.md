@@ -138,7 +138,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 ## 2. Core steps
 
 ### S0. Scaffold
-- **Status:** todo
+- **Status:** done
 - **Goal:** the common foundation every other step builds on: repo layout, conda env and
   pinned `requirements.txt`, `config.py` (provider/model single setting, paths, pricing
   table stub), Pydantic v2 `schemas.py` for every pipeline artefact (ParsedDocument with
@@ -153,10 +153,84 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   `rfp-solution-gen` conda env itself. Create the `core` branch.
 - **Depends on:** —
 - **Parallel with:** — (lands first)
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** generator default `deepseek:deepseek-flash`
+    (DeepSeek V4.1 Flash; `deepseek-chat` is no longer on DeepSeek's pricing page);
+    judge default `anthropic:claude-sonnet-5-5`; requirement `type` enum = functional,
+    technical, security_compliance, legal_contractual, timeline, budget_pricing,
+    submission, other; `strictness` = mandatory, desired, optional; risk `severity` and
+    `likelihood` both low/medium/high.
+  - **Branch:** `step-00-scaffold` off `core` as a worktree; one commit per unit below;
+    PR into `core`.
+  - **Packaging:** `pyproject.toml` (setuptools, `src/` layout, ruff and pytest config,
+    `llm` marker skipped by default), `requirements.txt` with exact pins plus `-e .` so
+    one `pip install -r requirements.txt` installs the package editable. Conda env
+    `rfp-solution-gen` (Python 3.12) created by the agent.
+  - **`config.py`:** pydantic-settings `Settings` (`RFP_` prefix, `.env`): `model`,
+    `judge_model` as `provider:model_id` strings, `temperature`, `max_structured_retries`,
+    the two S10 ablation flags (`full_text_problem`, `single_call_extraction`), API keys
+    and Langfuse keys under their conventional unprefixed names; `split_model_spec()`;
+    `langfuse_enabled`; path constants; `ModelPricing` + `PRICING` stub (DeepSeek peak
+    rates, Claude opus/sonnet/haiku 5.5) + `pricing_for()`. Cost arithmetic is S1's.
+  - **`schemas.py`:** Pydantic v2, `extra="forbid"`, StrEnums for every closed set, ID
+    formats enforced by regex (`S3.2` chunk, `S3` section, `R001`, `A01`, `G01`, `C01`,
+    `K01`). Models: parsing (`Page`, `Table`, `ImageBlock`, `ReferencedDocument`,
+    `PageFlag`, `OutlineEntry`, `ParsedDocument`), splitting (`Chunk`, `Section`,
+    `SplitDocument`), `Claim(text, kind=fact|inference, chunk_ids>=1)`, requirements
+    (`Requirement` with quote, `chunk_ids`, `quote_verified`, `merged_from`,
+    `conflicts_with`; `Ambiguity`; `Gap`; `RequirementsOutput`), problem (`ChunkSummary`,
+    `ProblemStatement` as four lists of `Claim`), solution (`SolutionComponent` citing
+    requirement IDs, `Coverage` computed by code, `Solution`), risk (`Risk`,
+    `RiskAssessment`), final `SolutionSummary` with `ChunkRef` index for rendering,
+    observability (`NodeMetrics`, `Escalation`, `RunLog.totals()`), and
+    `validate_ids_exist()` for the agents.
+  - **Skeleton:** `src/rfp_agent/{parsing,splitting,agents,render}/__init__.py`,
+    `prompts/README.md` (one file per agent, `{{name}}` placeholders), `inputs/rfp_brief.pdf`
+    copied from Missouri, `runs/samples/.gitkeep`, `.env.example`, GitHub Actions CI
+    (ruff check, ruff format --check, pytest on Python 3.12), README skeleton with the
+    pipeline diagram.
+  - **Tests:** `tests/test_schemas.py` (round-trip of a full `SolutionSummary` and
+    `RunLog`, ID regexes, forbid-extra, `validate_ids_exist`, totals) and
+    `tests/test_config.py` (defaults, model spec parsing, env override, pricing lookup).
+  - **Docs:** DECISIONS D13 to D15 (model ids and pricing source, schema conventions,
+    install and config mechanics), TIMELOG row, ASSUMPTIONS line on peak pricing.
+- **What was done:** (branch `step-00-scaffold`, PR into `core`)
+  - Conda env `rfp-solution-gen` (Python 3.12) created; `requirements.txt` pins
+    langgraph 1.2.18, langchain 1.4.7, langchain-core 1.7.3, langchain-deepseek 1.1.1,
+    langchain-anthropic 1.7.7, langfuse 5.0.4, pymupdf4llm 1.28.2, pymupdf 1.28.2,
+    pydantic 2.14.2, pydantic-settings 2.16.2, python-dotenv 1.2.4, typer 0.27.3,
+    rich 15.0.0, pytest 9.2.0, ruff 0.17.3, and `-e .` (editable install of the package).
+  - `pyproject.toml`: setuptools `src/` layout; ruff (line 100, py312, E/F/I/UP/B);
+    pytest (`testpaths=tests`, `llm` marker, `addopts=-m 'not llm'`).
+  - `src/rfp_agent/config.py`: `Settings` (pydantic-settings, `RFP_` prefix, reads
+    `REPO_ROOT/.env`): `model`, `judge_model`, `temperature`, `max_structured_retries`,
+    `full_text_problem`, `single_call_extraction`, provider keys and Langfuse keys under
+    their unprefixed names; `generator`/`judge` properties; `langfuse_enabled`;
+    `split_model_spec()`; path constants; `ModelPricing`, `PRICING`, `pricing_for()`;
+    `get_settings()` (lru_cache).
+  - `src/rfp_agent/schemas.py`: as planned. Extra helpers beyond the plan:
+    `STRICTNESS_RANK` (for S5's keep-the-stricter merge), `SplitDocument.chunk_by_id()`,
+    `RequirementsOutput.requirement_ids()/mandatory()`, `ProblemStatement.claims()`,
+    `ParsedDocument.page_count`, `RunTotals` model returned by `RunLog.totals()`.
+  - Empty packages `parsing/`, `splitting/`, `agents/`, `render/`; `prompts/README.md`;
+    `inputs/rfp_brief.pdf`; `runs/samples/.gitkeep`; `.env.example`;
+    `.github/workflows/ci.yml` (ruff check, ruff format --check, pytest on 3.12);
+    README skeleton with the pipeline diagram and quickstart.
+  - Tests: `tests/test_schemas.py` (10 tests incl. 9 parametrised bad-ID cases) and
+    `tests/test_config.py`; 29 pass, ruff clean. Shared files touched: all of them
+    (this is the scaffold).
 - **Deviations from plan:**
+  - `pymupdf4llm==2.0` and `pymupdf==2.0` on PyPI are empty placeholder releases
+    (dist-info only, no modules). Pinned both to 1.28.2 and added `pymupdf` as a
+    direct dependency since S2 will call it for links and images.
+  - Status set to `done` in the same commit as the docs, before the PR is opened,
+    to avoid a second docs-only commit on the branch.
 - **Open issues:**
+  - `langchain-openai` arrives transitively via `langchain-deepseek`; harmless, not pinned.
+  - langchain/langgraph 1.x APIs: S1 must verify `init_chat_model("deepseek:...")`
+    resolves to `langchain_deepseek` in these versions.
+  - DeepSeek peak vs off-peak pricing: `PRICING` holds peak; S1 may add a time-aware
+    rate if cost accuracy matters for the eval tables.
 
 ### S1. LLM layer and observability core
 - **Status:** todo

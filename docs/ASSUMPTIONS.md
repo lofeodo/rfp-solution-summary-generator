@@ -38,6 +38,9 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   low-balance key out of band; no fallback provider is documented.
 - Provider and model are one config setting, so any LangChain-supported chat model can
   be swapped in.
+- Default generator `deepseek-flash` (DeepSeek V4.1 Flash) and judge
+  `claude-sonnet-5-5`. The pricing table uses DeepSeek's peak-hour rates as an upper
+  bound; off-peak is half, so reported DeepSeek cost may overstate actual spend.
 
 ## Scope
 
