@@ -41,7 +41,7 @@ export default function Home() {
     <main className="mx-auto max-w-screen-2xl px-4 pb-24 pt-6 md:px-10">
       <Masthead />
       {error && <p className="mt-6 border-l-4 border-accent bg-accentsoft px-3 py-2 font-mono text-xs">{error}</p>}
-      <div className="mt-10 grid grid-cols-12 gap-x-10 gap-y-14">
+      <div className="mt-10 grid grid-cols-12 lg:gap-x-10 gap-y-14">
         <section className="col-span-12 lg:col-span-4">
           <div className="rule mb-6 flex items-baseline gap-4 pt-3">
             <span className="font-mono text-sm text-accent">01</span>

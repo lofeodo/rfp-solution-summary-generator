@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { api } from "../api/client";
+import ErrorBoundary from "../components/ErrorBoundary";
 import Masthead from "../components/Masthead";
 import SourcePanel from "../components/SourcePanel";
 import StageTimeline from "../components/StageTimeline";
@@ -9,6 +10,7 @@ import { StateBadge } from "../components/ui";
 import { useRun } from "../hooks/useRun";
 import { useRunData } from "../hooks/useRunData";
 import { secs, usd, when } from "../lib/format";
+import { STAGES, stagesDone } from "../lib/stages";
 import SolutionView from "./SolutionView";
 import RequirementsView from "./RequirementsView";
 import RisksView from "./RisksView";
@@ -43,6 +45,7 @@ export default function RunPage() {
       </main>
     );
 
+  const live = status?.status === "running" || status?.status === "queued";
   const title = data.parsed?.title || status?.source_name.replace(/\.pdf$/i, "") || id;
   const done = status?.artifacts.includes("summary") ?? false;
   const counts: Record<string, number | undefined> = {
@@ -55,7 +58,7 @@ export default function RunPage() {
       <main className="mx-auto max-w-screen-2xl px-4 pb-24 pt-4 md:px-10">
         <Masthead compact />
 
-        <header className="grid grid-cols-12 gap-x-10 gap-y-4 pb-6 pt-8">
+        <header className="grid grid-cols-12 lg:gap-x-10 gap-y-4 pb-6 pt-8">
           <div className="col-span-12 lg:col-span-9">
             <div className="flex flex-wrap items-center gap-3">
               {status && <StateBadge state={status.status} />}
@@ -102,15 +105,23 @@ export default function RunPage() {
           </div>
         </header>
 
-        <div className="grid grid-cols-12 gap-x-10 gap-y-10">
+        <div className="grid grid-cols-12 lg:gap-x-10 gap-y-10">
           <aside className="col-span-12 lg:col-span-3">
-            <div className="lg:sticky lg:top-6">
-              <StageTimeline
-                stages={stages}
-                totals={status?.totals ?? null}
-                live={status?.status === "running" || status?.status === "queued"}
-              />
+            <div className="hidden lg:sticky lg:top-6 lg:block">
+              <StageTimeline stages={stages} totals={status?.totals ?? null} live={live} />
             </div>
+            {/* On small screens the timeline folds into one line so the outputs stay near the top. */}
+            <details className="border-y-2 border-ink lg:hidden" open={live}>
+              <summary className="flex cursor-pointer items-baseline justify-between py-2 font-mono text-xs">
+                <span className="kicker">Pipeline {live && <span className="text-accent">· live</span>}</span>
+                <span>
+                  {stagesDone(stages)}/{STAGES.length} stages · {usd(status?.totals.cost_usd ?? 0)}
+                </span>
+              </summary>
+              <div className="pb-3">
+                <StageTimeline stages={stages} totals={null} live={live} />
+              </div>
+            </details>
           </aside>
 
           <section className="col-span-12 min-w-0 lg:col-span-9">
@@ -135,12 +146,14 @@ export default function RunPage() {
                 </NavLink>
               ))}
             </nav>
+            <ErrorBoundary resetKey={tab}>
             {tab === "solution" && <SolutionView data={data} />}
             {tab === "requirements" && <RequirementsView data={data} />}
             {tab === "risks" && <RisksView data={data} />}
             {tab === "problem" && <ProblemView data={data} />}
             {tab === "parse" && <ParseView data={data} />}
             {tab === "metrics" && <MetricsView status={status} stages={stages} />}
+            </ErrorBoundary>
             {!TABS.some((t) => t.id === tab) && (
               <p className="text-muted">
                 Unknown view. <Link to={`/runs/${id}`}>Back to the solution</Link>.

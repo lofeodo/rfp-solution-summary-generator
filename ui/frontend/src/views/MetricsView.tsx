@@ -74,11 +74,19 @@ export default function MetricsView({ status, stages }: { status: RunStatus | nu
           {[
             ["Cost", usd(t.cost_usd)],
             ["Input tokens", tokens(t.input_tokens)],
-            ["Cached input", `${tokens(t.cached_input_tokens)} (${t.input_tokens ? Math.round((t.cached_input_tokens / t.input_tokens) * 100) : 0}%)`],
+            [
+              "Cached input",
+              <>
+                {tokens(t.cached_input_tokens)}
+                <span className="ml-1 font-mono text-sm font-normal tracking-normal text-muted">
+                  {t.input_tokens ? Math.round((t.cached_input_tokens / t.input_tokens) * 100) : 0}%
+                </span>
+              </>,
+            ],
             ["Output tokens", tokens(t.output_tokens)],
             ["Retries", String(t.retries)],
           ].map(([k, v]) => (
-            <div key={k}>
+            <div key={k as string}>
               <dt className="kicker">{k}</dt>
               <dd className="display mt-1 text-4xl">{v}</dd>
             </div>

@@ -65,7 +65,7 @@ export default function ParseView({ data }: { data: RunData }) {
                 </ul>
                 {quality.escalations.length > 0 && (
                   <p className="mt-3 font-mono text-[11px] text-muted">
-                    Escalations: {quality.escalations.map((e) => `p${e.page} ${e.action}`).join(" · ")}
+                    Escalations: {quality.escalations.map((e) => `p${e.page} ${e.action.split(":")[0]}`).join(" · ")}
                   </p>
                 )}
               </div>

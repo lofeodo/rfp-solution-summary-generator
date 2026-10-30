@@ -1,12 +1,8 @@
 import { Link } from "react-router-dom";
 import type { RunListItem } from "../api/types";
 import { STAGES } from "../lib/stages";
-import { secs, usd, when } from "../lib/format";
+import { prettySource, secs, usd, when } from "../lib/format";
 import { StateBadge, Tag } from "./ui";
-
-export function displayName(source: string): string {
-  return source.replace(/\.pdf$/i, "").replace(/[_-]+/g, " ");
-}
 
 export default function RunList({ runs }: { runs: RunListItem[] }) {
   if (runs.length === 0) return <p className="text-muted">No runs yet.</p>;
@@ -23,7 +19,7 @@ export default function RunList({ runs }: { runs: RunListItem[] }) {
             </span>
             <span className="col-span-12 min-w-0 md:col-span-6">
               <span className="block truncate font-display text-2xl font-semibold tracking-tight group-hover:text-accent">
-                {displayName(r.source_name)}
+                {prettySource(r.source_name)}
               </span>
               <span className="font-mono text-[11px] text-muted">
                 {r.run_id} · {when(r.started_at)}

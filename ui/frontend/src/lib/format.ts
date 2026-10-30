@@ -27,6 +27,11 @@ export function when(iso: string | null): string {
   return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
 }
 
+// "federal_way.pdf" -> "federal way"
+export function prettySource(source: string): string {
+  return source.replace(/\.pdf$/i, "").replace(/[_-]+/g, " ");
+}
+
 // Strip pymupdf4llm emphasis from section titles like "**(B) Background**".
 export function cleanTitle(t: string): string {
   return t.replace(/\*\*|__|<\/?[a-z][^>]*>/gi, "").trim();

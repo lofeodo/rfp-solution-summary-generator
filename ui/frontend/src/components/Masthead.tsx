@@ -13,7 +13,7 @@ export default function Masthead({ compact = false }: { compact?: boolean }) {
       </div>
     );
   return (
-    <header className="grid grid-cols-12 gap-x-6 border-b-2 border-ink pb-6">
+    <header className="grid grid-cols-12 md:gap-x-6 border-b-2 border-ink pb-6">
       <p className="kicker col-span-12 mb-4 md:col-span-3 md:mb-0 md:pt-3">
         Agentic pipeline
         <br />

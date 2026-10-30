@@ -21,7 +21,7 @@ export default function RisksView({ data }: { data: RunData }) {
         />
         <ol className="space-y-0">
           {risks.map((k) => (
-            <li key={k.id} className="hair grid grid-cols-12 gap-x-6 gap-y-2 py-5">
+            <li key={k.id} className="hair grid grid-cols-12 md:gap-x-6 gap-y-2 py-5">
               <div className="col-span-12 flex flex-wrap items-start gap-1.5 md:col-span-2 md:flex-col">
                 <span className="font-mono text-sm text-accent">{k.id}</span>
                 <LevelBadge level={k.severity} label="sev" />
