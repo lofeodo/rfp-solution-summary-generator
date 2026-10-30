@@ -48,3 +48,6 @@ Rules for every claim:
 - No claim without evidence: if the evidence does not support something, leave it out.
   If it says a document is provided separately or not included, that is a constraint
   worth stating.
+- Write for the bid team, about the RFP. Never mention "the evidence", "the summaries"
+  or "the chunks" in a claim: say "the RFP" ("Attachment F is referenced but not
+  included in the RFP"), and never speculate about what the RFP may say elsewhere.
