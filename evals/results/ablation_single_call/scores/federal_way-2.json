@@ -1,0 +1,3539 @@
+{
+  "rfp": "federal_way",
+  "run": "2",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/ablation_single_call/federal_way/2",
+  "run_id": "2",
+  "model": "deepseek:deepseek-flash",
+  "scored_at": "2026-10-30T22:46:03.019308Z",
+  "judged": true,
+  "requirements": {
+    "extracted": 58,
+    "by_type": {
+      "submission": 38,
+      "timeline": 2,
+      "functional": 3,
+      "other": 1,
+      "technical": 1,
+      "budget_pricing": 10,
+      "legal_contractual": 3
+    },
+    "by_strictness": {
+      "mandatory": 56,
+      "desired": 2
+    },
+    "gold": 54,
+    "gold_reachable": 46,
+    "matched_gold": 42,
+    "matched_gold_reachable": 42,
+    "matched_by_code": 42,
+    "matched_by_judge": 0,
+    "recall": 0.7777777777777778,
+    "recall_reachable": 0.9130434782608695,
+    "type_accuracy": 0.8809523809523809,
+    "strictness_accuracy": 0.8809523809523809,
+    "type_confusion": {
+      "submission": {
+        "timeline": 1,
+        "submission": 20
+      },
+      "functional": {
+        "functional": 2,
+        "submission": 2
+      },
+      "other": {
+        "other": 1
+      },
+      "technical": {
+        "technical": 1
+      },
+      "timeline": {
+        "functional": 1,
+        "timeline": 1
+      },
+      "legal_contractual": {
+        "legal_contractual": 3
+      },
+      "budget_pricing": {
+        "budget_pricing": 9
+      },
+      "security_compliance": {
+        "submission": 1
+      }
+    },
+    "precision": 0.9827586206896551,
+    "in_scope_share": 0.9137931034482759,
+    "judged": 58,
+    "unverified_quotes": 0,
+    "matches": [
+      {
+        "gold_id": "GR001",
+        "gold_text": "Proposals must be received by the City by 3:00 p.m. PT on September 17, 2024.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 1,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R004"
+        ],
+        "tier": "code",
+        "best_id": "R004",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR003",
+        "gold_text": "Proposals must not be submitted by fax.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 1,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R003"
+        ],
+        "tier": "code",
+        "best_id": "R003",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR004",
+        "gold_text": "The vendor must offer ERP software and services that satisfy all of the City's functional and technical requirements.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 3,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R005"
+        ],
+        "tier": "code",
+        "best_id": "R005",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR005",
+        "gold_text": "The preferred vendor has experience successfully implementing the proposed solutions for cities of similar size and scope of services.",
+        "gold_type": "other",
+        "gold_strictness": "desired",
+        "gold_page": 3,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R006"
+        ],
+        "tier": "code",
+        "best_id": "R006",
+        "best_type": "other",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR006",
+        "gold_text": "Any best-of-breed Human Capital Management solution offered must be able to integrate with the selected ERP system.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 3,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R007"
+        ],
+        "tier": "code",
+        "best_id": "R007",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR007",
+        "gold_text": "A vendor responding with a best-of-breed solution must complete the Section 6 Requirements template for the relevant functionality and submit it per the Section 5 instructions.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 3,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R008"
+        ],
+        "tier": "code",
+        "best_id": "R008",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR008",
+        "gold_text": "The vendor must provide an integrated ERP solution that includes the modules and functionality defined in the Requirements document.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R010"
+        ],
+        "tier": "code",
+        "best_id": "R010",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR009",
+        "gold_text": "The replacement ERP solution is to be implemented in phases or as recommended by the selected vendor and approved by the City.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R011"
+        ],
+        "tier": "code",
+        "best_id": "R011",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR010",
+        "gold_text": "Vendors invited to demonstrate their product should be prepared to discuss the application's best practices and its ability to adapt to user preferences.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R012"
+        ],
+        "tier": "code",
+        "best_id": "R012",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR011",
+        "gold_text": "The City's estimated implementation window runs from March 2025 through January 2027.",
+        "gold_type": "timeline",
+        "gold_strictness": "desired",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R013 gives a go-live deadline, not the March 2025 to January 2027 window."
+      },
+      {
+        "gold_id": "GR012",
+        "gold_text": "All modules in scope must go live by January 1, 2027.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R013"
+        ],
+        "tier": "code",
+        "best_id": "R013",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR013",
+        "gold_text": "Finalist vendors must follow the City's pre-defined script during their software demonstrations.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R014"
+        ],
+        "tier": "code",
+        "best_id": "R014",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR014",
+        "gold_text": "The proposal must be one electronic PDF copy, in the order defined in the response format table, not exceeding 100 total pages excluding sample contracts.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R020"
+        ],
+        "tier": "code",
+        "best_id": "R020",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR015",
+        "gold_text": "The response must include one completed copy of the Requirements document in MS Word format, with the Word format unmodified.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R026",
+          "R021"
+        ],
+        "tier": "code",
+        "best_id": "R026",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR017",
+        "gold_text": "Proposals should be emailed to the City contact at Thuch.Mam@FederalWayWA.gov.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R019"
+        ],
+        "tier": "code",
+        "best_id": "R019",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR018",
+        "gold_text": "All data, materials and documentation originated and prepared for the City under this solicitation belong to the City.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R017"
+        ],
+        "tier": "code",
+        "best_id": "R017",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR020",
+        "gold_text": "Vendor questions about the RFP may be submitted by email to the City contact by August 28, 2024, 3:00 p.m. PT.",
+        "gold_type": "submission",
+        "gold_strictness": "optional",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate covers vendor questions by email or the deadline."
+      },
+      {
+        "gold_id": "GR021",
+        "gold_text": "Vendor responses should include the sections outlined in the Proposal Response Format; deviation may lead to the response being deemed non-responsive and disqualified.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R022"
+        ],
+        "tier": "code",
+        "best_id": "R022",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR022",
+        "gold_text": "Marketing literature should not be included in the proposal.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R023"
+        ],
+        "tier": "code",
+        "best_id": "R023",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR023",
+        "gold_text": "The proposal must begin with a cover letter that is an executive summary of the proposed software and services, limited to two pages.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R024"
+        ],
+        "tier": "code",
+        "best_id": "R024",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR024",
+        "gold_text": "The vendor must complete the Pricing Summary from Exhibit A, indicating costs for software and implementation services.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R028"
+        ],
+        "tier": "code",
+        "best_id": "R028",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR025",
+        "gold_text": "Pricing must be comprehensive, including all taxes and available discounts.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "desired",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R029"
+        ],
+        "tier": "code",
+        "best_id": "R029",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR026",
+        "gold_text": "Pricing must remain valid for 180 days from the response date.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R030"
+        ],
+        "tier": "code",
+        "best_id": "R030",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR027",
+        "gold_text": "The vendor must price the software for the user counts defined in the RFP.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R031"
+        ],
+        "tier": "code",
+        "best_id": "R031",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR028",
+        "gold_text": "The vendor must provide a separate pricing sheet for each deployment option offered (SaaS or on-premises).",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R057"
+        ],
+        "tier": "code",
+        "best_id": "R057",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR029",
+        "gold_text": "Implementation pricing must include all costs required for go-live, including software deployment, data conversion, system configuration, report development, testing and training.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R032"
+        ],
+        "tier": "code",
+        "best_id": "R032",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR030",
+        "gold_text": "The vendor must price ongoing license and maintenance for Years 1-10.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R033"
+        ],
+        "tier": "code",
+        "best_id": "R033",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR031",
+        "gold_text": "Financials software must be priced for 130 named users and 85 concurrent users.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R058"
+        ],
+        "tier": "code",
+        "best_id": "R058",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR032",
+        "gold_text": "Human Capital Management software must be priced for 400 FTEs and 744 W2s.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R058"
+        ],
+        "tier": "code",
+        "best_id": "R058",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR033",
+        "gold_text": "The proposal must include an implementation overview covering methodology, sample project plan, City and vendor resources, process improvement, change management, data conversion, testing, training and report development.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R034",
+          "R036",
+          "R037"
+        ],
+        "tier": "code",
+        "best_id": "R034",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR034",
+        "gold_text": "The proposal must include an overview of support services offered, including hours, response times, support tiers, post go-live services, backup and disaster recovery.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R035"
+        ],
+        "tier": "code",
+        "best_id": "R035",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR035",
+        "gold_text": "The proposal must include a technology overview covering architecture and deployment options, data centers, hardware, mobile, remote access, integration tools and software updates.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R036",
+          "R037",
+          "R034"
+        ],
+        "tier": "code",
+        "best_id": "R036",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR036",
+        "gold_text": "The proposal must include a security overview covering the security model, standards, SSO/SAML administration, multi-factor authentication and breach response.",
+        "gold_type": "security_compliance",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R037",
+          "R036",
+          "R034"
+        ],
+        "tier": "code",
+        "best_id": "R037",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR037",
+        "gold_text": "The vendor must provide references from three current and two prior customers for the proposed software, using the Exhibit B forms.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R038"
+        ],
+        "tier": "code",
+        "best_id": "R038",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR038",
+        "gold_text": "Preference is for references from Washington State public sector clients.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "R038 covers reference counts but not the Washington public sector preference."
+      },
+      {
+        "gold_id": "GR039",
+        "gold_text": "The vendor must disclose any contract terminations or legal actions with customers in the past five years, describing each situation with the contracting party's name and address.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R039"
+        ],
+        "tier": "code",
+        "best_id": "R039",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR040",
+        "gold_text": "The proposal must include sample contract documents such as a statement of work, license agreement, maintenance or support agreements and service level agreements.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R040"
+        ],
+        "tier": "code",
+        "best_id": "R040",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR041",
+        "gold_text": "The vendor must document any exceptions it has to the RFP content.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R041"
+        ],
+        "tier": "code",
+        "best_id": "R041",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR043",
+        "gold_text": "The vendor's Requirements responses will be incorporated into the signed contract.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate says responses are incorporated into the contract."
+      },
+      {
+        "gold_id": "GR044",
+        "gold_text": "The vendor must provide a rating and a comment for every item in the Requirements document; blank responses may cause rejection.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R042"
+        ],
+        "tier": "code",
+        "best_id": "R042",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR045",
+        "gold_text": "The vendor must not include hyperlinks in the Requirements document.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R044"
+        ],
+        "tier": "code",
+        "best_id": "R044",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR046",
+        "gold_text": "The vendor must not modify the format, font or numbering of the Requirements section or insert page breaks.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R046"
+        ],
+        "tier": "code",
+        "best_id": "R046",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR047",
+        "gold_text": "Requirement comments must give a substantive explanation; generic comments such as \"Standard Functionality\" are unacceptable.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R048"
+        ],
+        "tier": "code",
+        "best_id": "R048",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR048",
+        "gold_text": "Each line-item response in the Requirements document must be limited to 100 words.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R049",
+          "R027"
+        ],
+        "tier": "code",
+        "best_id": "R049",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR051",
+        "gold_text": "The vendor must provide a certification of insurance before commencing any work.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R054"
+        ],
+        "tier": "code",
+        "best_id": "R054",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR052",
+        "gold_text": "An underwriter's endorsement with additional insured verbiage is required, and the surety must be admitted in the State of Washington.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 13,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R055"
+        ],
+        "tier": "code",
+        "best_id": "R055",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR053",
+        "gold_text": "The ERP solution must replace the City's Eden financial modules: General Ledger, Purchasing, Contract Management, Accounts Payable, Accounts Receivable, Project and Grant Accounting, and Capital Assets.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate lists replacing the Eden financial modules."
+      },
+      {
+        "gold_id": "GR054",
+        "gold_text": "The ERP solution must replace the City's Eden Human Resources, Time and Attendance, and Payroll modules, as part of the ERP suite or integrated with it.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate mentions replacing Eden HR, time and attendance, or payroll."
+      },
+      {
+        "gold_id": "GR055",
+        "gold_text": "The ERP solution must replace the Quadrant cashiering system, as part of the ERP suite or integrated with it.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate mentions replacing Quadrant cashiering."
+      },
+      {
+        "gold_id": "GR056",
+        "gold_text": "The ERP solution must replace the Excel-based budget process, as part of the ERP suite or integrated with it.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate mentions replacing the Excel budget process."
+      },
+      {
+        "gold_id": "GR057",
+        "gold_text": "The ERP solution must replace the Excel-based preparation of the Annual Comprehensive Financial Report (ACFR), as part of the ERP suite or integrated with it.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate mentions ACFR preparation."
+      },
+      {
+        "gold_id": "GR058",
+        "gold_text": "The ERP solution must integrate with the retained systems NeoGov (recruiting), Power Time (police scheduling, time and attendance), Amanda and MBC.com (permitting, planning, land management), RecTrac (parks and recreation) and Class (Dumas Bay Conference Center).",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate names the retained systems to integrate with."
+      },
+      {
+        "gold_id": "GR059",
+        "gold_text": "Integration of the ERP solution with OpenGov (constituent transparency) and SharePoint (document management) is under review.",
+        "gold_type": "technical",
+        "gold_strictness": "optional",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "OpenGov and SharePoint are not mentioned."
+      },
+      {
+        "gold_id": "GR060",
+        "gold_text": "Enterprise asset management and fleet management, currently Excel shadow systems, are under review for inclusion in scope; their integration is to be determined.",
+        "gold_type": "functional",
+        "gold_strictness": "optional",
+        "gold_page": 5,
+        "quote_verifiable": false,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "Asset and fleet management scope review is not mentioned."
+      }
+    ],
+    "verdicts": [
+      {
+        "id": "R001",
+        "text": "Proposals must be received by the City of Federal Way no later than September 17, 2024 at 3:00 p.m. PT.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S1.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Due date and time stated in the chunk."
+      },
+      {
+        "id": "R002",
+        "text": "Late submissions of proposals will not be considered.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S1.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Late submissions explicitly not considered."
+      },
+      {
+        "id": "R003",
+        "text": "Proposals may not be submitted by fax.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S1.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Fax submission stated as not acceptable."
+      },
+      {
+        "id": "R004",
+        "text": "Vendor questions about the RFP must be submitted by August 28, 2024 at 3:00 p.m. PT.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S1.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Question deadline is procurement conduct, not affecting solution design or submission."
+      },
+      {
+        "id": "R005",
+        "text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S3.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk states solution satisfying all functional and technical requirements."
+      },
+      {
+        "id": "R006",
+        "text": "The Vendor should have experience successfully implementing the proposed solutions for cities of similar size and scope of services.",
+        "type": "other",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S3.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Preferred vendor experience with similar cities; affects bidder qualification."
+      },
+      {
+        "id": "R007",
+        "text": "Best-of-breed Human Capital Management solutions offered in response must have the ability to integrate with the selected ERP system.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S3.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Integration ability with selected ERP is stated."
+      },
+      {
+        "id": "R008",
+        "text": "Vendors submitting a best-of-breed HCM response must complete the Requirements template in Section 6 for the relevant functionality and submit it per Section 5 instructions.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S3.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Template completion and submission instructions stated."
+      },
+      {
+        "id": "R009",
+        "text": "The Vendor is solely responsible for all costs incurred in responding to the RFP.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S3.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Generic boilerplate on proposal costs; does not change solution or pricing."
+      },
+      {
+        "id": "R010",
+        "text": "The ERP solution must include the modules and functionality defined in the Requirements document provided with this RFP.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Solution must include modules defined in Requirements document."
+      },
+      {
+        "id": "R011",
+        "text": "The ERP solution must be implemented using a phased approach or another approach recommended by the selected Vendor and approved by the City.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Phased approach or vendor-recommended approach approved by City."
+      },
+      {
+        "id": "R012",
+        "text": "Vendors invited to demonstrate their product must be prepared to discuss the application's best practices and the system's ability to adapt to user preferences.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Demo preparation expectation stated; modest but affects demo preparation."
+      },
+      {
+        "id": "R013",
+        "text": "All modules in scope must go live by January 1, 2027.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Go-live date listed as evaluation criterion; affects scheduling."
+      },
+      {
+        "id": "R014",
+        "text": "Vendors invited to the software demo must follow the pre-defined demo script during their demo.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Vendors must follow demo script; stated explicitly."
+      },
+      {
+        "id": "R015",
+        "text": "Proposals should be prepared simply and economically with straightforward, concise descriptions of the Vendor's ability to satisfy the City's functional and technical needs.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported as a 'should'; vague style guidance that would not change bidder design or pricing."
+      },
+      {
+        "id": "R016",
+        "text": "Proposals must not exceed 100 pages, excluding a Vendor sample contract.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "100-page limit with sample contract exclusion matches source; affects proposal preparation."
+      },
+      {
+        "id": "R017",
+        "text": "Ownership of all data, materials and documentation originated and prepared for the City pursuant to this solicitation will belong to the City.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Deliverable ownership by City is stated and constrains the solution."
+      },
+      {
+        "id": "R018",
+        "text": "Pages or sections of the submitted documents the firm considers proprietary must be clearly labeled.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Labeling proprietary pages is stated; it affects how bidders submit."
+      },
+      {
+        "id": "R019",
+        "text": "Proposals must be emailed to Thuch.Mam@FederalWayWA.gov.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Email submission address matches the source."
+      },
+      {
+        "id": "R020",
+        "text": "The response must include one electronic PDF copy of the entire RFP proposal in the order defined in the table, not exceeding 100 total pages excluding sample contracts.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "One PDF, order, 100 pages excluding sample contracts all stated."
+      },
+      {
+        "id": "R021",
+        "text": "The response must include one completed copy of the Requirements document in MS Word format.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "One completed Requirements document in MS Word is stated."
+      },
+      {
+        "id": "R022",
+        "text": "Vendor responses must include the sections outlined in the Proposal Response Format table.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Responses must include the outlined sections; deviation risks disqualification."
+      },
+      {
+        "id": "R023",
+        "text": "Marketing literature must not be included in the proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Marketing literature exclusion is stated and affects submission content."
+      },
+      {
+        "id": "R024",
+        "text": "The proposal must include a cover letter executive summary of the proposed software and services for the scope of work, limited to two pages.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Cover letter limited to two pages is stated."
+      },
+      {
+        "id": "R025",
+        "text": "Each requirement in the Requirements document must have a rating and a comment relative to how the function is met with the software.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Each requirement needs a rating and comment; stated in the table."
+      },
+      {
+        "id": "R026",
+        "text": "The Requirements document must be submitted in MS Word format without modifying the Word format.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Provide in MS Word and do not modify the format; both stated."
+      },
+      {
+        "id": "R027",
+        "text": "Each requirement response comment must be limited to no more than 100 words.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "100-word response limit is stated."
+      },
+      {
+        "id": "R028",
+        "text": "Pricing must be submitted by completing the Pricing Summary from Exhibit A, indicating costs for software and implementation services.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Complete Exhibit A pricing summary for software and implementation is stated."
+      },
+      {
+        "id": "R029",
+        "text": "Pricing must be comprehensive, including all taxes and available discounts.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Comprehensive pricing including taxes and discounts is stated."
+      },
+      {
+        "id": "R030",
+        "text": "Pricing must be valid for 180 days from the response date.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "180-day price validity matches source."
+      },
+      {
+        "id": "R031",
+        "text": "Pricing must include software cost for the user counts defined in this RFP, with one sheet for each deployment option if applicable (SaaS or on-premises).",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Software cost for defined user counts and a sheet per deployment option stated."
+      },
+      {
+        "id": "R032",
+        "text": "Pricing must include all implementation services costs required for go live, including software deployment, data conversion, system configuration, report development, testing and training.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "All go-live implementation costs listed match the source."
+      },
+      {
+        "id": "R033",
+        "text": "Pricing must include the cost of ongoing license/maintenance for Years 1-10.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Maintenance cost for Years 1-10 is stated."
+      },
+      {
+        "id": "R034",
+        "text": "The proposal must provide an overview of the implementation methodology covering sample project plan, City and Vendor resources, process improvement, change management, data conversion, testing, training and report development.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Implementation overview items are stated; summary matches the list."
+      },
+      {
+        "id": "R035",
+        "text": "The proposal must provide an overview of support services offered, including hours, guaranteed response time, escalation, baseline versus premium support, user groups, post go-live tools, backup and disaster recovery.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.3"
+        ],
+        "supported": false,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Post go-live tools, backup and disaster recovery are not in the source list."
+      },
+      {
+        "id": "R036",
+        "text": "The proposal must provide an overview of the system technology, including architecture options, deployment options, data center locations and redundancy, hardware specifications, mobile options, remote access, integration tools and software update scheduling.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.4"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches technology overview items a-h in chunk."
+      },
+      {
+        "id": "R037",
+        "text": "The proposal must provide an overview of system security, including security model, standards, security administration (SSO, SAML), multi-factor authentication and security breach communication, response and cost.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.4"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches security overview items a-e."
+      },
+      {
+        "id": "R038",
+        "text": "The proposal must provide references using the forms in Exhibit B covering three current and two prior customers for the proposed software, similar in size and scope to the City's project.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.4"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches reference counts, Exhibit B, similarity to project."
+      },
+      {
+        "id": "R039",
+        "text": "The proposal must indicate whether the Vendor has had a contract terminated or entered into legal action with a customer in the past five years, describing the situations including the contracting party's name and address.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.4"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches five-year contract termination/legal action disclosure."
+      },
+      {
+        "id": "R040",
+        "text": "The proposal must provide sample contract documents, which may include a Statement of Work, software license or SaaS agreement, maintenance or support agreements and service level agreements.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.4"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Sample contract documents listed as stated."
+      },
+      {
+        "id": "R041",
+        "text": "The proposal must document any exceptions the Vendor has to the RFP content.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.4"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated."
+      },
+      {
+        "id": "R042",
+        "text": "Vendors must provide a rating and a comment for every item in the ERP Requirements document.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated; affects response completeness."
+      },
+      {
+        "id": "R043",
+        "text": "The comment for each requirement item must include a brief explanation of how the item is supported.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Comment should include brief explanation; stated."
+      },
+      {
+        "id": "R044",
+        "text": "Hyperlinks must not be provided within the Requirements document.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated prohibition."
+      },
+      {
+        "id": "R045",
+        "text": "Vendors must not reference another line item in their answers; all items must be addressed within the box provided.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated."
+      },
+      {
+        "id": "R046",
+        "text": "Vendors must not modify the format, font, numbering or insert page breaks in the Requirements section.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated formatting constraint."
+      },
+      {
+        "id": "R047",
+        "text": "Each requirement must be rated using the specified rating scale of 4 (standard and available), 3 (third-party software), 2 (modification), 0 (not available) or F (future release).",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Rating scale values match the table."
+      },
+      {
+        "id": "R048",
+        "text": "A comment of \"Standard Functionality\" or similar is not acceptable in the Requirements responses.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated."
+      },
+      {
+        "id": "R049",
+        "text": "Each line-item response in the Requirements document must be limited to 100 words.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S10.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated 100-word limit."
+      },
+      {
+        "id": "R050",
+        "text": "Proposers must notify the City in writing of any ambiguity, conflict, discrepancy, omission or other error discovered in the RFP or its attachments.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Procurement-conduct rule about reporting RFP errors, not solution design."
+      },
+      {
+        "id": "R051",
+        "text": "Proposers are responsible for ensuring they have incorporated all addenda issued for the RFP.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Procurement-conduct rule about addenda; generic."
+      },
+      {
+        "id": "R052",
+        "text": "Proposers must notify the City in advance of any proprietary or confidential material contained in the proposal and provide justification for not making such materials public.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Affects how proposal is submitted; stated in chunk."
+      },
+      {
+        "id": "R053",
+        "text": "A Vendor may not indicate that its entire submittal is proprietary.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Constrains submission marking; stated."
+      },
+      {
+        "id": "R054",
+        "text": "The Vendor must provide a certification of insurance prior to commencement of any work.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Insurance certification before work starts constrains schedule and compliance; stated in chunk."
+      },
+      {
+        "id": "R055",
+        "text": "An underwriter's endorsement with additional insured verbiage is required, and the surety must be an admitted surety in the State of Washington.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Endorsement and admitted surety requirement stated; constrains insurance arrangements."
+      },
+      {
+        "id": "R056",
+        "text": "Pricing must be submitted using the Exhibit A Pricing template as Section 3 of the response for all \"Required\" modules.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Pricing template as Section 3 for Required modules is stated; affects submission."
+      },
+      {
+        "id": "R057",
+        "text": "A separate pricing sheet must be provided for each deployment option.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Separate pricing sheet per deployment option is stated; affects pricing submission."
+      },
+      {
+        "id": "R058",
+        "text": "Pricing must cover Financials sized at 130 named users and 85 concurrent users, and Human Capital Management sized at 400 FTEs and 744 W2s.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "User and employee counts are stated in the template and size the pricing."
+      }
+    ]
+  },
+  "problem": {
+    "mode": "hierarchical",
+    "claims": {
+      "client_situation": 6,
+      "goal": 7,
+      "success_criteria": 8,
+      "constraints": 8
+    },
+    "facts": 28,
+    "inferences": 1,
+    "checklist_total": 12,
+    "checklist_covered": null,
+    "checklist_partial": null,
+    "checklist_coverage": null,
+    "checklist": [
+      {
+        "gold_id": "GC01",
+        "fact": "The City of Federal Way (WA) is the issuer, seeking proposals from experienced, qualified Vendors that can provide ERP software and services meeting all of the City's functional and technical requirements.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC02",
+        "fact": "The City intends to purchase an integrated ERP solution and to implement it as a replacement ERP, using a phased approach or one recommended by the selected Vendor and approved by the City.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC03",
+        "fact": "The City will also accept responses from vendors offering best-of-breed Human Capital Management solutions, which must be able to integrate with the selected ERP system.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC04",
+        "fact": "Proposals are due September 17, 2024 at 3:00 p.m. PT, and late submissions will not be considered.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC05",
+        "fact": "Vendor questions are due August 28, 2024 at 3:00 p.m. PT, with the RFP issued August 16, 2024.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC06",
+        "fact": "The estimated timeline has implementation running from March 2025 to January 2027, after finalist selection in October 2024, demos in December 2024, and due diligence in January 2025.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC07",
+        "fact": "Proposals are scored on Software (30), Technology (15), Vendor (15), Cost Value (15) and Implementation (25), and the Implementation criterion requires Go Live for all modules in scope by January 1, 2027.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC08",
+        "fact": "Pricing must be comprehensive (including all taxes and discounts), valid for 180 days, and cover software, implementation services, and license/maintenance for Years 1-10.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC09",
+        "fact": "Proposals must be emailed as one PDF of no more than 100 pages (excluding sample contracts) plus the Requirements document in MS Word format.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC10",
+        "fact": "The pricing basis is 130 named users and 85 concurrent users for Financials, and 400 FTEs and 744 W2s for Human Capital Management.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC11",
+        "fact": "The detailed modules and functionality are defined in a separate Requirements Word document that is not included in this PDF; vendors must rate each item, and missing many Required features may lead to elimination.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC12",
+        "fact": "The new ERP replaces Eden (financials, HR, time and attendance, payroll), Quadrant cashiering and Excel-based budget and ACFR, and must integrate with retained systems such as NeoGov, Power Time, Amanda and RecTrac.",
+        "quote_verifiable": false,
+        "status": null,
+        "claim": null,
+        "reason": null
+      }
+    ]
+  },
+  "solution": {
+    "components": 11,
+    "assumptions": 6,
+    "rounds": 2,
+    "cited_total": 19,
+    "cited_covered": 19,
+    "cited_coverage": 1.0,
+    "stored_coverage_agrees": true,
+    "judged_covered": null,
+    "judged_coverage": null,
+    "rubric": {},
+    "calendar_components": [],
+    "component_records": [
+      {
+        "id": "C01",
+        "title": "Bid administration and clarification management",
+        "description": "Manages the solicitation process itself: compiles the bid team's questions on the RFP, its attachments and the separate Requirements, Exhibit A and Exhibit B documents, and submits them to the City in writing by August 28, 2024 at 3:00 p.m. PT. Tracks the City's September 5, 2024 answers and any addenda, and confirms each is incorporated into the Requirements responses, pricing and implementation narrative before the September 17, 2024 submission. Any ambiguity, conflict, discrepancy or omission found in the RFP is raised with the City in writing rather than resolved silently in the proposal.",
+        "requirement_ids": [
+          "R004"
+        ]
+      },
+      {
+        "id": "C02",
+        "title": "Project management, methodology and phased plan",
+        "description": "Delivers the implementation methodology the City asks for: a sample project plan with phases, tasks and timeline; City and Vendor staffing by role with average hours per month; and the process improvement strategy that treats the project as a move to best practice rather than a like-for-like swap. The plan sequences Financials and HCM module groups across March 2025 to January 2027, with go live for all modules by January 1, 2027 and City approval gates at each phase boundary. A named project manager owns schedule, risk, issue and status reporting to the City throughout.",
+        "requirement_ids": [
+          "R011",
+          "R013",
+          "R005"
+        ]
+      },
+      {
+        "id": "C03",
+        "title": "Requirements response and fit-gap analysis",
+        "description": "Completes the City's Requirements document line by line in the unmodified MS Word file, giving every item a rating from the prescribed scale (4, 3, 2, 0 or F) and a comment of no more than 100 words that explains how the item is supported, with no hyperlinks, no cross-references to other line items and no 'standard functionality' shorthand. The same responses feed a fit-gap analysis that identifies modifications, third-party integrations and future-release items, with cost estimates for modifications and month/year for future releases. This is the basis for the functional scope confirmed with the City before configuration begins.",
+        "requirement_ids": [
+          "R005",
+          "R010",
+          "R007"
+        ]
+      },
+      {
+        "id": "C04",
+        "title": "Software configuration and module build",
+        "description": "Configures the in-scope Financial modules (General Ledger, Budget, Project and Grant Accounting, Purchasing and Contract Management, Accounts Payable, Accounts Receivable, Capital Assets, Enterprise Cashiering) and HCM modules (Human Resources, Time and Attendance, Payroll) to the City's chart of accounts, budget structure, grant and project accounting rules, procurement and contract workflows, and payroll and time rules. Where a best-of-breed HCM product is proposed, the integration to the ERP is built and tested so HR, time and payroll data flow to Financials. Configuration is delivered in iterative cycles with City review and sign-off per module.",
+        "requirement_ids": [
+          "R005",
+          "R010",
+          "R007"
+        ]
+      },
+      {
+        "id": "C05",
+        "title": "Data conversion by module",
+        "description": "Provides a data conversion methodology per module: source data profiling and mapping from the City's legacy environment, cleansing and validation rules, mock conversions and reconciliation reports, and a final cutover conversion with City sign-off on balances and record counts. Conversion scope covers master data (vendors, customers, employees, chart of accounts, assets) and open balances and transactions for each Financial and HCM module in scope.",
+        "requirement_ids": [
+          "R005",
+          "R010",
+          "R032"
+        ]
+      },
+      {
+        "id": "C06",
+        "title": "Integration, reporting and technical architecture",
+        "description": "Delivers the integration tools and interfaces needed between ERP modules and any best-of-breed HCM product, plus report development for the City's operational and management reporting needs. Documents the technical architecture options (hosted, on-premises, SaaS), data center locations and redundancy, hardware specifications, mobile options, remote access, integration tools and software update scheduling, and the security overview covering SSO/SAML, multi-factor authentication and breach notification, response and cost. This is the material the City's Technology criterion and security review will assess.",
+        "requirement_ids": [
+          "R005",
+          "R007"
+        ]
+      },
+      {
+        "id": "C07",
+        "title": "Testing, training and change management",
+        "description": "Runs a structured test programme — unit, integration, conference-room pilot, user acceptance and parallel or mock go-live — with documented scripts, defect tracking and City sign-off. Delivers training methodology and tools, role-based end-user and administrator training, and a change management methodology covering stakeholder engagement, communications, readiness assessment and adoption measurement, so the City realises process improvement rather than a system swap. Training materials and documentation are handed over as City property.",
+        "requirement_ids": [
+          "R005",
+          "R017",
+          "R032"
+        ]
+      },
+      {
+        "id": "C08",
+        "title": "Go live, cutover and post go-live support",
+        "description": "Executes cutover to go live for all modules by January 1, 2027, with a cutover runbook, go/no-go criteria and hypercare immediately after each go live. Provides ongoing support with stated support hours, guaranteed response times, escalation process, baseline versus premium support levels, backup and disaster recovery services, post go-live tools, and user group and conference access. Support is priced for Years 1-10 alongside license and maintenance.",
+        "requirement_ids": [
+          "R013",
+          "R033",
+          "R005"
+        ]
+      },
+      {
+        "id": "C09",
+        "title": "Pricing on Exhibit A, per deployment option",
+        "description": "Completes the Exhibit A Pricing Summary as Section 3 of the response for all Required modules, with software and implementation services costs covering deployment, data conversion, configuration, report development, testing and training, plus integration, travel and other costs. Pricing is comprehensive including all taxes and available discounts, valid 180 days from the response date, sized to 130 named / 85 concurrent Financial users and 400 FTEs / 744 W2s for HCM, and presented on a separate sheet for each deployment option (SaaS and on-premises) with license and maintenance for Years 1-10.",
+        "requirement_ids": [
+          "R028",
+          "R029",
+          "R030",
+          "R031",
+          "R032",
+          "R033",
+          "R056",
+          "R057",
+          "R058",
+          "R009"
+        ]
+      },
+      {
+        "id": "C10",
+        "title": "Governance, compliance and contract obligations",
+        "description": "Manages the contractual and legal obligations of the bid and the engagement: certification of insurance before any work commences, an underwriter's endorsement with additional insured verbiage from a surety admitted in Washington State, and acknowledgement that all data, materials and documentation prepared for the City belong to the City. Provides the Exhibit B references (three current, two prior customers of similar size and scope, with Washington public-sector preference), the five-year disclosure of terminated contracts or customer legal action, sample contract documents, and a documented list of exceptions to the RFP. Also carries the bidder's own cost of responding and the proposal's compliance with the City's public-records position.",
+        "requirement_ids": [
+          "R054",
+          "R055",
+          "R017",
+          "R009"
+        ]
+      },
+      {
+        "id": "C11",
+        "title": "Reference implementations and demo readiness",
+        "description": "Presents the Vendor's track record implementing the proposed solution for cities of similar size and scope, drawn from the Exhibit B references and shaped into implementation case summaries. Prepares the delivery team to demonstrate the product on-site against the City's Demo Script, covering best practices and the system's ability to adapt to user preferences, and to show adherence to the script alongside demonstrated fit to the City's functional and technical requirements.",
+        "requirement_ids": [
+          "R006"
+        ]
+      }
+    ],
+    "pairs": [
+      {
+        "component_id": "C01",
+        "requirement_id": "R004",
+        "requirement_text": "Vendor questions about the RFP must be submitted by August 28, 2024 at 3:00 p.m. PT.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R011",
+        "requirement_text": "The ERP solution must be implemented using a phased approach or another approach recommended by the selected Vendor and approved by the City.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R013",
+        "requirement_text": "All modules in scope must go live by January 1, 2027.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R010",
+        "requirement_text": "The ERP solution must include the modules and functionality defined in the Requirements document provided with this RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R007",
+        "requirement_text": "Best-of-breed Human Capital Management solutions offered in response must have the ability to integrate with the selected ERP system.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R010",
+        "requirement_text": "The ERP solution must include the modules and functionality defined in the Requirements document provided with this RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R007",
+        "requirement_text": "Best-of-breed Human Capital Management solutions offered in response must have the ability to integrate with the selected ERP system.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R010",
+        "requirement_text": "The ERP solution must include the modules and functionality defined in the Requirements document provided with this RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R032",
+        "requirement_text": "Pricing must include all implementation services costs required for go live, including software deployment, data conversion, system configuration, report development, testing and training.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R007",
+        "requirement_text": "Best-of-breed Human Capital Management solutions offered in response must have the ability to integrate with the selected ERP system.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R017",
+        "requirement_text": "Ownership of all data, materials and documentation originated and prepared for the City pursuant to this solicitation will belong to the City.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R032",
+        "requirement_text": "Pricing must include all implementation services costs required for go live, including software deployment, data conversion, system configuration, report development, testing and training.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R013",
+        "requirement_text": "All modules in scope must go live by January 1, 2027.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R033",
+        "requirement_text": "Pricing must include the cost of ongoing license/maintenance for Years 1-10.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R005",
+        "requirement_text": "The proposed ERP solution must satisfy all of the City's functional and technical requirements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R028",
+        "requirement_text": "Pricing must be submitted by completing the Pricing Summary from Exhibit A, indicating costs for software and implementation services.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R029",
+        "requirement_text": "Pricing must be comprehensive, including all taxes and available discounts.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R030",
+        "requirement_text": "Pricing must be valid for 180 days from the response date.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R031",
+        "requirement_text": "Pricing must include software cost for the user counts defined in this RFP, with one sheet for each deployment option if applicable (SaaS or on-premises).",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R032",
+        "requirement_text": "Pricing must include all implementation services costs required for go live, including software deployment, data conversion, system configuration, report development, testing and training.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R033",
+        "requirement_text": "Pricing must include the cost of ongoing license/maintenance for Years 1-10.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R056",
+        "requirement_text": "Pricing must be submitted using the Exhibit A Pricing template as Section 3 of the response for all \"Required\" modules.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R057",
+        "requirement_text": "A separate pricing sheet must be provided for each deployment option.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R058",
+        "requirement_text": "Pricing must cover Financials sized at 130 named users and 85 concurrent users, and Human Capital Management sized at 400 FTEs and 744 W2s.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R009",
+        "requirement_text": "The Vendor is solely responsible for all costs incurred in responding to the RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R054",
+        "requirement_text": "The Vendor must provide a certification of insurance prior to commencement of any work.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R055",
+        "requirement_text": "An underwriter's endorsement with additional insured verbiage is required, and the surety must be an admitted surety in the State of Washington.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R017",
+        "requirement_text": "Ownership of all data, materials and documentation originated and prepared for the City pursuant to this solicitation will belong to the City.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R009",
+        "requirement_text": "The Vendor is solely responsible for all costs incurred in responding to the RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C11",
+        "requirement_id": "R006",
+        "requirement_text": "The Vendor should have experience successfully implementing the proposed solutions for cities of similar size and scope of services.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      }
+    ]
+  },
+  "risks": {
+    "risks": 12,
+    "severity": {
+      "high": 3,
+      "medium": 8,
+      "low": 1
+    },
+    "likelihood": {
+      "high": 1,
+      "medium": 11
+    },
+    "source": {
+      "rfp": 8,
+      "solution": 4
+    },
+    "severity_agreement": null,
+    "likelihood_agreement": null,
+    "findings": 1,
+    "findings_code_covered": 1,
+    "findings_judge_covered": null,
+    "risk_verdicts": [
+      {
+        "id": "K01",
+        "title": "Requirements document not in hand, so scope and price are estimated blind",
+        "severity": "high",
+        "likelihood": "high",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K02",
+        "title": "January 1, 2027 go-live treated as hard for all modules",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K03",
+        "title": "Best-of-breed HCM integration adds unquantified scope",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K04",
+        "title": "Insurance limits and additional insured terms unknown at bid time",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K05",
+        "title": "Exhibit A and Exhibit B templates not yet obtained",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K06",
+        "title": "Unreadable page 5 may hide scope or pricing terms",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K07",
+        "title": "Demo Script withheld until finalist notification",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K08",
+        "title": "100-page cap and prescribed format squeeze the response",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K09",
+        "title": "Requirements responses constrained to 100 words with no cross-references",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K10",
+        "title": "Pricing must be comprehensive and held for 180 days across two deployment options",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K11",
+        "title": "Data conversion scoped from a single assumed legacy source",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K12",
+        "title": "Proprietary marking and public-records exposure",
+        "severity": "low",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      }
+    ],
+    "finding_verdicts": [
+      {
+        "id": "F1",
+        "kind": "flagged_page",
+        "label": "page 5 unreadable or incomplete (large_image_block)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K06"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      }
+    ]
+  },
+  "grounding": {
+    "by_output": {
+      "problem": {
+        "items": 29,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 3,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "solution": {
+        "items": 21,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 6,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "risks": {
+        "items": 12,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 7,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      }
+    },
+    "items": [
+      {
+        "where": "problem.client_situation[0]",
+        "output": "problem",
+        "text": "The RFP is issued by the City of Federal Way, Washington, which incorporated in February 1990 and changed from a council-manager to a mayor-council form of government in November 2010.",
+        "kind": "fact",
+        "cited": [
+          "S1.1",
+          "S4.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[1]",
+        "output": "problem",
+        "text": "The City is a residential and commercial community with an estimated 22,485 people employed within its city limits, and its comprehensive plan calls for a vibrant City Center with mixed-use development and public transportation access.",
+        "kind": "fact",
+        "cited": [
+          "S4.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[2]",
+        "output": "problem",
+        "text": "The City currently runs a legacy environment that it intends to replace with an integrated ERP solution; the RFP's Scope section presents tables describing the current environment and which solutions are in scope, but those tables are not reproduced in the RFP text.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[3]",
+        "output": "problem",
+        "text": "The City's stated business driver is process improvement through new systems and adoption of the selected Vendor's best practices, not a like-for-like system swap.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[4]",
+        "output": "problem",
+        "text": "The City wants a Vendor with a proven track record implementing the proposed solution for cities of similar size and scope of services.",
+        "kind": "fact",
+        "cited": [
+          "S3.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[5]",
+        "output": "problem",
+        "text": "The City is open to best-of-breed Human Capital Management Vendors that can integrate with the selected ERP system, in addition to full-suite ERP Vendors.",
+        "kind": "fact",
+        "cited": [
+          "S3.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[0]",
+        "output": "problem",
+        "text": "The City intends to purchase an integrated ERP solution covering the modules and functionality defined in a separate Requirements document issued with the RFP.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[1]",
+        "output": "problem",
+        "text": "The required Financial modules are General Ledger, Budget, Project and Grant Accounting, Purchasing and Contract Management, Accounts Payable, Accounts Receivable, Capital Assets and Enterprise Cashiering, sized at 130 named users and 85 concurrent users.",
+        "kind": "fact",
+        "cited": [
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "Purchasing"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[2]",
+        "output": "problem",
+        "text": "The required Human Capital Management modules are Human Resources, Time and Attendance and Payroll, sized at 400 FTEs and 744 W2s.",
+        "kind": "fact",
+        "cited": [
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[3]",
+        "output": "problem",
+        "text": "The City expects a phased implementation, or another approach recommended by the selected Vendor and approved by the City, with implementation running March 2025 through January 2027.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[4]",
+        "output": "problem",
+        "text": "The Vendor must deliver implementation services through go live covering software deployment, data conversion, system configuration, report development, testing and training, plus integration, travel and other costs.",
+        "kind": "fact",
+        "cited": [
+          "S9.3",
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[5]",
+        "output": "problem",
+        "text": "The Vendor must supply an implementation methodology with a sample project plan (phases, tasks, timeline), City and Vendor staffing by role and average hours per month, process improvement strategy, change management methodology, data conversion methodology by module, testing and training methodology and tools, and report development.",
+        "kind": "fact",
+        "cited": [
+          "S9.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[6]",
+        "output": "problem",
+        "text": "The Vendor must provide post go-live support including support hours, guaranteed response time, escalation process, baseline versus premium support levels, backup and disaster recovery services, and user groups and conferences.",
+        "kind": "fact",
+        "cited": [
+          "S9.3",
+          "S9.4"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[0]",
+        "output": "problem",
+        "text": "Proposals are scored by a City evaluation committee on Software (30 points), Implementation (25 points), Technology (15 points), Vendor (15 points) and Cost Value (15 points).",
+        "kind": "fact",
+        "cited": [
+          "S8.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[1]",
+        "output": "problem",
+        "text": "The Implementation criterion requires Go Live for all modules in scope by January 1, 2027.",
+        "kind": "fact",
+        "cited": [
+          "S8.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "1",
+          "2027"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[2]",
+        "output": "problem",
+        "text": "Finalists must demonstrate their product on-site following a City-issued Demo Script, and demos are judged on adherence to that script and on demonstrated ability to meet the City's functional and technical requirements.",
+        "kind": "fact",
+        "cited": [
+          "S8.1",
+          "S8.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[3]",
+        "output": "problem",
+        "text": "Every requirement line item must be rated and commented, with ratings of 4 (standard/available), 3 (third-party integrated, application named), 2 (modification, cost estimated), 0 (not available) or F (future release, month and year given); blank responses may cause rejection.",
+        "kind": "fact",
+        "cited": [
+          "S10.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[4]",
+        "output": "problem",
+        "text": "Software missing a significant number of required features and technology preferences may be eliminated from consideration.",
+        "kind": "fact",
+        "cited": [
+          "S10.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[5]",
+        "output": "problem",
+        "text": "Vendor questions are due August 28, 2024 at 3:00 p.m. PT, answers are posted September 5, 2024, and proposals are due September 17, 2024 at 3:00 p.m. PT, with late submissions not considered.",
+        "kind": "fact",
+        "cited": [
+          "S1.1",
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[6]",
+        "output": "problem",
+        "text": "The selection schedule runs finalists selected October 2024, software demos December 2024, due diligence review January 2025, and contract negotiations January 2025 onward, and the City may modify or reschedule these dates.",
+        "kind": "fact",
+        "cited": [
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[7]",
+        "output": "problem",
+        "text": "No contract will be awarded until it is approved by City Council, and the City may award on the initial proposal alone or after demos and negotiations.",
+        "kind": "fact",
+        "cited": [
+          "S8.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[0]",
+        "output": "problem",
+        "text": "Proposals must be a single electronic PDF of no more than 100 pages (sample contracts excluded) emailed to Thuch.Mam@FederalWayWA.gov, plus one completed Requirements document in unmodified MS Word format.",
+        "kind": "fact",
+        "cited": [
+          "S9.1",
+          "S9.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[1]",
+        "output": "problem",
+        "text": "The proposal must follow the prescribed section order — Cover Letter (two pages maximum), Requirements, Pricing, Implementation and Support — and responses that deviate may be classified non-responsive and disqualified, with marketing literature excluded.",
+        "kind": "fact",
+        "cited": [
+          "S9.2",
+          "S9.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[2]",
+        "output": "problem",
+        "text": "Pricing must use the Exhibit A Pricing Summary, be comprehensive including all taxes and discounts, remain valid 180 days from the response date, and include a separate sheet for each deployment option (SaaS or on-premises) with license/maintenance priced for Years 1-10.",
+        "kind": "fact",
+        "cited": [
+          "S9.3",
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[3]",
+        "output": "problem",
+        "text": "The Requirements document must not be reformatted — no changes to format, font, numbering or page breaks — each response is limited to 100 words, and hyperlinks, cross-references to other line items, and comments such as \"Standard Functionality\" are not acceptable.",
+        "kind": "fact",
+        "cited": [
+          "S10.1",
+          "S10.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[4]",
+        "output": "problem",
+        "text": "The Vendor must describe technical architecture options (hosted, on-premises, SaaS), data center locations and redundancy, hardware specifications, mobile options, remote access, integration tools, and update scheduling, plus a security overview covering SSO/SAML, multi-factor authentication and breach notification, response and cost.",
+        "kind": "fact",
+        "cited": [
+          "S9.4"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[5]",
+        "output": "problem",
+        "text": "The Vendor must submit three current and two prior customer references on Exhibit B forms, similar in size and scope to the City's project with preference for Washington State public sector clients, and must disclose any contract terminated or legal action with a customer in the past five years.",
+        "kind": "fact",
+        "cited": [
+          "S9.4",
+          "S13.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[6]",
+        "output": "problem",
+        "text": "All data, materials and documentation prepared for the City belong to the City, submissions become public records, and a Vendor cannot mark its entire submittal proprietary — the City makes the sole determination of what is proprietary.",
+        "kind": "fact",
+        "cited": [
+          "S9.1",
+          "S11.2",
+          "S11.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[7]",
+        "output": "problem",
+        "text": "The Requirements document and the Pricing Summary (Exhibit A) and References form (Exhibit B) are separate documents the bidder must obtain and complete, and the current-environment and in-scope solution tables referenced in the Scope section are not included in the RFP text.",
+        "kind": "inference",
+        "cited": [
+          "S6.1",
+          "S10.1",
+          "S12.1",
+          "S13.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "Summary"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C01.claims[0]",
+        "output": "solution",
+        "text": "Vendor questions are due August 28, 2024 at 3:00 p.m. PT, answers are posted September 5, 2024, and proposals are due September 17, 2024 at 3:00 p.m. PT.",
+        "kind": "fact",
+        "cited": [
+          "S1.1",
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C02.claims[0]",
+        "output": "solution",
+        "text": "The City expects implementation to run March 2025 through January 2027 with all modules live by January 1, 2027.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S7.1",
+          "S8.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "1"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C02.claims[1]",
+        "output": "solution",
+        "text": "The City's driver is process improvement and adoption of the Vendor's best practices, not a like-for-like system replacement.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C03.claims[0]",
+        "output": "solution",
+        "text": "The City's functional and technical requirements are held in a separate Requirements document issued with the RFP.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S10.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C03.claims[1]",
+        "output": "solution",
+        "text": "The City is open to best-of-breed HCM vendors that integrate with the selected ERP.",
+        "kind": "fact",
+        "cited": [
+          "S3.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "HCM"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C04.claims[0]",
+        "output": "solution",
+        "text": "Financials are sized at 130 named users and 85 concurrent users, and HCM at 400 FTEs and 744 W2s.",
+        "kind": "fact",
+        "cited": [
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "HCM"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C05.claims[0]",
+        "output": "solution",
+        "text": "The City currently runs a legacy environment that the ERP is intended to replace.",
+        "kind": "fact",
+        "cited": [
+          "S5.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C06.claims[0]",
+        "output": "solution",
+        "text": "The City scores Technology at 15 points and requires architecture, redundancy, mobile, integration and security detail.",
+        "kind": "fact",
+        "cited": [
+          "S8.1",
+          "S9.4"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C07.claims[0]",
+        "output": "solution",
+        "text": "The Vendor must deliver testing and training methodology and tools as part of implementation services.",
+        "kind": "fact",
+        "cited": [
+          "S9.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C08.claims[0]",
+        "output": "solution",
+        "text": "The City requires post go-live support detail including hours, response times, escalation, support tiers, backup and disaster recovery, and user groups.",
+        "kind": "fact",
+        "cited": [
+          "S9.3",
+          "S9.4"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C09.claims[0]",
+        "output": "solution",
+        "text": "Pricing must use the Exhibit A template and include a separate sheet for each deployment option.",
+        "kind": "fact",
+        "cited": [
+          "S9.3",
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C10.claims[0]",
+        "output": "solution",
+        "text": "The City requires an insurance certificate and an underwriter's endorsement with additional insured verbiage from a Washington-admitted surety.",
+        "kind": "fact",
+        "cited": [
+          "S11.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C10.claims[1]",
+        "output": "solution",
+        "text": "All data, materials and documentation prepared for the City belong to the City, and submissions become public records.",
+        "kind": "fact",
+        "cited": [
+          "S9.1",
+          "S11.2",
+          "S11.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C11.claims[0]",
+        "output": "solution",
+        "text": "The City wants a Vendor with a proven track record implementing the proposed solution for cities of similar size and scope.",
+        "kind": "fact",
+        "cited": [
+          "S3.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C11.claims[1]",
+        "output": "solution",
+        "text": "Finalists must demonstrate on-site following a City-issued Demo Script, judged on script adherence and demonstrated fit.",
+        "kind": "fact",
+        "cited": [
+          "S8.1",
+          "S8.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[0]",
+        "output": "solution",
+        "text": "January 1, 2027 is treated as a hard contractual go-live date for all modules, with modules going live in waves before that date rather than all at once.",
+        "kind": "assumption",
+        "cited": [
+          "S7.1",
+          "S8.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "1"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[1]",
+        "output": "solution",
+        "text": "Insurance is assumed to be quoted at the City's standard public-entity limits (commercial general liability, auto, workers' compensation, professional liability and cyber) with the City named as additional insured, pending the City confirming amounts.",
+        "kind": "assumption",
+        "cited": [
+          "S11.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[2]",
+        "output": "solution",
+        "text": "The Requirements document is assumed to match the functional scope described in the RFP's Scope and module sections, and the bid is priced against that scope until the actual document is obtained.",
+        "kind": "assumption",
+        "cited": [
+          "S5.1",
+          "S9.3",
+          "S10.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[3]",
+        "output": "solution",
+        "text": "The current-environment and in-scope solution tables are assumed to describe a single legacy system being replaced wholesale, so data conversion is scoped from one source per module.",
+        "kind": "assumption",
+        "cited": [
+          "S5.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[4]",
+        "output": "solution",
+        "text": "The Demo Script is assumed to be issued only to finalists, so demo preparation is scheduled after the October 2024 finalist selection rather than during proposal preparation.",
+        "kind": "assumption",
+        "cited": [
+          "S8.1",
+          "S8.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "2024"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[5]",
+        "output": "solution",
+        "text": "The Exhibit A and Exhibit B templates are assumed to be obtainable from the City before the September 17, 2024 deadline, and pricing and references are built directly in those templates.",
+        "kind": "assumption",
+        "cited": [
+          "S9.3",
+          "S12.1",
+          "S13.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "17",
+          "2024"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K01",
+        "output": "risks",
+        "text": "Requirements document not in hand, so scope and price are estimated blind. The City's functional and technical requirements live in a separate Requirements document that the bid team does not yet hold, and the current-environment and in-scope solution tables are not reproduced in the RFP text. The bid is therefore priced against an assumed scope; if the real document contains modules, interfaces or modifications beyond that assumption, the fixed Exhibit A price and the January 1, 2027 plan both break. The bidder carries the cost of re-rating hundreds of line items if the document arrives late. The RFP states the requirements are in a separate Word document and the scope tables are absent, while the solution explicitly assumes the document matches the RFP's module narrative and prices against that assumption. Pricing a multi-module ERP without the requirement list is expected to produce a gap.",
+        "kind": "risk",
+        "cited": [
+          "R010",
+          "R005",
+          "R025",
+          "R042",
+          "R047",
+          "S5.1",
+          "S9.3",
+          "S10.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "2027"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K02",
+        "output": "risks",
+        "text": "January 1, 2027 go-live treated as hard for all modules. The RFP requires all modules in scope live by January 1, 2027, with implementation running March 2025 to January 2027, but does not settle whether that date is contractual or whether modules may go live in waves. The proposed solution assumes a hard date with wave-based go-lives. If the City instead expects a single simultaneous cutover, or if any wave slips, the bidder faces liquidated exposure or a compressed, more expensive end-game across Financials and HCM. Go live for all modules is a scored Implementation criterion and the date is fixed, but the RFP leaves the phasing question open, so the risk turns on an answer the RFP does not give. A 22-month, eleven-module implementation with data conversion and a possible best-of-breed HCM integration is tight.",
+        "kind": "risk",
+        "cited": [
+          "R013",
+          "R011",
+          "S7.1",
+          "S8.1",
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "22",
+          "Financials",
+          "HCM"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K03",
+        "output": "risks",
+        "text": "Best-of-breed HCM integration adds unquantified scope. The City permits best-of-breed HCM vendors that integrate with the ERP, and the solution builds and tests that integration so HR, time and payroll data flow to Financials. Payroll and time integration is the highest-risk interface in an ERP programme; if the HCM product is third-party, the bidder owns an interface whose effort depends on a product it may not control, and the Exhibit A price must absorb it. The RFP explicitly opens the door to third-party HCM and requires integration capability, and the solution commits to building and testing that interface. The effort depends on which HCM product is proposed and on the City's payroll rules, neither of which the RFP settles.",
+        "kind": "risk",
+        "cited": [
+          "R007",
+          "R005",
+          "R032",
+          "S3.1",
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "HCM",
+          "HR"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K04",
+        "output": "risks",
+        "text": "Insurance limits and additional insured terms unknown at bid time. The RFP requires a certificate of insurance and an underwriter's endorsement naming the City as additional insured from a Washington-admitted surety, but states no coverage types, limits or amounts. The solution assumes standard public-entity limits. If the City's actual limits are higher, or require cyber or professional liability at levels the bidder does not carry, the bidder must buy cover or seek an exception after award, and the cost is not in the price. The requirement is mandatory and the amounts are simply absent from the RFP, so the exposure depends on facts the RFP does not give. Insurance is a pre-work condition, so a shortfall delays mobilisation rather than merely costing money.",
+        "kind": "risk",
+        "cited": [
+          "R054",
+          "R055",
+          "S11.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K05",
+        "output": "risks",
+        "text": "Exhibit A and Exhibit B templates not yet obtained. Pricing must be completed on the Exhibit A template as Section 3 and references on Exhibit B forms, but both are separate documents the bidder must obtain. If the templates arrive late or differ from the assumed structure, pricing and reference work is redone close to the September 17, 2024 deadline, and a non-conforming pricing sheet can make the response non-responsive. The solution assumes both templates are obtainable before the deadline, which the RFP does not guarantee. Pricing format is a mandatory submission requirement, so a mismatch is a responsiveness risk, not just rework.",
+        "kind": "risk",
+        "cited": [
+          "R028",
+          "R056",
+          "R057",
+          "R038",
+          "S9.3",
+          "S12.1",
+          "S13.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "17",
+          "2024"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K06",
+        "output": "risks",
+        "text": "Unreadable page 5 may hide scope or pricing terms. Page 5 of the RFP is dominated by an image block covering 42% of the page and its text could not be parsed. If that page carries scope tables, user counts or pricing instructions, the bid may be built on an incomplete reading of the RFP and miss a mandatory element. The page sits in the early scope section where the current-environment and in-scope solution tables are referenced, and those tables are already noted as not reproduced in the RFP text. The content is unknown, so the impact is plausible rather than certain.",
+        "kind": "risk",
+        "cited": [
+          "R010",
+          "R005"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "5",
+          "42"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K07",
+        "output": "risks",
+        "text": "Demo Script withheld until finalist notification. Finalists must demonstrate on-site following a City-issued Demo Script and are judged on script adherence, but the script is only provided with the finalist notification. The solution schedules demo preparation after October 2024 selection. If the script demands scenarios the team has not rehearsed, or the December 2024 demo window is short, the demo score suffers on a criterion the City weights heavily. The script is a referenced document not available at bid time, and the solution's assumption that it arrives only at finalist stage is an inference. Demo performance feeds the Software and Implementation scores, so a weak demo costs ranking.",
+        "kind": "risk",
+        "cited": [
+          "R012",
+          "R014",
+          "R006",
+          "S8.1",
+          "S8.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "2024"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K08",
+        "output": "risks",
+        "text": "100-page cap and prescribed format squeeze the response. The proposal must be a single PDF of no more than 100 pages in a prescribed section order, with a two-page cover letter, no marketing literature, and a separate unmodified Word Requirements document. The solution covers eleven components including architecture, security, references, sample contracts and full implementation methodology. Content that does not fit gets cut, and a deviation in order or length can be ruled non-responsive. The page cap is mandatory and the content obligations are extensive, including security, architecture, support and references. The RFP warns that responses deviating from the format may be disqualified, so the constraint bites on both quality and compliance.",
+        "kind": "risk",
+        "cited": [
+          "R016",
+          "R020",
+          "R022",
+          "R024",
+          "R023",
+          "S9.1",
+          "S9.2",
+          "S9.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K09",
+        "output": "risks",
+        "text": "Requirements responses constrained to 100 words with no cross-references. Every line item in the Requirements document must be rated on the prescribed scale and explained in 100 words or fewer, with no hyperlinks, no references to other line items and no 'standard functionality' shorthand, in an unmodified Word file. With a large requirement set this is a substantial writing and quality-control effort, and a blank or shorthand response may cause rejection. The RFP states blank responses may cause rejection and explicitly disallows the shorthand vendors normally use. The volume of line items is unknown until the Requirements document is obtained, which makes the effort hard to size.",
+        "kind": "risk",
+        "cited": [
+          "R025",
+          "R027",
+          "R042",
+          "R043",
+          "R044",
+          "R045",
+          "R046",
+          "R047",
+          "R048",
+          "R049",
+          "R026",
+          "S10.1",
+          "S10.2",
+          "S9.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K10",
+        "output": "risks",
+        "text": "Pricing must be comprehensive and held for 180 days across two deployment options. Pricing must include all taxes and discounts, cover implementation services through go live, license and maintenance for Years 1-10, and be presented on a separate sheet for each deployment option, valid for 180 days. The solution prices both SaaS and on-premises. If hardware, hosting or third-party costs move during the validity window, or a deployment option is under-scoped, the bidder absorbs the difference on a ten-year commitment. The RFP requires comprehensive pricing on two deployment sheets with a 180-day hold and ten years of maintenance, which locks in cost assumptions well beyond the bid. The solution's own assumption that the scope tables describe a single legacy system also feeds the conversion estimate.",
+        "kind": "risk",
+        "cited": [
+          "R029",
+          "R030",
+          "R031",
+          "R032",
+          "R033",
+          "R057",
+          "R058",
+          "S9.3",
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K11",
+        "output": "risks",
+        "text": "Data conversion scoped from a single assumed legacy source. The solution assumes the current-environment tables describe one legacy system replaced wholesale, so conversion is scoped from one source per module. If the City actually runs several systems, spreadsheets or shadow databases, source profiling, mapping and reconciliation multiply, and the conversion effort priced in Exhibit A is short. The RFP's current-environment tables are not reproduced in the RFP text, so the single-source assumption is unverified. Conversion is a mandatory priced service and a common source of ERP overrun.",
+        "kind": "risk",
+        "cited": [
+          "R032",
+          "R005",
+          "S5.1",
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "Exhibit"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K12",
+        "output": "risks",
+        "text": "Proprietary marking and public-records exposure. All data, materials and documentation prepared for the City belong to the City, submissions become public records, and the City alone decides what is proprietary, while the bidder may not mark the whole submittal proprietary. Pricing detail, methodology and security information therefore become disclosable, and an over-broad confidentiality claim can be rejected or the response treated as non-conforming. The obligation is mandatory and the City holds sole discretion, but the practical impact is limited to disclosure of bid content rather than delivery failure. The solution addresses ownership but not the marking procedure.",
+        "kind": "risk",
+        "cited": [
+          "R017",
+          "R018",
+          "R052",
+          "R053",
+          "S9.1",
+          "S11.2",
+          "S11.3"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      }
+    ]
+  },
+  "cost": {
+    "calls": 29,
+    "input_tokens": 65141,
+    "output_tokens": 21369,
+    "cached_input_tokens": 41722,
+    "cached_share": 0.6404875577593221,
+    "cost_usd": 0.032918831999999995,
+    "wall_s": 77.528548,
+    "retries": 0,
+    "stages": [
+      {
+        "stage": "parse",
+        "status": "finished",
+        "wall_s": 6.32790129998466,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "parse_quality",
+        "status": "finished",
+        "wall_s": 4.26256140001351,
+        "calls": 3,
+        "input_tokens": 4206,
+        "output_tokens": 439,
+        "cached_input_tokens": 3584,
+        "cost_usd": 0.000734904,
+        "retries": 0
+      },
+      {
+        "stage": "split",
+        "status": "finished",
+        "wall_s": 0.011470099998405203,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "requirements",
+        "status": "finished",
+        "wall_s": 17.611409699980868,
+        "calls": 1,
+        "input_tokens": 8568,
+        "output_tokens": 5071,
+        "cached_input_tokens": 8320,
+        "cost_usd": 0.00620952,
+        "retries": 0
+      },
+      {
+        "stage": "problem",
+        "status": "finished",
+        "wall_s": 19.470573999977205,
+        "calls": 22,
+        "input_tokens": 29300,
+        "output_tokens": 6543,
+        "cached_input_tokens": 20986,
+        "cost_usd": 0.010471716,
+        "retries": 0
+      },
+      {
+        "stage": "solution",
+        "status": "finished",
+        "wall_s": 27.926321300008567,
+        "calls": 2,
+        "input_tokens": 14353,
+        "output_tokens": 6102,
+        "cached_input_tokens": 7168,
+        "cost_usd": 0.009520908,
+        "retries": 0
+      },
+      {
+        "stage": "risk",
+        "status": "finished",
+        "wall_s": 19.514169000001857,
+        "calls": 1,
+        "input_tokens": 8714,
+        "output_tokens": 3214,
+        "cached_input_tokens": 1664,
+        "cost_usd": 0.0059817839999999995,
+        "retries": 0
+      },
+      {
+        "stage": "assemble",
+        "status": "finished",
+        "wall_s": 0.005768700008047745,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      }
+    ],
+    "retried": []
+  },
+  "judge": {
+    "model": "anthropic:claude-sonnet-5-5",
+    "calls": 5,
+    "failures": 0,
+    "totals": {
+      "input_tokens": 23753,
+      "output_tokens": 3749,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.08499600000000002,
+      "latency_s": 24.17229389998829,
+      "retries": 0
+    },
+    "per_node": {
+      "judge_match": {
+        "input_tokens": 4752,
+        "output_tokens": 569,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.015194,
+        "latency_s": 3.6252636999997776,
+        "retries": 0
+      },
+      "judge_requirements": {
+        "input_tokens": 19001,
+        "output_tokens": 3180,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.069802,
+        "latency_s": 20.547030199988512,
+        "retries": 0
+      }
+    }
+  }
+}
