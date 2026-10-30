@@ -15,6 +15,7 @@ ENV_VARS = [
     "RFP_MAX_OUTPUT_TOKENS",
     "RFP_REQUEST_TIMEOUT_S",
     "RFP_LLM_TRANSPORT_RETRIES",
+    "RFP_DEEPSEEK_THINKING",
     "DEEPSEEK_API_KEY",
     "ANTHROPIC_API_KEY",
     "LANGFUSE_PUBLIC_KEY",
@@ -41,6 +42,7 @@ def test_defaults():
     assert s.max_output_tokens is None
     assert s.request_timeout_s == 120.0
     assert s.llm_transport_retries == 2
+    assert s.deepseek_thinking is False
     assert s.full_text_problem is False
     assert s.single_call_extraction is False
     assert s.generator == ("deepseek", "deepseek-flash")
