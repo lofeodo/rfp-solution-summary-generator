@@ -156,6 +156,14 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   repository.
 - Uploads must be PDFs (checked by the `%PDF` header) of at most 50 MB. The limit is
   checked after the upload has been received, which is fine for local use.
+- The frontend targets current evergreen desktop and mobile browsers. The PDF
+  preview uses the browser's own viewer. Chrome, Edge and Firefox honour
+  `#page=N`; Safari opens at page 1.
+- The upload form's two ablation checkboxes only switch a flag on. An unticked box
+  sends nothing, so the server's settings decide (both default to off).
+- The frontend is built with `npm run build`, and `dist/` is not committed.
+  Without a build, the backend still serves the API, and `npm run dev` serves the
+  UI on `:5173`.
 
 ## Scope
 

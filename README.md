@@ -11,9 +11,9 @@ latency, cost).
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
 (S5), problem statement (S6), solution generator (S7), risk assessor (S8),
 renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11), the evaluation
-harness with baseline results (S12) and the UI backend (S14). Sample outputs for the
-four RFPs are under `runs/samples/`, eval results under `evals/results/baseline/`.
-Next: ablations and fixes driven by the evals (S13) and the UI frontend (S15); see
+harness with baseline results (S12), the UI backend (S14) and the UI frontend (S15).
+Sample outputs for the four RFPs are under `runs/samples/`, eval results under
+`evals/results/baseline/`. Next: ablations and fixes driven by the evals (S13); see
 `docs/ROADMAP.md`.
 
 ## Pipeline
@@ -87,7 +87,30 @@ calls back with a `StageEvent` (`started`, `finished`, `failed`, wall time, the 
 calls and cost) from each node, which is what the UI backend streams. Per-agent debug
 commands with JSON reuse of upstream outputs live in `python -m rfp_agent.agents`.
 
-## UI backend
+## UI
+
+A browser UI over the pipeline. Upload an RFP and watch each stage run live, with
+per-stage time, calls, tokens and cost. Then read the proposed solution, the
+requirements (filterable by type and strictness), the risks (sorted by severity),
+the problem statement, the parse and chunk views, and a metrics dashboard. Click
+any chunk, requirement, component or risk ID to open its source: the cited chunk
+with the verbatim quote highlighted, and the PDF at that page. The four samples
+need no API key.
+
+```
+# once: build the frontend (Node 20+)
+cd ui/frontend && npm ci && npm run build && cd ../..
+python -m ui.backend --port 8000          # UI and API on http://127.0.0.1:8000
+
+# or, while editing the frontend: two terminals
+python -m ui.backend --port 8000
+cd ui/frontend && npm run dev             # http://localhost:5173, proxies /api
+```
+
+Frontend checks: `npm run typecheck`, `npm test` (Vitest) and `npm run build` in
+`ui/frontend`, also run in CI.
+
+### UI backend
 
 `python -m ui.backend --port 8000` serves a FastAPI app over the same pipeline. It
 uploads a PDF, runs it on one worker thread (later uploads wait as `queued`), and
@@ -382,6 +405,7 @@ evals/harness/     eval harness: `python -m evals.harness` (S12)
 evals/results/     committed eval results, one directory per label (S12, S13)
 runs/samples/      committed end-to-end outputs for the four RFPs (S10)
 ui/backend/        FastAPI app: uploads, run queue, SSE events, run outputs (S14)
+ui/frontend/       Vite + React + TypeScript + Tailwind UI (S15)
 docs/              ROADMAP, DECISIONS, ASSUMPTIONS, TIMELOG, PROMPTS
 ```
 

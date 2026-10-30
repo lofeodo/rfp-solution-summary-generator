@@ -109,13 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S14 done
-    class S13,S15 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S14,S15 done
+    class S13 ready
 ```
 
-**Progress (2026-10-30):** done S0 to S12 and S14 (green). Ready now, all
-dependencies done (amber): S13 and S15, which may run in parallel. Update the two
-`class` lines in
+**Progress (2026-10-30):** done S0 to S12, S14 and S15 (green). Ready now, all
+dependencies done (amber): S13; S16 follows it. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
@@ -2010,7 +2009,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     a small merge there.
 
 ### S15. UI frontend (Vite, React, Tailwind)
-- **Status:** todo
+- **Status:** done
 - **Goal:** `ui/frontend/`: upload and view the source PDF alongside; live per-node
   progress with metrics (doubles as the metrics dashboard); main view of the rendered
   solution; views for every intermediate output, requirements table filterable by type
@@ -2023,10 +2022,168 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   polish is stretch ST1.
 - **Depends on:** S14
 - **Parallel with:** S12, S13
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:**
+    - The main view is built from `summary.json` in React, and every chunk, requirement,
+      component and risk ID is a clickable chip. `summary.md` stays a download.
+    - The PDF shows in the browser's own viewer (iframe `source.pdf#page=N`) beside a
+      chunk panel, which highlights the verbatim quote. No pdf.js.
+    - Type: Bricolage Grotesque for display, Newsreader for the body serif, JetBrains Mono
+      for IDs and numbers. One red-orange accent on off-white paper. The fonts are
+      self-hosted with `@fontsource`.
+    - TypeScript, with Vitest on the pure logic. A new CI job runs npm ci, typecheck,
+      test and build.
+    - A Playwright MCP screenshot, critique and adjust loop runs after each build unit,
+      at desktop and phone widths, not only at the end.
+  - **Taken without asking:**
+    - React 18, Vite, Tailwind and react-router. The backend already has the SPA
+      catch-all, and the Vite proxy sends `/api` to `:8000`.
+    - No state library. `dist/` stays out of git, and S16's Dockerfile builds it.
+    - Native `EventSource`, with stages keyed by `stage` from their latest event, so
+      replays without `started` events render.
+    - Quote markup (`**`, `<u>`) is stripped and rendered as text, with no raw HTML.
+    - Risks use the same severity sort as `render/markdown.py`.
+  - **Files (`ui/frontend/`):**
+    - `src/api/{types,client}.ts`: TS mirrors of the backend and artifact models, plus
+      fetch helpers.
+    - `src/lib/{stages,highlight,requirements,risks,format}.ts`: pure logic with Vitest
+      tests. It covers the SSE reducer, quote highlighting with normalisation and a "not
+      found" fallback, the requirement filters, the risk sort and number formats.
+    - `src/hooks/{useRun,useArtifact}.ts`.
+    - `src/components/`: `Masthead`, `UploadForm` (the four CLI options), `RunList`,
+      `StageTimeline` (live per-stage metrics), `NodeTable`, `RunSummaryBar` (totals,
+      Langfuse, downloads), `CiteChip`, and `SourcePanel` (chunk text, quote highlight and
+      the PDF at the page).
+    - `src/views/`: `Solution` (main), `Requirements` (filters, ambiguities, gaps),
+      `Risks`, `Problem` (chunk summaries), `Parse` (pages, flags, quality, referenced
+      documents), `Chunks`, and `Metrics`.
+    - Routes `/` and `/runs/:id/:tab?`.
+  - **Shared files:** `.github/workflows/ci.yml` (frontend job) and `README.md` (UI section,
+    status, layout).
+  - **Order:**
+    1. Scaffold.
+    2. Types, client and logic with tests.
+    3. Run list, upload and timeline, then MCP pass 1.
+    4. Solution, chips and source panel, then MCP pass 2.
+    5. The other views and downloads, then MCP pass 3.
+    6. The Emigre visual pass, then MCP pass 4 at phone width.
+    7. Docs, PR and merge.
+  - **Verify:** typecheck, Vitest and build. Pytest and ruff stay green. The MCP passes run
+    on the four samples. One live upload through the UI (~$0.05). The built `dist` is then
+    served by `python -m ui.backend` alone.
+- **What was done:** (branch `step-15-ui-frontend`, PR into `core`)
+  - `ui/frontend/` is a Vite 5 + React 18 + TypeScript + Tailwind 3 app with exact pins
+    in `package.json` and a lockfile. In dev, `npm run dev` proxies `/api` to `:8000`;
+    in production, `npm run build` writes `dist/`, which `python -m ui.backend` serves
+    with its SPA fallback. The fonts (Bricolage Grotesque, Newsreader, JetBrains Mono)
+    are self-hosted through `@fontsource`. Colours are role tokens in
+    `tailwind.config.ts`: paper, ink, muted, hair, and one red-orange accent.
+  - `src/api/types.ts` mirrors the backend models and every artifact, including the
+    agent wrappers (`ProblemResult`, `SolutionResult`, `RiskResult`,
+    `RequirementsReport`). `src/api/client.ts` holds the fetch helpers. The upload sends
+    the two flags only when they are ticked, so an unticked box keeps the server default.
+  - `src/lib/` holds the pure logic:
+    - `stages.ts`: the SSE reducer, keeping the latest event per stage in pipeline order,
+      with the parallel `requirements` ‖ `problem` pair;
+    - `highlight.ts`: strips pymupdf4llm markup and finds a quote in chunk text through
+      a folded form (case, curly quotes, dashes, whitespace, `*`) with an index map back
+      to the original. A long quote can fall back to its opening, and anything else is
+      "not found";
+    - `ids.ts`: ID kinds, and a run index built from whichever artifacts exist;
+    - `requirements.ts`: type, strictness and text filters;
+    - `risks.ts`: the renderer's severity, then likelihood, then ID sort;
+    - `format.ts`: number and name formatting.
+  - `src/hooks/`:
+    - `useRun`: status from `GET /runs/{id}`. While a run is queued or running, an
+      `EventSource` feeds the reducer, and each event refetches status.
+    - `useArtifact` and `useRunData`: each artifact is fetched once it appears in
+      `status.artifacts`, so a live run's tabs fill in stage by stage.
+  - **Home:** a masthead, the upload form (drop zone plus the four CLI options, with 4xx
+    and 5xx messages shown), and the run index (own runs, then samples). The index polls
+    every 3 s while anything is queued or running.
+  - **Run page:** the header has the title, model, cost, wall time, calls, the two
+    downloads, the PDF and the Langfuse link when present. Below it sit a sticky live
+    stage timeline (pulsing markers, ticking elapsed time, calls, tokens and cost per
+    stage, run totals) and six tabs:
+    - Solution (main): summary, mandatory-coverage figure with rounds, components with
+      requirement chips and cited claims, assumptions, then the problem statement;
+    - Requirements: type and strictness toggles with counts, search, a table, then
+      ambiguities and gaps;
+    - Risks: sorted, with severity and likelihood badges, mitigations, and the
+      code-computed findings;
+    - Problem: the statement plus the chunk summaries, with a relevant-only toggle;
+    - Parse & chunks: a words-per-page bar list with flags and quality verdicts,
+      referenced documents, and the section and chunk tree;
+    - Metrics: totals, single-series bars for wall time and cost per stage, and a
+      per-node table.
+  - **Source reveal:** every chunk, requirement, component, risk, ambiguity and gap ID is
+    a `CiteChip`. Clicking one opens a slide-over panel with the item and its cited
+    chunks, one tab each. The verbatim quote is highlighted, and only the chunk box
+    scrolls to it. The PDF opens in an iframe at the chunk's page. Chips inside the panel
+    push onto a history (Back), and Esc closes it.
+  - An error boundary around the routes and around each tab shows the error in place of
+    a blank page.
+  - Tests: `src/lib/lib.test.ts` has 11 Vitest tests:
+    - the reducer, live and replayed;
+    - markup stripping and quote highlighting across markup and curly quotes, the
+      fallbacks, and every verified Missouri quote (at least 95% must be found in full
+      in one of their cited chunks);
+    - the filters, the risk sort, the formats, and the ID index built from the committed
+      Missouri sample.
+
+    `npm run typecheck`, `npm test` and `npm run build` are clean.
+  - Playwright MCP passes at 1440 px and 390 px ran over the four samples (screenshots,
+    snapshots, console and scroll-width checks). Each pass's critique was fixed and
+    re-shot:
+    - pass 1 (home): the masthead hid the run list, a header rule was missing, and the
+      raw file stems showed;
+    - pass 2 (run page and panel): a "Not yet" flash while data loaded (now "Loading"),
+      a stray scrollbar on the tab bar, an oversized title, and a chunk panel with no
+      heading;
+    - pass 3 (tabs and phone): an oversized panel title for long requirements, stretched
+      ID chips, and the cached-token figure wrapping. At phone width the page overflowed
+      to 456 px, because 12-column grids with 40 px gutters need 440 px; gutters now
+      apply only at `lg`. On phones the timeline folds into a one-line `<details>`. A
+      helper named `displayName` was dropped by the dev transform (F15);
+    - pass 4 (visual): the drop cap gap.
+
+    The final check was the built `dist` served by the backend alone, including deep
+    links.
+  - Live run through the UI: an upload of `colfax.pdf` cost $0.0556 over 83 s with 91
+    LLM calls. The timeline showed the two parallel stages pulsing together with their
+    elapsed times ticking, and cost updated per stage. Every tab and both downloads
+    filled in without a reload.
+  - Shared files: `.github/workflows/ci.yml` (new `frontend` job: Node 22, `npm ci`,
+    typecheck, test, build), `README.md` (status, UI section, layout), `.gitignore`
+    (`.playwright-mcp/`).
+  - Docs: DECISIONS D38 and F15, ASSUMPTIONS (UI), TIMELOG. PROMPTS is unchanged
+    because no prompt changed.
 - **Deviations from plan:**
+  - The views read the per-stage artifacts (`split`, `requirements`, `problem`,
+    `solution`, `risks`, `parsed`, `quality`), not `summary.json`. The data is the same,
+    but a live run then fills in tab by tab, and the chunk text comes from `split.json`
+    with no per-chunk fetches. `summary.json` stays the download. The author's decision
+    (build the view in React, not from markdown) holds.
+  - Chunks share a tab with the parse view ("Parse & chunks"), and there is a Metrics
+    tab. That makes six tabs, where the plan listed seven views.
+  - No component smoke test with jsdom. The real-data Vitest checks plus the Playwright
+    passes covered the rendering, and jsdom cannot exercise the PDF iframe or the
+    layout.
+  - Added beyond the plan: the error boundaries, the folded timeline on phones, and the
+    "Loading" versus "Not yet" states.
 - **Open issues:**
+  - Samples show their file stem ("colfax") until `parsed.json` loads and supplies the
+    document title. It is a brief flash, but `RunListItem` could carry the title.
+  - Safari ignores `#page=N` in its PDF viewer, so the iframe opens at page 1 there.
+    The chunk text with its highlighted quote is unaffected.
+  - The run index polls every 3 s while a run is in flight. An SSE stream for the list
+    would be cleaner, but polling is enough for a single user.
+  - `npm audit` reports advisories in the Vite 5 dev server. They are dev-only and
+    local, since production is the built `dist` behind FastAPI. Vite 6 or later would
+    clear them.
+  - The Langfuse link is still unexercised because there are no keys, as in S14.
+  - Deeper visual polish (an asymmetric grid on the solution page, display-type
+    experiments) is stretch ST1.
 
 ### S16. Documentation, Dockerfile, demo script
 - **Status:** todo
