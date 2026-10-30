@@ -10,13 +10,13 @@ the end of every step. Times are estimates to the nearest half hour.
 |---|---|---|
 | 0. Reading, research, planning | 4.0 | 3.0 assignment + public RFPs + brainstorming; 1.0 input inspection, roadmap, working rules |
 | 1. Working app (pipeline, parsing, agents, CLI) | 12.5 | S0 scaffold: env, config, schemas, tests, CI; S1 LLM layer; S9 assembler and renderer; S2 parsing 2.0; S4 parse-quality pass 1.0; S3 splitting 1.5; S6 problem statement 1.0; S5 requirements extractor 2.0; S7 solution generator with coverage loop 1.0; S10 pipeline graph, CLI, four live runs 1.0 |
-| 2. Prompt assets and notes | 3.5 | S11 gold drafting prompts and notes; S4 parse_quality prompt and notes; S6 problem prompts, live runs and notes; S5 extraction and dedupe prompts, one tuning round, notes 1.0; S7 solution prompt, live runs on four RFPs, one tuning round, notes 1.0 |
-| 3. Evaluation harness and sample results | 2.5 | S11 gold labels: format, labelling script, drafts, correction of 265 items |
-| 4. Observability | 1.5 | S1 run recorder, cost, Langfuse handler; S10 stage records, stage events, per-stage cost 0.5 |
-| 5. DECISIONS.md and other docs | 2.5 | S0 plan, decisions, README skeleton; S9 plan and D16; S6 plan, D28, F6, F7; S7 plan, D32, F10, F11 0.5; S10 plan, D34, README run section 0.5 |
+| 2. Prompt assets and notes | 4.0 | S11 gold drafting prompts and notes; S4 parse_quality prompt and notes; S6 problem prompts, live runs and notes; S5 extraction and dedupe prompts, one tuning round, notes 1.0; S7 solution prompt, live runs on four RFPs, one tuning round, notes 1.0; S12 seven judge prompts, one tuning round, notes 0.5 |
+| 3. Evaluation harness and sample results | 4.75 | S11 gold labels: format, labelling script, drafts, correction of 265 items; S12 harness, scripted-judge tests, 8 fresh runs, 12 judged runs, hand-labelled agreement sample 2.25 |
+| 4. Observability | 1.75 | S1 run recorder, cost, Langfuse handler; S10 stage records, stage events, per-stage cost 0.5; S12 retry cause in the run log (F7), judge cost logs 0.25 |
+| 5. DECISIONS.md and other docs | 3.0 | S0 plan, decisions, README skeleton; S9 plan and D16; S6 plan, D28, F6, F7; S7 plan, D32, F10, F11 0.5; S10 plan, D34, README run section 0.5; S12 plan, D36, D37, F13, F14, results README 0.5 |
 | 6. Demo | | |
 | UI (part of 1, tracked separately) | 1.5 | S14 backend: API, run queue, SSE, tests, live run, API contract, D35 |
-| **Total** | **28.0** | |
+| **Total** | **31.5** | |
 
 ## Per step
 
@@ -37,3 +37,4 @@ the end of every step. Times are estimates to the nearest half hour.
 | 2026-10-30 | S8 | 2.5 | 1, 2, 5 | Risk assessor: code-computed findings block, must-cite and count band in the schema, sort-then-number, debug CLI with the S4 pass, 18 fake-model tests, live runs on four RFPs twice ($0.08), D33, F12 |
 | 2026-10-30 | S10 | 2.0 | 1, 4, 5 | Pipeline graph with the S5/S6 fan-out, stage wrappers with events and stage records, run CLI with ablation flags, 13 stubbed-stage tests, live runs on four RFPs, committed samples, D34 |
 | 2026-10-30 | S14 | 1.5 | UI, 5 | UI backend: FastAPI app over run_pipeline, one-worker queue, condition-backed SSE, samples served as runs, stubs shared with the graph tests, 27 tests, one live run through the API ($0.05), API contract, D35 |
+| 2026-10-30 | S12 | 3.5 | 2, 3, 4, 5 | Eval harness: code-then-judge gold matching, per-item precision, grounding (entity check plus cited-text judge), checklist, solution rubric and judged coverage, risk levels and findings, consistency, pairwise, agreement; F7 fix; 30 scripted-judge tests; 8 fresh runs and 12 judged runs ($0.56 generation, about $6.1 judge including the calibration rescore); 40 hand labels; D36, D37, F13, F14 |
