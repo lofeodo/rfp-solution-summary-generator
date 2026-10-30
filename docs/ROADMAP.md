@@ -1828,7 +1828,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     matcher) would make prompt iterations on one judge cheaper in S13.
 
 ### S13. Ablations and fixes driven by evals
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** run and commit: hierarchical vs full-text problem statement (several runs
   each, variance), per-chunk vs single-call extraction. Fix the failure modes the evals
   expose (prompt edits logged in `docs/PROMPTS.md`, code fixes), each with a
@@ -1836,7 +1836,38 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   back-burner agentic feature (critic, revision loop) is justified; if not, say why.
 - **Depends on:** S12
 - **Parallel with:** S14, S15
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** about **2 h and $6** (the time log stands
+    at 33.5 of 36 h with S16 still to come); fixes are the **F14 `judge_match` rule** and
+    the **S7 "name each obligation you cite" rule**, the S8 scale sharpening is skipped
+    with the reason recorded (level agreement is bounded by the judge's own consistency,
+    not a shown pipeline fault); **two fresh runs per RFP per ablation**; **one results
+    label per experiment** plus a `diff` command for the before/after tables.
+  - **Branch:** `step-13-ablations` off `core` (worktree); PR into `core`.
+  - **Harness additions** (`evals/harness/`, `tests/test_harness.py`): `run` gains
+    tri-state `--full-text-problem` and `--single-call-extraction` forwarded to
+    `run_pipeline`; `score --only match,precision,problem,solution,risks,grounding,cost`
+    rescoring the named sections and merging into the existing score file and judge log
+    (`score_requirements` split into `match_gold`, `judge_items`,
+    `assemble_requirements`; `score_run(only=, previous=)`; `merge_judge_logs`; the
+    `judge $` column keeps one meaning: the cost of the calls behind the verdicts in the
+    file); `diff <label_a> <label_b> --what problem|requirements|solution` printing
+    per-RFP mean ± sd with deltas from the two `summary.json`; `compare --rfp`
+    case-insensitive. Tests with the scripted judge for each.
+  - **Experiments, in this order** (later scoring uses the fixed judge): (1) F14 rule
+    in `judge_match`, `score --label baseline --only match`, before/after combined recall
+    per RFP; (2) `ablation_full_text`: 2 runs × 4 RFPs with `--full-text-problem`, scored
+    `--only problem,grounding,cost`, pairwise against baseline run 1 on each RFP, `diff
+    --what problem`; (3) `ablation_single_call`: 2 × 4 with `--single-call-extraction`,
+    scored `--only match,precision,cost`, `diff --what requirements`; (4) S7 Coverage
+    rule in `prompts/solution.md`, `fix_solution_naming`: 2 × 4 full runs scored `--only
+    solution`, `diff --what solution` (target: NYESD judged coverage up from 78%, cited
+    coverage and rounds unchanged); revert the prompt if it is worse and keep the number.
+    Spot-check a few verdicts per experiment against the source.
+  - **Docs:** D39 (ablation results and what the pipeline keeps; D5 and D28 evidence by
+    reference), D40 (critic / revision loop decision from the numbers), F14 fixed;
+    PROMPTS rows for `judge_match` and `solution`; results README rows for the labels,
+    `--only`, `diff`; roadmap, time log, README eval section.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
