@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from rfp_agent.config import RUNS_DIR, Settings, get_settings, pricing_for
-from rfp_agent.schemas import Escalation, NodeMetrics, RunLog, RunTotals
+from rfp_agent.schemas import Escalation, NodeMetrics, RunLog, RunTotals, StageRecord
 
 if TYPE_CHECKING:
     from langchain_core.messages import AIMessage
@@ -92,6 +92,20 @@ def new_run_id(now: datetime | None = None) -> str:
     return f"{now:%Y%m%d-%H%M%S}-{secrets.token_hex(3)}"
 
 
+def per_node_totals(log: RunLog) -> dict[str, RunTotals]:
+    """Totals of a run log grouped by node name, in first-seen order."""
+    out: dict[str, RunTotals] = {}
+    for n in log.nodes:
+        t = out.setdefault(n.node, RunTotals())
+        t.input_tokens += n.input_tokens
+        t.output_tokens += n.output_tokens
+        t.cached_input_tokens += n.cached_input_tokens
+        t.cost_usd += n.cost_usd
+        t.latency_s += n.latency_s
+        t.retries += n.retries
+    return out
+
+
 _current: ContextVar[RunRecorder | None] = ContextVar("rfp_run_recorder", default=None)
 
 
@@ -144,6 +158,9 @@ class RunRecorder:
     def record_escalation(self, escalation: Escalation) -> None:
         self.log.escalations.append(escalation)
 
+    def record_stage(self, stage: StageRecord) -> None:
+        self.log.stages.append(stage)
+
     def set_trace_url(self, url: str | None) -> None:
         self.log.langfuse_trace_url = url
 
@@ -152,16 +169,7 @@ class RunRecorder:
 
     def per_node(self) -> dict[str, RunTotals]:
         """Totals grouped by node name, in first-seen order."""
-        out: dict[str, RunTotals] = {}
-        for n in self.log.nodes:
-            t = out.setdefault(n.node, RunTotals())
-            t.input_tokens += n.input_tokens
-            t.output_tokens += n.output_tokens
-            t.cached_input_tokens += n.cached_input_tokens
-            t.cost_usd += n.cost_usd
-            t.latency_s += n.latency_s
-            t.retries += n.retries
-        return out
+        return per_node_totals(self.log)
 
     def finish(self) -> RunLog:
         if self.log.finished_at is None:

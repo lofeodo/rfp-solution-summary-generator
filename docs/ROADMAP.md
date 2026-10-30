@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S11 done
-    class S10 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11 done
+    class S12,S14 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S11 (green).
-Ready now, all dependencies done (amber): S10. Update the two `class` lines in
+**Progress (2026-10-30):** done S0 to S11 (green). Ready now, all dependencies done
+(amber): S12 and S14, which may run in parallel. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
@@ -1415,7 +1415,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - S14/S15 may want per-claim anchors in the markdown for click-to-source; not added.
 
 ### S10. LangGraph wiring and CLI
-- **Status:** todo
+- **Status:** done
 - **Goal:** `graph.py`: the pipeline as a LangGraph graph with the parallel fan-out
   (S5 and S6), per-node observability from S1, event streaming usable by the UI.
   `cli.py`: `python -m rfp_agent run inputs/rfp_brief.pdf` writes JSON, markdown and the
@@ -1424,10 +1424,149 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   under `runs/samples/`; start the failure-modes list in `docs/DECISIONS.md`.
 - **Depends on:** S4, S8, S9
 - **Parallel with:** S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** the live run covers **all four RFPs**,
+    each committed under `runs/samples/<rfp>/` (about $0.50 in total), with a four-row
+    results table here; a run writes **every stage's JSON as it finishes** (`parsed`,
+    `quality`, `split`, `requirements` plus its report, `problem`, `solution`, `risks`)
+    next to `summary.json`, `summary.md` and `run_log.json`, and `RunLog` gains a
+    **`stages` list** (name, status, wall time, error) so S12 reads one file and S14
+    serves the intermediates; progress reaches the UI through a **callback**
+    (`build_pipeline(on_event=...)`): each node wrapper emits started / finished /
+    failed with wall time and the stage's tokens and cost, which works from the parallel
+    branches without S14 parsing LangGraph stream modes; unit tests **stub the five LLM
+    stages** over a real parse and split of Federal Way (order, fan-out, files, events,
+    failure path, ablation flags, CLI), plus one live `-m llm` Missouri test.
+  - **Taken without asking:** node order `parse` → `parse_quality` → `split` →
+    (`requirements` ‖ `problem`) → `solution` → `risk` → `assemble`, the quality pass
+    before the split as the S8 CLI does and always on (no call when nothing is flagged);
+    the S7 revision loop stays a function call (`build_solution` already invokes its
+    compiled graph with `config`, so Langfuse nests it); one chat model built once and
+    shared; recorder, settings, model and the callback bound in closures rather than read
+    from the contextvar inside nodes, because the fan-out runs on executor threads; CLI
+    flags `--full-text-problem`, `--single-call-extraction`, `--max-iterations`,
+    `--model`, `--runs-dir`, `--run-id`, `-v`, applied to a copy of `Settings` and passed
+    as explicit arguments; Langfuse handler in `config["callbacks"]`, trace URL set on
+    the recorder, flush on exit (keys are empty locally, so only the no-op path runs
+    live); on a stage failure the exception propagates, `activate()` still writes the run
+    log with the stage marked `failed`, earlier intermediates stay, the CLI exits 1.
+  - **Branch:** `step-10-graph-cli` off `core` as a worktree; PR into `core`.
+  - **Files:** `graph.py` (`PipelineState`, `StageEvent`, `build_pipeline(*, settings,
+    recorder, model, config, out_dir, on_event)`, `run_pipeline(pdf, *, settings,
+    runs_dir, run_id, full_text_problem, single_call_extraction, max_iterations,
+    on_event) -> PipelineResult`; stage LLM totals from `recorder.per_node()` by node
+    prefix); `cli.py` (typer `run` command, rich stage lines, per-node table, totals,
+    paths) and `__main__.py`; `schemas.py` (shared, Observability section: `StageRecord`,
+    `RunLog.stages`); `observability.py` (`RunRecorder.record_stage`); `runs/samples/`.
+  - **Tests:** `tests/test_graph.py` (stubbed stages) and `tests/test_graph_live.py`.
+  - **Docs:** DECISIONS D34 plus any failure mode hit, TIMELOG, README (status, run
+    command, flags, `RFP_SINGLE_CALL_EXTRACTION` row, layout, samples).
+- **What was done:** (branch `step-10-graph-cli`, PR into `core`)
+  - `src/rfp_agent/graph.py`: `PipelineState` (documents and results; `output_paths`
+    merged with a dict reducer because both branches add to it); stage names `parse`,
+    `parse_quality`, `split`, `requirements`, `problem`, `solution`, `risk`, `assemble`
+    (`STAGES`, `STAGE_NODE_PREFIXES` mapping stage to its LLM node names, `STAGE_FILES`
+    mapping stage to the JSON it writes); `StageEvent` (status, wall time, the stage's
+    calls and `RunTotals`, error); `stage_totals(log, stage)`; `build_pipeline(*,
+    settings, recorder, model, out_dir, on_event)` wraps each stage function in one
+    `stage()` closure that emits the events, records a `StageRecord`, writes the
+    stage's files and re-raises on failure; `apply_overrides(settings, ...)`;
+    `run_pipeline(pdf, *, settings, model, runs_dir, run_id, model_spec,
+    full_text_problem, single_call_extraction, max_iterations, on_event) ->
+    PipelineResult(summary, run_log, run_dir, state)`, which builds one chat model,
+    puts the Langfuse handler (when keys exist) in `config["callbacks"]`, runs under
+    `RunRecorder.activate()` so the log is written either way, and raises
+    `PipelineError(stage, run_log, run_dir, cause)` on a stage failure. Source paths
+    are kept in posix form so logs and samples read the same on every OS.
+  - `src/rfp_agent/cli.py` and `__main__.py`: `python -m rfp_agent run <pdf>
+    [--full-text-problem] [--single-call-extraction] [--max-iterations N] [--model
+    spec] [--runs-dir DIR] [--run-id ID]`, `-v` on the app; prints a line per stage
+    start and finish, a per-stage table (status, wall, calls, cost), the per-node table
+    (now with a cached column), the totals line, a one-line summary of the output and
+    the three main paths; exit 1 on a stage failure (tables and the kept run directory
+    printed), exit 2 on a missing provider key. `print_metrics(log)` lives here and the
+    agents CLI delegates to it (shared file touched: `agents/__main__.py`).
+  - `schemas.py` (shared, Observability section): `StageStatus`, `StageRecord(stage,
+    status, started_at, latency_s, error)`, `RunLog.stages` (additive, default empty).
+    `observability.py` (S1 file): `RunRecorder.record_stage`, `per_node_totals(log)`
+    (the recorder's `per_node` delegates to it).
+  - Run directory `runs/<run_id>/`: `parsed.json` (overwritten by the quality pass with
+    the judged flags), `quality.json`, `split.json`, `requirements.json`,
+    `requirements_report.json`, `problem.json`, `solution.json`, `risks.json`,
+    `summary.json`, `summary.md`, `run_log.json`.
+  - Tests: `tests/test_graph.py` (12 tests, the five LLM stages monkeypatched on
+    `rfp_agent.graph` with stubs over a real parse and split of Federal Way: stage
+    order with both branches between `split` and `solution`, a barrier proving the two
+    branches run concurrently, judged document reaching the risk stage and the summary,
+    same split to both branches, solution and risk inputs identity, events once per
+    stage with per-stage calls and cost, every file written and the run log round
+    trip, ablation flags and `--model` reaching the stage calls and the log, defaults
+    from settings, failed stage recorded with its error and later stages not started
+    while earlier intermediates and the log stay, no-out-dir mode writes nothing,
+    `stage_totals` by prefix, `apply_overrides`, `RunLog` with stage records; CLI via
+    `CliRunner`: success output and paths, failure exit 1 naming the stage, missing key
+    exit 2, missing PDF rejected); `tests/test_graph_live.py` (`-m llm`, Missouri end
+    to end). 321 unit tests pass, ruff clean.
+  - Live results: `python -m rfp_agent run data/rfps/<rfp>.pdf`, DeepSeek Flash,
+    thinking off, concurrency 4 per branch, default settings, one run each, no Langfuse
+    keys. Wall is the whole run; "stage wall" is per stage (the two branch figures
+    overlap in time). Every stage finished, every mandatory requirement in scope is
+    covered, every citation resolves (strict assembly). Total $0.28 and 6.3 minutes for
+    the four.
+
+    | RFP | reqs | comps | rounds | coverage | risks | calls | tokens in / out (cached) | cost | retries | wall | stage wall: parse / quality / req ‖ prob / sol / risk |
+    |---|---|---|---|---|---|---|---|---|---|---|---|
+    | Missouri | 120 | 11 | 2 | 72/72 | 12 | 143 | 275.4k / 45.1k (202.2k) | $0.077 | 1 (`problem_synthesis`) | 110 s | 6 / 4 / 38 ‖ 39 / 41 / 20 |
+    | NYESD | 223 | 8 | 2 | 109/109 | 12 | 145 | 315.5k / 58.0k (216.7k) | $0.101 | 0 | 107 s | 6 / 0 / 48 ‖ 38 / 33 / 19 |
+    | Colfax | 120 | 10 | 1 | 47/47 | 12 | 91 | 178.3k / 32.6k (123.8k) | $0.056 | 0 | 79 s | 5 / 8 / 28 ‖ 25 / 19 / 19 |
+    | Federal Way | 106 | 11 | 2 | 34/34 | 12 | 50 | 127.9k / 29.5k (86.4k) | $0.048 | 1 (`requirements_dedupe`) | 81 s | 6 / 4 / 21 ‖ 18 / 31 / 18 |
+
+    The fan-out pays: requirements and problem take about the same time and overlap,
+    so the middle of the run costs one branch's wall time, not two. The provider
+    prefix cache served 68 to 73% of input tokens. Escalations match S4's table
+    (Missouri p19 and p20, Federal Way p5 confirmed bad; the rest cleared). The
+    solution loop needed a second round on three of four RFPs (first-round coverage
+    71/72, 108/109, 33/34), as in S7's runs. Read by eye: Federal Way's K01 is the
+    absent requirements document and K11 the unreadable page 5; Missouri's K-list has
+    the IS-approval gate and the $175,000 cap; NYESD's assumptions resolve the two
+    tracks and the 250-versus-400 participant target.
+  - Samples: `runs/samples/{missouri,nyesd,colfax,federal_way}/`, the full run
+    directories (2.6 MB in all). `.gitignore` already carved `runs/samples/` out.
+  - Docs: DECISIONS D34; ASSUMPTIONS (run directory contents, two thread pools at
+    once, S4 before risks in the graph); TIMELOG; README status line, run section with
+    the flag table and exit codes, `RFP_SINGLE_CALL_EXTRACTION` row, observability
+    paragraph, layout lines. Shared files touched: `schemas.py`, `observability.py`,
+    `agents/__main__.py`, `README.md`.
 - **Deviations from plan:**
+  - No new failure mode: all four runs were clean, so DECISIONS gains D34 only. The
+    "start the failure-modes list" goal was already met by S1 to S8 (F1 to F12).
+  - `parse` writes `parsed.json` and `parse_quality` overwrites it with the judged
+    flags (plan had the quality stage write it once); a crash in the judge therefore
+    still leaves the raw parse on disk.
+  - `parse_pdf` stringifies its `Path`, which gives backslashes on Windows; the parse
+    node restores the posix path the run was started with, and the four sample
+    directories (generated before that fix) had their path strings normalised the same
+    way by script. Nothing else in the samples was edited.
+  - `print_metrics` moved from the agents CLI to `cli.py` (takes a `RunLog`) so both
+    entry points print the same table; the agents CLI keeps its signature.
+  - First CI run failed on a cosmetic point: rich wrapped a long temp path at the
+    80-column CI terminal and a test looked for the file name on one line. Path lines
+    are now printed with soft wrap off.
 - **Open issues:**
+  - The CLI runs the quality pass always; a `--skip-quality` flag would save 4 to 8 s
+    on RFPs with flagged pages when S13 reruns prompts. Not added.
+  - Missouri's "success criteria" list is mostly the procurement calendar (proposal
+    due dates, question deadlines) rather than project success measures; an S6 prompt
+    matter for S13, visible now that whole summaries are read end to end.
+  - Submission items dominate the requirement lists (Federal Way 71 of 106, NYESD a
+    similar share); S5's open issue, now quantified per run in `summary.md`.
+  - `run_pipeline` builds one chat model for every stage; a per-stage model (for
+    example thinking on for solution and risk only, S1's open issue) would need a
+    `models: dict[str, BaseChatModel]` argument. Easy to add when S13 wants it.
+  - Langfuse was not exercised live (no keys); `langfuse_trace_url` lands in the log
+    when they exist. S14 should show the link when present.
+  - The event callback runs on LangGraph's executor threads; S14 must hand events to
+    its SSE loop through a thread-safe queue (the CLI uses a print lock).
 
 ### S11. Gold labels
 - **Status:** done

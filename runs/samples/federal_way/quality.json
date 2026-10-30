@@ -1,0 +1,52 @@
+{
+  "judged_pages": [
+    2,
+    5,
+    14
+  ],
+  "judgements": {
+    "2": {
+      "text_usable": true,
+      "content_missing": false,
+      "page_kind": "contents",
+      "confirmed_flags": [],
+      "reason": "This is a table of contents page whose entries and page numbers are fully readable and correctly attributed, so the low word count is a harmless false alarm."
+    },
+    "5": {
+      "text_usable": true,
+      "content_missing": true,
+      "page_kind": "narrative",
+      "confirmed_flags": [
+        "large_image_block"
+      ],
+      "reason": "The narrative text is clean and readable, but the sentence introducing \"the following tables\" is followed by a 42%-page image that almost certainly contains the current-environment/scope table, which is absent from the extracted text."
+    },
+    "14": {
+      "text_usable": true,
+      "content_missing": false,
+      "page_kind": "form",
+      "confirmed_flags": [],
+      "reason": "The pricing template's rows are all present and readable in order; the single-column layout with merged header cells is a flattened form grid, not lost data, and no images exist on the page."
+    }
+  },
+  "escalations": [
+    {
+      "page": 2,
+      "triggered_by": "code",
+      "confirmed_bad": false,
+      "action": "cleared by judge: This is a table of contents page whose entries and page numbers are fully readable and correctly attributed, so the low word count is a harmless false alarm."
+    },
+    {
+      "page": 5,
+      "triggered_by": "code",
+      "confirmed_bad": true,
+      "action": "would escalate to VLM: The narrative text is clean and readable, but the sentence introducing \"the following tables\" is followed by a 42%-page image that almost certainly contains the current-environment/scope table, which is absent from the extracted text."
+    },
+    {
+      "page": 14,
+      "triggered_by": "code",
+      "confirmed_bad": false,
+      "action": "cleared by judge: The pricing template's rows are all present and readable in order; the single-column layout with merged header cells is a flattened form grid, not lost data, and no images exist on the page."
+    }
+  ]
+}

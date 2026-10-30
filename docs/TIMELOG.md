@@ -9,14 +9,14 @@ the end of every step. Times are estimates to the nearest half hour.
 | Deliverable | Hours | Notes |
 |---|---|---|
 | 0. Reading, research, planning | 4.0 | 3.0 assignment + public RFPs + brainstorming; 1.0 input inspection, roadmap, working rules |
-| 1. Working app (pipeline, parsing, agents, CLI) | 11.5 | S0 scaffold: env, config, schemas, tests, CI; S1 LLM layer; S9 assembler and renderer; S2 parsing 2.0; S4 parse-quality pass 1.0; S3 splitting 1.5; S6 problem statement 1.0; S5 requirements extractor 2.0; S7 solution generator with coverage loop 1.0 |
+| 1. Working app (pipeline, parsing, agents, CLI) | 12.5 | S0 scaffold: env, config, schemas, tests, CI; S1 LLM layer; S9 assembler and renderer; S2 parsing 2.0; S4 parse-quality pass 1.0; S3 splitting 1.5; S6 problem statement 1.0; S5 requirements extractor 2.0; S7 solution generator with coverage loop 1.0; S10 pipeline graph, CLI, four live runs 1.0 |
 | 2. Prompt assets and notes | 3.5 | S11 gold drafting prompts and notes; S4 parse_quality prompt and notes; S6 problem prompts, live runs and notes; S5 extraction and dedupe prompts, one tuning round, notes 1.0; S7 solution prompt, live runs on four RFPs, one tuning round, notes 1.0 |
 | 3. Evaluation harness and sample results | 2.5 | S11 gold labels: format, labelling script, drafts, correction of 265 items |
-| 4. Observability | 1.0 | S1 run recorder, cost, Langfuse handler |
-| 5. DECISIONS.md and other docs | 2.0 | S0 plan, decisions, README skeleton; S9 plan and D16; S6 plan, D28, F6, F7; S7 plan, D32, F10, F11 0.5 |
+| 4. Observability | 1.5 | S1 run recorder, cost, Langfuse handler; S10 stage records, stage events, per-stage cost 0.5 |
+| 5. DECISIONS.md and other docs | 2.5 | S0 plan, decisions, README skeleton; S9 plan and D16; S6 plan, D28, F6, F7; S7 plan, D32, F10, F11 0.5; S10 plan, D34, README run section 0.5 |
 | 6. Demo | | |
 | UI (part of 1, tracked separately) | | |
-| **Total** | **24.5** | |
+| **Total** | **26.5** | |
 
 ## Per step
 
@@ -35,3 +35,4 @@ the end of every step. Times are estimates to the nearest half hour.
 | 2026-10-30 | S5 | 3.0 | 1, 2 | Requirements extractor: verified calls with feedback, exact and LLM-grouped dedupe with sanitised fallback, single-call mode, concurrency, 23 fake-model tests, two prompts tuned after a live run, five live runs on the four RFPs ($0.25), D29 to D31, F8, F9 |
 | 2026-10-30 | S7 | 2.5 | 1, 2, 5 | Solution generator: no RFP text, citations checked in the schema, code-computed coverage, LangGraph generate/check/revise loop with a round cap, debug CLI, 23 fake-model tests, live runs on four RFPs twice (first prompt and tuned prompt, $0.45 including S5 and S6 inputs), D32, F10, F11 |
 | 2026-10-30 | S8 | 2.5 | 1, 2, 5 | Risk assessor: code-computed findings block, must-cite and count band in the schema, sort-then-number, debug CLI with the S4 pass, 18 fake-model tests, live runs on four RFPs twice ($0.08), D33, F12 |
+| 2026-10-30 | S10 | 2.0 | 1, 4, 5 | Pipeline graph with the S5/S6 fan-out, stage wrappers with events and stage records, run CLI with ablation flags, 13 stubbed-stage tests, live runs on four RFPs, committed samples, D34 |

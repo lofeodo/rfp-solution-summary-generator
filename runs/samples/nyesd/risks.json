@@ -1,0 +1,326 @@
+{
+  "assessment": {
+    "risks": [
+      {
+        "id": "K01",
+        "title": "Schedule A terms unseen but binding, and its concerns must be filed blind",
+        "description": "Schedule A sets the standard contract terms the successful respondent must accept, yet its text is not in the RFP. The bidder must decide whether to accept unknown terms and file written concerns with its Administrative Proposal, while the RFP simultaneously forbids including Schedule A information in the submission. If Schedule A contains unacceptable liability, indemnity or data-ownership terms, the bidder either walks away after award or absorbs unplanned legal and insurance cost.",
+        "severity": "high",
+        "likelihood": "high",
+        "justification": "Schedule A is referenced as a mandatory contract term (R115, R260) but is absent from the RFP, and R258/R259 pull in opposite directions on how concerns are filed, so the bidder cannot price or accept the terms knowingly.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R115",
+          "R258",
+          "R259",
+          "R260"
+        ],
+        "chunk_ids": [
+          "S28.1",
+          "S57.1"
+        ],
+        "mitigation": "Request Schedule A through the designated contacts before the August 29, 2025 question deadline, and state in the proposal that acceptance is conditional on review of Schedule A; file concerns as a separate letter accompanying the Administrative Proposal, as the proposed solution assumes."
+      },
+      {
+        "id": "K02",
+        "title": "MWBE 30% and SDVOB 6% goals carry liquidated damages and payment withholding",
+        "description": "The contract sets a 30% MWBE and 6% SDVOB participation goal, with good faith effort documentation, quarterly Workforce Utilization Reports and monthly SDVOB compliance reporting. Failure to meet the goals can trigger liquidated damages equal to the shortfall and withholding of payment, and the RFP does not settle whether the goals apply to total contract value or subcontracting spend or whether good faith efforts alone suffice.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The damages and withholding provisions are explicit (R191, R195, R196, R250), but the base against which the goals are measured and the waiver standard are left open, so exposure depends on facts the RFP does not settle.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R189",
+          "R190",
+          "R191",
+          "R195",
+          "R196",
+          "R197",
+          "R210",
+          "R212",
+          "R221",
+          "R231",
+          "R232",
+          "R247",
+          "R250"
+        ],
+        "chunk_ids": [
+          "S45.1",
+          "S45.2",
+          "S46.1",
+          "S49.1",
+          "S50.1",
+          "S50.2",
+          "S53.1"
+        ],
+        "mitigation": "Identify certified MWBE and SDVOB subcontractors before submission and build them into the Utilization Plans and the budget; ask ESD to confirm the measurement base and the waiver route, and price a compliance analyst to run the reporting cadence."
+      },
+      {
+        "id": "K03",
+        "title": "Stipend level and its share of the $2M per-track cap are undefined",
+        "description": "The RFP requires a stipend line in the budget and a stated stipend level in the Project Plan but gives no rate, duration or expected share of the award. If ESD expects a stipend near a full-time wage for 250+ participants, the stipend alone could consume most of the $2M per track, leaving too little for instruction, coaching and placement — and the bidder only learns this after award.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "Stipends are mandatory (R016, R051, R084) and the cap is fixed (R034), but the RFP leaves the rate and allocation open, so the budget model turns on an unsettled fact.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R016",
+          "R034",
+          "R051",
+          "R084"
+        ],
+        "chunk_ids": [
+          "S9.1",
+          "S14.1",
+          "S15.1",
+          "S22.1"
+        ],
+        "mitigation": "Ask ESD before the deadline what stipend range and share of the award it expects; state the proposed stipend level and the participant count it supports as an explicit assumption in the proposal, and show the cost model at that level."
+      },
+      {
+        "id": "K04",
+        "title": "Placement commitment above 50% rests on employer letters the bidder must secure",
+        "description": "The RFP requires the majority of graduates to secure paid internships or full-time AI roles and requires employer commitment letters with the proposal, but does not define the measurement window or verification method. The proposed solution commits to a placement rate above 50% measured within six months, an assumption the bidder is making on ESD's behalf; if employers do not convert letters into hires, the bidder carries the performance risk.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "Placement is a core scored outcome (R041, R098) and the proposed solution's six-month measurement window is an inference, not an RFP term, so the commitment could exceed what the bidder can control.",
+        "source": "solution",
+        "requirement_ids": [
+          "R041",
+          "R091",
+          "R098"
+        ],
+        "chunk_ids": [
+          "S12.1",
+          "S22.1",
+          "S22.2"
+        ],
+        "mitigation": "Secure signed employer commitment letters with named role counts before submission, and state in the proposal the placement definition, measurement window and verification method the bidder will report against."
+      },
+      {
+        "id": "K05",
+        "title": "Appendix A IT security standard unknown, so the data platform may be under-scoped",
+        "description": "Appendix A, the ESD IT Security Standard Brief, is referenced but not included, so the security controls the participant data system must meet are unknown. If it imposes state-standard controls such as hosting in approved environments, encryption, access logging or third-party assessment, the proposed data system and its cost will need rework after award.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "The proposed solution explicitly assumes Appendix A imposes nothing beyond standard state data-handling baselines, an assumption the RFP does not support because the document is missing.",
+        "source": "solution",
+        "requirement_ids": [
+          "R056",
+          "R057"
+        ],
+        "chunk_ids": [
+          "S4.1"
+        ],
+        "mitigation": "Obtain Appendix A before submission and price the data system to its actual controls; if it is not released, state in the proposal that the security architecture and price assume standard NYS data-handling baselines and that any additional controls will be handled as a change order."
+      },
+      {
+        "id": "K06",
+        "title": "Appendix B Diversity Practices Questionnaire missing while worth 10 scoring points",
+        "description": "The Diversity Practices Questionnaire is required in the Technical Proposal and is scored at 10 of 100 points, but the form is not in the RFP. A bidder that cannot obtain it either submits an incomplete Technical Proposal or loses the full diversity score, which can decide a competitive award.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "The form is both a mandatory submission item (R102, R113) and a scored section, and it is absent from the RFP, so the loss is near-certain unless ESD releases it.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R102",
+          "R113"
+        ],
+        "chunk_ids": [
+          "S24.1",
+          "S27.1",
+          "S47.1"
+        ],
+        "mitigation": "Request Appendix B from AI.Prep@esd.ny.gov before the question deadline and prepare the diversity narrative in advance so the questionnaire can be completed quickly once released."
+      },
+      {
+        "id": "K07",
+        "title": "Administrative forms and OCSD/MWBE/SDVOB templates not supplied",
+        "description": "A long list of required submission items — Non-Collusive Bidding Certification, Conflict of Interest Attestation, 139-j/139-k forms, Vendor Responsibility Questionnaire, Iran Divestment statement, EO 16 and EO 177 certifications, OCSD-1/2/4, ST-220-CA, W-9 and the NYS Businesses form — are provided only as external links or not at all. Missing or mis-ordered items may render the proposal non-responsive, and the bidder must assemble and verify all of them in the weeks before the October 1, 2025 deadline.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP says omission may result in rejection and requires items in a set order, and several forms (OCSD-1, OCSD-2, OCSD-4, MWBE and SDVOB Utilization Plans) are not included, so the risk turns on how strictly ESD enforces completeness.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R116",
+          "R117",
+          "R118",
+          "R119",
+          "R120",
+          "R121",
+          "R122",
+          "R123",
+          "R124",
+          "R126",
+          "R127",
+          "R252",
+          "R254"
+        ],
+        "chunk_ids": [
+          "S28.1",
+          "S37.1",
+          "S38.1",
+          "S39.1",
+          "S40.1",
+          "S41.1",
+          "S42.1",
+          "S43.1",
+          "S46.1",
+          "S46.2",
+          "S55.1",
+          "S56.1"
+        ],
+        "mitigation": "Build a submission checklist mapped to the RFP's listed order, download every linked form at kickoff, and ask ESD in writing whether omissions can be cured after submission."
+      },
+      {
+        "id": "K08",
+        "title": "Participant floor of 250 versus the 400+ priority is not a settled threshold",
+        "description": "The RFP sets a 250-participant minimum as a 'should' while giving priority to proposals above 400, and the proposed solution commits to more than 400 to capture the priority. If 250 is in fact pass/fail and 400 is only a scoring preference, the bidder has priced a larger program than needed; if the commitment is contractual, under-recruiting against 400 becomes a performance failure.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The proposed solution treats 250 as a scored floor and commits above 400, a design choice that raises cost and delivery risk if the RFP's intent differs.",
+        "source": "solution",
+        "requirement_ids": [
+          "R038",
+          "R040"
+        ],
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "mitigation": "Ask ESD how participant counts are scored and whether a proposal below 250 is disqualified; state the committed participant number and the recruitment assumptions behind it in the proposal so the commitment is bounded."
+      },
+      {
+        "id": "K09",
+        "title": "Low-income definition is undefined and drives eligibility, stipends and reporting",
+        "description": "The RFP does not define 'low-income' — the footnote reference is missing — yet the definition determines recruitment scope, the 50% low-income enrolment target, stipend eligibility and the completion and placement denominators. The proposed solution assumes Pell eligibility for Track A and a benefit-program income threshold for Track B; if ESD applies a different standard, recruitment and reporting must be rebuilt.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The definition is required for multiple mandatory data points (R058–R062) and the 50% target (R040), and the proposed solution's definition is an explicit inference.",
+        "source": "solution",
+        "requirement_ids": [
+          "R040",
+          "R058",
+          "R059",
+          "R060",
+          "R061",
+          "R062",
+          "R092"
+        ],
+        "chunk_ids": [
+          "S7.1",
+          "S12.1",
+          "S17.1",
+          "S22.1"
+        ],
+        "mitigation": "Ask ESD to confirm the low-income definition and whether an alternative may be proposed under R055; state the definition and its documentation method in the proposal so the enrolment and reporting commitments are tied to it."
+      },
+      {
+        "id": "K10",
+        "title": "Immersive schedule length and intensity are undefined, so staffing and stipend cost float",
+        "description": "The RFP requires an immersive program deliverable part-time or full-time but sets no hours or duration. The proposed solution assumes roughly 12 weeks full-time or 24 weeks part-time; a longer or more intensive schedule required by ESD would raise instruction, coaching and stipend costs against a fixed $2M cap.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "Training duration must be stated in the Project Plan (R082) and drives the budget, but the RFP leaves the definition of 'immersive' open (R027).",
+        "source": "solution",
+        "requirement_ids": [
+          "R027",
+          "R082",
+          "R084"
+        ],
+        "chunk_ids": [
+          "S9.1",
+          "S22.1"
+        ],
+        "mitigation": "State the proposed hours and duration per track in the Project Plan as the bidder's definition of immersive, and ask ESD whether a minimum intensity applies."
+      },
+      {
+        "id": "K11",
+        "title": "OSC approval and a 1 January 2026 start leave a thin mobilisation window",
+        "description": "Award is announced November 14, 2025 and the contract is anticipated to start January 1, 2026, but the contract is not enforceable until the Office of the State Comptroller grants any required approval. If OSC review runs past January, the 60-day mobilisation compresses and the first cohort, curriculum finalisation and compliance filings slip, while the 18-month term may still be measured from the original start.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP does not confirm whether OSC review applies here or how long it takes, and the proposed solution only assumes the mobilisation plan absorbs a possible delay.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R035",
+          "R067",
+          "R141"
+        ],
+        "chunk_ids": [
+          "S18.1",
+          "S32.1",
+          "S14.1"
+        ],
+        "mitigation": "Ask ESD whether OSC approval applies and whether the 18-month term runs from execution or from January 1, 2026; state in the proposal that mobilisation begins on contract execution and that the first-cohort date shifts with any approval delay."
+      },
+      {
+        "id": "K12",
+        "title": "Technical Proposal content limits conflict with the required Cost of Services section",
+        "description": "The RFP requires a Cost of Services section inside the Technical Proposal while also forbidding any information beyond what is specifically requested, and the proposed solution resolves this by placing cost detail in a separate volume referenced from the Technical Proposal. If ESD reads the prohibition strictly, the cross-reference or the separate volume could be treated as non-conforming or the price could be judged incomplete.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "R103 and R114 pull in opposite directions and R112 mandates a Cost of Services section, so the resolution depends on how ESD interprets its own instructions.",
+        "source": "solution",
+        "requirement_ids": [
+          "R103",
+          "R112",
+          "R114"
+        ],
+        "chunk_ids": [
+          "S26.1",
+          "S27.1"
+        ],
+        "mitigation": "Ask ESD in writing whether cost information belongs in the Technical Proposal or a separate price volume; follow the answer exactly and keep the Technical Proposal to the listed sections with bookmarks matching them."
+      }
+    ]
+  },
+  "findings": {
+    "uncovered_requirement_ids": [],
+    "conflicts": [
+      [
+        "R103",
+        "R114"
+      ],
+      [
+        "R258",
+        "R259"
+      ]
+    ],
+    "absent_documents": [
+      {
+        "name": "Schedule A",
+        "kind": "schedule",
+        "url": null,
+        "page": 11,
+        "section": "ii. Administrative Proposal",
+        "present": false
+      },
+      {
+        "name": "Appendix A",
+        "kind": "appendix",
+        "url": null,
+        "page": 2,
+        "section": "APPENDICES",
+        "present": false
+      },
+      {
+        "name": "Appendix B",
+        "kind": "appendix",
+        "url": null,
+        "page": 10,
+        "section": "E. Diversity Practices (10 pts)",
+        "present": false
+      },
+      {
+        "name": "Schedule B",
+        "kind": "schedule",
+        "url": null,
+        "page": 20,
+        "section": "Equal Employment Opportunity Requirements",
+        "present": false
+      }
+    ],
+    "flags": [],
+    "budget_requirement_count": 15
+  }
+}

@@ -1,0 +1,300 @@
+{
+  "assessment": {
+    "risks": [
+      {
+        "id": "K01",
+        "title": "Fixed milestone dates may be re-opened at kick-off, leaving the 25 April 2025 demonstration and 25 July 2025 training unachievable",
+        "description": "The RFP fixes a 25 April 2025 demonstration, 25 July 2025 training and manual, a September 2025 interim presentation and 3 November 2025 draft deliverables, yet the same table says milestone dates will be determined at the kick-off meeting and the schedule is only an estimate presuming a 1 November 2024 start. If the start slips or the dates move, the six-phase plan compresses and the demonstration, training and reporting dates are missed. Missing a contractual date on a research contract of this size is a material failure for the bidder and delays MoDOT's decision on the technology.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The RFP both fixes and unfixes the same dates, and the schedule is explicitly an estimate pending contracting, so a later start is plausible; the consequence is a missed contractual milestone.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R016",
+          "R024",
+          "R026",
+          "R027",
+          "R031",
+          "R041",
+          "R055"
+        ],
+        "chunk_ids": [
+          "S15.1",
+          "S15.2",
+          "S11.1"
+        ],
+        "mitigation": "State in the proposal that the milestone dates in the RFP table are treated as binding and that any later start is handled by a written schedule amendment, and ask MoDOT before the deadline whether the 1 November 2024 start and the listed milestone dates are fixed."
+      },
+      {
+        "id": "K02",
+        "title": "MoDOT IS approval of the named LLD program gates the proof of concept",
+        "description": "The RFP requires the Offeror to name the program used to develop the LLDs before proof-of-concept work begins and requires MoDOT Information Systems to approve it before the demonstration phase may proceed. The RFP does not say what information must accompany the name or what criteria and turnaround the approval uses. If approval is slow or the chosen program is rejected, the 25 April 2025 demonstration slips and the bidder carries unplanned idle effort inside a fixed ceiling.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The approval is a hard gate on the critical path to a fixed demonstration date, and the RFP leaves both the submission content and the approval timeline open.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R052",
+          "R053",
+          "R131",
+          "R136",
+          "R138"
+        ],
+        "chunk_ids": [
+          "S22.1",
+          "S73.1"
+        ],
+        "mitigation": "Name the program in the proposal with version, licensing model, hosting location, data flows and security posture, ask MoDOT IS before the deadline what else it needs and how long review takes, and hold explicit schedule contingency between approval and the demonstration."
+      },
+      {
+        "id": "K03",
+        "title": "The $175,000 ceiling may not cover a surveyor-verified prototype plus training and reporting",
+        "description": "The RFP caps the work at a not-to-exceed $175,000 for a 15-month engagement that includes a literature review, a program approval cycle, a working AI/ML prototype, a professional land surveyor reviewing every generated description, role-based training, a user manual and a final report. The proposed solution prices a five-person senior team to that ceiling and assumes a sample of roughly ten to fifteen properties. If the property sample, training volume or surveyor review effort is larger than assumed, the bidder absorbs the overrun or cuts scope that MoDOT expects.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The ceiling is fixed and the RFP leaves the demonstration sample, training volume and manual scope undefined, so the effort that drives cost is not settled; a senior team plus surveyor review is expensive relative to the cap.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R042",
+          "R092",
+          "R096",
+          "R097",
+          "R007"
+        ],
+        "chunk_ids": [
+          "S17.1",
+          "S45.1",
+          "S47.1"
+        ],
+        "mitigation": "State the assumed property count, training session count and manual scope explicitly in the proposal as the basis of the price, and ask MoDOT before the deadline to confirm the expected demonstration sample and training volume."
+      },
+      {
+        "id": "K04",
+        "title": "MHTC parameters and EPG Section 236.4.6.2 are not defined or supplied",
+        "description": "The RFP requires the tool to draft from 'MHTC parameters' and to meet MoDOT EPG Section 236.4.6.2, but neither the parameter set nor the EPG section is included. The proposed solution assumes the parameters are right-of-way plan data, parcel and ownership records and deed references, and that the EPG section is publicly available and stable. If the real parameter set is different or the EPG rules are more intricate than assumed, the rules engine and the drafting model are rebuilt after kick-off, inside a fixed ceiling and a fixed demonstration date.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The core technical input and the governing drafting standard are both undefined in the RFP, and the solution's reading of them is an explicit inference rather than a confirmed fact.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R011",
+          "R012",
+          "R013",
+          "R014",
+          "R015"
+        ],
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "mitigation": "Ask MoDOT before the deadline for a sample MHTC parameter set and confirmation of which EPG 236.4.6.2 version governs, and state in the proposal that the parameter specification is fixed at kick-off and that changes to it are handled by written amendment."
+      },
+      {
+        "id": "K05",
+        "title": "Contract term of 15 months conflicts with a 2 February 2026 end date",
+        "description": "The RFP states a 15-month contract period and separately ends the contract on 2 February 2026, which is roughly 14.5 months after the estimated 1 November 2024 start. The proposed solution prices and staffs a full 15 months and treats both as binding. If the shorter period governs, the final reporting phase and the last quarterly update fall outside the term and the bidder either absorbs unbilled effort or negotiates a change order.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The two statements cannot both be true from the same start date, and the RFP does not say which governs; the gap is about two weeks of effort, absorbable but real.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R016",
+          "R041"
+        ],
+        "chunk_ids": [
+          "S11.1",
+          "S15.1",
+          "S15.2"
+        ],
+        "mitigation": "Ask MoDOT to confirm whether the term is 15 months from the actual start or ends on 2 February 2026, and build the cost estimate on the shorter of the two with the final report scheduled before the end date."
+      },
+      {
+        "id": "K06",
+        "title": "Oracle 19C and SQL Server requirements point at incompatible database platforms",
+        "description": "One requirement mandates Oracle 19C for on-premise deployments while another directs the application to be designed and maintained on the latest supported SQL Server, with SQL Server 2016 or higher only if MoDOT IS approves. The proposed solution hedges by saying it runs on Oracle 19C or an approved SQL Server version. If the platform is not settled before the build, the prototype's data layer is built twice or rebuilt late, and the proof-of-concept demonstration date is at risk.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The two requirements are directly contradictory and the RFP does not say whether they are alternatives or whether Oracle is the default; the prototype is small, so rework is material but not fatal.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R144",
+          "R145"
+        ],
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "mitigation": "Ask MoDOT IS before the deadline which platform the prototype must run on and what approval SQL Server needs, and design the data access layer so the database can be swapped without rewriting the rules engine."
+      },
+      {
+        "id": "K07",
+        "title": "Licensing and Python approval gates could force a redesign of the prototype",
+        "description": "The RFP bars third-party tools that place a licensing responsibility on MoDOT without prior BRPT and IS management approval, and reserves Python for ESRI scripts and small one-time uses unless the BRPT approves larger use. The proposed solution assumes the named program's licence sits with the Offeror at no cost to MoDOT and that Python use stays small. If either assumption is wrong, the bidder must re-select the program or rewrite components in C#, and the approval queue adds weeks to a fixed schedule.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The solution's own assumptions make both approvals confirmation steps, but the RFP sets no threshold for 'large scale' Python and no criteria for the licensing review, so rejection is plausible.",
+        "source": "solution",
+        "requirement_ids": [
+          "R136",
+          "R138",
+          "R131",
+          "R137"
+        ],
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "mitigation": "State in the proposal that the named program's licence is held by the Offeror with no cost or licensing obligation for MoDOT, keep Python to ESRI scripts only, and ask the BRPT before the deadline what it treats as large-scale Python use."
+      },
+      {
+        "id": "K08",
+        "title": "Exhibits A and B are referenced but not in the RFP",
+        "description": "The RFP requires an E-Verify MOU, a sworn affidavit of no unauthorized-alien employment and lawful-presence affidavits for sole proprietors and general partners, and points to Exhibit A and Exhibit B for the forms, but neither exhibit is in the document. The proposed solution commits to the affidavits without having seen the forms. If the forms cannot be obtained or require information the bidder does not hold at submission, the proposal is incomplete and can be disqualified.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The obligation is mandatory and the forms are missing from the RFP, so the bidder cannot confirm it can complete them correctly before the deadline.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R117",
+          "R118",
+          "R119",
+          "R120"
+        ],
+        "chunk_ids": [],
+        "mitigation": "Request Exhibit A and Exhibit B from MoDOTResearchRFP@modot.mo.gov before the question deadline, and prepare the E-Verify MOU and affidavits in draft so they can be signed as soon as the forms arrive."
+      },
+      {
+        "id": "K09",
+        "title": "Unreadable pages 19 and 20 may carry requirements the proposal does not answer",
+        "description": "Pages 19 and 20 of the RFP could not be read: each has only 19 words of text and an image covering more than half the page. Those pages sit in the section that sets out the kick-off, Data Management Plan and task requirements. If they contain task detail, deliverable formats or review gates, the proposal may be non-responsive on a mandatory item without the bidder knowing.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The pages fall in a substantive part of the scope of work and the text is largely unreadable, so a missed requirement is plausible; the consequence is a responsiveness failure rather than a delivery failure.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R044",
+          "R047",
+          "R048",
+          "R049"
+        ],
+        "chunk_ids": [],
+        "mitigation": "Ask MoDOT for a text-searchable copy of pages 19 and 20 before the question deadline, and cross-check the work plan and Data Management Plan against whatever those pages contain before submission."
+      },
+      {
+        "id": "K10",
+        "title": "The Price Page form is not provided, so the cost estimate may not match the required format",
+        "description": "The RFP requires the fee proposal on the Section (4) Price Page with Salaries, Benefits, Operating Expense, F&A, Miscellaneous and Total, but the form itself is not in the document. The proposed solution builds a bottom-up estimate and maps it to those categories. If the actual form has different line items, a different period basis or a prescribed breakdown, the estimate must be rebuilt close to the deadline and may not be comparable to other offers.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The pricing form is mandatory and missing, and the RFP also leaves open whether the estimate covers the total contract value or an annual basis.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R006",
+          "R092",
+          "R093",
+          "R096",
+          "R097"
+        ],
+        "chunk_ids": [
+          "S5.1",
+          "S45.1",
+          "S47.1"
+        ],
+        "mitigation": "Obtain the Price Page from the MoDOT information-for-researchers page or by question before the deadline, and prepare the estimate so it can be re-cut into any prescribed line-item structure without re-pricing."
+      },
+      {
+        "id": "K11",
+        "title": "Evaluation criteria and weights are not disclosed",
+        "description": "The RFP says proposals are evaluated against criteria set by the Technical Advisory Committee but does not list the criteria or their weights, and states that MHTC is not obliged to solicit missing information. The proposed solution allocates effort across a ten-page work plan, personnel, experience and references without knowing what is scored. If the weighting favours, for example, prior AI/ML or Missouri state-agency experience, the bid may be structured against the wrong strengths.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The criteria are absent from the RFP and the proposal is judged as submitted, so a misallocated emphasis directly affects the chance of award.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R091",
+          "R105",
+          "R077",
+          "R079"
+        ],
+        "chunk_ids": [
+          "S41.1",
+          "S43.1",
+          "S36.1"
+        ],
+        "mitigation": "Ask MoDOT before the deadline whether the evaluation criteria and weights can be shared, and structure the ten-page work plan so each Section 2 item and each differentiator is visible within the page limit."
+      },
+      {
+        "id": "K12",
+        "title": "Post-award negotiated contract lets MHTC cancel the award",
+        "description": "The RFP makes award subject to a post-award negotiated contract and allows MHTC to cancel and select another Offeror if terms cannot be agreed, while the contract provisions themselves are not reproduced in the RFP. The proposed solution accepts the negotiated contract and its provisions. If the negotiated terms add obligations the bidder has not priced, such as broader IP rights or different insurance, the bidder either accepts an uneconomic contract or loses the award after spending bid effort.",
+        "severity": "medium",
+        "likelihood": "low",
+        "justification": "Cancellation requires a negotiation breakdown, which is unusual, but the contract terms are not visible in the RFP and the bidder cannot price against them.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R098",
+          "R099",
+          "R100",
+          "R106",
+          "R107"
+        ],
+        "chunk_ids": [
+          "S48.1",
+          "S53.1"
+        ],
+        "mitigation": "Review the Standard Research Agreement on the MoDOT website before submission, ask before the deadline which provisions are non-negotiable, and state in the proposal the assumptions on IP ownership and insurance on which the price rests."
+      }
+    ]
+  },
+  "findings": {
+    "uncovered_requirement_ids": [],
+    "conflicts": [
+      [
+        "R016",
+        "R041"
+      ],
+      [
+        "R144",
+        "R145"
+      ]
+    ],
+    "absent_documents": [
+      {
+        "name": "Exhibit A",
+        "kind": "exhibit",
+        "url": null,
+        "page": 15,
+        "section": "SECTION (5): AGREEMENT REQUIREMENTS",
+        "present": false
+      },
+      {
+        "name": "Exhibit B",
+        "kind": "exhibit",
+        "url": null,
+        "page": 15,
+        "section": "SECTION (5): AGREEMENT REQUIREMENTS",
+        "present": false
+      }
+    ],
+    "flags": [
+      {
+        "page": 19,
+        "reason": "low_word_count",
+        "detail": "19 words"
+      },
+      {
+        "page": 19,
+        "reason": "large_image_block",
+        "detail": "image covers 54% of the page"
+      },
+      {
+        "page": 20,
+        "reason": "low_word_count",
+        "detail": "19 words"
+      },
+      {
+        "page": 20,
+        "reason": "large_image_block",
+        "detail": "image covers 54% of the page"
+      }
+    ],
+    "budget_requirement_count": 6
+  }
+}

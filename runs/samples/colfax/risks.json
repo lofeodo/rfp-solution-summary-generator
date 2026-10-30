@@ -1,0 +1,284 @@
+{
+  "assessment": {
+    "risks": [
+      {
+        "id": "K01",
+        "title": "Attachment F spreadsheet not available, so the 45%-weighted scope response is built blind",
+        "description": "Attachment F (\"Software Abilities and Requirements\") is a separate Excel file the City must supply and the proposal must return completed, but it is not in the RFP package. The bid team must therefore guess the City's line-item functional requirements and price against them; if the real spreadsheet contains items the proposed platform does not cover, the bid is either non-responsive or needs unplanned configuration and third-party products after award. Because Tab 1 carries 45% of the score, a mis-scoped Attachment F also directly costs evaluation points.",
+        "severity": "high",
+        "likelihood": "high",
+        "justification": "The document is mandatory (R061) and holds solution requirements, yet it is listed as a separate attachment not included in the RFP; the solution itself admits it is completed against an assumed scope pending the City's file.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R061",
+          "R035",
+          "R057"
+        ],
+        "chunk_ids": [
+          "S23.1",
+          "S39.1",
+          "S28.2"
+        ],
+        "mitigation": "Request Attachment F in writing before the July 31, 2025 question deadline and state in the proposal that the response is completed against the RFP scope of work pending the City's file; hold a priced contingency for any line items outside the six named modules."
+      },
+      {
+        "id": "K02",
+        "title": "City's standard contract and General Contract Terms not available before bidding",
+        "description": "The RFP makes all its terms enforceable contract conditions and bars modified terms in the proposal, yet the standard contract and the General Contract Terms and Conditions are only 'available upon request' and are not in the package. The bidder must accept unseen terms covering liability, indemnity, insurance and termination, and any objection raised in the proposal risks rejection.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "R039 and R025/R026 make unseen terms binding and objections disqualifying, while the contract documents are missing; the solution assumes no material deviation without having read them.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R039",
+          "R025",
+          "R026",
+          "R103",
+          "R022"
+        ],
+        "chunk_ids": [
+          "S19.1",
+          "S13.1",
+          "S13.2",
+          "S29.1"
+        ],
+        "mitigation": "Request the standard contract and General Contract Terms in writing before July 31, 2025; if not produced, state in the proposal that the bid is conditioned on review of those documents and raise any concerns as written questions rather than as proposal exceptions."
+      },
+      {
+        "id": "K03",
+        "title": "July 1, 2026 go-live is a goal, not a fixed date, and the start date is undefined",
+        "description": "The RFP states July 1, 2026 as the City's goal and says work starts 'soon after' award, with award targeted for October 22, 2025 but no notice-to-proceed date. If award slips or negotiations run long, the roughly eight-month window to configure six modules, migrate five years of history, test and train compresses; the solution's answer is to cut scope rather than move the date, which risks an incomplete cutover at fiscal-year start.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The date is aspirational in the RFP and the start is undefined, yet the solution treats July 1, 2026 as a firm commitment and plans to absorb slippage by compressing scope.",
+        "source": "solution",
+        "requirement_ids": [
+          "R068",
+          "R120",
+          "R067"
+        ],
+        "chunk_ids": [
+          "S24.1",
+          "S32.1",
+          "S9.1"
+        ],
+        "mitigation": "State in the proposal that the schedule assumes a notice to proceed by a named date (for example mid-November 2025) and define in advance which scope items are deferred if award is later, so the City chooses the trade-off rather than the vendor."
+      },
+      {
+        "id": "K04",
+        "title": "Hard-copy delivery and page-limit compliance could disqualify an otherwise strong bid",
+        "description": "The proposal must arrive as one signed original hard copy physically received at a Colfax address by 4:00 PM PST on August 28, 2025, alongside an emailed copy, and the RFP is unclear whether the PO Box and street address are alternatives and whether the 20-page limit is pass/fail. A courier delay or an over-length response could make the bid unevaluable regardless of its quality.",
+        "severity": "high",
+        "likelihood": "low",
+        "justification": "Late and FAX submissions are not evaluated and the page limit is stated as 'should' while the surrounding text says respondents are required to adhere; the solution assumes the street address and treats the limit as binding.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R042",
+          "R046",
+          "R048",
+          "R044",
+          "R045"
+        ],
+        "chunk_ids": [
+          "S21.1",
+          "S21.2"
+        ],
+        "mitigation": "Ask the City which address to use and whether the hard copy must physically arrive by the deadline, then ship by tracked courier at least three business days early and hold the response to the page allowance with the cover letter and appendices in their separate budgets."
+      },
+      {
+        "id": "K05",
+        "title": "Attachment G security documentation required but its standard and format are undefined",
+        "description": "Attachment G asks for documentation of financial-data protection and secure access controls, but the form is not in the package and no framework, format or scope is named. The bid team cannot tell whether a control narrative, a SOC 2 report or a certification will be accepted, so it may submit evidence the City scores as insufficient, or over-invest in documentation that is not what was wanted.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "R102 is mandatory and Attachment G is a referenced document absent from the PDF, while the RFP names no standard; the solution's assumption that a narrative mapped to a recognized framework will be accepted is unverified.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R102"
+        ],
+        "chunk_ids": [
+          "S28.2",
+          "S40.1"
+        ],
+        "mitigation": "Ask the City by July 31, 2025 which standard and format Attachment G requires, and submit a control narrative mapped to a recognized framework plus the current SOC 2 report as supporting evidence."
+      },
+      {
+        "id": "K06",
+        "title": "Attachments A to E missing, so pricing, references, location and certification forms must be reconstructed",
+        "description": "Attachment A (pricing proposal), B (references), C (location of workers), D (financial condition certification) and E (insurance certification) are all referenced but supplied separately and absent from the RFP. The bid team must recreate the forms, risking a submission that is rejected as incomplete or that omits a required field, and cannot confirm the exact price breakout the City will score.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "Five mandatory submission forms (R089, R084, R097, R098, R100) are missing from the package; the RFP requires all attachments to be populated and signed, and the solution already assumes it can recreate Attachment B.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R089",
+          "R084",
+          "R097",
+          "R098",
+          "R100",
+          "R057",
+          "R058"
+        ],
+        "chunk_ids": [
+          "S4.1",
+          "S28.1",
+          "S28.2",
+          "S22.1"
+        ],
+        "mitigation": "Request the full attachment set with the written questions and, if not supplied, submit faithfully reconstructed forms with every field the RFP describes, flagging in the cover letter that the City's originals were not provided."
+      },
+      {
+        "id": "K07",
+        "title": "Small City staff cannot carry their share of implementation and training",
+        "description": "The City has 11 full-time employees with one vacancy plus one part-time employee, and the solution relies on City Accounting and IT to supply extracts, validate data, sign off control totals and attend training. If City staff cannot free the time, milestones slip and the vendor absorbs rework; the RFP does not commit City resources or name a project sponsor.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "The headcount is stated in the RFP and the solution itself notes the vendor must carry most of the workload, yet the plan still depends on City sign-offs and joint working sessions.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R111",
+          "R112",
+          "R113",
+          "R115"
+        ],
+        "chunk_ids": [
+          "S6.1",
+          "S5.1"
+        ],
+        "mitigation": "State in the proposal the City effort assumed per phase (named roles and hours), propose a single City project sponsor, and schedule training and validation sessions around the City's operational calendar."
+      },
+      {
+        "id": "K08",
+        "title": "Conflicting 30-day and 15-day financial-certification notice periods",
+        "description": "R099 requires notice to the City within 30 days of any condition materially altering the financial certification, while R139 requires notice to the Contract Lead within 15 days of material changes to the same representations. Operating to the wrong clock after award could breach a contractual notice obligation, and the RFP does not define what counts as a material change.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The two requirements conflict on both the period and the recipient, and the certification does not define 'material change'; the solution resolves it by assumption rather than by the City's answer.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R099",
+          "R139"
+        ],
+        "chunk_ids": [
+          "S28.2",
+          "S36.1"
+        ],
+        "mitigation": "Ask the City which notice period and recipient govern, and until answered operate to the shorter 15-day period to the Contract Lead with a copy to the City."
+      },
+      {
+        "id": "K09",
+        "title": "Five-year data migration sized on assumed source formats and volumes",
+        "description": "The RFP does not state the volume, format or cleanliness of the prior five years of history, nor who supplies and cleans the extracts. The solution assumes standard Tyler Technologies Fund Balance exports with the City supplying extracts and the vendor mapping and cleaning them; if the data is messier, larger or in non-standard formats, migration effort and reconciliation time grow and the go-live date is at risk.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "R110 is mandatory and the RFP leaves volumes and formats undefined; the solution's sizing rests on an explicit assumption about the source system and export formats.",
+        "source": "solution",
+        "requirement_ids": [
+          "R110",
+          "R111",
+          "R112"
+        ],
+        "chunk_ids": [
+          "S31.1",
+          "S5.1"
+        ],
+        "mitigation": "Ask the City for record counts, file formats and a sample extract before the deadline, and state in the proposal that the migration price covers a defined volume and format with re-pricing for material variance."
+      },
+      {
+        "id": "K10",
+        "title": "Twelve months of post-go-live support priced into the base without a defined scope",
+        "description": "The RFP does not say whether the 12 months of support is included in the base price or optional, when it starts, or what service levels apply. The solution assumes it starts at go-live and is included in the base price, which puts a full year of help desk, update notices and annual 1099/W-2 e-filing support inside a fixed price the City will not let the bidder revise during clarification.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "R114 is mandatory but its pricing basis is undefined, and R033 bars price changes during clarification, so an under-priced support year cannot be corrected later.",
+        "source": "solution",
+        "requirement_ids": [
+          "R114",
+          "R093",
+          "R033",
+          "R118"
+        ],
+        "chunk_ids": [
+          "S31.1",
+          "S17.1"
+        ],
+        "mitigation": "Ask the City to confirm the support period's start and whether it is base or optional, and price it explicitly as a separate line with stated support hours, response targets and an assumed ticket volume."
+      },
+      {
+        "id": "K11",
+        "title": "Reimbursable expense cap and total price structure left to the bidder's guess",
+        "description": "The RFP requires a capped reimbursable figure and a total price proposal amount but gives no ceiling, no methodology and no explanation of how the total relates to the services total plus the cap. The solution assumes a respondent-proposed cap covering on-site travel and treats the total as the sum of services plus cap; if the City expected a different construction, the price sheet is scored as non-responsive or the cap under-recovers travel costs.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "R088, R124 and R125 are mandatory but the cap basis and the relationship between the three amounts are undefined, and the solution resolves both by assumption.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R088",
+          "R124",
+          "R125",
+          "R123",
+          "R087"
+        ],
+        "chunk_ids": [
+          "S28.1",
+          "S33.1"
+        ],
+        "mitigation": "Ask the City by July 31, 2025 whether a maximum cap or methodology is prescribed and how the total price proposal is composed; state the construction used in Attachment A explicitly so the City can see the arithmetic."
+      },
+      {
+        "id": "K12",
+        "title": "Insurance limits and additional-insured terms unstated, so coverage cannot be priced or confirmed",
+        "description": "Attachment E requires proof of workers compensation and commercial general liability coverage, but the RFP states no limits, additional-insured requirements or certificate form. The solution assumes limits customary for a municipal software contract; if the City's actual requirements are higher, the bidder either fails a mandatory submission item or absorbs unplanned premium.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "R100 is mandatory and the coverage requirements are open-ended ('including, but not limited to'), while the solution's insurance position rests on an explicit assumption pending the City's stated limits.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R100"
+        ],
+        "chunk_ids": [
+          "S37.1",
+          "S28.2"
+        ],
+        "mitigation": "Ask the City for the required limits and endorsements before the deadline, and submit certificates at customary municipal limits naming the City as additional insured, with a note that limits will be conformed to the contract."
+      }
+    ]
+  },
+  "findings": {
+    "uncovered_requirement_ids": [],
+    "conflicts": [
+      [
+        "R099",
+        "R139"
+      ]
+    ],
+    "absent_documents": [
+      {
+        "name": "Attachment E",
+        "kind": "attachment",
+        "url": null,
+        "page": 14,
+        "section": "Tab 3.3 Key Personnel Experience",
+        "present": false
+      },
+      {
+        "name": "Attachment F",
+        "kind": "attachment",
+        "url": null,
+        "page": 12,
+        "section": "Tab 1: Response to Project Goals and Scope",
+        "present": false
+      },
+      {
+        "name": "Attachment G",
+        "kind": "attachment",
+        "url": null,
+        "page": 14,
+        "section": "Tab 3.3 Key Personnel Experience",
+        "present": false
+      }
+    ],
+    "flags": [],
+    "budget_requirement_count": 11
+  }
+}

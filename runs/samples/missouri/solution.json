@@ -1,0 +1,458 @@
+{
+  "solution": {
+    "summary": "The bid is a 15-month research and development engagement, not a software procurement: we deliver a proof-of-concept AI/ML tool that drafts legal land descriptions from MHTC parameters, together with the evidence, training and reporting that let MoDOT decide whether the technology is useful. The work runs in six phases — kick-off and planning, literature and peer-state review, program selection and MoDOT IS approval, proof-of-concept build and demonstration, training and manual, then synthesis and final reporting — each gated by a MoDOT review point. We build the prototype on the approved MoDOT technology stack (.NET 6.0 or above, MVC/Razor Pages/Web API, C#/JavaScript/HTML/CSS, Python only for ESRI scripts or small one-time uses) and host it in a MoDOT-approved environment, with no third-party licensing burden placed on MoDOT. The team is a small, senior one: a principal investigator and land-surveying subject-matter expert, an AI/ML engineer, a .NET developer, a technical writer/trainer and a part-time contract and compliance lead, with a professional land surveyor reviewing every generated description. Everything is priced to the $175,000 not-to-exceed ceiling on the Section (4) Price Page, and all deliverables, data and working papers remain MHTC property. A bid-administration workstream owns the RFP's own calendar — the question deadline, the proposal deadline and the 7:30 a.m. to 4 p.m. Central window for every RFP event — so the offer is submitted on time and through the single permitted channel.",
+    "components": [
+      {
+        "id": "C01",
+        "title": "Bid administration and RFP calendar compliance",
+        "description": "A named bid manager owns the RFP's own timetable and contact rules so the offer is never late and never disqualified. Questions and comments go only to MoDOTResearchRFP@modot.mo.gov by the date and time in Section 1E (17 July 2024, 4 p.m. Central), with no contact with MoDOT employees by any other method; the proposal is emailed to the same address by 21 August 2024, 10 a.m. Central, and we treat submission as complete only when MoDOT's notification of receipt arrives. Every RFP event we schedule or attend — question submission, proposal delivery, any interview or clarification session — is booked inside the 7:30 a.m. to 4 p.m. Central window, and the calendar is tracked against a written submission checklist with a time buffer before each deadline. The same workstream assembles the single combined PDF in the required order and confirms the Proposal Submission Form, signatures and contact details are present.",
+        "requirement_ids": [
+          "R005",
+          "R017",
+          "R074"
+        ],
+        "claims": [
+          {
+            "text": "Proposals are due by email to MoDOTResearchRFP@modot.mo.gov by 21 August 2024 at 10 a.m. Central, and questions are due by 17 July 2024 at 4 p.m. Central.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S1.1",
+              "S12.1",
+              "S33.1"
+            ]
+          },
+          {
+            "text": "All RFP events must occur between 7:30 a.m. and 4 p.m. Central time.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S12.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C02",
+        "title": "Project management, governance and MoDOT coordination",
+        "description": "A named project manager runs the engagement under a finalized work plan that details every task, resource and schedule commitment and explicitly recognizes MoDOT's ultimate authority to approve work plans. We facilitate the kick-off meeting to confirm scope, schedule and a communications protocol, then hold quarterly status meetings (in person or online) with written minutes for the kick-off and every quarterly meeting, submit quarterly progress updates by the last working day of March, June, September and December, and maintain monthly email and phone updates to MoDOT contacts. All activity is coordinated with the Research Unit of the Construction and Materials Division, and advice and information on Agreement matters is available to that Division throughout the term. A single MHTC representative channel handles concerns about administration of the services.",
+        "requirement_ids": [
+          "R044",
+          "R045",
+          "R046",
+          "R047",
+          "R080",
+          "R029",
+          "R032",
+          "R101",
+          "R102",
+          "R065",
+          "R016",
+          "R041",
+          "R031"
+        ],
+        "claims": [
+          {
+            "text": "The contract period is 15 months, with an estimated 1 November 2024 start and a final invoice and contract end date of 2 February 2026.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S11.1",
+              "S15.1",
+              "S15.2"
+            ]
+          },
+          {
+            "text": "The work is coordinated by the Research Unit of MoDOT's Construction and Materials Division, with which the Offeror must fully coordinate.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S1.1",
+              "S49.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C03",
+        "title": "Data Management Plan and research data handling",
+        "description": "Within two weeks of kick-off we submit a Data Management Plan that names the anticipated formats for every data type the study produces — source deeds and right-of-way plans, MHTC parameter sets, training corpora, model artefacts, generated descriptions and review comments — and commits to platform-independent, non-proprietary formats (plain text, CSV, PDF/A, GeoJSON where spatial) so the data retains maximum future utility for MoDOT. The plan also states retention, access and handover arrangements consistent with MHTC ownership of all data and deliverables and with records being available to MHTC and the Missouri State Auditor for three years after final payment. No PII is stored in any database table without a documented business need and IS Cyber Security Team approval.",
+        "requirement_ids": [
+          "R048",
+          "R049",
+          "R050",
+          "R121",
+          "R125",
+          "R146",
+          "R147"
+        ],
+        "claims": [
+          {
+            "text": "The Data Management Plan is due within two weeks after the kick-off meeting.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S19.1",
+              "S15.2"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C04",
+        "title": "Literature search and peer-state practice review",
+        "description": "A structured review of published research and of other state DOTs' use of AI/ML for right-of-way work, covering document-drafting and deed-description automation, spatial data extraction, and the accuracy, liability and professional-surveyor review questions those uses raise. We deliver an annotated bibliography, a comparison matrix of peer-state practice and a findings memo that feeds directly into the program selection and the proof-of-concept design, so the demonstration is grounded in what has already been shown to work rather than starting from zero.",
+        "requirement_ids": [
+          "R051"
+        ],
+        "claims": [
+          {
+            "text": "Task 2 requires a thorough literature search and review of other state DOT practices using AI/ML for right-of-way purposes.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S20.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C05",
+        "title": "Program selection and MoDOT Information Systems approval",
+        "description": "We name the specific program used to develop the LLDs before any proof-of-concept work begins, and submit it to MoDOT Information Systems with the information that review needs: version, licensing model, hosting location, data flows, security posture and any third-party dependencies. We do not proceed to the proof-of-concept demonstration until MoDOT IS has approved the named program, and we hold a schedule contingency for that approval. The selection is constrained to the approved technology stack — .NET 6.0 or above (or a supported .NET Framework 4.8+ where specifically needed), MVC/Razor Pages/Web API, C#/JavaScript/HTML/CSS, with Python limited to ESRI scripts and small one-time uses unless the IS Best Practices Review Team approves more — and to components that place no licensing responsibility on MoDOT without BRPT and IS management approval.",
+        "requirement_ids": [
+          "R053",
+          "R131",
+          "R132",
+          "R133",
+          "R134",
+          "R136",
+          "R137",
+          "R138",
+          "R139"
+        ],
+        "claims": [
+          {
+            "text": "Task 3b requires the Offeror to name the program used to develop the LLDs before proof-of-concept work begins, and MoDOT Information Systems must approve it before Task 3c proceeds.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S22.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C06",
+        "title": "Legal land description rules engine and drafting prototype",
+        "description": "The core build: a rules-and-template layer that encodes MoDOT EPG Section 236.4.6.2 requirements and the MHTC drafting conventions, so that generated descriptions use metes and bounds for partial acquisitions, reproduce the last deed of record verbatim where a property is acquired in its entirety, and recite the specific rights acquired, conveyed or leased whenever the interest is less than fee simple. The AI/ML component drafts from MHTC parameters supplied per property and produces a clearly marked first draft for Right of Way staff to review and edit, with every generated call and bearing traceable to its source input. The application is a browser-based web application requiring no client-side software beyond a modern browser, tested against the latest IS-approved browsers, meeting WCAG 2.1 AA and the State of Missouri Accessibility Standard, running on Oracle 19C or an approved SQL Server version, and free of vendor branding where a licensed option removes it and of unlicensed third-party content.",
+        "requirement_ids": [
+          "R011",
+          "R012",
+          "R013",
+          "R014",
+          "R015",
+          "R140",
+          "R141",
+          "R143",
+          "R144",
+          "R145",
+          "R149",
+          "R150",
+          "R151",
+          "R135"
+        ],
+        "claims": [
+          {
+            "text": "Realty rights acquired or conveyed by MHTC must be described by metes and bounds unless the property is acquired in its entirety, in which case the description must be written exactly as it appears on the last deed of record.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S9.1"
+            ]
+          },
+          {
+            "text": "Descriptions prepared for MHTC must meet MoDOT Engineering Policy Guide Section 236.4.6.2.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S9.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C07",
+        "title": "Proof-of-concept demonstration and surveyor verification",
+        "description": "A live demonstration on 25 April 2025 in which the technology generates draft legal land descriptions across a spread of property types — partial takes, whole-parcel acquisitions, easements and less-than-fee interests — with MoDOT Right of Way staff reviewing the drafts and giving structured improvement feedback that we log, triage and fold into the next iteration. Each generated description is checked by a professional land surveyor against the right-of-way plans and the surveyor's survey information before it is presented as a candidate for deed use, mirroring the review MoDOT requires before a deed reaches a grantor. We report measured accuracy and staff editing effort per property so MoDOT can judge usefulness, not just feasibility.",
+        "requirement_ids": [
+          "R024",
+          "R010",
+          "R015"
+        ],
+        "claims": [
+          {
+            "text": "The Offeror must present how the AI/ML will create draft LLDs on 25 April 2025 for MoDOT feedback.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S15.2"
+            ]
+          },
+          {
+            "text": "Before a deed is presented to a grantor, a professional land surveyor must verify the description matches the right-of-way plans and the survey information.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S9.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C08",
+        "title": "Training, user manual and knowledge transfer",
+        "description": "Once the system is finalized we train Right of Way staff and deliver a user manual for ongoing reference, both by 25 July 2025. Training is role-based — drafters, reviewers and approvers — covering parameter entry, reading and correcting a generated description, the surveyor verification step and the audit trail, delivered in sessions plus recorded walkthroughs so staff can revisit them. The manual is delivered electronically and in print-ready form, covering installation and access, every workflow, the EPG 236.4.6.2 rules the tool applies, troubleshooting and worked examples, and is updated to match the final system at project close.",
+        "requirement_ids": [
+          "R055",
+          "R056",
+          "R026",
+          "R027"
+        ],
+        "claims": [
+          {
+            "text": "The manual and ROW training must be delivered by 25 July 2025.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S15.2"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C09",
+        "title": "Synthesis, final reporting and research summary",
+        "description": "A draft Synthesis Report and Research Summary with supporting documentation, delivered by 3 November 2025, followed by the final report containing all findings, a 1–2 page research summary stating objectives, findings and conclusions, and a presentation for MoDOT staff. The final report carries a completed Technical Report Documentation page and follows the Publications Guidelines and summary template. The synthesis answers the research question directly: whether AI/ML can usefully produce a first draft LLD from MHTC parameters, under what conditions, with what review burden and what residual risk — and recommends next steps for MoDOT adoption.",
+        "requirement_ids": [
+          "R057",
+          "R062",
+          "R063",
+          "R026",
+          "R027"
+        ],
+        "claims": [
+          {
+            "text": "The draft final report, summary and user manual are due by 3 November 2025.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S15.2"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C10",
+        "title": "Contract, compliance and commercial obligations",
+        "description": "A compliance workstream that carries every non-technical obligation: acceptance of the post-award negotiated contract and its provisions, including MHTC's right to cancel if terms cannot be agreed; no public release of materials without MHTC consent; no assignment or delegation without written consent; acceptance that MHTC written clarifications govern; formal signed amendments for any change; full responsibility for subcontractor performance; flow-down of Section (3) paragraph I to every subcontract with Commission-directed enforcement; MHTC ownership of all deliverables and information; confidentiality of MHTC factual matters with immediate notice of any disclosure request; records available to MHTC and the State Auditor for three years after final payment; and MHTC's royalty-free right to reproduce derived products. It also carries the employment and insurance package: E-Verify MOU, the sworn affidavit of no unauthorized-alien employment, lawful-presence affidavits for sole proprietors and general partners, general and automobile liability at $500,000 per person and $3,000,000 per occurrence, Missouri workers' compensation, and certificates of insurance available on request. We commit to 10% MBE and 5% WBE participation and to direct hiring of minorities and women.",
+        "requirement_ids": [
+          "R098",
+          "R099",
+          "R100",
+          "R103",
+          "R104",
+          "R106",
+          "R107",
+          "R111",
+          "R113",
+          "R114",
+          "R115",
+          "R117",
+          "R118",
+          "R119",
+          "R121",
+          "R122",
+          "R123",
+          "R125",
+          "R126",
+          "R127",
+          "R128",
+          "R129",
+          "R130",
+          "R109",
+          "R110"
+        ],
+        "claims": [
+          {
+            "text": "Award is subject to a post-award negotiated contract that MHTC may cancel if terms cannot be agreed.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S48.1"
+            ]
+          },
+          {
+            "text": "The RFP requires 10% MBE and 5% WBE participation targets, an E-Verify affidavit, lawful-presence affidavits, and insurance of $500,000 per person and $3,000,000 per occurrence plus Missouri workers' compensation.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S55.1",
+              "S59.1",
+              "S60.1",
+              "S72.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C11",
+        "title": "Price page and cost estimate",
+        "description": "A complete cost estimate for all services in the Scope of Work, entered on Section (4), the Price Page, broken out into Salaries, Benefits, Operating Expense, Facilities and Administration (F&A) Cost, Miscellaneous and Total, with miscellaneous costs itemized on an attached sheet. The estimate is built bottom-up from named staff, hours and rates across the full 15-month period and totals no more than the $175,000 not-to-exceed ceiling, with the Offeror agreeing to perform at the quoted fees under the RFP's terms. A cost narrative maps each line to a task so MoDOT can see what each phase buys.",
+        "requirement_ids": [
+          "R092",
+          "R093",
+          "R096",
+          "R097",
+          "R042",
+          "R007"
+        ],
+        "claims": [
+          {
+            "text": "Services are capped at a not-to-exceed amount of $175,000, with the cost estimate entered on the Section (4) Price Page.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S17.1"
+            ]
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The MHTC parameters are assumed to be the right-of-way plan data, parcel and ownership records, deed references and acquisition instructions that MoDOT Right of Way staff currently use to hand-write descriptions; we will confirm the exact parameter set at kick-off and treat it as a fixed input specification for the prototype.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S9.1"
+        ]
+      },
+      {
+        "text": "MoDOT EPG Section 236.4.6.2 is assumed to be obtainable from MoDOT's public Engineering Policy Guide and to be stable for the project term; we will encode it as a versioned ruleset and re-verify it at each review gate rather than assume it is supplied with the RFP.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S9.1"
+        ]
+      },
+      {
+        "text": "The 1 November 2024 start is assumed to be the planning baseline, with the 2 February 2026 contract end and the fixed milestone dates (25 April 2025 demonstration, 25 July 2025 training and manual, 15 September 2025 interim presentation, 3 November 2025 draft deliverables) treated as binding and not re-opened at kick-off.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S15.1",
+          "S15.2",
+          "S11.1"
+        ]
+      },
+      {
+        "text": "The interim presentation is assumed to fall at the September 2025 milestone already named in the schedule, which we treat as the project mid-point.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S15.1",
+          "S15.2"
+        ]
+      },
+      {
+        "text": "The proof-of-concept is assumed to cover a representative sample of roughly ten to fifteen properties spanning partial takes, whole-parcel acquisitions, easements and less-than-fee interests, sized to fit within the $175,000 ceiling; the exact count will be agreed with MoDOT at kick-off.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S23.1",
+          "S17.1"
+        ]
+      },
+      {
+        "text": "Training is assumed to be delivered as a small number of virtual or on-site sessions for the Right of Way staff who will use the tool, plus recorded walkthroughs and one electronic and print-ready manual, rather than repeated sessions for the whole division.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S24.1"
+        ]
+      },
+      {
+        "text": "The prototype is assumed to be hosted in a MoDOT-approved environment on Oracle 19C, with SQL Server used only if MoDOT IS approves it, and no PII stored, since the study works from property and deed data rather than personal records.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S73.2"
+        ]
+      },
+      {
+        "text": "The named LLD development program is assumed to be a commercially or openly licensed tool whose licence sits with the Offeror or is otherwise free of cost and licensing responsibility for MoDOT, so that BRPT review is a confirmation step rather than a procurement.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S73.1"
+        ]
+      },
+      {
+        "text": "The literature review is assumed to be delivered as an annotated bibliography plus a peer-state comparison memo and a short briefing at a quarterly meeting, covering the past ten years of US state DOT practice, rather than a standalone published report.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S20.1"
+        ]
+      },
+      {
+        "text": "The cost estimate is assumed to be a total-contract-value estimate for the full 15-month period of performance, detailed by labour category, hours and rates, since a detailed budget is developed only after award.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S45.1",
+          "S47.1"
+        ]
+      },
+      {
+        "text": "The 10% MBE and 5% WBE targets are assumed to be measured against total contract value and reported in the proposal with named subcontracting partners, even though the RFP states them as encouraged.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S55.1"
+        ]
+      },
+      {
+        "text": "The insurance limits are assumed to be binding at contract signing, with certificates of insurance provided on request before award.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S72.1"
+        ]
+      },
+      {
+        "text": "Confidential MHTC material is assumed to be identified by marking at the time it is supplied, and we will notify MHTC's representative within one business day of any third-party request for it.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S66.1"
+        ]
+      },
+      {
+        "text": "The Offeror is assumed to retain ownership of its pre-existing models, code and tooling, granting MHTC the royalty-free right to reproduce and use products derived from the work, with all study deliverables and MHTC-supplied information remaining MHTC property.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S69.1",
+          "S65.1"
+        ]
+      },
+      {
+        "text": "The question deadline is assumed to be 17 July 2024 at 4 p.m. Central, the date carried on the contact row of the RFP timetable, and the proposal deadline is assumed to be fixed at 21 August 2024 at 10 a.m. Central even though MoDOT reserves the right to expand the rest of the schedule.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S12.1",
+          "S33.1"
+        ]
+      }
+    ],
+    "coverage": {
+      "mandatory_total": 72,
+      "mandatory_covered": 72,
+      "uncovered_requirement_ids": []
+    }
+  },
+  "rounds": [
+    {
+      "iteration": 1,
+      "coverage": {
+        "mandatory_total": 72,
+        "mandatory_covered": 69,
+        "uncovered_requirement_ids": [
+          "R005",
+          "R017",
+          "R074"
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "coverage": {
+        "mandatory_total": 72,
+        "mandatory_covered": 72,
+        "uncovered_requirement_ids": []
+      }
+    }
+  ]
+}
