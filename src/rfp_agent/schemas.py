@@ -362,6 +362,80 @@ class RequirementsOutput(StrictModel):
         return [r for r in self.requirements if r.strictness is Strictness.MANDATORY]
 
 
+# LLM output contracts for the extractor (S5). IDs and chunk citations are assigned by
+# code, so the per-chunk reply carries none; the single-call reply cites chunk IDs, which
+# code checks against the split document.
+
+
+class ExtractedRequirement(StrictModel):
+    text: str = Field(description="The requirement as one self-contained sentence")
+    type: RequirementType
+    strictness: Strictness
+    quote: str = Field(description="Shortest verbatim span of the chunk stating it")
+
+
+class ExtractedAmbiguity(StrictModel):
+    description: str = Field(description="What is unclear and what a bidder would ask")
+    requirement_indexes: list[int] = Field(
+        default_factory=list,
+        description="0-based positions in `requirements` of this reply that it affects",
+    )
+
+
+class ExtractedGap(StrictModel):
+    description: str = Field(description="What the RFP needs that this text does not provide")
+    referenced_document: str | None = Field(
+        default=None, description="Name of the absent document, if the gap is one"
+    )
+
+
+class ChunkExtraction(StrictModel):
+    """Reply for one chunk (per-chunk path)."""
+
+    requirements: list[ExtractedRequirement] = Field(default_factory=list)
+    ambiguities: list[ExtractedAmbiguity] = Field(default_factory=list)
+    gaps: list[ExtractedGap] = Field(default_factory=list)
+
+
+class CitedRequirement(ExtractedRequirement):
+    chunk_id: str = Field(pattern=CHUNK_ID_RE, description="The chunk the quote is from")
+
+
+class CitedAmbiguity(ExtractedAmbiguity):
+    chunk_ids: list[str] = Field(min_length=1)
+
+
+class CitedGap(ExtractedGap):
+    chunk_ids: list[str] = Field(default_factory=list)
+
+
+class DocumentExtraction(StrictModel):
+    """Reply for the whole document (single-call ablation path)."""
+
+    requirements: list[CitedRequirement] = Field(default_factory=list)
+    ambiguities: list[CitedAmbiguity] = Field(default_factory=list)
+    gaps: list[CitedGap] = Field(default_factory=list)
+
+
+class DedupeGroup(StrictModel):
+    representative_id: str = Field(description="The most specific statement; kept")
+    member_ids: list[str] = Field(
+        min_length=1, description="Requirements folded into the representative"
+    )
+
+
+class RequirementConflict(StrictModel):
+    requirement_ids: list[str] = Field(min_length=2)
+    reason: str = Field(description="One sentence on how they contradict")
+
+
+class DedupeOutput(StrictModel):
+    """Reply of the fuzzy-dedupe grouping pass. Code merges and checks it (D6)."""
+
+    groups: list[DedupeGroup] = Field(default_factory=list)
+    conflicts: list[RequirementConflict] = Field(default_factory=list)
+
+
 # --------------------------------------------------------------------------------------
 # Problem statement (S6)
 # --------------------------------------------------------------------------------------

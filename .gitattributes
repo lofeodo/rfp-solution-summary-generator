@@ -1,0 +1,5 @@
+# Prompt files are hashed byte for byte into the run log and compared in tests, and
+# JSON fixtures are compared as text, so they must not pick up CRLF on Windows checkouts.
+prompts/** text eol=lf
+tests/fixtures/** text eol=lf
+evals/gold/*.json text eol=lf

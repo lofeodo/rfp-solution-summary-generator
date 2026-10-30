@@ -126,6 +126,10 @@ class Settings(BaseSettings):
         "On: JSON mode (thinking mode rejects forced tool_choice).",
     )
 
+    extract_concurrency: int = Field(
+        default=4, ge=1, description="Parallel per-chunk LLM calls in the requirements extractor"
+    )
+
     # Ablation flags (S10 CLI exposes them; S6 and S5 read them)
     full_text_problem: bool = Field(
         default=False, description="Problem statement from one full-text call"
