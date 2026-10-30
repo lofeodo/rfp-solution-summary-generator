@@ -7,8 +7,8 @@ cites the chunk of the RFP it came from, so the summary can be checked against t
 source. The repo includes an evaluation harness and per-run observability (tokens,
 latency, cost).
 
-**Status:** scaffold (S0) and PDF parsing (S2) are in. The pipeline lands step by
-step; see `docs/ROADMAP.md`.
+**Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2)
+and renderer (S9). The pipeline lands step by step; see `docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -38,6 +38,7 @@ conda activate rfp-solution-gen
 pip install -r requirements.txt          # also installs the package in editable mode
 cp .env.example .env                     # then fill in DEEPSEEK_API_KEY (and ANTHROPIC_API_KEY for evals)
 pytest                                   # unit tests; nothing here calls a paid API
+pytest --update-golden                   # rewrite golden files after an intended render change
 ```
 
 Run the pipeline on the default brief (lands in step S10):
@@ -46,8 +47,10 @@ Run the pipeline on the default brief (lands in step S10):
 python -m rfp_agent run inputs/rfp_brief.pdf
 ```
 
-Outputs go to `runs/<run_id>/` as JSON, markdown and a run log with per-node tokens,
-latency and cost. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
+Outputs go to `runs/<run_id>/`: `summary.json` (the source of truth), `summary.md`
+(rendered from the JSON by code) and a run log with per-node tokens, latency and cost.
+Citations in the markdown read `(Section title, p. 4 [S3.2])`; the bracketed chunk ID
+is the key into the JSON. A sample rendering lives in `tests/fixtures/summary_sample.md`. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
 and is a no-op otherwise.
 
 ## Parsing
@@ -61,6 +64,37 @@ table, fragmented lines) for the parse-quality pass. No LLM is involved. To insp
 
 ```bash
 python -m rfp_agent.parsing data/rfps/colfax.pdf --out colfax.json
+```
+
+## Configuration
+
+All settings live in `.env` (see `.env.example`); `RFP_*` variables override defaults.
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `RFP_MODEL` | `deepseek:deepseek-flash` | generator, `<provider>:<model_id>` |
+| `RFP_JUDGE_MODEL` | `anthropic:claude-sonnet-5-5` | eval judge |
+| `RFP_TEMPERATURE` | `0` | sent to every provider except Anthropic |
+| `RFP_MAX_STRUCTURED_RETRIES` | `2` | retries after a schema validation failure |
+| `RFP_MAX_OUTPUT_TOKENS` | provider default | output cap per call |
+| `RFP_REQUEST_TIMEOUT_S` | `120` | per-request timeout |
+| `RFP_LLM_TRANSPORT_RETRIES` | `2` | SDK retries on 429, 5xx and connection errors |
+| `RFP_DEEPSEEK_THINKING` | `false` | DeepSeek thinking mode (structured output switches to JSON mode when on) |
+
+## Observability
+
+Every LLM call goes through `structured_call` in `src/rfp_agent/llm.py`, which records
+one entry per call (node, model, input, output and cached tokens, cost from the pricing
+table in `config.py`, latency, retries) into the run's log. The log also holds the model,
+temperature and the SHA-256 of every prompt file used, and is written to
+`runs/<run_id>/run_log.json` even when a run fails. Langfuse tracing is added as a
+LangChain callback when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, and is
+off otherwise.
+
+Live smoke tests against the real APIs are skipped by default:
+
+```bash
+pytest -m llm      # needs DEEPSEEK_API_KEY and/or ANTHROPIC_API_KEY in .env
 ```
 
 ## Inputs

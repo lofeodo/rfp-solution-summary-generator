@@ -25,12 +25,12 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 ## Parsing
 
 - Running headers and footers carry no requirement content; they are stripped when they
-  repeat on at least three pages (D17).
+  repeat on at least three pages (D21).
 - `mailto:` links are contact addresses, not documents; only http(s) links are recorded
   as referenced documents. The addresses stay in the page text.
 - A referenced attachment or exhibit counts as present only when its section in the PDF
-  has at least 40 words; a cover page saying "provided separately" is absent (D18).
-- OCR is off: image-only pages are flagged for S4, not transcribed (D16).
+  has at least 40 words; a cover page saying "provided separately" is absent (D22).
+- OCR is off: image-only pages are flagged for S4, not transcribed (D20).
 
 ## Models and keys
 
@@ -51,6 +51,11 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - Default generator `deepseek-flash` (DeepSeek V4.1 Flash) and judge
   `claude-sonnet-5-5`. The pricing table uses DeepSeek's peak-hour rates as an upper
   bound; off-peak is half, so reported DeepSeek cost may overstate actual spend.
+- Cache-write tokens are costed at the normal input rate. Anthropic bills them at
+  1.25x, so Claude cost is slightly under-counted on calls that write the cache;
+  DeepSeek has no cache-write surcharge.
+- DeepSeek runs with thinking mode off by default (`RFP_DEEPSEEK_THINKING`); its API
+  default is on. Whether thinking improves output quality is measured in S13.
 
 ## Scope
 

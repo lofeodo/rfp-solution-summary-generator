@@ -196,7 +196,80 @@ Why: a single install command and a single source of pins; no `PYTHONPATH` trick
 pydantic-settings keeps validation (ranges, types) in the same library as the schemas.
 Evidence: CI runs the same install.
 
-### D16. Parsing: layout path with OCR off, flag thresholds as constants
+### D16. Markdown layout, citation format, strict assembly
+Context: S9 turns the JSON into the markdown a reviewer reads, and is the last place a
+broken citation can be caught before it ships.
+Options: citations as "section, page" only vs with the chunk ID; requirements as one
+table vs grouped lists; assembler that annotates vs raises on dangling IDs; snapshot
+tests vs assertion-only tests.
+Choice: citations render as `(Section title, p. 4 [S3.2])`, grouping IDs that share a
+section and page range; requirements grouped by type with the verbatim quote as a
+blockquote; risks as a table sorted by severity then likelihood, then per-risk details;
+`assemble()` raises `CitationError` listing every dangling ID with its location unless
+`strict=False`, while the renderer prints a bare `[S9.9]` for an unknown ID and never
+raises; one golden-file test over a fixture that hits every render branch, refreshed
+with `pytest --update-golden` (author decisions, 2026-10-30).
+Why: the chunk ID keeps the markdown traceable to the JSON and the UI's source reveal,
+at the cost of a few characters. Quotes are long and break table rows, so a list keeps
+them inline. Raising by default means a citation bug fails the run loudly instead of
+shipping an unverifiable claim; the non-strict path exists so the eval harness can still
+score a run with a bad citation and count it. A golden file makes any render change
+show up as a reviewable diff.
+Evidence: `tests/fixtures/summary_sample.md`.
+
+### D17. Structured output: provider-native mode inside a code-owned retry loop
+Context: every agent emits a Pydantic schema; providers differ in how they enforce one.
+DeepSeek silently turns JSON-schema mode into tool calling, returns `parsed=None` with no
+error when the model makes no tool call, and in thinking mode (its default) rejects forced
+tool choice. Current Claude models reject forced tool choice but support native JSON-schema
+output.
+Options: provider-native `with_structured_output` per provider; one code-side path (schema
+in the prompt, parse JSON text in code) for every provider.
+Choice: provider-native (author decision), method picked per model by
+`structured_method`: Anthropic `json_schema`; DeepSeek forced tool calling with thinking
+off (default), JSON mode with the schema in the prompt when thinking is on. Around it,
+code owns the loop: on a validation error or missing output the model's reply and the
+error go back into the conversation (as tool results when the reply made tool calls),
+bounded by `RFP_MAX_STRUCTURED_RETRIES`; a reply truncated by the output cap is not
+retried; exhaustion raises with every attempt.
+Why: native modes give the strongest guarantee each provider offers (forced tool calling
+and Claude's JSON-schema output rarely fail validation), while the loop gives one uniform
+failure contract for every agent. `extra="forbid"` on the schemas means hallucinated
+fields reach the loop as errors instead of being dropped.
+Evidence: live smoke tests on DeepSeek Flash pass with thinking off (389 in / 80 out
+tokens, 0.9 s) and on (251 in / 115 out, 1.4 s), no retries; unit tests cover every retry
+path. Thinking on vs off quality is open for S13.
+
+### D18. Observability recording: explicit recorder in a context variable
+Context: per-node tokens, latency and cost must land in a local JSON run log without
+threading a logger through every agent and graph state.
+Options: a LangChain callback that aggregates usage by `langgraph_node`; an explicit
+recorder that `structured_call` writes to.
+Choice: `RunRecorder` holds the `RunLog`; `RunRecorder.activate()` puts it in a context
+variable for the duration of a run, and `structured_call` and `load_prompt` record into
+whichever recorder is active. One `NodeMetrics` per logical call (retries summed into it,
+recorded on failure too), aggregated per node in code. Langfuse rides alongside as a
+LangChain callback, built only when both keys are set.
+Why: explicit recording is testable without a graph, keeps retries and validation
+failures attached to the call that caused them, and does not depend on callback
+propagation details. Per-call entries keep the latency distribution visible for the eval
+tables and the UI. Langfuse is lazy-imported and its trace-URL lookup is guarded because
+without keys it raises.
+Evidence: unit tests write and re-read the run log; live smoke test writes one.
+
+### D19. Sampling and cost settings per provider
+Context: one temperature setting for every provider; Claude Sonnet 5.5 rejects a
+non-default temperature (LangChain raises before sending), DeepSeek accepts one.
+Choice: the factory sends `RFP_TEMPERATURE` to every provider except Anthropic, which runs
+at its default with adaptive thinking left at the model default. Cost is an upper bound:
+DeepSeek peak rates, cache reads at the cached rate, cache writes at the input rate,
+unknown models cost 0 with one warning (author decision).
+Why: a judge must run with whatever sampling its model allows; determinism for the
+generator comes from temperature 0 on DeepSeek. A clock-dependent DeepSeek price would make
+the same run cost different amounts depending on when it ran, which muddies eval tables.
+Evidence: factory unit tests; live smoke test cost matches the table.
+
+### D20. Parsing: layout path with OCR off, flag thresholds as constants
 Context: pymupdf4llm 1.28.2 ships a layout model (`pymupdf.layout`) that returns page
 boxes (text, section-header, table, picture, page-header, page-footer) and turns OCR on
 by default when Tesseract is installed. S4 needs flags on suspicious pages.
@@ -213,7 +286,7 @@ exist for. The thresholds separate the known cases: Missouri's affidavit forms (
 the page) and Federal Way's image table (42%) from cover logos (8% to 14%).
 Evidence: four-RFP tests; flagged pages listed in the S2 roadmap entry.
 
-### D17. Running headers and footers are stripped only when they repeat
+### D21. Running headers and footers are stripped only when they repeat
 Context: running headers ("City of Federal Way, WA - RFP for ERP Software 5 | Page") and
 footers ("Page 6 of 22", bare numbers) pollute chunks and quotes. The layout model
 classes most of them, but sometimes calls one ordinary text, merges it with the heading
@@ -228,9 +301,9 @@ fragment of a repeated header is removed.
 Why: repetition is what makes a line a running header, so a one-off sentence the model
 misclassified survives. The author chose stripping over keeping everything.
 Evidence: Missouri, NYESD and Colfax word counts unchanged by the prefix and fragment
-cases; Federal Way pages 7, 9, 11 each lose exactly the 14-word header (F2).
+cases; Federal Way pages 7, 9, 11 each lose exactly the 14-word header (F3).
 
-### D18. A referenced document is present only if its section has a body
+### D22. A referenced document is present only if its section has a body
 Context: RFPs name attachments and exhibits; some are in the PDF, some are cover pages
 saying "separate document", some are image-only forms.
 Options: present when a matching heading exists; heading plus a minimum body; always
@@ -262,7 +335,17 @@ Fix:       what changed (link the prompt changelog line or commit)
 Before/after: metric, if one exists
 ```
 
-### F1. Mangled plain-text URLs duplicated real links
+### F1. DeepSeek thinking mode rejects forced tool choice
+Where: `structured_call` on `deepseek:deepseek-flash`, S1 live smoke test.
+Observed: `400 - Thinking mode does not support this tool_choice`.
+Cause: thinking mode is on by default for DeepSeek's current models, and LangChain's
+tool-calling `with_structured_output` forces the tool.
+Fix: `RFP_DEEPSEEK_THINKING` (default off) sets `extra_body.thinking`; with thinking off
+the forced tool call works, with thinking on `structured_call` switches DeepSeek to JSON
+mode with the schema in the prompt (D17).
+Before/after: live smoke test failed, then passed in both modes.
+
+### F2. Mangled plain-text URLs duplicated real links
 Where:     S2 hyperlink extraction, NYESD.
 Observed:  39 links where the document has 32; e.g. both
            `.../file-your-vendor-responsibility-questionnaire` (annotation) and
@@ -273,7 +356,7 @@ Fix:       compare URLs on letters and digits only, against every annotation in 
            document, and drop a plain-text URL that equals or prefixes one.
 Before/after: 39 to 32 NYESD links; test asserts no two links share a key.
 
-### F2. Running header survived on three Federal Way pages
+### F3. Running header survived on three Federal Way pages
 Where:     S2 header/footer stripping, Federal Way p7, p9, p11.
 Observed:  "City of Federal Way, WA - RFP for ERP Software 7 | P a g e **SECTION 4..."
            left in the page markdown.
@@ -283,5 +366,3 @@ Cause:     the layout model merged the header with the heading below into one bo
 Fix:       strip a repeated header as a prefix of a box that starts in the top band, and
            strip header-classed boxes whose text is a fragment of a repeated header.
 Before/after: 3 pages with the header to 0; other documents' word counts unchanged.
-
-(The first pipeline run on `inputs/rfp_brief.pdf` continues this list.)

@@ -233,7 +233,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     rate if cost accuracy matters for the eval tables.
 
 ### S1. LLM layer and observability core
-- **Status:** todo
+- **Status:** done
 - **Goal:** `llm.py`: chat-model factory from config (DeepSeek default, Claude and any
   LangChain model swappable), a `structured_call()` helper that enforces a Pydantic
   schema with bounded retry feeding the validation error back, and records the retry
@@ -243,10 +243,113 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   through LangChain and a no-op when keys are absent. Unit tests with a fake model.
 - **Depends on:** S0
 - **Parallel with:** S2, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** `structured_call` uses provider-native
+    `with_structured_output(include_raw=True)` inside a bounded retry loop (not code-side
+    JSON parsing); one `NodeMetrics` per logical LLM call (retries included), tagged with
+    the node, aggregated in code; `.env` created with empty placeholders, live smoke test
+    `@pytest.mark.llm` self-skips without a key; cost is a simple upper bound (peak
+    DeepSeek rates, cache reads at the cached rate, cache writes at the input rate,
+    unknown model costs 0 with a warning).
+  - **Verified library facts:** `init_chat_model("deepseek:...")` builds `ChatDeepSeek`
+    with kwargs unfiltered; `ChatDeepSeek` raises at construction without a key and both
+    providers read keys from `os.environ` only, so the factory passes `api_key` from
+    `Settings`; `ChatAnthropic` raises for Sonnet 5.5 / Fable 5 if temperature is set, so
+    temperature goes to non-Anthropic providers only; DeepSeek rewrites `json_schema` to
+    `function_calling`, where no tool call gives `parsed=None, parsing_error=None`;
+    Anthropic uses `method="json_schema"`; both report `usage_metadata` with
+    `input_token_details.cache_read`; Langfuse without keys is a no-op but
+    `get_trace_url()` raises, so it is guarded.
+  - **Branch:** `step-01-llm-observability` off `core` as a worktree; one commit per unit.
+  - **`config.py` (shared):** `max_output_tokens` (None = provider default),
+    `request_timeout_s` (120), `llm_transport_retries` (2, SDK-level 429/5xx retries,
+    distinct from `max_structured_retries`); `.env.example` updated.
+  - **`llm.py`:** `get_chat_model(spec=None, settings=None, **overrides)`,
+    `get_judge_model()`, `MissingApiKeyError`; `structured_method(model)` (json_schema
+    for Anthropic, function_calling otherwise); `structured_call(model, schema, messages,
+    node=..., recorder=None, max_retries=None, config=None) -> StructuredResult` that
+    appends the bad AIMessage plus a HumanMessage with the validation error and retries,
+    refuses to retry a truncated output (`finish_reason == "length"` /
+    `stop_reason == "max_tokens"`), raises `StructuredOutputError` with all attempts on
+    exhaustion, and records one `NodeMetrics`; `load_prompt(name) -> Prompt` with
+    `{{var}}` rendering (missing or unused variables are errors) and SHA-256 recorded on
+    the active run.
+  - **`observability.py`:** `estimate_cost()`, `usage_from_message()`, `new_run_id()`,
+    `RunRecorder` (holds the `RunLog`; `record`, `record_prompt`, `record_escalation`,
+    `per_node()`, `finish()`, `write()` to `runs/<run_id>/run_log.json`, `activate()`
+    context manager setting a contextvar so nodes need no plumbing),
+    `current_recorder()`; `make_langfuse_handler()`, `langfuse_trace_url()`,
+    `shutdown_langfuse()`, all no-ops without keys and without importing `langfuse`.
+  - **Tests:** scripted fake chat model; structured-call retry paths (success, bad args,
+    no tool call, exhaustion, truncation, recording); factory per provider; prompt
+    loader; cost arithmetic, recorder round-trip, Langfuse on/off; live smoke test
+    marked `llm`.
+  - **Docs:** DECISIONS D17 to D19, TIMELOG, ASSUMPTIONS (cache-write pricing), README
+    configuration and observability sections.
+- **What was done:** (branch `step-01-llm-observability`, PR into `core`)
+  - `src/rfp_agent/llm.py`: `get_chat_model(spec=None, settings=None, thinking=None,
+    **overrides)` builds any LangChain provider through `init_chat_model`, wiring the key
+    from `Settings` (raises `MissingApiKeyError` naming the env var), timeout, transport
+    retries, optional `max_tokens`; temperature is sent to every provider except
+    Anthropic; DeepSeek gets `extra_body={"thinking": {"type": ...}}` from
+    `Settings.deepseek_thinking` or the `thinking` argument. `get_judge_model()`.
+    `model_spec_of(model)` (`provider:model_id` for logs and pricing).
+    `structured_method(model)`: `json_schema` for Anthropic, `json_mode` for DeepSeek with
+    thinking on, `function_calling` otherwise. `structured_call(model, schema, messages,
+    node=..., settings=None, recorder=None, max_retries=None, config=None)` returns
+    `StructuredResult(value, metrics, attempts)`; on failure it appends the model's reply
+    plus feedback (a `ToolMessage` per tool call, else a `HumanMessage`) carrying the
+    validation error (capped at 2000 chars) and retries; a missing structured output gets
+    a fixed "no structured output" message; a reply cut by the output cap raises
+    `StructuredOutputError(truncated=True)` without retry; exhaustion raises
+    `StructuredOutputError` with every attempt. In JSON mode the schema is inserted as a
+    system message after the caller's system messages. One `NodeMetrics` (summed tokens
+    over attempts, cost, wall latency, `retries`) is recorded per call, on success and on
+    failure. `load_prompt(name) -> Prompt(name, path, text, sha256)` with
+    `Prompt.render(**vars)` (`{{var}}`; missing and unused variables raise) and the hash
+    recorded on the active run.
+  - `src/rfp_agent/observability.py`: `estimate_cost()` (cached input at the cached rate,
+    unknown model costs 0 and warns once), `usage_from_message()`, `new_run_id()`
+    (`YYYYMMDD-HHMMSS-<6 hex>`), `RunRecorder` (`log: RunLog`, `run_dir`, `record`,
+    `record_prompt`, `record_escalation`, `set_trace_url`, `totals`, `per_node`, `finish`,
+    `write` to `runs/<run_id>/run_log.json`, `activate()` context manager that sets the
+    current recorder and writes the log on exit even if the run raises,
+    `from_settings()`), `current_recorder()`; `make_langfuse_handler()`,
+    `langfuse_trace_url()`, `shutdown_langfuse()`: no-ops without keys and never import
+    `langfuse` then; the trace-URL lookup never raises.
+  - `config.py` (shared file): `max_output_tokens`, `request_timeout_s`,
+    `llm_transport_retries`, `deepseek_thinking`; `.env.example` lists them. Local `.env`
+    created from `.env.example` with empty keys for the author to fill in.
+  - Tests: `tests/fakes.py` (`ScriptedChatModel`, `tool_call_msg`, `text_msg`),
+    `test_llm_structured.py`, `test_llm_deepseek_modes.py`, `test_llm_factory.py`,
+    `test_prompts.py`, `test_observability.py`, `test_config.py` extended: 67 unit tests
+    pass, ruff clean. `test_llm_live.py` (`-m llm`): DeepSeek Flash with thinking off and
+    on both pass live (about $0.0002 per call, 1 to 1.5 s); the Claude test skipped (no
+    `ANTHROPIC_API_KEY` yet).
 - **Deviations from plan:**
+  - Added `Settings.deepseek_thinking` (default off) and a `json_mode` structured method.
+    The first live call failed with DeepSeek's 400 "Thinking mode does not support this
+    tool_choice": thinking is on by default for `deepseek-flash` and LangChain's
+    tool-calling structured output forces the tool. Both fixes were probed live (see
+    DECISIONS D17 and F1).
+  - Retry feedback is a `ToolMessage` per tool call rather than always a `HumanMessage`:
+    both APIs reject a conversation with an unanswered tool call.
+  - `NodeMetrics` is also recorded when a call exhausts its retries, so failed calls
+    still show their cost.
+  - Each module was committed with its tests instead of a separate tests commit, so every
+    commit is green.
 - **Open issues:**
+  - The conda env's editable install still points at the deleted `step-00-scaffold`
+    worktree, so `import rfp_agent` from a fresh shell fails until
+    `pip install -e .` is re-run from the main checkout. This step ran everything with
+    `PYTHONPATH=src`. CI is unaffected.
+  - Claude path not yet exercised live (`json_schema` method via `output_config`);
+    run `pytest -m llm` once `ANTHROPIC_API_KEY` is in `.env` (S11/S12 need it anyway).
+  - Thinking on vs off for DeepSeek is a quality question for S13: off is the cheap
+    default; S7 and S8 can pass `thinking=True` per model if evals show a benefit.
+  - S10 wraps the graph run in `RunRecorder.activate()` and passes
+    `make_langfuse_handler()` in `config["callbacks"]`; LangGraph propagates it to calls
+    inside nodes.
 
 ### S2. PDF parsing (library path)
 - **Status:** done
@@ -290,7 +393,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     NYESD none), image sizes and captions, references (Colfax A to G with E/F/G absent,
     NYESD Schedule A and Appendix A/B, Missouri Exhibits and the joined MoDOT URL), no
     curly quotes, header stripped, titles.
-  - **Docs:** DECISIONS D16 to D17, ASSUMPTIONS lines, TIMELOG row, README parsing section.
+  - **Docs:** DECISIONS D20 to D22, ASSUMPTIONS lines, TIMELOG row, README parsing section.
 - **What was done:** (branch `step-02-pdf-parsing`, PR into `core`)
   - `parsing/pdf.py`: `parse_pdf(path) -> ParsedDocument`. One
     `pymupdf4llm.to_markdown(doc, page_chunks=True, use_ocr=False)` call; per page:
@@ -302,7 +405,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - `parsing/normalize.py`: NFC; curly quotes, Unicode spaces and hyphens to ASCII;
     ligatures expanded; soft hyphen and zero-width characters dropped; en/em dashes kept;
     bold URLs split across `<br>` in table cells rejoined; header/footer stripping (see
-    D17).
+    D21).
   - `parsing/heuristics.py`: `count_words` (ignores tags, pipes, separator rows),
     `table_blocks`, `broken_table_reason` (ragged, or one-column with `<br>`-merged
     cells), `flag_page`; thresholds are module constants.
@@ -330,12 +433,12 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     mention.
   - Plain-text URLs are suppressed when an annotation anywhere in the document covers
     them, compared on letters and digits only. NYESD's text layer mangles long URLs at
-    line breaks (lost hyphens), which otherwise produced seven bogus duplicates (F1).
+    line breaks (lost hyphens), which otherwise produced seven bogus duplicates (F2).
   - Header/footer stripping needed two extra cases beyond the plan: a repeated header
     merged into the same box as the next heading (prefix removed, heading kept), and a
-    header split across two header boxes (Federal Way p7, p9, p11; F2).
+    header split across two header boxes (Federal Way p7, p9, p11; F3).
   - `escalate()` takes a page and all its flags, not one flag: S4 judges each page once.
-  - OCR is passed off explicitly (`use_ocr=False`); the layout path defaults it on (D16).
+  - OCR is passed off explicitly (`use_ocr=False`); the layout path defaults it on (D20).
   - Image captions use the whole nearest text block (Missouri p19's caption block starts
     with a blank line and overlaps the image by one point).
 - **Open issues:**
@@ -349,8 +452,6 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     the next.
   - URLs without a scheme (`www.colfax-ca.gov` in text) are not recorded; Colfax's link
     annotation is `http://www.colfax-ca.go/`, a typo in the source, kept as-is.
-  - The shared conda env's editable install points at the main checkout; in a worktree,
-    run tests with `PYTHONPATH=src` so the worktree's code is imported.
 
 ### S3. Section and chunk splitting
 - **Status:** todo
@@ -446,16 +547,83 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S9. JSON assembly and markdown renderer
-- **Status:** todo
+- **Status:** done
 - **Goal:** `render/`: assemble the final `SolutionSummary` JSON (source of truth) and
   render markdown from it in code with citations shown as "section title, page" and
   requirement quotes inline. Golden-file tests from fixture JSON. No LLM.
 - **Depends on:** S0
 - **Parallel with:** S1 to S8, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** citations render as
+    `(Section title, p. 4 [S3.2])`, with the chunk ID kept so the markdown traces back to
+    the JSON and UI; `assemble()` raises `CitationError` on dangling IDs by default
+    (`strict=False` opts out) and the renderer falls back to the raw ID so it never
+    crashes; requirements grouped by type, verbatim quote as a blockquote; risks as an
+    overview table sorted by severity then likelihood, then per-risk details.
+  - **Branch:** `step-09-render` off `core` as a worktree; one commit per unit; PR into
+    `core`. No schema change, no new dependency.
+  - **`render/assemble.py`:** `assemble(*, run_id, model, parsed, split, requirements,
+    problem_statement, solution, risks, generated_at=None, strict=True)` builds
+    `ChunkRef`s from `SplitDocument` (owning section title, chunk pages), copies
+    `source_path`, `title`, `referenced_documents`, `flags` from `ParsedDocument`.
+    `dangling_citations(summary)` walks every citation site (claims, requirement
+    `chunk_ids` and `conflicts_with`, ambiguities, gaps, component `requirement_ids`,
+    `uncovered_requirement_ids`, risk IDs) and returns `(location, id)` pairs;
+    `merged_from` is not checked (pre-merge IDs are gone by design). Coverage stays S7's.
+  - **`render/markdown.py`:** `render_markdown(summary)`, pure and deterministic. Order:
+    title and metadata; problem statement (four subsections, claim bullets, inference
+    marked); requirements (count line, one subsection per type present, quote
+    blockquote, merged/conflicts lines, unverified-quote marker, ambiguities, gaps);
+    proposed solution (summary, coverage line and uncovered IDs, components, assumptions);
+    risks (sorted table, then details with why, mitigation, related requirements);
+    referenced documents table; parse flags. Empty sections print "None." so the shape is
+    stable. Citations group chunk IDs that share section title and page range.
+  - **`render/io.py`:** `write_summary(summary, out_dir)` writes `summary.json` and
+    `summary.md`; S10 decides the directory.
+  - **Tests:** `tests/fixtures/summary_sample.json` hand-built to hit every render
+    branch, golden `tests/fixtures/summary_sample.md`, `--update-golden` pytest option in
+    `tests/conftest.py`; tests for determinism, risk sort, unknown-chunk fallback, table
+    escaping, assembler chunk refs and metadata, strict and non-strict dangling
+    citations, file writing. No LLM.
+  - **Docs:** DECISIONS D16 (layout, citation format, strict assembler, golden tests),
+    TIMELOG row, README render section. PROMPTS untouched (no prompt).
+- **What was done:** (branch `step-09-render`, PR into `core`)
+  - `src/rfp_agent/render/assemble.py`: `assemble()` (keyword-only, `generated_at`
+    injectable, `strict=True`), `chunk_refs(split)`, `dangling_citations(summary)`
+    returning `(location, id)` pairs such as `("risks.K01.chunk_ids", "S9.9")`,
+    `CitationError` carrying `.dangling`. Uses `validate_ids_exist` from `schemas.py`.
+  - `src/rfp_agent/render/markdown.py`: `render_markdown(summary)`, public helpers
+    `cite(chunk_ids, index)` and `sorted_risks(summary)` (S14/S15 can reuse them),
+    `TYPE_LABELS` and `SOURCE_LABELS` for human-readable enum labels. All free text is
+    whitespace-collapsed in list items and table cells; table cells escape `|`.
+  - `src/rfp_agent/render/io.py`: `write_summary(summary, out_dir)` writes
+    `summary.json` (indent 2) and `summary.md` (LF newlines); S10 picks `out_dir`.
+  - `render/__init__.py` re-exports `assemble`, `chunk_refs`, `dangling_citations`,
+    `CitationError`, `render_markdown`, `write_summary`.
+  - Tests: `tests/test_render.py` (14 tests: golden, determinism, section order, cite
+    grouping, unknown-ID fallback, risk sort, table escaping, empty-summary placeholders,
+    assembler chunk refs and metadata, default timestamp, strict raise, non-strict keep,
+    dangling detection across sites, writer round-trip); fixture
+    `tests/fixtures/summary_sample.json` and golden `tests/fixtures/summary_sample.md`;
+    `tests/conftest.py` adds `--update-golden`. 43 tests pass, ruff clean.
+  - Shared file touched: `pyproject.toml` gains `pythonpath = ["src"]` under pytest
+    (see deviations). README: status line, output file names and citation format,
+    `--update-golden`. DECISIONS D16. TIMELOG row.
 - **Deviations from plan:**
+  - The environment's editable install pointed at the deleted `step-00-scaffold`
+    worktree, so `rfp_agent` was not importable. Fixed twice over: re-ran
+    `pip install --no-deps -e` against the main checkout, and set pytest's
+    `pythonpath = ["src"]` so every worktree tests its own source regardless of where
+    the editable install points. Parallel steps should rely on the latter.
+  - Risk details use `###` headings (plan said `####`) so heading levels do not skip.
+  - Requirement notes (merged from, conflicts with) sit on the item line in italics
+    rather than on separate lines, because a line after a blockquote would be swallowed
+    into the quote.
 - **Open issues:**
+  - `merged_from` IDs are not checked by `dangling_citations` by design; if S5 ever
+    reuses a pre-merge ID for a different requirement, nothing flags it.
+  - The renderer trusts `Coverage` from S7; it does not recompute it.
+  - S14/S15 may want per-claim anchors in the markdown for click-to-source; not added.
 
 ### S10. LangGraph wiring and CLI
 - **Status:** todo

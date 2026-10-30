@@ -25,6 +25,9 @@ select = ["E", "F", "I", "UP", "B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# Import the package from this checkout's src/, not wherever the editable install points,
+# so each worktree tests its own code.
+pythonpath = ["src"]
 addopts = "-m 'not llm'"
 markers = [
     "llm: calls a paid LLM API; skipped by default, run with -m llm",

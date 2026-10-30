@@ -113,6 +113,18 @@ class Settings(BaseSettings):
     max_structured_retries: int = Field(
         default=2, ge=0, description="Retries after a schema validation failure"
     )
+    max_output_tokens: int | None = Field(
+        default=None, ge=1, description="Output cap per call; None uses the provider default"
+    )
+    request_timeout_s: float = Field(default=120.0, gt=0, description="Per-request timeout")
+    llm_transport_retries: int = Field(
+        default=2, ge=0, description="SDK-level retries on 429/5xx/connection errors"
+    )
+    deepseek_thinking: bool = Field(
+        default=False,
+        description="DeepSeek thinking mode. Off: forced tool calling for structured output. "
+        "On: JSON mode (thinking mode rejects forced tool_choice).",
+    )
 
     # Ablation flags (S10 CLI exposes them; S6 and S5 read them)
     full_text_problem: bool = Field(
