@@ -1,0 +1,340 @@
+{
+  "solution": {
+    "summary": "The bid proposes a single integrated ERP for the City of Federal Way, delivered as a configured commercial product (SaaS as the primary deployment option, with an on-premises option priced separately) covering the Financial modules and the Human Capital Management modules named in the RFP, plus implementation services from contract signature through Go Live by January 1, 2027. Delivery runs in phases: mobilization and fit-gap against the City's Requirements document (March 2025), configuration and data conversion by module, report development and integration, then testing, training and cutover, with a post-go-live support and disaster-recovery wrap. The team is a named engagement director, a public-sector project manager, module leads for each Financial and HCM area, a data conversion lead, an integration and reporting lead, a change management and training lead, and a support desk under a documented SLA. Pricing is submitted on the Exhibit A template with a separate sheet per deployment option, ten years of subscription/maintenance, and stated assumptions for every block. A governance and compliance component carries the contractual, insurance, ownership and disclosure obligations so they are not lost among the technical work, and a selection-stage component commits the named bid team to the City's demo, due diligence and negotiation calendar.",
+    "components": [
+      {
+        "id": "C01",
+        "title": "Bid governance, compliance and contract obligations",
+        "description": "A single compliance register tracks every legal, contractual and pricing obligation the RFP imposes and shows where the proposal satisfies it: acceptance of the City's terms and conditions, ownership of all data, materials and documentation in the City, no blanket proprietary designation and advance notice of any confidential material, insurance certification and underwriter's endorsement with an admitted Washington surety before work starts, and the proposer bearing its own bid costs. The register also records the City's sole authority over public-disclosure treatment and the risk of rejection for referencing non-City terms. It is maintained by the engagement director and reviewed at each phase gate.",
+        "requirement_ids": [
+          "R010",
+          "R029",
+          "R113",
+          "R116",
+          "R118",
+          "R119",
+          "R120"
+        ],
+        "claims": [
+          {
+            "text": "The City of Federal Way is a Washington municipality, so the surety must be admitted in Washington State.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S1.1",
+              "S11.3"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C02",
+        "title": "Selection-stage commitment: demos, due diligence and negotiations",
+        "description": "The named bid team commits to the City's selection calendar as a firm obligation, not an option. The same engagement director, solution architect and module leads who will run the implementation are the people who present the functional and technical demo in December 2024, attend the January 2025 due diligence review with financial statements, reference contacts and security documentation ready, and enter contract negotiations from January 2025 with a mandate to sign. Availability is confirmed in the proposal with named individuals and a single point of contact, and the team holds the December and January windows free of conflicting engagements so a City reschedule can be absorbed.",
+        "requirement_ids": [
+          "R016",
+          "R017",
+          "R018"
+        ],
+        "claims": [
+          {
+            "text": "The City's selection schedule runs finalists in October 2024, software demos in December 2024, due diligence in January 2025 and contract negotiations from January 2025 onward.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S7.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C03",
+        "title": "Requirements response and clarification programme",
+        "description": "The team completes the City's separate Requirements document in its original Word format, rating every line item on the City's five-point scale (4, 3, 2, 0, F) with a comment of no more than 100 words explaining how the function is met, naming the third-party product for any rating of 3, giving the estimated cost for any rating of 2, and giving the release month and year for any rating of F. No hyperlinks, no cross-references to other line items, no format or page-break changes, and no 'standard functionality' answers. The same discipline drives the demo: the team prepares against the City's Demo Script, staffs the December 2024 demo and January 2025 due diligence, and stands ready for follow-up demonstrations and clarification. Written questions are lodged by the August 28, 2024 deadline and all addenda are incorporated.",
+        "requirement_ids": [
+          "R004",
+          "R005",
+          "R020",
+          "R023",
+          "R025",
+          "R026",
+          "R101"
+        ],
+        "claims": [
+          {
+            "text": "The City will supply a pre-defined Demo Script to finalists and expects demos in December 2024 and due diligence in January 2025.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S8.1",
+              "S8.2",
+              "S7.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C04",
+        "title": "Solution architecture and integration design",
+        "description": "A documented architecture for the integrated ERP covering the Financial modules (General Ledger, Budget, Project and Grant Accounting, Purchasing and Contract Management, Accounts Payable, Accounts Receivable, Capital Assets, Enterprise Cashiering) and the HCM modules (Human Resources, Time and Attendance, Payroll), with a single audit trail across all modules capturing user, date, time stamp and before/after values. Integration is designed and built for the interfaces the City needs, including any best-of-breed HCM component, using published APIs and a named integration toolset with a documented methodology. The design is validated against the City's Requirements document during fit-gap so that gaps are known before configuration starts.",
+        "requirement_ids": [
+          "R005",
+          "R007",
+          "R011",
+          "R107"
+        ],
+        "claims": [
+          {
+            "text": "The City's required Financial modules are General Ledger, Budget, Project and Grant Accounting, Purchasing and Contract Management, Accounts Payable, Accounts Receivable, Capital Assets and Enterprise Cashiering.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S12.1"
+            ]
+          },
+          {
+            "text": "The City's required HCM modules are Human Resources, Time and Attendance and Payroll.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S12.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C05",
+        "title": "Phased implementation programme and project management",
+        "description": "A phased plan, recommended by the bidder and submitted for City approval, running from March 2025 to Go Live for all modules in scope by January 1, 2027. The plan sets out phases, tasks, milestones, dependencies and approval gates, names City resources by role, responsibility and average hours per month, and names vendor resources on the same basis. A process improvement strategy runs alongside configuration so the City captures the best practices it is buying, and a business change management methodology with defined tools is applied from mobilization onward. Progress is reported monthly against the plan and the Go Live date.",
+        "requirement_ids": [
+          "R012",
+          "R019",
+          "R021"
+        ],
+        "claims": [
+          {
+            "text": "Implementation is scheduled for March 2025 through January 2027 with Go Live for all modules required by January 1, 2027.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S7.1",
+              "S8.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C06",
+        "title": "Data conversion by module",
+        "description": "A data conversion methodology plus a module-by-module conversion plan stating, for each module, the years of history and the data elements to be converted, the extraction and validation approach, and the reconciliation and sign-off the City performs before load. Conversion is rehearsed at least twice into a test environment before the final cutover load, with exception reports returned to the City for correction. The plan covers Financial and HCM data, including payroll history and balances needed for W2 and leave processing.",
+        "requirement_ids": [
+          "R054"
+        ],
+        "claims": [
+          {
+            "text": "The HCM deployment is sized at 400 FTEs and 744 W2s, which sets the payroll history and year-end volume the conversion must carry.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S12.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C07",
+        "title": "Configuration, report development and testing",
+        "description": "Configuration of every module in scope to the City's requirements, with any modification identified in the Requirements document carrying an estimated cost so the City can decide whether to accept it. Report development delivers the City's operational and statutory reports on a documented approach, with a report inventory agreed during fit-gap and built and validated in the test environment. Testing follows a written methodology and toolset covering unit, integration, conversion, security and user acceptance testing, with City sign-off required at each stage and defects tracked to closure before cutover.",
+        "requirement_ids": [
+          "R005",
+          "R054",
+          "R101"
+        ],
+        "claims": []
+      },
+      {
+        "id": "C08",
+        "title": "Training and change management",
+        "description": "Role-based training for the City's named users, delivered through a documented training methodology and toolset: train-the-trainer for internal champions, hands-on sessions per module, quick-reference materials and a sandbox environment for practice before Go Live. Training is sequenced with the phased rollout so each group is trained close to its cutover, and attendance and competency are tracked. Change management activities — stakeholder mapping, communications, readiness assessments and adoption measurement — run from mobilization through post-go-live stabilization.",
+        "requirement_ids": [
+          "R054"
+        ],
+        "claims": [
+          {
+            "text": "The Financials deployment is sized at 130 named users and 85 concurrent users, which sets the training cohort size.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S12.1"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "C09",
+        "title": "Hosted platform, security and disaster recovery",
+        "description": "The production ERP is hosted in the bidder's data centres with stated locations and redundancy, with an on-premises option available and priced separately. The service includes scheduled software updates with a published timeline, remote access over supported technologies, mobile hardware and OS support, and a backup strategy with defined retention and restore testing. Security covers the security model and standards met, SSO and SAML administration, multi-factor authentication, and a written breach process stating how the City is notified, the response the bidder provides and who bears the cost. Disaster recovery is described at baseline and premium levels so the City can choose.",
+        "requirement_ids": [
+          "R005"
+        ],
+        "claims": []
+      },
+      {
+        "id": "C10",
+        "title": "Post go-live support and service levels",
+        "description": "Support begins at Go Live and runs for the contract term: stated support hours, guaranteed response times by severity, named resources, and a documented escalation path with City-facing contacts. Baseline and premium support levels are compared side by side so the City can price the difference, and user groups and conferences available to City staff are listed. Post go-live tools and services include a stabilization period with on-site or remote hypercare, a health-check review at 30 and 90 days, and a continuous improvement backlog carried into the maintenance years.",
+        "requirement_ids": [
+          "R005"
+        ],
+        "claims": []
+      },
+      {
+        "id": "C11",
+        "title": "Pricing on the Exhibit A template",
+        "description": "Pricing is submitted on the City's Exhibit A template as Section 3 of the response, with a separate sheet for each deployment option (SaaS and on-premises). It quotes the Financials deployment at 130 named and 85 concurrent users and the HCM deployment at 400 FTEs and 744 W2s, prices each named Financial and HCM module line, prices Year 1 software and all implementation services (implementation, data conversion, training, report development, integration, travel and other), and prices subscription/maintenance for each of Years 2 through 10. Every block carries stated assumptions, the Sub-Total and Total lines are completed, all taxes and available discounts are included, and the pricing is held valid for 180 days from the response date.",
+        "requirement_ids": [
+          "R051",
+          "R052",
+          "R054",
+          "R124",
+          "R125",
+          "R126",
+          "R127",
+          "R128",
+          "R129",
+          "R130",
+          "R131"
+        ],
+        "claims": [
+          {
+            "text": "The City requires license and maintenance pricing for Years 1 through 10 with a separate sheet per deployment option.",
+            "kind": "fact",
+            "chunk_ids": [
+              "S9.3",
+              "S12.1"
+            ]
+          }
+        ]
+      }
+    ],
+    "assumptions": [
+      {
+        "text": "The bid is submitted as a full-scope ERP response covering both Financial and HCM modules, with best-of-breed integration capability demonstrated rather than a partial HCM-only offer.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S3.1"
+        ]
+      },
+      {
+        "text": "The Requirements document issued separately with the RFP is assumed to define the functional scope, and every line item in it is answered and priced rather than treated as negotiable.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S5.1",
+          "S9.1",
+          "S9.3"
+        ]
+      },
+      {
+        "text": "The January 1, 2027 Go Live is treated as a firm contractual commitment for all modules in scope, not merely a scored factor.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S8.1"
+        ]
+      },
+      {
+        "text": "The March 2025 start and the January 2027 Go Live are assumed to hold as stated, with any City rescheduling handled through a change order that re-baselines the plan and pricing.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S7.1"
+        ]
+      },
+      {
+        "text": "The December 2024 demo, January 2025 due diligence and January 2025 negotiations are assumed to fall inside the stated schedule, and the bid team is held available across those windows without a separate fee.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S7.1"
+        ]
+      },
+      {
+        "text": "The current-systems tables in Section 3 Scope are assumed to list the legacy systems being replaced, and the conversion plan is scoped from them once obtained.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S6.1"
+        ]
+      },
+      {
+        "text": "Two deployment options are priced — SaaS as the primary offer and on-premises as the alternative — giving one Exhibit A sheet per option.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S9.3",
+          "S12.1"
+        ]
+      },
+      {
+        "text": "Project and Grant Accounting is priced once as a single line item, treating the duplicate listing in the template as a drafting error.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S12.1"
+        ]
+      },
+      {
+        "text": "All applicable taxes are embedded in the quoted prices rather than shown as separate lines, and configuration effort is included in the implementation services price rather than charged separately.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S9.3",
+          "S10.1"
+        ]
+      },
+      {
+        "text": "Insurance is priced on the assumption of commercial general liability, professional liability, cyber liability and workers' compensation cover with the City named as additional insured, pending the City's stated limits.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S11.3"
+        ]
+      },
+      {
+        "text": "References are offered from Washington State public-sector clients of comparable size running the proposed modules, with three current and two prior customers on Exhibit B forms.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S9.4",
+          "S13.1",
+          "S15.1"
+        ]
+      },
+      {
+        "text": "The Demo Script is assumed to be fixed once issued, so demo preparation is staffed against the script as published rather than negotiated.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S8.1",
+          "S8.2"
+        ]
+      },
+      {
+        "text": "The 100-page limit is treated as mandatory and the Requirements document in Word is assumed to sit outside that count as a separate required file.",
+        "kind": "inference",
+        "chunk_ids": [
+          "S9.1"
+        ]
+      }
+    ],
+    "coverage": {
+      "mandatory_total": 34,
+      "mandatory_covered": 34,
+      "uncovered_requirement_ids": []
+    }
+  },
+  "rounds": [
+    {
+      "iteration": 1,
+      "coverage": {
+        "mandatory_total": 34,
+        "mandatory_covered": 31,
+        "uncovered_requirement_ids": [
+          "R016",
+          "R017",
+          "R018"
+        ]
+      }
+    },
+    {
+      "iteration": 2,
+      "coverage": {
+        "mandatory_total": 34,
+        "mandatory_covered": 34,
+        "uncovered_requirement_ids": []
+      }
+    }
+  ]
+}

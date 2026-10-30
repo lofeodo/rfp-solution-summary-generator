@@ -1,0 +1,251 @@
+{
+  "assessment": {
+    "risks": [
+      {
+        "id": "K01",
+        "title": "Requirements document not in hand, so scope and price rest on an unseen file",
+        "description": "The functional scope is defined by a separate Requirements document issued with the RFP, and the current-systems tables in Section 3 are not reproduced. The bid team must rate and price every line item in a document it has not seen, so the implementation estimate and the Exhibit A totals could be built on a scope that turns out larger or different. If the document arrives late or is materially bigger than assumed, the bid is either underpriced or has to be reworked close to the September 17, 2024 deadline.",
+        "severity": "high",
+        "likelihood": "high",
+        "justification": "The RFP makes the Requirements document the definition of scope and the basis of the Section 2 response, yet it is a separate file the bidder must obtain; the solution's own assumption that every line item is answered and priced depends entirely on it.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R011",
+          "R045",
+          "R046",
+          "R054",
+          "R121"
+        ],
+        "chunk_ids": [
+          "S5.1",
+          "S9.1",
+          "S9.3",
+          "S6.1"
+        ],
+        "mitigation": "Request the Requirements document and the current-systems tables in writing before the August 28, 2024 question deadline, and state in the proposal that pricing is based on the issued version of the Requirements document with any added line items priced by change order."
+      },
+      {
+        "id": "K02",
+        "title": "Go Live of January 1, 2027 treated as firm for all modules",
+        "description": "The City scores Implementation on Go Live for all modules by January 1, 2027, and the proposed solution commits to that date for Financials and HCM together. A full-scope ERP with data conversion, integrations, report development and training in roughly 22 months leaves little float, and any City-side delay in fit-gap, data cleansing or UAT sign-off pushes the date. Missing it risks the Implementation score, contractual damages and a hypercare period that runs unpaid.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The date is both a scored criterion and, on the solution's reading, a contractual commitment covering every module; the RFP does not say whether it is binding or what happens if it slips, and the schedule depends on City resources the RFP does not quantify.",
+        "source": "solution",
+        "requirement_ids": [
+          "R019",
+          "R021",
+          "R012"
+        ],
+        "chunk_ids": [
+          "S7.1",
+          "S8.1"
+        ],
+        "mitigation": "Ask whether January 1, 2027 is a firm contractual milestone or a scored factor, and state in the proposal a phased go-live sequence with named City dependencies and a relief mechanism if City deliverables are late."
+      },
+      {
+        "id": "K03",
+        "title": "Page limit and proposal format ambiguities risk disqualification",
+        "description": "The 100-page limit is stated twice with different wording, the required section order table is not in the RFP text, and the solution assumes the Word Requirements document sits outside the page count. If that reading is wrong, or if the response deviates from the prescribed format, the proposal can be classified non-responsive and disqualified before it is scored.",
+        "severity": "high",
+        "likelihood": "low",
+        "justification": "The RFP says proposals deviating from the requested format may be disqualified, and the solution's page-count assumption is an inference from conflicting wording rather than a stated rule.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R028",
+          "R035",
+          "R040",
+          "R039"
+        ],
+        "chunk_ids": [
+          "S9.1",
+          "S9.2"
+        ],
+        "mitigation": "Ask the City to confirm the definitive proposal outline and whether the Word Requirements document counts toward the 100 pages, and build the response to the stricter reading with a page budget tracked from the first draft."
+      },
+      {
+        "id": "K04",
+        "title": "Demo Script and demo logistics unavailable before finalist selection",
+        "description": "Finalists must demo in December 2024 against a pre-defined Demo Script that is only issued with the finalist invitation, and the format, timing and location of the demos are not stated. The team cannot size demo preparation or guarantee the named presenters' availability, and a script that arrives late or covers unfamiliar scenarios weakens the Software and Implementation scores that carry 55 of the 100 points.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "The script is a referenced document not included in the RFP and the demo dates are fixed in the selection calendar, so preparation effort and staffing are committed against an unknown script.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R016",
+          "R023",
+          "R025",
+          "R026"
+        ],
+        "chunk_ids": [
+          "S8.1",
+          "S8.2",
+          "S7.1"
+        ],
+        "mitigation": "Ask when the Demo Script and pre-demo meeting details will be issued, and hold the December 2024 window and a rehearsal slot for the named engagement director, architect and module leads in the proposal."
+      },
+      {
+        "id": "K05",
+        "title": "Insurance cover and limits unstated, so the premium cannot be priced",
+        "description": "The RFP requires a certificate of insurance and an underwriter's endorsement with additional insured wording from a surety admitted in Washington, but states no coverage types, limits or additional insured parties. The bidder must either guess the cover in its price or leave it out and absorb the premium later, and an endorsement that does not match the City's wording can hold up the start of work.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "The solution prices insurance on an assumed set of coverages pending the City's limits, and the RFP gives none; the requirement is a condition of commencing work, so a mismatch delays mobilization.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R119",
+          "R120"
+        ],
+        "chunk_ids": [
+          "S11.3"
+        ],
+        "mitigation": "Ask the City for the required coverage types, limits and additional insured wording before the deadline, and state the assumed cover and limits as a pricing assumption in Exhibit A."
+      },
+      {
+        "id": "K06",
+        "title": "Pricing held for 180 days across a selection calendar that runs past it",
+        "description": "Pricing must remain valid for 180 days from the September 17, 2024 response, but negotiations begin in January 2025 and no contract is awarded until City Council approves it. A long negotiation, a Council deferral or a rescheduled selection can carry the bid past the validity window, forcing a re-price or an unpriced extension at the bidder's cost.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP reserves the right to modify or reschedule the selection schedule and requires Council approval before award, while the solution commits to a fixed 180-day hold with no escalation clause.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R052",
+          "R018"
+        ],
+        "chunk_ids": [
+          "S9.3",
+          "S7.1",
+          "S8.2"
+        ],
+        "mitigation": "State in the proposal that the 180-day validity is measured from the response date and that pricing may be re-confirmed if award occurs after that window, and ask whether the City will accept a validity extension clause."
+      },
+      {
+        "id": "K07",
+        "title": "Two deployment options priced on one effort estimate",
+        "description": "The solution prices SaaS as the primary offer and on-premises as a separately sheeted alternative, but the RFP does not say which options must be priced or how the City will compare them. Preparing two full Exhibit A sheets doubles pricing effort and page count, and an on-premises option priced from SaaS assumptions may be materially understated if hardware, database licensing and patching obligations fall to the bidder.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP requires a separate sheet per deployment option without naming the options, and the solution's choice to price both is an inference that adds cost and risk to the bid itself.",
+        "source": "solution",
+        "requirement_ids": [
+          "R123",
+          "R073",
+          "R074",
+          "R131"
+        ],
+        "chunk_ids": [
+          "S9.3",
+          "S12.1"
+        ],
+        "mitigation": "Ask which deployment options must be priced and whether one may be designated the base offer, and if both are required, price the on-premises option from a separate infrastructure and licensing build-up rather than scaling the SaaS figures."
+      },
+      {
+        "id": "K08",
+        "title": "Configuration effort assumed included in the implementation price",
+        "description": "The rating scale treats a 4 as available out of the box or with configuration included in the proposal, and the solution embeds configuration effort in the implementation services price rather than charging it separately. If the Requirements document contains many items that need configuration, the fixed implementation price absorbs work the bidder never separately estimated, and the City may read a 4 as a promise of no extra cost for any configuration it later requests.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP does not settle whether configuration is priced in the proposal or assumed free, and the solution resolves the ambiguity in the City's favour without a configuration volume estimate.",
+        "source": "solution",
+        "requirement_ids": [
+          "R099",
+          "R101",
+          "R054",
+          "R129"
+        ],
+        "chunk_ids": [
+          "S10.1",
+          "S9.3"
+        ],
+        "mitigation": "Ask how configuration is to be priced and rated, and state in the proposal the configuration hours included per module and that configuration beyond the rated scope is a change order."
+      },
+      {
+        "id": "K09",
+        "title": "References may not satisfy undefined size and scope criteria",
+        "description": "The RFP requires three current and two prior references similar in size and scope to the City's project, with preference for Washington public-sector clients, but does not define similar size, scope, or whether references must run the proposed modules. The solution assumes comparable Washington public-sector clients exist; if they do not, the Vendor criterion (15 points) is weakened and the bid may be judged less experienced than required.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "Neither the size threshold nor the module-match rule is stated, and the solution's reference set is an assumption rather than a confirmed list.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R086",
+          "R087",
+          "R088",
+          "R006"
+        ],
+        "chunk_ids": [
+          "S9.4",
+          "S13.1",
+          "S15.1",
+          "S3.1"
+        ],
+        "mitigation": "Ask what size and scope criteria will be applied to references and whether they must be live on the proposed modules, and confirm five qualifying references on Exhibit B forms before the deadline."
+      },
+      {
+        "id": "K10",
+        "title": "Best-of-breed HCM integration obligation without a defined boundary",
+        "description": "The RFP invites best-of-breed HCM responses provided the HCM solution integrates with the selected ERP, but does not say whether such a response must cover the full ERP scope or only HCM, or whether the City will contract with several vendors. The solution commits to full-scope ERP with best-of-breed integration demonstrated; if the City selects a separate HCM vendor, the integration work, its ownership and its cost fall between contracts.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP leaves the minimum scope of a best-of-breed response and the multi-vendor contracting model open, and the solution's full-scope assumption is an inference that may not match the City's intent.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R007",
+          "R011",
+          "R005"
+        ],
+        "chunk_ids": [
+          "S3.1",
+          "S5.1"
+        ],
+        "mitigation": "Ask whether the City will contract with a single vendor for the full scope and, if not, who owns and pays for the ERP-to-HCM integration; state the integration scope and assumptions explicitly in the proposal."
+      },
+      {
+        "id": "K11",
+        "title": "Unreadable page 5 may hide a submission or scope requirement",
+        "description": "Page 5 of the RFP is largely an image that could not be parsed, and it sits in the early sections that carry the submission instructions and City background. A requirement, form or instruction on that page could be missed, and a missed submission instruction is a disqualification risk while a missed scope statement is a pricing risk.",
+        "severity": "medium",
+        "likelihood": "low",
+        "justification": "The page is 42% image and unreadable to the extraction, and the surrounding sections carry mandatory submission and scope content; the impact is high if it holds an instruction but the chance of a material omission is limited to one page.",
+        "source": "rfp",
+        "requirement_ids": [],
+        "chunk_ids": [],
+        "mitigation": "Obtain a readable copy of page 5 from the City or the issuing contact and confirm in writing that no submission instruction or scope item is missed."
+      },
+      {
+        "id": "K12",
+        "title": "Named bid team committed to selection events without a fee",
+        "description": "The solution holds the engagement director, solution architect and module leads available for the December 2024 demo, January 2025 due diligence and negotiations from January 2025 without a separate fee, and the City reserves the right to reschedule. If the calendar moves or the process runs long, senior staff are tied up unpaid across several months while other work is turned away, and the bid cost rises with no guarantee of award.",
+        "severity": "low",
+        "likelihood": "medium",
+        "justification": "The RFP reserves the right to modify or reschedule the selection calendar, and the solution's commitment to named individuals across three windows is an assumption that the dates hold.",
+        "source": "solution",
+        "requirement_ids": [
+          "R016",
+          "R017",
+          "R018",
+          "R113"
+        ],
+        "chunk_ids": [
+          "S7.1",
+          "S11.2"
+        ],
+        "mitigation": "Name the individuals but state in the proposal that availability is tied to the published selection calendar, and confirm a single point of contact and a rescheduling protocol with the City."
+      }
+    ]
+  },
+  "findings": {
+    "uncovered_requirement_ids": [],
+    "conflicts": [],
+    "absent_documents": [],
+    "flags": [
+      {
+        "page": 5,
+        "reason": "large_image_block",
+        "detail": "image covers 42% of the page"
+      }
+    ],
+    "budget_requirement_count": 13
+  }
+}
