@@ -1666,7 +1666,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - `tests/test_gold.py` parses all four PDFs for the committed-gold check (about 25 s).
 
 ### S12. Evaluation harness
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `evals/`: run the pipeline over the four RFPs and score. Requirements:
   match extracted to gold, precision and recall, type and strictness accuracy on matched
   pairs. Grounding on every cited output: code checks (cited IDs exist; numbers, dates,
@@ -1679,7 +1679,64 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   `evals/results/` with a short README; hand-score a sample for judge agreement.
 - **Depends on:** S10, S11
 - **Parallel with:** S14
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** **three runs per RFP, all judged**: the
+    committed `runs/samples/<rfp>` is run 1, two fresh runs are generated per RFP, all
+    twelve are scored by the judge (about $8 to $12 including prompt debugging);
+    **commit scores only**: eval run directories live under `runs/evals/<label>/<rfp>/<k>/`
+    (gitignored by `runs/*`), `evals/results/<label>/` commits the per-run score JSON
+    (per-item verdicts carry the item text so they read without the run directory),
+    `summary.md`, `summary.json`, the judge run log and the agreement sample;
+    **judge agreement**: the harness exports a sample of about 40 verdicts, the coding
+    agent hand-labels them from the source text, the author spot-checks the diff in the
+    PR; **F7 fix lands here**: `NodeMetrics.last_error` (optional, default None), set by
+    `structured_call` when any attempt failed (shared files `schemas.py`, `llm.py`;
+    additive, old logs still load).
+  - **Taken without asking:** the judge stays `Settings.judge_model`
+    (`anthropic:claude-sonnet-5-5`, D3/D13); every extracted requirement and every cited
+    claim is judged (no sampling); gold matching is code first, judge second; judge calls
+    go through S1's `structured_call` on a thread pool (`llm_concurrency`) and are
+    recorded into a `RunRecorder` whose log is the judge cost; the pairwise judge is
+    unit-tested with fakes and smoke-tested live once on Missouri so S13 inherits a
+    working command; judge prompts follow the agent-prompt conventions.
+  - **Branch:** `step-12-eval-harness` off `core` (worktree); PR into `core`.
+  - **Files:** `evals/harness/` (`schemas.py` score models, `load.py` run + gold loader,
+    `match.py`, `grounding.py`, `judge.py`, `score.py`, `consistency.py`, `pairwise.py`,
+    `report.py`, `agreement.py`, `__main__.py` typer app with `run`, `score`, `report`,
+    `sample`, `agree`, `compare`); `evals/results/README.md` and
+    `evals/results/<label>/`; seven prompts `prompts/judge_{match,requirements,grounding,
+    checklist,solution,risks,pairwise}.md`; `tests/test_harness.py` (fakes, code metrics on
+    the samples, CLI) and `tests/test_harness_live.py` (`-m llm`).
+  - **Requirements vs gold:** code tier (quote containment either way after `normalise`,
+    extracted text containing the gold quote, or word-set Jaccard of quotes >= 0.5;
+    many-to-many), then a judge tier for the gold items still unmatched (batches of 15
+    against candidates whose cited chunks overlap the gold page +-1). Recall over all gold
+    and over the reachable gold (`quote_verifiable=true`); type and strictness accuracy
+    on matched pairs. Precision by judge on every extracted item (`supported`,
+    `is_requirement`, `in_scope`): precision = supported and is_requirement; in-scope
+    share reported separately (D31: surplus is not wrong).
+  - **Grounding, every cited item** (problem claims, component claims, assumptions,
+    risks): code checks cited IDs resolve (`dangling_citations`) and that numbers, dates,
+    amounts and proper nouns in the claim appear in the cited text (heuristic, reported
+    as such); a judge that sees only the claim and its cited text returns supported /
+    partially / unsupported, with inferences judged as reasonable or not.
+  - **Problem statement:** checklist coverage by judge (covered / partial / missing per
+    gold fact, claim index checked by code). **Solution:** cited coverage recomputed by
+    code; one judge call returns rubric scores (specificity, feasibility, consistency
+    with constraints, 1 to 5), the cited requirement IDs a component does not actually
+    address (judged coverage), and procurement-calendar components. **Risks:** one judge
+    call rates severity and likelihood against the prompt's definitions and says whether
+    each code finding (conflict, absent document, flagged page) is covered; code checks
+    the same by ID and string.
+  - **Cost and latency** per stage from `run_log.json` via `stage_totals`, retries with
+    their last error. **Consistency** per RFP over its runs: mean, sd, min, max of the
+    headline numbers and Jaccard of the matched-gold and covered-checklist sets.
+    **Pairwise:** A/B then B/A, consistent winner or tie, order bias recorded.
+  - **Order of work:** F7 fix; harness code and prompts with fake tests; `run --label
+    baseline --runs 2 --all --reuse-samples`; score Federal Way run 1 first and tune each
+    judge prompt at most once; score the rest; report, sample, hand-label, agree;
+    pairwise smoke; docs (results README, D35 and D36, PROMPTS notes, ASSUMPTIONS,
+    TIMELOG, README eval section).
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
