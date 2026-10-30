@@ -3,7 +3,16 @@
 One directory per results set (`<label>`), produced by the S12 harness
 (`evals/harness/`). `baseline/` is the pipeline as merged after S10: three runs per
 RFP, the committed sample (`runs/samples/<rfp>`) as run 1 and two fresh runs, all
-scored by the judge (`anthropic:claude-sonnet-5-5`, effort `medium`).
+scored by the judge (`anthropic:claude-sonnet-5-5`, effort `medium`); its gold-match
+tier was rescored in S13 under the F14 `judge_match` rule. The S13 labels each hold
+two fresh runs per RFP scored only on the sections their change touches (the other
+columns are code-only, shown as `–`), plus a `diff_*.md` against the baseline:
+
+| Label | What changed | Scored sections | Decision |
+|---|---|---|---|
+| `ablation_full_text/` | `--full-text-problem`: one synthesis call over the whole text instead of per-chunk summaries | problem, grounding, cost; `pairwise_<rfp>_problem.json` against baseline run 1 | D39 |
+| `ablation_single_call/` | `--single-call-extraction` with `RFP_MAX_OUTPUT_TOKENS=16000` (F16) | match, precision, cost | D39 |
+| `fix_solution_naming/` | `prompts/solution.md` "name what you cite" rule | solution | D40 |
 
 | File | What it is |
 |---|---|

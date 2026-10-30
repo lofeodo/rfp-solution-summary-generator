@@ -77,7 +77,10 @@ Choice: per-chunk extraction over every chunk, with a single-call full-document
 baseline as an eval ablation (all four RFPs fit in one call: 4k to 10k words).
 Why: retrieval introduces a recall ceiling the eval cannot easily see. The single-call
 baseline is cheap to add and tells us whether chunking is worth its cost.
-Evidence: none yet (ablation planned in the eval step).
+Evidence: S13 ablation (D39): the single call matches per-chunk recall within 2 pp on
+the four RFPs at 30 to 45% less cost, but truncates at the default output cap on
+Missouri (F16) and drops whole obligations rather than details; per-chunk stays the
+default for scale.
 
 ### D6. Fuzzy dedupe by one LLM grouping pass, not embeddings
 Context: per-chunk extraction produces near-duplicate requirements across chunks.
@@ -463,7 +466,9 @@ run log records the spend. Keeping the baseline's prompt identical makes the S13
 about hierarchy alone.
 Evidence: four RFPs, both modes: every citation resolves, no stage-one failure, the
 validator retried once in 2 of 4 NYESD runs and succeeded; rough checklist coverage 12/12
-hierarchical, 11 to 12/12 full text (ROADMAP S6 table). Quality comparison is S13's.
+hierarchical, 11 to 12/12 full text (ROADMAP S6 table). S13's judged comparison (D39):
+checklist coverage and grounding within one sd of each other, pairwise split 2 to 1
+with one tie; hierarchy is kept for the per-chunk citations and scale, not quality.
 ### D29. Quote verification: one feedback turn, then keep the item as unverified
 Context: every requirement carries a verbatim quote that code must be able to find in
 the cited chunk (traceability rule); models paraphrase, fix typos and join table cells.
@@ -775,6 +780,43 @@ overflow on phones and a blank page from F15. One live Colfax upload through the
 cost $0.0556 over 83 s, and the timeline and every tab filled in without a reload.
 Details in the roadmap, S15.
 
+### D39. Ablations: hierarchy and chunking are kept for scale and traceability, not for quality the evals can see
+Context: D5 chose per-chunk extraction and D28 the two-stage problem statement, each
+with a cheaper single-call baseline behind a flag, and both deferred the comparison to
+the evals. S13 ran each ablation twice on every RFP (`evals/results/ablation_full_text/`,
+`evals/results/ablation_single_call/`) against the three baseline runs, scored only the
+sections the flag changes, and compared the problem statements pairwise with the order
+swapped.
+Options: keep both defaults; switch either default to its single-call path; keep the
+defaults and state what they buy.
+Choice: keep both defaults, and say plainly that on these four RFPs the evals do not
+show a quality gain from either. Per-chunk extraction is kept because the single call
+fails outright at the provider's default output cap on the largest RFP (Missouri, 8k
+tokens; F16) and would fail on any RFP longer than the ones here, and because its
+misses are whole obligations rather than details. The hierarchical problem statement is
+kept because its per-chunk summaries are what the UI's chunk view and the per-claim
+citations rest on, and because it is the path that still works when a document does not
+fit one call. Both flags stay one setting away for the demo.
+Why: the cheaper path should win unless the numbers or the failure modes say otherwise,
+and here the failure modes do. Single-call extraction: combined recall within 2 pp of
+per-chunk on every RFP (Colfax 99 → 97%, Federal Way 81 → 79%, Missouri 91 → 89%,
+NYESD 99 → 99%), 33 to 129 fewer items, in-scope share up 6 to 8 pp on three RFPs,
+pipeline cost down 30 to 45% and wall time down 6 to 36 s; but code-only recall falls
+7 to 8 pp on Colfax and Missouri, the items it drops are complete obligations from the
+middle of the document (Missouri's page-5 description rules, MBE/WBE participation,
+royalty-free reuse, annual library review), and the one call needs 5 to 10k output
+tokens, which is past the default cap on Missouri and NYESD. Full-text problem
+statement: checklist coverage 9.0 → 10.5 (Colfax), 8.3 → 8.5 (Federal Way), 10.3 →
+11.0 (Missouri), 10.3 → 9.5 (NYESD) of 12, all within one sd of the baseline;
+unsupported problem claims 5 to 9 either way; pipeline cost down 10 to 25%; the
+pairwise judge preferred full text on Colfax and Missouri, hierarchical on Federal Way,
+and tied with position bias on NYESD, so S12's single Missouri smoke result (hierarchical
+preferred both ways) did not replicate across runs. Two runs per arm is enough to see
+that the differences sit inside run-to-run variance, not enough to rank the arms.
+Evidence: `diff_requirements.md` and `diff_problem.md` under each label, the four
+`pairwise_*_problem.json` files, and the spot-checked unmatched gold items in the
+single-call score files. D5 and D28 point here.
+
 ---
 
 ---
@@ -969,13 +1011,16 @@ Observed:  in about 4 of Missouri run 1's 9 judge-tier matches the extracted ite
            matches).
 Cause:     the prompt rejects a *different* value but says nothing about a *missing*
            one, and asks for "every candidate that states a material part".
-Fix:       not re-judged in S12 (a full rescore costs about $5). The report shows
-           code-only recall next to the combined figure, so recall is bracketed: true
-           recall lies between them. S13 can add "a candidate that omits the gold item's
-           key value does not match unless another listed candidate supplies it" and
-           rescore.
-Before/after: n/a; code-only versus combined recall per run is in
-           `evals/results/baseline/summary.md` (for example Missouri 86% versus 99%).
+Fix:       S13: the rule "missing values do not match either" with the two Missouri
+           examples, then `score --label baseline --only match` (the new `--only`
+           re-runs one judge and merges the file and log; $0.40 instead of $5).
+Before/after: combined recall per run, Missouri 99 / 100 / 94% → 93 / 93 / 87%
+           (judge-tier matches 9 / 7 / 9 → 5 / 2 / 4); Colfax, Federal Way and NYESD
+           within one point of before (NYESD-1 96 → 98%, Federal Way-3 80 → 81%: judge
+           noise). The four Missouri items now unmatched each turn on a date the
+           candidate omits (7/17/2024, 9/15/2025, 4/25/2025, 7/25/2025); the state
+           accessibility standard is still matched to WCAG 2.1 AA (the RFP defines it
+           so). Recall stays reported next to its code-only bound.
 
 ### F15. Vite's dev transform dropped an exported function named `displayName`
 Where:     S15 frontend, `RunList.tsx`, in the dev server only (`npm run build` was fine).
@@ -986,3 +1031,19 @@ Cause:     React Fast Refresh treats `displayName` as a component property, and 
 Fix:       renamed to `prettySource` in `lib/format.ts`, with a unit test, and added
            error boundaries so a render error shows a message instead of a blank page.
 Before/after: blank page, then the run list rendered.
+
+### F16. Single-call extraction truncated at the provider's default output cap
+Where:     S13 ablation `ablation_single_call`, `requirements_extract_single`, Missouri
+           run 1 (the first RFP attempted).
+Observed:  `output truncated by the token cap; not retrying` from `structured_call`
+           (the F5 guard), so the run failed in the requirements stage.
+Cause:     `RFP_MAX_OUTPUT_TOKENS` is unset, so DeepSeek's default cap (about 8k)
+           applies; one call over the whole document needs 5 to 10k output tokens
+           (Missouri 8.0 to 8.3k, NYESD 9.7 to 10.4k with the cap raised). Per-chunk
+           calls never come near it.
+Fix:       the ablation was rerun with `RFP_MAX_OUTPUT_TOKENS=16000` for that label
+           only, and the finding is recorded in D39 as the reason the single-call path
+           stays an ablation: its output budget scales with the document, the
+           per-chunk path's does not.
+Before/after: 0 of 1 Missouri runs finished at the default cap; 8 of 8 at 16k, no
+           retries, 18 to 36 s per call.

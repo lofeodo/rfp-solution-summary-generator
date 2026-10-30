@@ -11,9 +11,10 @@ latency, cost).
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
 (S5), problem statement (S6), solution generator (S7), risk assessor (S8),
 renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11), the evaluation
-harness with baseline results (S12), the UI backend (S14) and the UI frontend (S15).
-Sample outputs for the four RFPs are under `runs/samples/`, eval results under
-`evals/results/baseline/`. Next: ablations and fixes driven by the evals (S13); see
+harness with baseline results (S12), the UI backend (S14), the UI frontend (S15) and
+the eval-driven ablations and fixes (S13). Sample outputs for the four RFPs are under
+`runs/samples/`, eval results under `evals/results/` (baseline, two ablations, one
+prompt fix). Next: documentation, Dockerfile and demo script (S16); see
 `docs/ROADMAP.md`.
 
 ## Pipeline
