@@ -1,0 +1,26 @@
+# TIMELOG.md
+
+Rough hours per part, as the assignment asks. Two views: per deliverable (what the
+reviewer wants) and per roadmap step (how the work actually happened). Update both at
+the end of every step. Times are estimates to the nearest half hour.
+
+## Per deliverable
+
+| Deliverable | Hours | Notes |
+|---|---|---|
+| 0. Reading, research, planning | 4.0 | 3.0 assignment + public RFPs + brainstorming; 1.0 input inspection, roadmap, working rules |
+| 1. Working app (pipeline, parsing, agents, CLI) | | |
+| 2. Prompt assets and notes | | |
+| 3. Evaluation harness and sample results | | |
+| 4. Observability | | |
+| 5. DECISIONS.md and other docs | | |
+| 6. Demo | | |
+| UI (part of 1, tracked separately) | | |
+| **Total** | **4.0** | |
+
+## Per step
+
+| Date | Step | Hours | Deliverable | Notes |
+|---|---|---|---|---|
+| 2026-10-29 | — | 3.0 | 0 | Read assignment, studied public RFPs, brainstormed the solution |
+| 2026-10-30 | Planning | 1.0 | 0 | Inspected the four RFPs, surfaced assignment points, wrote ROADMAP, CLAUDE.md, living docs |
