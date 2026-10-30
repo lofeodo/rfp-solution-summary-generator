@@ -37,6 +37,7 @@ def test_success_first_try():
     assert (m.input_tokens, m.output_tokens, m.cached_input_tokens) == (120, 30, 100)
     assert m.cost_usd == 0.0  # fake model has no price
     assert m.latency_s >= 0
+    assert m.last_error is None
     assert len(model.calls) == 1
 
 
@@ -55,6 +56,7 @@ def test_validation_error_is_fed_back_as_tool_result():
     assert "confidence" in feedback.content
     assert "did not validate" in feedback.content
     assert [a.error is None for a in result.attempts] == [False, True]
+    assert result.metrics.last_error and "confidence" in result.metrics.last_error  # F7
 
 
 def test_missing_tool_call_gets_plain_feedback():
@@ -79,6 +81,7 @@ def test_exhaustion_raises_with_all_attempts_and_records_cost(tmp_path):
     assert err.metrics.retries == 2
     assert "chunk_ids" in str(err)
     assert rec.log.nodes == [err.metrics]
+    assert err.metrics.last_error and "chunk_ids" in err.metrics.last_error  # F7
 
 
 def test_max_retries_override():

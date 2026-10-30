@@ -678,7 +678,69 @@ the API cost $0.050 over 82 s. `curl -N` printed every stage as it happened, wit
 keepalives during the 32 s solution stage and the two branches starting together.
 Details in the roadmap, S14.
 
-### D36. UI frontend: views built from per-stage artifacts, source reveal in a slide-over, the browser's PDF viewer
+### D36. Evals: code first, judge second; recall against gold, precision judged per item
+Context: S12 must score requirements against gold (S11), and gold is core-only (D23):
+a correct boilerplate clause is absent from gold but is not an error. Requirement
+wording differs freely between gold and the extractor, and one gold item can be split
+into several extracted items or merged with others. The judge (Claude Sonnet 5.5) costs
+money per call; the pipeline makes 90 to 235 requirements per run.
+Options: (a) embed and match by similarity; (b) ask the judge to match everything;
+(c) code match first (quote containment either way after `normalise`, the statement
+containing the gold quote, quote word overlap at least 0.5), the judge only for the gold
+items code could not pair, shown only the extracted items cited on nearby pages. For
+precision: count unmatched extracted items as false positives, or judge every item.
+For judge configuration: default effort, or a lower one.
+Choice: (c), many-to-many. Recall over all gold and over reachable gold (quote in the
+parsed text), and code-only recall as the lower bound. Precision judged on every
+extracted item against its cited chunk (supported, a real obligation), with an in-scope
+flag reported separately. The judge runs at effort `medium` with a 32,000-token cap
+(F13), through S1's `structured_call`, with a per-call schema that demands exactly one
+verdict per ID shown, so a dropped or invented ID is sent back as a validation error
+(the F4 pattern). Each run's judge calls are recorded in their own run log
+(`evals/results/<label>/judge_logs/`), so the eval's cost is observable the same way as
+the pipeline's.
+Why: quotes are verbatim spans of the same parsed text, so code matching is exact,
+free and explainable, and it settles 61 to 94% of gold before any call. The judge
+handles the paraphrase cases code cannot, on a small candidate list. Counting surplus
+as error would punish the extractor for the gold scope rule; the in-scope share is the
+honest measure of surplus. Medium effort keeps thinking tokens down on hundreds of
+classification-like calls.
+Evidence: baseline, 12 runs: recall 80 to 100% (code-only 61 to 94%, reachable 93 to
+100%), precision 95 to 99%, in-scope share 83 to 96%. Judge cost $0.33 to $0.63 per run,
+$5.14 for the 12; zero failed batches after the cap fix. The hand-labelled sample agrees
+with the judge on 11 of 12 precision verdicts. Judge-tier matches are lenient (F14), so
+true recall sits between the two recall columns.
+
+### D37. Grounding: code heuristics plus a judge that sees only what is cited
+Context: every factual claim cites chunk or requirement IDs, and assembly already proves
+that every cited ID exists. Nothing yet checked that the cited text says what the claim
+says. The roadmap asked for code checks on numbers, dates, amounts and proper nouns,
+plus a judge that sees only the claim and the cited chunk.
+Options: show the judge the whole RFP, or only the cited text; judge assumptions and
+risks like facts, or by kind; show the risk judge the pipeline's levels or not.
+Choice: code computes dangling IDs and "entity misses" (a number or capitalised name in
+the claim that is absent from the cited text: dotted numbers kept whole, separators
+stripped, month and day names skipped, section headings included in the chunk text). The
+judge sees each claim with only its cited text, in batches of ten, and returns
+supported, partially or unsupported. Assumptions are judged as positions: only the facts
+they state about the RFP must be supported, and the judge says whether the cited text
+shows the gap they resolve. Risks are judged on the facts they rest on. The risk-level
+judge sees each risk's description and mitigation but not the pipeline's levels or
+justification.
+Why: judging against only the cited text tests the citation, not the claim's truth
+somewhere in the RFP, which is what the traceability rule promises. The first Federal
+Way scoring showed assumptions graded as facts (4 unsupported, 11 partially of 22
+solution items) and risk agreement at 100% while the levels were visible; both were
+artefacts of the setup, and both changed when the setup did (0 unsupported, 7 partially;
+severity agreement 92%, likelihood 58%). The entity check is cheap and finds real
+citation misses (Missouri's commission named but cited to chunks that do not name it),
+but over-flags style capitals, so it is reported as a pointer, not a score.
+Evidence: baseline, 12 runs: 0 dangling IDs; partially or unsupported items 4 to 10 of
+25 to 32 problem claims, 4 to 16 of 20 to 38 solution items, 2 to 11 of 12 to 13 risks;
+13 to 33 items with an entity miss per run. Judge agreement on grounding: 10 of 12
+sampled verdicts.
+
+### D38. UI frontend: views built from per-stage artifacts, source reveal in a slide-over, the browser's PDF viewer
 Context: S15 must show a run live, every intermediate output, and the source of any
 cited claim, on top of the S14 API. The author chose a React view built from JSON over
 rendering `summary.md`, and the browser's PDF viewer over pdf.js.
@@ -709,7 +771,7 @@ the run list (polling while busy), and visual polish beyond four Playwright pass
 Evidence: 11 Vitest tests, including quote highlighting for at least 95% of Missouri's
 verified quotes in a cited chunk, and the index built from the committed sample.
 Playwright MCP passes at 1440 px and 390 px fixed 13 issues, among them a 456 px
-overflow on phones and a blank page from F13. One live Colfax upload through the UI
+overflow on phones and a blank page from F15. One live Colfax upload through the UI
 cost $0.0556 over 83 s, and the timeline and every tab filled in without a reload.
 Details in the roadmap, S15.
 
@@ -804,9 +866,11 @@ Observed:  `retries = 1` in the node metrics; the INFO line read "attempt 1 fail
 Cause:     `structured_call` logs the error truncated and `NodeMetrics` stores the retry
            count only; DeepSeek Flash is not deterministic at temperature 0, so the
            retry could not be reproduced on demand (60 to 63 relevant chunks across runs).
-Fix:       not fixed in S6 (the schema is S1's). Open issue for S12/S13: record the last
-           validation error on `NodeMetrics` so a retry is diagnosable from the run log.
-Before/after: n/a.
+Fix:       not fixed in S6 (the schema is S1's). Fixed in S12: `NodeMetrics.last_error`
+           (optional, additive) holds the last failed attempt's error, capped like the
+           feedback; the eval harness lists every retried node with it.
+Before/after: n/a in S6; from S12 every new run log names the cause of each retry
+           (logs written earlier show it as unknown).
 
 ### F8. Extractor reported other sections of the same RFP as ambiguities and gaps
 Where:     S5 `requirements_extract` prompt, Missouri (first live run).
@@ -881,8 +945,39 @@ Fix:       a **Count** rule under Rules ("at most twelve; merge or drop; code re
 Before/after: 13, 13, 13, 13 → 12, 13, 13, 12; cost and latency unchanged ($0.04 for
            the rerun).
 
+---
 
-### F13. Vite's dev transform dropped an exported function named `displayName`
+### F13. Judge output truncated by the token cap
+Where:     S12 `judge_grounding`, Colfax run 1, one batch of ten claims.
+Observed:  `output truncated by the token cap; not retrying`; the batch's verdicts were
+           missing and the run reported one judge failure.
+Cause:     the judge cap was 16,000 tokens and Claude's thinking counts toward it (the
+           same cause as F5 in gold drafting); a batch of long risk texts with long cited
+           chunks used it up.
+Fix:       `JUDGE_MAX_TOKENS = 32000`; the run was rescored. Failed batches are counted
+           in `JudgeCost.failures` and shown in the cost table, so a gap is visible.
+Before/after: 1 failed batch in 12 runs → 0; Colfax run 1 rescored for $0.42.
+
+---
+
+### F14. Judge-tier gold matches accept a missing key value
+Where:     S12 `judge_match`, most visibly Missouri (9 judge-tier matches per run).
+Observed:  in about 4 of Missouri run 1's 9 judge-tier matches the extracted item lacks
+           the gold item's key value: an interim presentation "by 9/15/2025" matched to
+           "near the mid-point", the Missouri accessibility standard matched to WCAG 2.1
+           AA. The code tier had no such cases (3 of 61 pairs below containment, all true
+           matches).
+Cause:     the prompt rejects a *different* value but says nothing about a *missing*
+           one, and asks for "every candidate that states a material part".
+Fix:       not re-judged in S12 (a full rescore costs about $5). The report shows
+           code-only recall next to the combined figure, so recall is bracketed: true
+           recall lies between them. S13 can add "a candidate that omits the gold item's
+           key value does not match unless another listed candidate supplies it" and
+           rescore.
+Before/after: n/a; code-only versus combined recall per run is in
+           `evals/results/baseline/summary.md` (for example Missouri 86% versus 99%).
+
+### F15. Vite's dev transform dropped an exported function named `displayName`
 Where:     S15 frontend, `RunList.tsx`, in the dev server only (`npm run build` was fine).
 Observed:  a blank home page; console `ReferenceError: displayName is not defined`.
            The served module called `displayName(...)` but no longer defined it.

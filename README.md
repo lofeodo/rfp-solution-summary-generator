@@ -10,9 +10,11 @@ latency, cost).
 **Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
 (S5), problem statement (S6), solution generator (S7), risk assessor (S8),
-renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11), the UI
-backend (S14) and the UI frontend (S15). Sample outputs for the four RFPs are under
-`runs/samples/`. Next: the eval harness (S12); see `docs/ROADMAP.md`.
+renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11), the evaluation
+harness with baseline results (S12), the UI backend (S14) and the UI frontend (S15).
+Sample outputs for the four RFPs are under `runs/samples/`, eval results under
+`evals/results/baseline/`. Next: ablations and fixes driven by the evals (S13); see
+`docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -346,6 +348,42 @@ python -m evals.gold.label check --all   # every gold quote is in the parsed tex
 python -m evals.gold.label diff --all    # draft vs final correction table
 ```
 
+## Evaluation
+
+`evals/harness/` scores pipeline runs against the gold labels with code checks first and
+a Claude judge second (`RFP_JUDGE_MODEL`, needs `ANTHROPIC_API_KEY`). Per run it
+measures:
+
+- **Requirements:** recall against gold (code match, then the judge for the rest),
+  precision and scope of every extracted item by the judge, and type and strictness
+  accuracy.
+- **Grounding:** every cited claim, assumption and risk is checked against only the text
+  it cites. Code checks IDs, numbers and names; the judge rates each item supported,
+  partially or unsupported.
+- **Problem statement:** checklist coverage of the 12 gold facts.
+- **Solution:** cited and judged coverage of mandatory requirements, plus a rubric for
+  specificity, feasibility and consistency.
+- **Risks:** severity and likelihood re-rated blind, and coverage of the code findings.
+- **Cost and latency:** per stage from the run log, with each retry's cause.
+
+Across runs it reports consistency, a pairwise A/B judge for ablations, and judge
+agreement with a hand-labelled sample.
+
+```bash
+python -m evals.harness run --label baseline --all --runs 2 --reuse-samples  # paid, ~$0.60
+python -m evals.harness score --label baseline            # judge, ~$5 for 12 runs
+python -m evals.harness score --label baseline --no-judge # code metrics only, free
+python -m evals.harness report --label baseline           # summary.md and summary.json
+python -m evals.harness compare RUN_A RUN_B --what problem --rfp missouri   # pairwise
+```
+
+Baseline (`evals/results/baseline/summary.md`): three runs per RFP, recall 80 to 100%,
+with 61 to 94% matched by code alone. Federal Way's lower figure is its image-only page 5;
+reachable recall is 93 to 96%. Precision is 95 to 99%, checklist coverage 67 to 92%,
+and judged coverage of mandatory requirements 70 to 100% against 100% cited. The judge
+agrees with 34 of 40 hand labels. How to read every column is in
+`evals/results/README.md`.
+
 ## Repository layout
 
 ```
@@ -362,7 +400,9 @@ src/rfp_agent/
   render/          JSON assembly and markdown rendering (S9)
 prompts/           one markdown prompt per agent
 tests/             pytest; `@pytest.mark.llm` tests are skipped by default
-evals/             gold labels, harness, results (S11 to S13)
+evals/gold/        gold labels and the labelling script (S11)
+evals/harness/     eval harness: `python -m evals.harness` (S12)
+evals/results/     committed eval results, one directory per label (S12, S13)
 runs/samples/      committed end-to-end outputs for the four RFPs (S10)
 ui/backend/        FastAPI app: uploads, run queue, SSE events, run outputs (S14)
 ui/frontend/       Vite + React + TypeScript + Tailwind UI (S15)

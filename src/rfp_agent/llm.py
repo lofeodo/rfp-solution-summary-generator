@@ -255,6 +255,17 @@ def _feedback_messages(raw: AIMessage, feedback: str) -> list[BaseMessage]:
     return [HumanMessage(content=feedback)]
 
 
+def _last_error(attempts: list[AttemptRecord]) -> str | None:
+    """The error of the last failed attempt, so retries are diagnosable from the log (F7)."""
+    errors = [a.error for a in attempts if a.error]
+    if not errors:
+        return None
+    text = errors[-1]
+    if len(text) > FEEDBACK_MAX_CHARS:
+        text = text[:FEEDBACK_MAX_CHARS] + " ...[truncated]"
+    return text
+
+
 def structured_call[T: BaseModel](
     model: BaseChatModel,
     schema: type[T],
@@ -301,6 +312,7 @@ def structured_call[T: BaseModel](
             latency_s=time.perf_counter() - t0,
             retries=max(len(attempts) - 1, 0),
             started_at=started_at,
+            last_error=_last_error(attempts),
         )
         if recorder is not None:
             recorder.record(m)

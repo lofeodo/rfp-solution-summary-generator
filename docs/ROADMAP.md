@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S14,S15 done
-    class S12 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S14,S15 done
+    class S13 ready
 ```
 
-**Progress (2026-10-30):** done S0 to S11, S14 and S15 (green). Ready now, all
-dependencies done (amber): S12. S16 waits on S12 and S13. Update the two `class` lines in
+**Progress (2026-10-30):** done S0 to S12, S14 and S15 (green). Ready now, all
+dependencies done (amber): S13; S16 follows it. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
@@ -1666,7 +1666,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - `tests/test_gold.py` parses all four PDFs for the committed-gold check (about 25 s).
 
 ### S12. Evaluation harness
-- **Status:** todo
+- **Status:** done
 - **Goal:** `evals/`: run the pipeline over the four RFPs and score. Requirements:
   match extracted to gold, precision and recall, type and strictness accuracy on matched
   pairs. Grounding on every cited output: code checks (cited IDs exist; numbers, dates,
@@ -1679,10 +1679,153 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   `evals/results/` with a short README; hand-score a sample for judge agreement.
 - **Depends on:** S10, S11
 - **Parallel with:** S14
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** **three runs per RFP, all judged**: the
+    committed `runs/samples/<rfp>` is run 1, two fresh runs are generated per RFP, all
+    twelve are scored by the judge (about $8 to $12 including prompt debugging);
+    **commit scores only**: eval run directories live under `runs/evals/<label>/<rfp>/<k>/`
+    (gitignored by `runs/*`), `evals/results/<label>/` commits the per-run score JSON
+    (per-item verdicts carry the item text so they read without the run directory),
+    `summary.md`, `summary.json`, the judge run log and the agreement sample;
+    **judge agreement**: the harness exports a sample of about 40 verdicts, the coding
+    agent hand-labels them from the source text, the author spot-checks the diff in the
+    PR; **F7 fix lands here**: `NodeMetrics.last_error` (optional, default None), set by
+    `structured_call` when any attempt failed (shared files `schemas.py`, `llm.py`;
+    additive, old logs still load).
+  - **Taken without asking:** the judge stays `Settings.judge_model`
+    (`anthropic:claude-sonnet-5-5`, D3/D13); every extracted requirement and every cited
+    claim is judged (no sampling); gold matching is code first, judge second; judge calls
+    go through S1's `structured_call` on a thread pool (`llm_concurrency`) and are
+    recorded into a `RunRecorder` whose log is the judge cost; the pairwise judge is
+    unit-tested with fakes and smoke-tested live once on Missouri so S13 inherits a
+    working command; judge prompts follow the agent-prompt conventions.
+  - **Branch:** `step-12-eval-harness` off `core` (worktree); PR into `core`.
+  - **Files:** `evals/harness/` (`schemas.py` score models, `load.py` run + gold loader,
+    `match.py`, `grounding.py`, `judge.py`, `score.py`, `consistency.py`, `pairwise.py`,
+    `report.py`, `agreement.py`, `__main__.py` typer app with `run`, `score`, `report`,
+    `sample`, `agree`, `compare`); `evals/results/README.md` and
+    `evals/results/<label>/`; seven prompts `prompts/judge_{match,requirements,grounding,
+    checklist,solution,risks,pairwise}.md`; `tests/test_harness.py` (fakes, code metrics on
+    the samples, CLI) and `tests/test_harness_live.py` (`-m llm`).
+  - **Requirements vs gold:** code tier (quote containment either way after `normalise`,
+    extracted text containing the gold quote, or word-set Jaccard of quotes >= 0.5;
+    many-to-many), then a judge tier for the gold items still unmatched (batches of 15
+    against candidates whose cited chunks overlap the gold page +-1). Recall over all gold
+    and over the reachable gold (`quote_verifiable=true`); type and strictness accuracy
+    on matched pairs. Precision by judge on every extracted item (`supported`,
+    `is_requirement`, `in_scope`): precision = supported and is_requirement; in-scope
+    share reported separately (D31: surplus is not wrong).
+  - **Grounding, every cited item** (problem claims, component claims, assumptions,
+    risks): code checks cited IDs resolve (`dangling_citations`) and that numbers, dates,
+    amounts and proper nouns in the claim appear in the cited text (heuristic, reported
+    as such); a judge that sees only the claim and its cited text returns supported /
+    partially / unsupported, with inferences judged as reasonable or not.
+  - **Problem statement:** checklist coverage by judge (covered / partial / missing per
+    gold fact, claim index checked by code). **Solution:** cited coverage recomputed by
+    code; one judge call returns rubric scores (specificity, feasibility, consistency
+    with constraints, 1 to 5), the cited requirement IDs a component does not actually
+    address (judged coverage), and procurement-calendar components. **Risks:** one judge
+    call rates severity and likelihood against the prompt's definitions and says whether
+    each code finding (conflict, absent document, flagged page) is covered; code checks
+    the same by ID and string.
+  - **Cost and latency** per stage from `run_log.json` via `stage_totals`, retries with
+    their last error. **Consistency** per RFP over its runs: mean, sd, min, max of the
+    headline numbers and Jaccard of the matched-gold and covered-checklist sets.
+    **Pairwise:** A/B then B/A, consistent winner or tie, order bias recorded.
+  - **Order of work:** F7 fix; harness code and prompts with fake tests; `run --label
+    baseline --runs 2 --all --reuse-samples`; score Federal Way run 1 first and tune each
+    judge prompt at most once; score the rest; report, sample, hand-label, agree;
+    pairwise smoke; docs (results README, D36 and D37, PROMPTS notes, ASSUMPTIONS,
+    TIMELOG, README eval section).
+- **What was done:** (branch `step-12-eval-harness`, PR into `core`)
+  - `evals/harness/` (`python -m evals.harness`): `schemas.py` (`RunScores` and its
+    sections; every per-item verdict carries the item text), `load.py` (`EvalRun` over a
+    run directory, RFP name matched to gold case-insensitively, chunk lookups with the
+    section path and page, `source_blocks`), `judge.py` (`build_judge_model`: effort
+    `medium`, 32,000-token cap, 300 s timeout; `exact_ids` per-call schemas; `Judge` with
+    its own `RunRecorder`, prompt loading from this checkout, thread-pool `map` that
+    counts failed batches), `match.py` (code tier, judge tier on unmatched gold with
+    page-near candidates, precision judge batched by chunk), `grounding.py` (item
+    collection, entity check, grounding judge), `sections.py` (checklist, solution
+    rubric and judged coverage, risk levels and findings coverage, cost per stage with
+    retries), `score.py` (`score_run`), `consistency.py`, `pairwise.py`, `report.py`,
+    `agreement.py`, `__main__.py` (`run`, `score`, `report`, `sample`, `agree`,
+    `compare`).
+  - Prompts: `judge_match`, `judge_requirements`, `judge_grounding`, `judge_checklist`,
+    `judge_solution`, `judge_risks`, `judge_pairwise`.
+  - F7 fix (shared files): `NodeMetrics.last_error` in `schemas.py`, set by
+    `structured_call` in `llm.py` from the last failed attempt; asserted in
+    `tests/test_llm_structured.py`.
+  - Tests: `tests/test_harness.py` (30: a scripted judge that parses each judge prompt's
+    IDs and answers by rule, over the committed samples: loading, code-tier scores, code
+    metrics on all four samples, Federal Way reachable recall, retries listed, entity
+    extraction and number boundaries, judge-tier matching with an invented ID dropped,
+    precision and scope arithmetic, grounding fill and the assumption kind, checklist,
+    solution and risk judges with the levels hidden, judge cost logged, score file round
+    trip, `exact_ids` feedback and retry, failed judge call counted, stats and Jaccard,
+    consistency, pairwise order swap in four cases, agreement sampling and scoring,
+    report sections, CLI `run` with a stubbed pipeline, `score --no-judge` then
+    `report`, missing key exit 2); `tests/test_harness_live.py` (`-m llm`, scores the
+    Federal Way sample). 351 unit tests pass, ruff clean.
+  - Baseline (`evals/results/baseline/`): `runs/samples/<rfp>` copied in as run 1, two
+    fresh runs per RFP (eight runs, $0.56, all stages finished), all twelve judged.
+    Means over three runs (sd in the summary):
+
+    | RFP | reqs | recall (code only / all / reachable) | precision | in scope | type / strictness acc | checklist | unsupported p / s / r | judged cov | feasibility | sev agree | $ pipeline / judge |
+    |---|---|---|---|---|---|---|---|---|---|---|---|
+    | Missouri | 122 | 86 / 98 / 98% | 96% | 85% | 78 / 89% | 86% | 5.3 / 9.7 / 6.3 | 97% | 3.0 | 64% | 0.078 / 0.40 |
+    | NYESD | 226 | 83 / 99 / 99% | 97% | 86% | 95 / 76% | 86% | 9.3 / 9.3 / 9.3 | 78% | 3.0 | 65% | 0.101 / 0.59 |
+    | Colfax | 120 | 93 / 99 / 99% | 98% | 87% | 83 / 89% | 75% | 6.0 / 6.7 / 5.7 | 96% | 3.7 | 56% | 0.056 / 0.37 |
+    | Federal Way | 100 | 67 / 80 / 94% | 99% | 94% | 87 / 87% | 69% | 7.0 / 8.0 / 5.3 | 100% | 3.3 | 74% | 0.047 / 0.36 |
+
+    Matched-gold sets barely move between runs (Jaccard 0.96 to 0.98); covered-checklist
+    sets move more (0.74 to 0.88), and checklist coverage spans 67 to 92% within one RFP.
+    Specificity is 4 on all twelve runs. Every finding code detected is addressed by some
+    risk except one NYESD finding on two runs. Judge cost $5.14 for the twelve, zero
+    failed batches; about $6.1 in all with the calibration rescore and the F13 rerun.
+  - Agreement: 40 verdicts sampled from run 1 of each RFP (12 precision, 12 grounding, 8
+    checklist, 8 coverage; negatives over-drawn), hand-labelled from the evidence alone:
+    34 agree (precision 11/12, grounding 10/12, checklist 7/8, coverage 6/8). The six
+    disagreements: the judge stricter than the label on four, more lenient on two; in
+    two the judge's reason contradicts its own verdict.
+  - Pairwise smoke: Missouri hierarchical (sample) versus full-text problem statement:
+    hierarchical preferred in both orders, no order bias, $0.03.
+  - Docs: DECISIONS D36, D37, F13, F14 and F7 marked fixed; PROMPTS design notes for the
+    seven judge prompts and two changelog rows; ASSUMPTIONS evaluation section; TIMELOG;
+    README status, evaluation section, layout; `prompts/README.md` rows;
+    `evals/results/README.md`. Shared files touched: `schemas.py`, `llm.py`, `README.md`.
 - **Deviations from plan:**
+  - The per-output judges live in `sections.py` rather than in `score.py`, which stays a
+    thin orchestrator.
+  - Two judge prompts were tuned once after reading Federal Way run 1, as the plan
+    allowed: assumptions graded as facts, and the risk judge anchoring on visible levels
+    (100% agreement). See D37 and the PROMPTS changelog.
+  - Precision verdicts showed nothing to tune (95 to 99%, near the ceiling by
+    construction); the in-scope share is the informative number and is reported beside
+    it.
+  - Code-only recall was added to the report after a spot check found the judge tier
+    lenient (F14); re-judging was not worth $5 in this step.
+  - The judge cap went from 16,000 to 32,000 tokens after one truncated batch (F13).
+  - The entity check was calibrated on the samples before any judge call: section
+    headings added to the chunk text, dotted numbers kept whole, month names skipped,
+    acronyms checked at a sentence start; Missouri's flagged items went from 40 to 16.
 - **Open issues:**
+  - F14: tighten `judge_match` on missing key values and rescore (about $5); until then
+    quote recall as the range between the code-only and combined columns.
+  - NYESD judged coverage is 70 to 83% against 100% cited: mostly legal and contractual
+    clauses cited in bulk by one compliance component that never names them (10 of 18
+    lost requirements on run 1, 17 of 31 on run 2). An S7 prompt rule ("name each
+    obligation you cite") is an S13 candidate, measurable by this column.
+  - Likelihood agreement is 50 to 92%, severity 50 to 92%; the S8 scales overlap in the
+    middle. S13 can sharpen the definitions and rerun `judge_risks` only.
+  - The rubric barely moves (specificity always 4); for S13 ablations the pairwise judge
+    is the better instrument for solution quality.
+  - Federal Way's checklist coverage (69%) is capped by GC12 (page-5 image) and by
+    compound gold facts that end `partial`; ST2 is the fix for the first.
+  - The hand labels were written by the coding agent; the author should spot-check
+    `agreement_labels.json` (the six disagreements are listed in `summary.json`).
+  - Scoring re-runs every judge for a run; a `--only` option (for example only the
+    matcher) would make prompt iterations on one judge cheaper in S13.
 
 ### S13. Ablations and fixes driven by evals
 - **Status:** todo
@@ -2001,7 +2144,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
       ID chips, and the cached-token figure wrapping. At phone width the page overflowed
       to 456 px, because 12-column grids with 40 px gutters need 440 px; gutters now
       apply only at `lg`. On phones the timeline folds into a one-line `<details>`. A
-      helper named `displayName` was dropped by the dev transform (F13);
+      helper named `displayName` was dropped by the dev transform (F15);
     - pass 4 (visual): the drop cap gap.
 
     The final check was the built `dist` served by the backend alone, including deep
@@ -2013,7 +2156,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - Shared files: `.github/workflows/ci.yml` (new `frontend` job: Node 22, `npm ci`,
     typecheck, test, build), `README.md` (status, UI section, layout), `.gitignore`
     (`.playwright-mcp/`).
-  - Docs: DECISIONS D36 and F13, ASSUMPTIONS (UI), TIMELOG. PROMPTS is unchanged
+  - Docs: DECISIONS D38 and F15, ASSUMPTIONS (UI), TIMELOG. PROMPTS is unchanged
     because no prompt changed.
 - **Deviations from plan:**
   - The views read the per-stage artifacts (`split`, `requirements`, `problem`,
