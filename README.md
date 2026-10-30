@@ -9,7 +9,7 @@ latency, cost).
 
 **Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
-(S5), problem statement (S6), solution generator (S7),
+(S5), problem statement (S6), solution generator (S7), risk assessor (S8),
 renderer (S9) and gold labels (S11). The pipeline lands step by step; see
 `docs/ROADMAP.md`.
 
@@ -179,6 +179,41 @@ python -m rfp_agent.agents solution data/rfps/colfax.pdf \
 python -m rfp_agent.agents -v solution data/rfps/colfax.pdf --max-iterations 1   # no revision round
 ```
 
+## Risk assessor
+
+`rfp_agent.agents.risk.build_risks(requirements, problem_statement, solution,
+title=..., referenced_documents=parsed.referenced_documents, flags=parsed.flags)`
+writes the risks: six to twelve entries, each with a severity and a likelihood (`low`,
+`medium`, `high`), a justification, the requirement and chunk IDs it relates to, a
+`source` (`rfp` for what the RFP itself carries, `solution` for what the proposed
+approach creates) and a mitigation. The model sees the solution, the problem statement,
+the requirements, the ambiguities and the gaps, never the RFP text (prompt
+`prompts/risk.md`).
+
+Before the call, code computes a findings block the model must work from: the mandatory
+requirements the solution left uncovered, the requirement conflicts S5 flagged, the
+referenced documents the parser marked absent, the parse flags that survived the
+quality pass, and how many budget requirements exist. The output schema rejects, inside
+the retry, fewer than 3 or more than 15 risks, any unknown ID, and a draft in which an
+uncovered mandatory requirement is cited by no risk. Code then sorts by severity and
+likelihood and numbers the risks `K01…`, so K01 is the top risk in both the JSON and the
+rendered table.
+
+Scales: severity is the impact if the risk happens (`high`: the project fails, misses a
+contractual date or overruns budget by more than a quarter; `medium`: rework or cost
+that contingency absorbs; `low`: normal delivery); likelihood is the chance given the
+RFP and the solution as written (`high`: expected unless someone acts; `medium`: turns
+on facts the RFP does not settle; `low`: an unusual event).
+
+On the four RFPs: 12 to 13 risks, one call, no validator retry, $0.007 to $0.011 and
+about 20 s per RFP on DeepSeek Flash. To run it on its own (paid; it runs the
+parse-quality pass first and, without the JSON options, S5, S6 and S7 too):
+
+```bash
+python -m rfp_agent.agents risk data/rfps/colfax.pdf --requirements colfax_requirements.json \
+    --problem colfax_problem.json --solution colfax_solution.json --out colfax_risks.json
+```
+
 ## Configuration
 
 All settings live in `.env` (see `.env.example`); `RFP_*` variables override defaults.
@@ -241,7 +276,7 @@ src/rfp_agent/
   parsing/         PDF to markdown, page flags, referenced documents (S2), quality pass (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
   agents/          requirements extractor with dedupe (S5), problem (S6), solution
-                   with its coverage loop (S7), risk; `python -m rfp_agent.agents` debug CLI
+                   with its coverage loop (S7), risk assessor (S8); `python -m rfp_agent.agents` debug CLI
   textmatch.py     quote matching tolerant of markdown and typography (S5, gold labels)
   render/          JSON assembly and markdown rendering (S9)
 prompts/           one markdown prompt per agent

@@ -167,12 +167,44 @@ model add a commercial or submission-flavoured component to cite them (Missouri 
 R019); the assumption list runs long (Missouri 8) and some assumptions restate facts the
 problem statement already carries.
 
+### prompts/risk.md
+Purpose: the risks of bidding and delivering: what could go wrong, how badly, how
+likely, and what the bidder would do about it (D33).
+Inputs it receives: `{{title}}`, `{{findings}}` (five blocks computed by code: mandatory
+requirements the solution does not address, conflicting requirement pairs, referenced
+documents not in the PDF, pages whose text could not be parsed, the budget-requirement
+count), `{{solution}}` (summary, components as `ID Title (requirement IDs)` with their
+description and claims, assumptions, the coverage line), `{{problem}}`,
+`{{requirements}}` (as S7, but the submission block is headed "how and when the proposal
+is delivered", not "do not address"), `{{ambiguities}}`, `{{gaps}}`. No RFP text.
+Output contract (schema): `RiskAssessmentDraft`; a per-call subclass rejects fewer than
+3 or more than 15 risks, unknown requirement or chunk IDs, and a draft in which an
+uncovered mandatory requirement is cited by no risk. Code sorts by severity then
+likelihood and numbers `K01…`.
+Why it is written this way: the findings come first and the "Findings first" rule says
+code checks the uncovered IDs, so the model works from facts before it speculates; the
+two scales are written out as impact and as "given the RFP and the solution as
+written", so a `high` means the same thing on every RFP; `source` is defined by what
+creates the risk, not by where the words came from; "one risk, one cause" with a worked
+contrast stops requirement restatements; `chunk_ids` may be empty for a flagged page or
+a missing document because those have no chunk; mitigation is asked to be an action (a
+question before the deadline, a stated assumption, a contingency), not "monitor"; the F6
+tone rule is carried over with "the findings" added to the banned phrases; instructions
+come first for the prefix cache.
+Known weaknesses: the count runs to the top of the range or one over (F12); severity
+clusters at high and medium (no `low` severity and one `low` likelihood in 50 risks on
+the tuned prompt), so the scales separate less than they could; `source` can flip
+between runs for the same risk (NYESD's MWBE goals: `rfp`, then `solution`), which
+S12's judge should sample.
+
 ## Changelog
 
 One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-10-30 | risk | Count rule under Rules: at most twelve, merge or drop, code rejects more than fifteen | All four first runs returned 13 against "six to twelve" (F12); 12, 13, 13, 12 after |
+| 2026-10-30 | risk | Created (S8) | First version; 12 to 13 risks per RFP, 0 validator retries, every code finding surfaced as a risk |
 | 2026-10-30 | solution | Assumptions: `chunk_ids` are the `S4.2` IDs listed after the ambiguity or gap; `A01`/`G01` are never cited | Colfax and Federal Way first runs cited ambiguity and gap IDs as chunks, caught by the validator (F10); 0 retries on the four-RFP rerun |
 | 2026-10-30 | solution | Created (S7) | First version; full mandatory coverage on four RFPs after at most one revision round |
 | 2026-10-30 | requirements_extract | Gaps: name the document, never its URL; a document named with its link is one gap | NYESD listed 50 gaps, most forms twice (name and URL) (F9); 38 after |

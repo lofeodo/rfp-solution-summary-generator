@@ -556,6 +556,46 @@ validator retry. The two IDs the revision added (R007, R019) are proposal-proces
 obligations typed `timeline` by S5, so the model wrapped them in a commercial
 component; see S7 open issues. Four-RFP table in the roadmap, S7.
 
+### D33. Risks: findings computed by code, must-address checked in the schema, one call
+Context: the risk assessor is the last agent and the one most tempted to write generic
+project risks. The roadmap lists what it must cover (timelines, vague or conflicting
+requirements, missing budget, referenced-but-absent documents, flagged pages, risks the
+solution creates), asks that code validate IDs, and leaves the scales to this step.
+Options: send the RFP text again; let the model find everything; a code-detected
+findings block the model must address; a generate → check → revise loop as in S7.
+Choice: no RFP text (the S7 rule). Code computes a findings block before the call: the
+mandatory requirements S7 left uncovered, the conflict pairs S5 flagged, the referenced
+documents the parser marked absent (hyperlinks excluded), the parse flags that survived
+the S4 judge, and the count of budget requirements. The model sees it first, then the
+solution (components with their requirement IDs and claims, assumptions, coverage), the
+problem statement, all requirements (submission items under a plain heading, since
+deadlines are risks), ambiguities and gaps. A per-call `RiskAssessmentDraft` subclass
+rejects fewer than 3 or more than 15 risks, unknown requirement or chunk IDs, and a
+draft in which an uncovered mandatory requirement is cited by no risk (the author's
+call: only the finding with a citable ID is enforced; conflicts, documents and pages are
+advice). One call, no loop; the retry is the feedback loop. Scales: severity is impact
+(`high`: the project fails, a contractual date is missed or the budget overruns by more
+than a quarter; `medium`: rework or cost contingency absorbs; `low`: normal delivery);
+likelihood is judged given the RFP and the solution as written (`high`: expected unless
+someone acts; `medium`: turns on facts the RFP does not settle; `low`: an unusual
+event). Code sorts by severity then likelihood and numbers `K01…`, so the JSON order is
+the rendered table order.
+Why: the findings block turns the step from "think of risks" into "explain these facts
+and add what they imply", which is where a 20k-token context earns its keep; the model
+still brings judgment code cannot (Missouri's IS-approval gate on the proof of concept,
+NYESD's 250-versus-400 participant floor). Enforcing only the uncovered IDs keeps the
+validator honest: it can check an ID, it cannot check that a page was "considered". No
+loop was built because nothing in a risk list is computable the way coverage is; the
+count band and the must-cite rule are the whole contract, and one call costs a cent.
+Three-level scales with written definitions give S12's judge something to agree with
+(D14).
+Evidence: four RFPs, DeepSeek Flash, one call each, 0 validator retries, $0.007 to
+$0.011 and 19 to 22 s; 12 to 13 risks per RFP; every code finding surfaced as a risk
+(table in the roadmap, S8). No uncovered mandatory requirement reached S8 because S7's
+loop closed them all, so the must-cite rule is exercised by the unit tests only.
+
+---
+
 ---
 
 ## Part 2 — Failure modes hit
@@ -705,3 +745,19 @@ Fix:       none needed: `structured_call` already treats a missing tool call as 
            retryable attempt and feeds the instruction back. Noted so S12's retry
            counts have a known cause.
 Before/after: one retry, $0.01.
+
+---
+
+### F12. Risk count ran over the asked range on every RFP
+Where:     S8 `risk_assess`, all four RFPs, first prompt.
+Observed:  13 risks on each of the four RFPs against "six to twelve risks" in the
+           "What to return" line; inside the validator band (3 to 15), so no retry.
+Cause:     the count sat in a field description while the Rules section said each
+           finding "deserves a risk"; with 7 to 10 code findings plus the model's own,
+           the rules outweighed the range.
+Fix:       a **Count** rule under Rules ("at most twelve; merge or drop; code rejects
+           more than fifteen"). Partial: Missouri and Federal Way returned 12, NYESD and
+           Colfax still 13. The band in the schema stays the contract; the range is
+           advice. S13 can tighten the band if the judge finds the tail risks weak.
+Before/after: 13, 13, 13, 13 → 12, 13, 13, 12; cost and latency unchanged ($0.04 for
+           the rerun).

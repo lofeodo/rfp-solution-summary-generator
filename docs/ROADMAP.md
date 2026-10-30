@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S9,S11 done
-    class S8 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S11 done
+    class S10 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S7, S9, S11 (green). Ready
-now, all dependencies done (amber): S8. Update the two `class` lines in
+**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S7, S8, S9, S11 (green).
+Ready now, all dependencies done (amber): S10. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
@@ -1190,7 +1190,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     subgraph if S10 prefers one graph.
 
 ### S8. Risk assessor
-- **Status:** in progress
+- **Status:** done
 - **Goal:** `agents/risk.py`: reads the solution and everything before it; covers
   risks inherent in the RFP (timelines, vague or conflicting requirements, missing
   budget, referenced-but-absent documents, flagged pages) and risks created by the
@@ -1247,9 +1247,93 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     live `llm` test on Missouri running S5 to S8.
   - **Docs:** DECISIONS D33 plus any failure mode hit, PROMPTS note and changelog,
     ASSUMPTIONS risks section, TIMELOG, README risk section and CLI line.
-- **What was done:**
+- **What was done:** (branch `step-08-risk`, PR into `core`)
+  - `schemas.py` (shared, Risk section): LLM output contracts `RiskDraft(title,
+    description, severity, likelihood, justification, source, requirement_ids,
+    chunk_ids, mitigation)` and `RiskAssessmentDraft(risks)`. `Risk`, `RiskAssessment`
+    unchanged.
+  - `agents/risk.py`: `Findings` (uncovered mandatory IDs, conflict pairs once each,
+    absent non-hyperlink referenced documents, flags, budget-requirement count) and
+    `detect_findings` (pure); `format_solution`, `format_findings` (five labelled blocks
+    with `(none)` placeholders), `allowed_chunk_ids` (S7's union plus solution claims and
+    assumptions), `render_prompt`; `risk_schema(requirement_ids, chunk_ids, must_cite)`
+    (per-call `RiskAssessmentDraft` subclass via `create_model`: count band 3 to 15,
+    unknown requirement or chunk IDs named with the risk index and title, every
+    must-cite ID cited by some risk); `to_assessment` (stable sort by severity then
+    likelihood, `K01…`, ID dedupe, blank mitigation becomes `None`);
+    `RiskResult(assessment, findings)`; `build_risks(requirements, problem, solution, *,
+    title, referenced_documents, flags, model, settings, recorder, config)`: one
+    `structured_call`, node `risk_assess`; uncovered IDs absent from the requirement
+    list are logged, not enforced. Retry exhaustion raises.
+  - `agents/solution.py` (S7 file, two touches): `claim_line` made public;
+    `format_requirements(..., submission_heading=)` with the S7 default unchanged.
+  - `agents/__main__.py` (shared CLI): `python -m rfp_agent.agents risk <pdf> [-r
+    req.json] [-p problem.json] [-s solution.json] [-o out.json]`; runs the S4 quality
+    pass first, then S5, S6, S7 when their JSON is not given; prints the findings,
+    per-node metrics, a risk table and per-risk details.
+  - `prompts/risk.md`: role, fields, the two scales, rules (findings first, whole
+    picture, one risk one cause, count, cite only shown IDs, no invented facts, F6
+    tone), then title, findings, solution, problem, requirements (submission block under
+    a plain heading), ambiguities, gaps. Tuned once after the first four-RFP run (F12).
+  - Tests: `tests/test_risk.py` (18 fake-model tests: placeholders, findings detection
+    and placeholders, prompt content, allowed-ID union, schema name and acceptance, five
+    validator rejections, sort-then-number with stable ties and folding, one call with
+    recorder node and prompt hash, must-cite fed back then accepted, exhaustion raises,
+    unknown uncovered ID not enforced, JSON round trip, assembled summary with no
+    dangling citation rendering through S9 in K order); `tests/test_risk_live.py`
+    (`-m llm`, Missouri, S4 + S5 + S6 + S7 + S8). 309 unit tests pass, ruff clean.
+  - Live results, DeepSeek Flash, thinking off. Inputs: the S7 step's final `-o` JSON
+    per RFP (`runs/s7/*_req.json`, `*_prob.json`, `*_sol2.json`), parse flags judged by
+    S4 in the same run, then the risk call twice: on the first prompt and on the tuned
+    prompt. Rows are the tuned prompt; tokens, cost and latency are the risk call only
+    (the S4 pass adds $0.001 to $0.002 and 4 to 9 s where pages are flagged).
+
+    | RFP | findings: uncovered / conflicts / absent docs / flagged pages / budget reqs | risks | severity h/m/l | likelihood h/m/l | source rfp/solution | tokens in / out | cost | retries | latency | first prompt |
+    |---|---|---|---|---|---|---|---|---|---|---|
+    | Missouri | 0 / 2 / 2 / 4 / 7 | 12 | 5/7/0 | 2/10/0 | 8/4 | 16.0k / 3.2k | $0.008 | 0 | 19 s | 13 risks, $0.009 |
+    | NYESD | 0 / 2 / 4 / 0 / 15 | 13 | 6/7/0 | 4/9/0 | 8/5 | 22.6k / 3.7k | $0.011 | 0 | 22 s | 13 risks, $0.011 |
+    | Colfax | 0 / 2 / 3 / 0 / 11 | 13 | 7/6/0 | 2/10/1 | 9/4 | 14.1k / 3.6k | $0.008 | 0 | 22 s | 13 risks, $0.008 |
+    | Federal Way | 0 / 1 / 0 / 1 / 15 | 12 | 4/8/0 | 2/10/0 | 10/2 | 12.9k / 3.2k | $0.007 | 0 | 19 s | 13 risks, $0.008 |
+
+    Every citation resolves (the validator guarantees it). Read by eye: every code
+    finding became a risk (Missouri's Exhibits A and B, EPG 236.4.6.2, the unreadable
+    pages 19 to 20 and both conflict pairs; Colfax Attachments F and G and the hard-copy
+    versus email conflict; Federal Way's absent requirements document and image-only
+    page 5; NYESD's appendices and schedules), and the model added judgment code cannot
+    (Missouri's IS-approval gate before the proof of concept and the $175,000 cap
+    against an open-ended scope; NYESD's 250-versus-400 participant target and the
+    MWBE/SDVOB liquidated damages; Colfax's July 1, 2026 go-live being a goal, not a
+    milestone). Mitigations are actions with dates ("ask the City by July 31, 2025").
+    No tone slip ("the findings", "the inputs") in 100 risks across both runs. The
+    must-cite rule never fired live because S7 closed every uncovered requirement; the
+    unit tests exercise it.
+  - Docs: DECISIONS D33, F12; PROMPTS note and changelog; ASSUMPTIONS risks section;
+    TIMELOG; README risk section, status and layout lines. Shared files touched:
+    `schemas.py`, `agents/solution.py`, `agents/__main__.py`, `README.md`.
 - **Deviations from plan:**
+  - Prompt tuned once, as the plan allowed: all four first runs returned 13 risks
+    against "six to twelve" (F12). A count rule under Rules brought Missouri and Federal
+    Way to 12; NYESD and Colfax still return 13. The validator band is the contract.
+  - The debug CLI runs the S4 quality pass unconditionally (no opt-out flag): it is a
+    no-op when nothing is flagged and costs under $0.002 otherwise.
 - **Open issues:**
+  - Scales cluster: no `low` severity and one `low` likelihood in 50 risks on the tuned
+    prompt. Either the RFPs carry no low risk worth one of 12 slots, or the model avoids
+    the bottom of the scale; S12's judge should rate a sample of levels against the
+    definitions, and S13 can nudge ("name at least one low") if the judge disagrees.
+  - `source` wobbles between runs for the same risk (NYESD's MWBE goals: `rfp` on the
+    first run, `solution` on the second). A judge check, or a code rule such as
+    "`solution` only when the risk cites a component's claim or an assumption", is an
+    S13 experiment.
+  - Conflicts S5 over-flags (Missouri Oracle versus SQL Server) become risks here too
+    (Missouri K07); fixing S5's conflict precision fixes both.
+  - Risks about flagged pages and absent documents carry no chunk citation, so the
+    rendered "Why" line has no source link; the page number is in the text. S14/S15
+    could link the page instead.
+  - S10 wiring: after the S4 pass, the risk node calls `build_risks(requirements,
+    problem.statement, solution_result.solution, title=parsed.title,
+    referenced_documents=parsed.referenced_documents, flags=parsed.flags,
+    config=config)`; keep `RiskResult.findings` in the graph state for the UI.
 
 ### S9. JSON assembly and markdown renderer
 - **Status:** done
