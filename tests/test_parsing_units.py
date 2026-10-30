@@ -18,7 +18,6 @@ from rfp_agent.parsing.normalize import (
     strip_headers_footers,
 )
 from rfp_agent.parsing.pdf import pick_title
-from rfp_agent.parsing.quality import escalate
 from rfp_agent.parsing.references import (
     DOC_REF_RE,
     document_lines,
@@ -276,8 +275,3 @@ def test_pick_title_falls_back_to_first_heading():
     )
     assert pick_title(None, page) == "Request for Proposals ERP"
     assert pick_title("", "no headings") is None
-
-
-def test_escalate_stub_returns_none():
-    page = _page(19, "x")
-    assert escalate(page, flag_page(19, "x", [0.5])) is None

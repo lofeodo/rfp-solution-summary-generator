@@ -31,6 +31,10 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - A referenced attachment or exhibit counts as present only when its section in the PDF
   has at least 40 words; a cover page saying "provided separately" is absent (D22).
 - OCR is off: image-only pages are flagged for S4, not transcribed (D20).
+- The parse-quality judge (S4) sees the extracted text, the flags and each image's size
+  and caption, never the page image. Whether an image holds content is inferred from
+  that context; the VLM that would look at the image is stretch ST2 (D24).
+- Only flagged pages are judged. A damaged page that no heuristic flags is not caught.
 
 ## Models and keys
 

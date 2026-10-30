@@ -341,6 +341,37 @@ Evidence: 19 to 26% of drafted requirements corrected per RFP, almost all remova
 scope; 5 type or strictness edits in 265 drafted items; 0 drafted quotes failed
 verification (evals/gold/README.md).
 
+### D24. Parse quality: two-boolean verdict, attribution by match, flags replaced
+Context: S2's heuristics flag 12 pages across the four RFPs; most are covers, contents
+pages and short attachment dividers. Downstream steps (S8 risks, S9 parse-flags table)
+should see only real damage, and the roadmap asks that every escalation records whether
+code or the model triggered it.
+Options: a single `usable` boolean; ok/degraded/unusable scale; two booleans. Keep S2's
+flags and add a report beside them; or replace them with judged flags. Judge with the
+generator or with Claude.
+Choice (author decisions): one generator-model call per flagged page (all flags on the
+page in one call) returning `PageJudgement`: `text_usable` (the text represents the page),
+`content_missing` (the page holds content the text lacks, typically in an image),
+`page_kind`, `confirmed_flags`, one-sentence `reason`. Code decides: not bad clears the
+page (`code`, `confirmed_bad=False`); bad with at least one confirmed heuristic flag keeps
+those flags and calls the VLM hook (`code`); bad with no confirmed flag replaces the
+page's flags with an `other` flag carrying the reason (`model`). `confirmed_flags` is
+intersected with the page's real flags, so an invented flag name cannot survive. The pass
+returns a copy of the `ParsedDocument` holding only surviving flags plus a
+`ParseQualityReport`; every escalation also goes on the run log. A judge call that fails
+after retries keeps the page's flags. The VLM hook is a `(page, judgement) -> action`
+callable; core records "would escalate to VLM", ST2 swaps in transcription.
+Why: a single boolean conflates "the text is garbled" with "the text is fine but a table
+is in an image" (Federal Way p5), which the two booleans separate; the decision rule lives
+in code so the attribution is auditable and testable without a model. Replacing flags
+keeps later steps simple; the report and run log keep the full audit. Failing safe means
+a flaky judge can hide nothing. The generator judges because it is a pipeline node; the
+Claude judge stays reserved for evaluation (D3).
+Evidence: live on DeepSeek Flash, 12 pages judged, 0 retries, $0.0047 and 4 to 8 s per
+document; 9 false alarms cleared (Colfax p1, p2, p3, p20, p21, p22; Federal Way p2, p14;
+Missouri p12) and 3 escalated (Missouri p19, p20; Federal Way p5), matching the manual
+inspection in S2 exactly. The `model` path is exercised only by unit tests so far.
+
 ---
 
 ## Part 2 — Failure modes hit
