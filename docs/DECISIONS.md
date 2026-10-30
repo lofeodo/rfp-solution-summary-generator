@@ -594,6 +594,50 @@ $0.011 and 19 to 22 s; 12 to 13 risks per RFP; every code finding surfaced as a 
 (table in the roadmap, S8). No uncovered mandatory requirement reached S8 because S7's
 loop closed them all, so the must-cite rule is exercised by the unit tests only.
 
+### D34. One LangGraph graph of thin stage wrappers; runtime objects in closures, outputs on disk per stage
+Context: S2 to S9 each ship a function that takes `settings`, `recorder` and a LangChain
+`config`; the S8 debug CLI already chains them by hand. S10 must make that one graph
+with the S5/S6 fan-out, per-stage observability and a progress surface for the UI, and
+produce the first end-to-end outputs.
+Options: (a) a `StateGraph` whose nodes are the existing functions, called directly;
+(b) nest S7's compiled loop as a subgraph and move every agent's internals into graph
+nodes; (c) no graph, a plain function calling the stages in order with a thread for the
+fan-out. For progress: LangGraph stream modes (`updates`, `debug`) versus a callback
+from the node wrappers. For where intermediates live: in memory only, or written as
+each stage finishes.
+Choice: (a). Eight nodes (`parse`, `parse_quality`, `split`, `requirements`, `problem`,
+`solution`, `risk`, `assemble`); `split` fans out to `requirements` and `problem`, which
+join at `solution`. Every node is the same wrapper around a stage function: it emits a
+`StageEvent` (started / finished / failed, wall time, the stage's LLM calls and cost) to
+an optional callback, records a `StageRecord` on the run recorder (`RunLog.stages`, an
+additive change to the S1 schema), and writes the stage's output JSON into the run
+directory before returning. Settings, the one shared chat model, the recorder and the
+callback are bound in closures by `build_pipeline`; the state carries only documents
+and results. S7's revision loop stays a function call, since `build_solution` already
+runs its compiled graph with the same `config`, so tracing nests it. A stage's LLM
+calls are found by node-name prefix (`requirements_`, `problem_`, ...), so per-stage
+cost needs no second accounting. The CLI maps a failure to exit 1 with the stage named,
+and `activate()` writes the run log on the way out either way.
+Why: the agents' internals are already tested at their own level, so wrapping them
+keeps the graph small enough to explain in a minute and keeps S14's job to
+"subscribe to the callback and serve the files". A callback works from the executor
+threads the fan-out runs on, and it costs nothing when absent; parsing LangGraph's
+stream formats in the UI would couple S14 to LangGraph's event shapes. Writing
+intermediates per stage makes a failed run diagnosable (the log says which stage and
+why, the earlier outputs are on disk) and gives the UI and the evals one place to read
+from. Reading the recorder from the contextvar inside nodes would also have worked
+(LangGraph copies the context into its executor threads) but explicit binding does not
+depend on that.
+Evidence: first end-to-end runs on the four RFPs, one each, DeepSeek Flash: every
+stage finished, $0.048 to $0.101 and 79 to 110 s wall per RFP ($0.28 and 6.3 minutes in
+all), 0 to 1 structured-output retry per run, all mandatory requirements in scope
+covered, every citation resolving under strict assembly. The requirements and
+problem-statement branches took 21 to 48 s each and overlapped, so the middle of the
+run costs one branch's time. A stubbed-stage test holds both branches at a barrier to
+prove they run concurrently, and a forced failure in the solution stage leaves the
+log with the stage marked failed, the error text, and the requirements and problem
+JSON on disk. Table in the roadmap, S10; samples under `runs/samples/`.
+
 ---
 
 ---

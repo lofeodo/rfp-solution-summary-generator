@@ -82,8 +82,8 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   requirements, conflict pairs, referenced documents the parser marked absent
   (hyperlinks excluded, since presence is only judged for attachments and appendices),
   the parse flags the caller passes, and the budget-requirement count.
-- "Flagged pages" means the flags the caller passes. The debug CLI runs the S4 judge
-  first so only confirmed flags reach the model; S10 should do the same. A risk about a
+- "Flagged pages" means the flags the caller passes. The debug CLI and the pipeline
+  graph both run the S4 judge first so only confirmed flags reach the model. A risk about a
   flagged page or a missing document carries no chunk citation, since neither has one;
   the page number is in the text.
 - Severity is the impact if the risk happens (high: the project fails, misses a
@@ -132,6 +132,13 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   run log per run. The eval harness and UI read the JSON log, so nothing depends on
   Langfuse being reachable; tracing is a no-op when keys are absent.
 - Local run plus a Dockerfile is the target; no cloud deployment in core.
+- A pipeline run writes every stage's JSON into its run directory as the stage
+  finishes, next to the summary and the run log, so a failed run keeps what it had and
+  the UI can serve intermediates without re-running anything. Run directories are
+  gitignored except the committed samples. The requirements and problem-statement
+  stages run in parallel, each with its own thread pool, so a run makes up to twice
+  `RFP_LLM_CONCURRENCY` calls at once; the DeepSeek tier used here has not rate-limited
+  that.
 - The demo recording is produced by the author; the README includes the demo script.
 - Gold labels cover core requirements only (D23): a correctly extracted boilerplate
   clause is not in gold and must not count as a false positive, so S12 judges precision

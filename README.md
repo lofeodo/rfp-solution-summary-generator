@@ -10,7 +10,8 @@ latency, cost).
 **Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
 section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
 (S5), problem statement (S6), solution generator (S7), risk assessor (S8),
-renderer (S9) and gold labels (S11). The pipeline lands step by step; see
+renderer (S9), the end-to-end graph and CLI (S10) and gold labels (S11). Sample
+outputs for the four RFPs are under `runs/samples/`. Next: the eval harness (S12); see
 `docs/ROADMAP.md`.
 
 ## Pipeline
@@ -44,17 +45,45 @@ pytest                                   # unit tests; nothing here calls a paid
 pytest --update-golden                   # rewrite golden files after an intended render change
 ```
 
-Run the pipeline on the default brief (lands in step S10):
+Run the pipeline on the default brief:
 
 ```bash
 python -m rfp_agent run inputs/rfp_brief.pdf
 ```
 
 Outputs go to `runs/<run_id>/`: `summary.json` (the source of truth), `summary.md`
-(rendered from the JSON by code) and a run log with per-node tokens, latency and cost.
+(rendered from the JSON by code), `run_log.json` (per-call tokens, latency and cost,
+per-stage wall time) and every intermediate (`parsed.json`, `quality.json`,
+`split.json`, `requirements.json` and its report, `problem.json`, `solution.json`,
+`risks.json`), each written as its stage finishes so a failed run keeps what it had.
 Citations in the markdown read `(Section title, p. 4 [S3.2])`; the bracketed chunk ID
-is the key into the JSON. A sample rendering lives in `tests/fixtures/summary_sample.md`. Langfuse tracing turns on automatically when `LANGFUSE_*` keys are set
-and is a no-op otherwise.
+is the key into the JSON. Committed samples for the four RFPs live under
+`runs/samples/<rfp>/`. Langfuse tracing turns on automatically when `LANGFUSE_*` keys
+are set and is a no-op otherwise.
+
+## Running the pipeline
+
+`python -m rfp_agent run <pdf>` runs the graph below: parse, judge the flagged pages,
+split, then requirements extraction and the problem statement in parallel, then the
+solution, the risks, and the assembled summary. The CLI prints one line per stage as it
+starts and finishes (wall time, LLM calls, cost), then a per-stage table, a per-node
+table and the run totals.
+
+| Flag | Effect |
+|---|---|
+| `--full-text-problem` | ablation: problem statement from one full-text call (`RFP_FULL_TEXT_PROBLEM`) |
+| `--single-call-extraction` | ablation: one extraction call over the whole document (`RFP_SINGLE_CALL_EXTRACTION`) |
+| `--max-iterations N` | solution rounds for this run (`RFP_SOLUTION_MAX_ITERATIONS`) |
+| `--model provider:id` | generator for this run (`RFP_MODEL`) |
+| `--runs-dir DIR`, `--run-id ID` | where the run directory goes (default `runs/<timestamp-hex>/`) |
+| `-v` | log every failed structured-output attempt and its feedback |
+
+Exit codes: 0 on success, 1 when a stage fails (the run log and the intermediates
+written so far are kept, and the failing stage is named), 2 when the provider key is
+missing. The graph is importable too: `rfp_agent.graph.run_pipeline(pdf, on_event=...)`
+calls back with a `StageEvent` (`started`, `finished`, `failed`, wall time, the stage's
+calls and cost) from each node, which is what the UI (S14) streams. Per-agent debug
+commands with JSON reuse of upstream outputs live in `python -m rfp_agent.agents`.
 
 ## Parsing
 
@@ -230,6 +259,7 @@ All settings live in `.env` (see `.env.example`); `RFP_*` variables override def
 | `RFP_DEEPSEEK_THINKING` | `false` | DeepSeek thinking mode (structured output switches to JSON mode when on) |
 | `RFP_LLM_CONCURRENCY` | `4` | parallel calls in per-chunk stages (requirement extraction, problem-statement summaries) |
 | `RFP_FULL_TEXT_PROBLEM` | `false` | problem statement from one full-text call instead of per-chunk summaries (ablation) |
+| `RFP_SINGLE_CALL_EXTRACTION` | `false` | requirements from one call over the whole document instead of per chunk plus dedupe (ablation) |
 | `RFP_SOLUTION_MAX_ITERATIONS` | `3` | solution rounds: one generation plus revisions while mandatory requirements are uncovered; `1` disables revision |
 
 ## Observability
@@ -237,8 +267,11 @@ All settings live in `.env` (see `.env.example`); `RFP_*` variables override def
 Every LLM call goes through `structured_call` in `src/rfp_agent/llm.py`, which records
 one entry per call (node, model, input, output and cached tokens, cost from the pricing
 table in `config.py`, latency, retries) into the run's log. The log also holds the model,
-temperature and the SHA-256 of every prompt file used, and is written to
-`runs/<run_id>/run_log.json` even when a run fails. Langfuse tracing is added as a
+temperature and the SHA-256 of every prompt file used, plus one `stages` entry per
+graph node (status, wall time, error text on failure), and is written to
+`runs/<run_id>/run_log.json` even when a run fails. A stage's LLM calls are the nodes
+whose name starts with the stage's prefix (`requirements_`, `problem_`, `solution_`,
+`risk_`, `parse_quality`). Langfuse tracing is added as a
 LangChain callback when `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY` are set, and is
 off otherwise.
 
@@ -273,6 +306,8 @@ python -m evals.gold.label diff --all    # draft vs final correction table
 src/rfp_agent/
   config.py        provider/model setting, paths, pricing table
   schemas.py       Pydantic v2 contract between every pipeline stage
+  graph.py         the LangGraph pipeline: stage wrappers, events, run_pipeline (S10)
+  cli.py           `python -m rfp_agent run <pdf>` (S10)
   parsing/         PDF to markdown, page flags, referenced documents (S2), quality pass (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
   agents/          requirements extractor with dedupe (S5), problem (S6), solution
@@ -282,7 +317,7 @@ src/rfp_agent/
 prompts/           one markdown prompt per agent
 tests/             pytest; `@pytest.mark.llm` tests are skipped by default
 evals/             gold labels, harness, results (S11 to S13)
-runs/samples/      committed sample run outputs
+runs/samples/      committed end-to-end outputs for the four RFPs (S10)
 docs/              ROADMAP, DECISIONS, ASSUMPTIONS, TIMELOG, PROMPTS
 ```
 
