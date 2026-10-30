@@ -270,6 +270,8 @@ def test_run_pipeline_wires_every_stage_and_writes_every_file(tmp_path, monkeypa
     assert stubs.calls[RISK]["title"] == result.summary.document_title
     assert result.summary.run_id == "t1"
     assert result.summary.model == SETTINGS.model
+    assert "\\" not in result.summary.source_path  # posix form on every OS
+    assert result.run_log.source_path == result.summary.source_path
 
     # Events: started and finished once per stage, finished carries the stage's calls.
     assert sorted(events_of(events, StageStatus.STARTED)) == sorted(STAGES)

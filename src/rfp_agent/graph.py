@@ -303,7 +303,10 @@ def build_pipeline(
         return node
 
     def parse(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
-        return {"parsed": parse_pdf(state["pdf_path"])}
+        parsed = parse_pdf(state["pdf_path"])
+        # parse_pdf stringifies a Path, which uses backslashes on Windows; keep the
+        # posix form the run was started with so every output reads the same on any OS.
+        return {"parsed": parsed.model_copy(update={"source_path": state["pdf_path"]})}
 
     def parse_quality(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
         parsed, report = run_quality_pass(
@@ -459,16 +462,17 @@ def run_pipeline(
         single_call_extraction=single_call_extraction,
         max_iterations=max_iterations,
     )
-    pdf = Path(pdf)
+    # Forward slashes whatever the OS, so run logs and samples read the same everywhere.
+    pdf_path = Path(pdf).as_posix()
     if model is None:
         model = get_chat_model(settings=settings)
     recorder = RunRecorder.from_settings(
-        pdf, settings, run_id=run_id, runs_dir=runs_dir or RUNS_DIR
+        pdf_path, settings, run_id=run_id, runs_dir=runs_dir or RUNS_DIR
     )
     handler = make_langfuse_handler(settings)
     config: RunnableConfig = {
         "run_name": f"rfp-run-{recorder.run_id}",
-        "metadata": {"run_id": recorder.run_id, "source": str(pdf)},
+        "metadata": {"run_id": recorder.run_id, "source": pdf_path},
     }
     if handler is not None:
         config["callbacks"] = [handler]
@@ -482,7 +486,7 @@ def run_pipeline(
     try:
         with recorder.activate():
             try:
-                state: PipelineState = graph.invoke({"pdf_path": str(pdf)}, config=config)
+                state: PipelineState = graph.invoke({"pdf_path": pdf_path}, config=config)
             except Exception as exc:
                 failed = [s.stage for s in recorder.log.stages if s.status == StageStatus.FAILED]
                 stage = failed[-1] if failed else "unknown"
