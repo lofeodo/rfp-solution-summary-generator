@@ -480,7 +480,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S4. Parse quality pass (LLM judge of flagged pages, VLM hook)
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** for pages flagged by S2 heuristics, one LLM call judges whether the page's
   extracted text is usable; pages confirmed bad are passed to a VLM hook that in core
   only records "would escalate" (transcription is stretch). Log for every escalation
@@ -488,7 +488,36 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   a fake model.
 - **Depends on:** S1, S2
 - **Parallel with:** S3, S5, S6, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** the judge returns two booleans,
+    `text_usable` and `content_missing`, plus a page kind, the heuristic flags it
+    confirms and a one-sentence reason; a page is bad when its text is unusable or
+    content is missing. The pass replaces `ParsedDocument.flags` with the judged flags
+    and attributes each escalation by match: `code` when the judge confirms a heuristic
+    flag, `model` when it finds a problem no heuristic named. The generator model judges;
+    a judge failure keeps the page's flags and the run continues. The prompt is one
+    template rendered into one human message (the S11 convention).
+  - **Branch:** `step-04-parse-quality` off `core` as a worktree; one commit per unit.
+  - **`schemas.py` (shared, Parsing section):** `PageKind` enum; `PageJudgement` (LLM
+    output contract, `bad` property); `ParseQualityReport` (judgements by page,
+    escalations, judged pages). `Escalation` is unchanged.
+  - **`parsing/quality.py`:** `judge_page()` renders `prompts/parse_quality.md` with the
+    title, page number and count, flags, images and page markdown, and calls
+    `structured_call(node="parse_quality")`, one call per flagged page. `escalate(page,
+    flags, judgement, hook)` replaces the S2 stub and applies the attribution rule. The
+    VLM hook is a callable `(page, judgement) -> action text`; the default
+    `record_only_hook` returns "would escalate to VLM: <reason>" (ST2 swaps in
+    transcription). `run_quality_pass(parsed, ...) -> (ParsedDocument, ParseQualityReport)`
+    judges each flagged page, records every escalation on the run recorder, and returns a
+    copy of the document holding only confirmed and model-raised flags.
+  - **Debug CLI:** `python -m rfp_agent.parsing <pdf> --judge` runs the pass and prints
+    each judgement.
+  - **Tests:** fake-model unit tests for every branch (no flags, cleared, confirmed,
+    model-raised, several flags on one page, judge failure, prompt content, recorder,
+    custom hook, schema round-trip); a live `llm` test on Federal Way (p5 escalated, p2
+    cleared); one live run on all four RFPs for the results table.
+  - **Docs:** DECISIONS D24 plus failure modes hit, PROMPTS design note and changelog,
+    ASSUMPTIONS (judge sees text only), TIMELOG, README parsing section.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
