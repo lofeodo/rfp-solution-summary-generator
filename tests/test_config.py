@@ -43,6 +43,7 @@ def test_defaults():
     assert s.request_timeout_s == 120.0
     assert s.llm_transport_retries == 2
     assert s.deepseek_thinking is False
+    assert s.llm_concurrency == 4
     assert s.full_text_problem is False
     assert s.single_call_extraction is False
     assert s.generator == ("deepseek", "deepseek-flash")

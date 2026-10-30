@@ -60,6 +60,43 @@ Known weaknesses: cannot see the image, so a decorative large image next to a se
 that sounds like a lead-in could be escalated; blank fill-in forms (Missouri affidavits)
 are escalated although transcribing them adds little.
 
+### prompts/problem_chunk.md
+Purpose: stage one of the problem statement (S6): what one chunk says about who the
+client is, what they need and why, and under what constraints.
+Inputs it receives: `{{title}}`, `{{chunk_id}}`, `{{section_path}}` (`A > B`),
+`{{pages}}`, `{{text}}` (the chunk, overlap sentence included).
+Output contract (schema): `ChunkSummaryDraft` in `schemas.py` (`relevant`, `summary`);
+code attaches the chunk ID (D28).
+Why it is written this way: the relevance list mirrors the gold checklist categories
+(issuer, need, deliverables, dates, money, constraints, evaluation, referenced documents)
+so stage one keeps exactly what the synthesis must cite; "keep every number, date, amount,
+name and document exactly" because the synthesis can only state values that survive
+stage one; the model is told it sees one chunk and must not guess the rest, which keeps
+summaries factual; the irrelevant list names the boilerplate seen on the four RFPs
+(contents, cover, signature blocks, generic clauses).
+Known weaknesses: summaries run long (NYESD: 76k input tokens become 13k of summaries,
+little shorter than the 18.5k full text); "two to five sentences" is advisory and not
+enforced. Relevance is generous (60 to 63 of 70 NYESD chunks), which is the safe side.
+
+### prompts/problem_synthesis.md
+Purpose: stage two of the problem statement (S6), and the full-text baseline: four lists
+of cited claims (client situation, goal, success criteria, constraints).
+Inputs it receives: `{{title}}`, `{{evidence_kind}}` (one sentence saying whether the
+evidence is summaries or full text), `{{evidence}}` (items labelled `[S3.2] section
+path (pages n)`).
+Output contract (schema): a per-call subclass of `ProblemStatement` that rejects empty
+lists and chunk IDs outside the evidence (D28).
+Why it is written this way: each list is defined by the questions a bid team asks, with
+the checklist categories spread across them so nothing has two homes; "state the concrete
+value" with a positive and a negative example, because a claim without the number is not
+checkable; `fact` vs `inference` is defined by whether a cited chunk states the claim,
+since S12's grounding judge checks exactly that; "three to eight per list" is advisory,
+the validator enforces only non-empty; the same prompt serves both modes so the S13
+ablation varies the evidence only; the last rule ("write about the RFP, never the
+evidence") came from F6.
+Known weaknesses: in 2 of 4 NYESD runs the first attempt cited an ID outside the evidence
+or left a list empty (F7); the model occasionally spends a constraint slot on a
+procedural detail (upload folder layout) rather than a solution constraint.
 ### prompts/requirements_extract.md
 Purpose: extract core requirements, ambiguities and gaps from one chunk (S5); the same
 file, with `{{unit}}` and `{{mode_rules}}` swapped, serves the single-call ablation over
@@ -69,15 +106,15 @@ separately), `{{mode_rules}}` (empty, or the chunk-ID citation rule in document 
 `{{title}}`, `{{input}}` (one or many `### Chunk S3.2` blocks with section path, pages and
 the text in `<chunk>` tags).
 Output contract (schema): `ChunkExtraction` or `DocumentExtraction` in `schemas.py`.
-Code assigns IDs, cites the chunk, verifies quotes (D28) and dedupes.
+Code assigns IDs, cites the chunk, verifies quotes (D29) and dedupes.
 Why it is written this way: the include/exclude scope is the gold prompt's, so extractor
-and labeller agree on what a requirement is (D30); the exclude list names the boilerplate
+and labeller agree on what a requirement is (D31); the exclude list names the boilerplate
 clauses the first run kept (assignment, independent contractor, audit, FFATA) and says a
 form is one item, not one per field; "many chunks contain no requirement" and "returning
 empty lists is correct" stop the model inventing obligations from headings; the quote
 rule says code checks it verbatim, which makes the model copy rather than tidy;
 ambiguities and gaps both carry a "not this" list, because the first run reported other
-sections of the same RFP as missing (F6); the instructions come first and the chunk last
+sections of the same RFP as missing (F8); the instructions come first and the chunk last
 so DeepSeek's prefix cache serves about three quarters of the input tokens.
 Known weaknesses: still generous with `submission` items (proposal-content lists split
 finely) and with ambiguities (29 to 70 per RFP); the gap definition pulls in every
@@ -85,7 +122,7 @@ linked form on a form-heavy RFP (NYESD 38); output varies between runs at temper
 
 ### prompts/requirements_dedupe.md
 Purpose: one grouping pass over the exact-deduped list: which IDs state the same
-obligation, which contradict (D6, D29).
+obligation, which contradict (D6, D30).
 Inputs it receives: `{{requirements}}`, one line per item: `ID [strictness, type] text —
 "quote" (chunk IDs)`.
 Output contract (schema): `DedupeOutput` (groups with `representative_id` and
@@ -107,9 +144,11 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
-| 2026-10-30 | requirements_extract | Gaps: name the document, never its URL; a document named with its link is one gap | NYESD listed 50 gaps, most forms twice (name and URL) (F7); 38 after |
-| 2026-10-30 | requirements_extract | Expanded boilerplate exclusions, one item per form; ambiguities and gaps exclude content defined elsewhere in the same RFP and ordinary lack of detail | Missouri first run: 144 requirements, 105 ambiguities, 39 gaps, most "not in this chunk" (F6); 131 / 53 / 12 after |
+| 2026-10-30 | requirements_extract | Gaps: name the document, never its URL; a document named with its link is one gap | NYESD listed 50 gaps, most forms twice (name and URL) (F9); 38 after |
+| 2026-10-30 | requirements_extract | Expanded boilerplate exclusions, one item per form; ambiguities and gaps exclude content defined elsewhere in the same RFP and ordinary lack of detail | Missouri first run: 144 requirements, 105 ambiguities, 39 gaps, most "not in this chunk" (F8); 131 / 53 / 12 after |
 | 2026-10-30 | requirements_dedupe | "An ID may appear once across the whole answer; check before answering"; alternatives and a standard next to its stricter version are not conflicts | Missouri first run: R030 in three groups on both turns (fallback used); clean after one turn on all reruns |
 | 2026-10-30 | requirements_extract, requirements_dedupe | Created (S5) | First version |
+| 2026-10-30 | problem_synthesis | Rule: write about the RFP, never "the evidence" or "the summaries" | F6: 3 of 4 live outputs leaked the prompt's framing into claims; 0 of 2 after |
+| 2026-10-30 | problem_chunk, problem_synthesis | Created (S6) | First version; rough checklist coverage 12/12 on four RFPs |
 | 2026-10-30 | parse_quality | Created (S4) | First version; 12 of 12 live verdicts matched manual inspection |
 | 2026-10-30 | gold_requirements, gold_checklist | Created (S11) | First version |

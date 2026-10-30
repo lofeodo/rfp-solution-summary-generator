@@ -34,7 +34,7 @@ from rfp_agent.schemas import (
     Strictness,
 )
 
-SETTINGS = Settings(_env_file=None, max_structured_retries=1, extract_concurrency=1)
+SETTINGS = Settings(_env_file=None, max_structured_retries=1, llm_concurrency=1)
 
 TEXTS = {
     "S1.1": "The Contractor **shall** deliver a web application by March 1, 2025. "
@@ -381,7 +381,7 @@ def test_concurrent_calls_keep_document_order():
         return reply([item(f"Do thing {cid}.", f"shall do thing {cid}")])
 
     model = ScriptedChatModel(responder=responder)
-    settings = Settings(_env_file=None, max_structured_retries=1, extract_concurrency=4)
+    settings = Settings(_env_file=None, max_structured_retries=1, llm_concurrency=4)
     out, report = extract_requirements(doc, model=model, settings=settings, title="T")
     assert [r.chunk_ids for r in out.requirements] == [[i] for i in ids]
     assert [r.id for r in out.requirements] == [f"R{n:03d}" for n in range(1, 9)]

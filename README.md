@@ -8,7 +8,8 @@ source. The repo includes an evaluation harness and per-run observability (token
 latency, cost).
 
 **Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
-section and chunk splitting (S3), parse-quality pass (S4), requirements extractor (S5),
+section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
+(S5), problem statement (S6),
 renderer (S9) and gold labels (S11). The pipeline lands step by step; see
 `docs/ROADMAP.md`.
 
@@ -106,7 +107,7 @@ python -m rfp_agent.splitting data/rfps/federal_way.pdf --out federal_way_split.
 
 `rfp_agent.agents.requirements.extract_requirements(split, title=...)` turns a
 `SplitDocument` into a `RequirementsOutput` (requirements, ambiguities, gaps) plus a
-`RequirementsReport`. One structured LLM call per chunk (`RFP_EXTRACT_CONCURRENCY` in
+`RequirementsReport`. One structured LLM call per chunk (`RFP_LLM_CONCURRENCY` in
 parallel, default 4) returns core requirements with type, strictness and a verbatim
 quote; code looks every quote up in the chunk, gives the model one turn to fix the ones
 it cannot find, and keeps the rest flagged `quote_verified=false`. Code assigns the
@@ -123,7 +124,31 @@ call over the whole document instead, the eval baseline. To inspect it (paid, a 
 cents per RFP):
 
 ```bash
-python -m rfp_agent.agents.requirements data/rfps/colfax.pdf --out colfax_requirements.json
+python -m rfp_agent.agents requirements data/rfps/colfax.pdf --out colfax_requirements.json
+## Problem statement
+
+`rfp_agent.agents.problem.build_problem_statement(split, title=...)` writes the part of
+the summary that says what the client is asking for and why: four lists of one-sentence
+claims (client situation, goal, success criteria, constraints), each citing the chunk IDs
+that support it and labelled `fact` or `inference`. Two paths:
+
+- **Hierarchical** (default): one call per chunk (prompt `prompts/problem_chunk.md`,
+  `RFP_LLM_CONCURRENCY` calls at a time) returns whether the chunk is relevant and a
+  compact factual summary; code attaches the chunk ID. One synthesis call
+  (`prompts/problem_synthesis.md`) then sees only the relevant summaries, labelled with
+  their IDs. The synthesis output schema rejects an empty list or a citation that was not
+  in the evidence, so the validation error goes back to the model and the call is
+  retried; after the retry budget the node fails rather than keep an unverifiable claim.
+- **Full text** (`RFP_FULL_TEXT_PROBLEM=true`, the S13 ablation): the same synthesis
+  prompt over the full text of every chunk with the same labels.
+
+On the four RFPs the hierarchical path costs $0.01 to $0.04 and 30 to 60 s on DeepSeek
+Flash, the full-text call $0.004 to $0.008 and about 10 s; both mention every fact of the
+gold checklists that the parsed text contains. To run one agent on its own (paid):
+
+```bash
+python -m rfp_agent.agents problem data/rfps/colfax.pdf --out colfax_problem.json
+python -m rfp_agent.agents -v problem data/rfps/colfax.pdf --full-text   # -v logs retries
 ```
 
 ## Configuration
@@ -140,6 +165,8 @@ All settings live in `.env` (see `.env.example`); `RFP_*` variables override def
 | `RFP_REQUEST_TIMEOUT_S` | `120` | per-request timeout |
 | `RFP_LLM_TRANSPORT_RETRIES` | `2` | SDK retries on 429, 5xx and connection errors |
 | `RFP_DEEPSEEK_THINKING` | `false` | DeepSeek thinking mode (structured output switches to JSON mode when on) |
+| `RFP_LLM_CONCURRENCY` | `4` | parallel calls in per-chunk stages (requirement extraction, problem-statement summaries) |
+| `RFP_FULL_TEXT_PROBLEM` | `false` | problem statement from one full-text call instead of per-chunk summaries (ablation) |
 
 ## Observability
 
@@ -184,7 +211,8 @@ src/rfp_agent/
   schemas.py       Pydantic v2 contract between every pipeline stage
   parsing/         PDF to markdown, page flags, referenced documents (S2), quality pass (S4)
   splitting/       sections and citable chunks with stable IDs (S3)
-  agents/          requirements extractor with dedupe (S5); problem, solution, risk (S6 to S8)
+  agents/          requirements extractor with dedupe (S5), problem (S6), solution,
+                   risk; `python -m rfp_agent.agents` debug CLI
   textmatch.py     quote matching tolerant of markdown and typography (S5, gold labels)
   render/          JSON assembly and markdown rendering (S9)
 prompts/           one markdown prompt per agent

@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S9,S11 done
-    class S6 ready
+    class S0,S1,S2,S3,S4,S5,S6,S9,S11 done
+    class S7 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S9, S11 (green). Ready now, all
-dependencies done (amber): S6; S7 follows once S6 lands. Update the two `class` lines in
+**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S9, S11 (green). Ready
+now, all dependencies done (amber): S7. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
@@ -705,7 +705,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     assigns IDs; gaps deduped by normalised document name); an unverified quote gets one
     code-level retry with feedback naming the quote, then the item is kept with
     `quote_verified=False` (the requirement is real even if the quote is sloppy); chunk
-    calls run in a thread pool (`Settings.extract_concurrency`, default 4) with the
+    calls run in a thread pool (`Settings.llm_concurrency`, default 4) with the
     recorder passed explicitly (contextvars do not cross threads); `.gitattributes`
     pins `prompts/**`, `tests/fixtures/**` and `evals/gold/*.json` to LF (S3's open issue).
   - **Branch:** `step-05-requirements` off `core` as a worktree; PR into `core`.
@@ -714,8 +714,8 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `ExtractedRequirement`, `ExtractedAmbiguity`, `ExtractedGap`, `ChunkExtraction`,
     `Cited*` + `DocumentExtraction` for single-call, `DedupeGroup`,
     `RequirementConflict`, `DedupeOutput`; existing models unchanged); `config.py`
-    (`extract_concurrency`); `agents/requirements.py`; `prompts/requirements_extract.md`,
-    `prompts/requirements_dedupe.md`; debug CLI `python -m rfp_agent.agents.requirements`.
+    (`llm_concurrency`); `agents/requirements.py`; `prompts/requirements_extract.md`,
+    `prompts/requirements_dedupe.md`; debug CLI `python -m rfp_agent.agents requirements`.
   - **Pipeline:** per chunk, one `structured_call(node="requirements_extract")` →
     `verify_quotes` with `find_quote` → feedback retry if any quote is unverified (retry
     accepted only if it verifies at least as many items) → a failed chunk yields nothing
@@ -735,7 +735,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     chunk failure, assemble, exact dedupe, group checks and fallback, conflict split,
     the exactly-one-group invariant, end-to-end with recorder, single-call path,
     concurrency order); a live `llm` test on Missouri.
-  - **Docs:** DECISIONS D28 to D30 plus any failure modes hit, PROMPTS notes and
+  - **Docs:** DECISIONS D29 to D31 plus any failure modes hit, PROMPTS notes and
     changelog, ASSUMPTIONS, TIMELOG, README requirements section, `.env.example`.
 - **What was done:** (branch `step-05-requirements`, PR into `core`)
   - `src/rfp_agent/textmatch.py`: `normalise`, `find_quote` moved from `evals/gold/`
@@ -746,7 +746,8 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `CitedGap` + `DocumentExtraction` for single-call mode; `DedupeGroup`
     (`representative_id`, `member_ids`), `RequirementConflict`, `DedupeOutput`.
     `Requirement`, `Ambiguity`, `Gap`, `RequirementsOutput` unchanged.
-  - `config.py` (shared): `extract_concurrency` (default 4); `.env.example` line.
+  - `config.py` (shared): the extractor reads S6's `llm_concurrency` (default 4); its
+    description now names both stages. No new setting.
   - `agents/requirements.py`: `extract_requirements(split, title=, model=, settings=,
     recorder=, config=, single_call=) -> (RequirementsOutput, RequirementsReport)`.
     Per chunk: `render_chunk_prompt` → `verified_call` (a `structured_call` followed by
@@ -769,16 +770,16 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     (cited chunk exists and quote found in it), items citing an unknown chunk dropped
     after the feedback turn, grouping call skipped. Node names `requirements_extract`,
     `requirements_extract_single`, `requirements_dedupe`.
-  - `agents/requirements_cli.py`: `python -m rfp_agent.agents.requirements <pdf>
-    [--single-call] [--concurrency N] [--out f.json]` prints the table, ambiguities,
-    gaps, the report and run totals.
+  - `agents/__main__.py` (S6's agents CLI, shared): a `requirements` command,
+    `python -m rfp_agent.agents requirements <pdf> [--single-call] [--out f.json]`, prints
+    the report summary, per-node metrics, the requirements table, ambiguities and gaps.
   - Prompts `requirements_extract.md` (one file for both modes: `{{unit}}`,
     `{{mode_rules}}`, `{{title}}`, `{{input}}`; instructions first so the provider
     prefix cache hits, about 74% of input tokens were cache reads) and
     `requirements_dedupe.md` (`{{requirements}}`). Tuned once after the first Missouri
-    run (F6, F7).
-  - `.gitattributes`: `prompts/**`, `tests/fixtures/**`, `evals/gold/*.json` are LF on
-    every checkout (closes S3's open issue; prompt hashes now match across OSes).
+    run (F8, F9).
+  - `.gitattributes`: added here for `prompts/**`, `tests/fixtures/**`, `evals/gold/*.json`;
+    S6 landed a broader version first, which the merge kept.
   - Tests: `tests/test_requirements.py` (23 fake-model tests: prompt rendering, numbering
     and citation, quote feedback accepted / worse retry discarded / still unverified kept,
     markup-tolerant matching, failed chunk skipped, exact dedupe across the overlap,
@@ -793,7 +794,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     containment against gold either way after normalisation (a sanity number, not the
     S12 metric: several "misses" are the same requirement with a different span, e.g.
     every cover-page deadline was extracted). NYESD is the only run on the final prompt
-    (the gap-naming line was added after the first three; see F7).
+    (the gap-naming line was added after the first three; see F9).
 
     | RFP | chunks | calls | pre-dedupe | exact | fuzzy | final | conflicts | ambiguities | gaps | gold | crude recall | cost | latency (summed) |
     |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -810,20 +811,22 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     (S11's open issue) as a flagged conflict; Missouri's fixed milestone dates vs
     relative deadlines as four conflicts; Federal Way's separate Requirements document
     as a gap.
-  - Docs: DECISIONS D28 to D30, F6, F7; PROMPTS notes and changelog; ASSUMPTIONS;
+  - Docs: DECISIONS D29 to D31, F8, F9; PROMPTS notes and changelog; ASSUMPTIONS;
     TIMELOG; README requirements section; `prompts/README.md` rows already existed.
     Shared files touched: `schemas.py`, `config.py`, `.env.example`, `README.md`,
     `tests/fakes.py`, `evals/gold/textmatch.py`.
 - **Deviations from plan:**
-  - The debug CLI lives in `agents/requirements_cli.py` rather than under a `__main__`
-    guard inside the agent: with `from __future__ import annotations`, typer cannot
-    resolve `Annotated` defined inside a function. `python -m rfp_agent.agents.requirements`
-    still works (the guard delegates).
+  - The debug CLI is a command on S6's `python -m rfp_agent.agents` app rather than a
+    module of its own: a first version under a `__main__` guard inside the agent failed
+    (with `from __future__ import annotations`, typer cannot resolve `Annotated` defined
+    inside a function), and S6 had meanwhile added the shared app.
+  - `extract_concurrency` was dropped on merge in favour of S6's `llm_concurrency`: one
+    knob for every per-chunk stage.
   - One prompt file serves both modes (`{{unit}}`, `{{mode_rules}}`) instead of a second
     document-mode file.
   - Prompt tuned once after the first live run instead of shipping the first draft: the
-    model reported other sections of the same RFP as ambiguities and gaps (F6) and
-    listed NYESD forms twice, by name and by URL (F7). Requirements 144 → 131,
+    model reported other sections of the same RFP as ambiguities and gaps (F8) and
+    listed NYESD forms twice, by name and by URL (F9). Requirements 144 → 131,
     ambiguities 105 → 53, gaps 39 → 12 on Missouri.
   - `exact_dedupe` lets a verified quote replace an unverified one on merge (not in the
     plan; costs nothing and improves the evidence).
@@ -850,7 +853,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `Settings` reads `REPO_ROOT/.env` and `REPO_ROOT` is the worktree.
 
 ### S6. Problem statement (hierarchical)
-- **Status:** todo
+- **Status:** done
 - **Goal:** `agents/problem.py`: stage one summarises each chunk ("what is being built,
   for whom, why, under what constraints") tagged with its chunk ID, near-empty for
   irrelevant chunks; stage two synthesises client situation, goal, success criteria,
@@ -859,10 +862,171 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   that cited IDs exist. Prompts `prompts/problem_chunk.md`, `prompts/problem_synthesis.md`.
 - **Depends on:** S1, S3
 - **Parallel with:** S4, S5, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** stage one is **one call per chunk, run
+    concurrently** in a thread pool (new setting `RFP_LLM_CONCURRENCY`, default 4); code
+    sets the chunk ID on each summary, so the model never writes a citation in stage one.
+    In synthesis a claim citing a chunk ID that was not among the summaries shown is
+    caught by a **validator on the output schema**, so `structured_call` feeds the bad IDs
+    back and retries (the S11 F4 pattern); when the budget is exhausted the node raises
+    and the run log shows why, no silent drops. The same validator rejects an **empty
+    claim list** (an RFP always has a situation, goal, success criteria and constraints);
+    the prompt asks for 3 to 8 claims per list but the upper bound is not enforced.
+    A **`.gitattributes`** forces LF on `prompts/` and `tests/fixtures/` (S3's open
+    issue: CRLF checkouts on Windows broke one S4 test and made prompt hashes differ by OS).
+  - **Taken without asking:** every chunk is summarised, no code-side skipping (tiny
+    front-matter chunks such as "Issued: August 8, 2025" carry facts); synthesis sees only
+    summaries marked relevant, in document order, each with its chunk ID, section path and
+    pages; the **full-text baseline** (`Settings.full_text_problem`) sends every chunk's
+    own text (overlap stripped with `own_text`) with the same IDs through the same
+    synthesis prompt, so the evidence is the only variable in the S13 comparison;
+    `problem_synthesis.md` therefore takes `{{evidence}}` plus a one-line
+    `{{evidence_kind}}`; a chunk whose stage-one call fails after its retries is kept as
+    `relevant=False` with the error recorded on the summary (one flaky call must not kill a
+    70-call stage), while a synthesis failure raises; the recorder and the prompt are
+    resolved in the main thread before dispatch because contextvars do not cross
+    `ThreadPoolExecutor`; node names `problem_chunk`, `problem_synthesis`,
+    `problem_full_text` so per-node cost is visible.
+  - **Branch:** `step-06-problem` off `core` as a worktree; one commit per unit; PR into
+    `core`.
+  - **`schemas.py` (shared, Problem statement section):** `ChunkSummaryDraft(summary,
+    relevant)` as the stage-one LLM contract; `ChunkSummary` gains `error: str | None`.
+    `ProblemStatement` itself stays permissive (S9 assembles empty ones); the validators
+    live on a per-call subclass built with `pydantic.create_model` from the allowed IDs.
+  - **`config.py` (shared):** `llm_concurrency` (`RFP_LLM_CONCURRENCY`, default 4);
+    `.env.example` and the README table gain the row.
+  - **`agents/problem.py`:** `render_chunk_prompt`, `summarise_chunk` (one call, node
+    `problem_chunk`), `summarise_chunks` (thread pool, document order preserved),
+    `format_evidence` (relevant summaries) and `format_full_text` (own text of every
+    chunk), `problem_schema(allowed_ids)`, `synthesise` (one call, returns a plain
+    `ProblemStatement`), `build_problem_statement(split, *, title, model, settings,
+    recorder, config, full_text=None) -> ProblemResult(statement, chunk_summaries, mode)`;
+    debug CLI `python -m rfp_agent.agents.problem <pdf> [--full-text] [--out]`.
+  - **Prompts:** `prompts/problem_chunk.md` (what is being built, for whom, why, under
+    what constraints; keep every number, date, amount, name and referenced document;
+    `relevant=false` for contents, signature blocks and boilerplate that would apply to
+    any contract) and `prompts/problem_synthesis.md` (four lists, one sentence per claim
+    with the concrete value, `fact` vs `inference`, cite only IDs present in the evidence).
+  - **Tests (`tests/test_problem.py`, fake model):** chunk prompt content and
+    placeholders; chunk ID set by code; irrelevant chunk; failed chunk kept with error;
+    concurrency preserves order; evidence lists only relevant summaries in order with
+    section path; unknown ID rejected then accepted on retry; exhaustion raises; empty list
+    rejected; full-text evidence has every ID and no overlap sentence; settings flag picks
+    the mode; nodes recorded on the recorder. `tests/test_problem_live.py` (`-m llm`) on
+    Missouri. The CRLF fix makes the failing S4 test pass on Windows.
+  - **Live run:** both modes on the four RFPs once each; table of relevant chunks, claims
+    per list, inferences, retries, cost and latency; spot check of each statement against
+    the gold checklist by eye (S12 does it properly).
+  - **Docs:** DECISIONS D28 (stage-one IDs set by code, citations checked by a schema
+    validator inside the retry loop, concurrency) plus any failure mode hit; PROMPTS design
+    notes and changelog; ASSUMPTIONS; TIMELOG; README problem-statement section, config
+    row, layout line.
+- **What was done:** (branch `step-06-problem`, PR into `core`)
+  - `agents/problem.py`: `summarise_chunk` (one `structured_call` per chunk, node
+    `problem_chunk`, schema `ChunkSummaryDraft`; code attaches the chunk ID; a relevant
+    verdict with an empty summary is recorded as not relevant; a call that fails after its
+    retries returns `relevant=False` with the error on the summary), `summarise_chunks`
+    (thread pool of `Settings.llm_concurrency`, document order kept, prompt and recorder
+    resolved on the calling thread), `format_evidence` / `evidence_ids` (relevant summaries
+    labelled `[S3.2] section > path (pages n)`), `format_full_text` (own text of every
+    chunk, overlap stripped with `own_text`, same labels), `problem_schema(allowed_ids)`
+    (a `ProblemStatement` subclass per call via `pydantic.create_model`, named
+    `ProblemStatement` so the tool name is unchanged, whose validator rejects an empty
+    claim list and any chunk ID outside the evidence with a message naming the list and the
+    IDs), `synthesise` (one call, node `problem_synthesis` or `problem_full_text`,
+    returns the plain contract class), `build_problem_statement(split, *, title, model,
+    settings, recorder, config, full_text=None) -> ProblemResult(mode, statement,
+    chunk_summaries)`; `NoEvidenceError` when no chunk is relevant.
+  - `agents/__main__.py`: `python -m rfp_agent.agents [-v] problem <pdf> [--full-text]
+    [--out f.json]` runs parse, split and the agent under a non-writing recorder and prints
+    per-node calls, tokens, cost, latency and retries, then the claims. S5, S7 and S8 add
+    their commands here.
+  - Prompts `prompts/problem_chunk.md` (title, chunk ID, section path, pages, text; the
+    relevance list mirrors the gold checklist categories) and `prompts/problem_synthesis.md`
+    (`{{title}}`, `{{evidence_kind}}`, `{{evidence}}`; four lists, one sentence per claim
+    with the concrete value, `fact` vs `inference`, cite only labelled IDs, write about "the
+    RFP" never "the evidence").
+  - `schemas.py` (shared, Problem statement section): `ChunkSummaryDraft(relevant,
+    summary)`; `ChunkSummary.error`. `ProblemStatement` unchanged. `config.py` (shared):
+    `llm_concurrency` (`RFP_LLM_CONCURRENCY`, default 4). `.env.example`: that row plus
+    `RFP_FULL_TEXT_PROBLEM`.
+  - `.gitattributes` (new shared file): LF for every text file type and binary for PDFs,
+    so Windows checkouts hash prompts and compare goldens like CI; the S4 test that failed
+    locally passes.
+  - Tests: `tests/test_problem.py` (18 fake-model tests: prompt placeholders and content,
+    chunk IDs set by code in order, irrelevant and empty summaries, failed chunk kept with
+    error and recorded, concurrent order, evidence formatting, full text without overlap,
+    schema name, unknown ID fed back then accepted, empty list fed back, exhaustion raises,
+    synthesis prompt content, hierarchical end to end with recorder and prompt hashes,
+    full-text mode from the flag and from the argument, no evidence raises, JSON round
+    trip); `tests/test_problem_live.py` (`-m llm`, Missouri). 245 unit tests pass, ruff
+    clean.
+  - Live results, DeepSeek Flash, thinking off, concurrency 4 (NYESD hierarchical run four
+    times, Federal Way twice; cost ranges come from DeepSeek's automatic prefix caching on
+    repeated runs). Latency is wall time including parsing and splitting:
+
+    | RFP | mode | relevant chunks | claims sit/goal/crit/constr | inferences | calls | tokens in / out | cost | retries | wall |
+    |---|---|---|---|---|---|---|---|---|---|
+    | Missouri | hierarchical | 41 / 67 | 7 / 7 / 8 / 8 | 1 | 68 | 73.7k / 9.9k | $0.018 | 0 | ~35 s |
+    | Missouri | full text | — | 7 / 8 / 8 / 8 | 1 | 1 | 11.5k / 2.3k | $0.006 | 0 | ~15 s |
+    | NYESD | hierarchical | 60 to 63 / 70 | 6 / 6 / 7 / 8 | 1 | 71 | 90k / 15k | $0.026 to $0.043 | 1 in 2 of 4 runs | 63 s |
+    | NYESD | full text | — | 7 / 7 / 8 / 9 | 0 | 1 | 18.5k / 2.2k | $0.008 | 0 | 21 s |
+    | Colfax | hierarchical | 35 / 40 | 6 / 7 / 7 / 8 | 1 | 41 | 47.3k / 8.1k | $0.021 | 0 | ~30 s |
+    | Colfax | full text | — | 6 / 7 / 8 / 8 | 2 | 1 | 8.6k / 1.9k | $0.005 | 0 | ~15 s |
+    | Federal Way | hierarchical | 19 to 20 / 21 | 6 / 7 / 7 / 8 | 2 | 22 | 29.4k / 6.6k | $0.010 to $0.015 | 0 | 32 s |
+    | Federal Way | full text | — | 7 / 7 / 8 / 8 | 1 | 1 | 7.4k / 1.9k | $0.004 | 0 | 20 s |
+
+    Every citation resolved (the validator guarantees it); no stage-one call failed. A
+    rough keyword check against the 12-fact gold checklists (numbers, dates, amounts of
+    each fact found in the claims) gives 12 / 12 for every hierarchical output and 11 to
+    12 / 12 for full text; read by eye, Federal Way and NYESD cover every checklist fact
+    except Federal Way GC12 (the current systems live in the page-5 image table, absent
+    from the parsed text; the statement says so, labelled as an inference) and Missouri
+    full text drops the 1/1/2026 final-report date. Both modes surface the
+    referenced-but-absent documents (Colfax Attachment F, NYESD Appendices A and B and
+    Schedule A, Federal Way Requirements document) as constraints.
+  - Docs: DECISIONS D28, F6; PROMPTS design notes and changelog (creation plus one wording
+    fix); ASSUMPTIONS (problem statement section); TIMELOG; README problem-statement
+    section, configuration rows, layout and status lines. Shared files touched:
+    `schemas.py`, `config.py`, `.env.example`, `README.md`, `tests/test_config.py`,
+    `.gitattributes` (new).
 - **Deviations from plan:**
+  - The debug CLI lives in `agents/__main__.py` (`python -m rfp_agent.agents problem`),
+    not in `problem.py`: typer resolves the string annotations that
+    `from __future__ import annotations` produces against module globals, so a CLI defined
+    inside a function with local imports crashed with `NameError: Annotated`. The shared
+    entry point also keeps typer and rich out of the agent module and gives S5, S7 and S8
+    a place to add their commands. A `-v` flag prints every failed attempt.
+  - `.gitattributes` forces LF on every text type (`*.py`, `*.md`, `*.json`, ...), not only
+    `prompts/` and `tests/fixtures/`: the cost is nil and it stops the "LF will be replaced
+    by CRLF" churn on every commit from Windows.
+  - After the first live run the synthesis prompt gained a rule to write about "the RFP",
+    never "the evidence" or "the summaries": three of four hierarchical outputs had a
+    constraint reading "documents not included in the evidence". Fixed and re-run on
+    NYESD and Federal Way (clean).
+  - A stage-one `relevant=True` with an empty summary is downgraded to not relevant in
+    code (the plan did not say; an empty summary carries no evidence to cite).
 - **Open issues:**
+  - The citation validator fired in 2 of 4 NYESD runs (one retry, then success), but the
+    `structured_call` log line truncates the error at 200 characters and the run log keeps
+    only the retry count, so which ID or list was wrong is not recorded. S12 or S13 should
+    add the last validation error to `NodeMetrics` (S1-owned schema) so retries are
+    diagnosable from the log.
+  - DeepSeek Flash is not deterministic at temperature 0: four NYESD runs gave 60 to 63
+    relevant chunks and different claim wording. S12's repeated-run consistency metric is
+    therefore necessary, not optional.
+  - Stage one compresses little on NYESD (76k input tokens become 13k of summaries, versus
+    18.5k tokens of full text), so the hierarchical path costs 3 to 5x the full-text call
+    on every RFP and buys per-chunk citations and scale rather than cheaper synthesis. A
+    tighter length rule in `problem_chunk.md` is an S13 experiment, to be judged by
+    checklist coverage.
+  - Federal Way's current systems (page 5, image only) cannot reach the statement without
+    ST2; the hierarchical output flags the gap as an inference, the full-text output does
+    not mention it.
+  - S10 wiring: the problem node calls `build_problem_statement(split, title=parsed.title,
+    config=config)` and should keep `ProblemResult.chunk_summaries` in the graph state for
+    S14's per-chunk view; `full_text_problem` is read from settings so the CLI only needs
+    to expose the flag.
 
 ### S7. Solution generator
 - **Status:** todo

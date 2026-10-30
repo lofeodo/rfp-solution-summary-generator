@@ -296,7 +296,7 @@ def extract_chunks(
     recorder: RunRecorder | None,
     config: RunnableConfig | None,
 ) -> list[ChunkResult]:
-    """One call per chunk, ``settings.extract_concurrency`` at a time, document order kept.
+    """One call per chunk, ``settings.llm_concurrency`` at a time, document order kept.
 
     The recorder is passed explicitly because the context variable that
     ``current_recorder()`` reads does not cross threads.
@@ -313,7 +313,7 @@ def extract_chunks(
             config=config,
         )
 
-    workers = max(1, min(settings.extract_concurrency, len(chunks)))
+    workers = max(1, min(settings.llm_concurrency, len(chunks)))
     if workers == 1:
         return [one(c) for c in chunks]
     with ThreadPoolExecutor(max_workers=workers) as pool:
@@ -741,9 +741,3 @@ def extract_requirements(
     report.unverified_quotes = [r.id for r in reqs if not r.quote_verified]
     output = RequirementsOutput(requirements=reqs, ambiguities=ambs, gaps=dedupe_gaps(gaps))
     return output, report
-
-
-if __name__ == "__main__":  # pragma: no cover
-    from rfp_agent.agents.requirements_cli import main
-
-    main()

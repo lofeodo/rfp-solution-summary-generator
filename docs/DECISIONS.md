@@ -438,7 +438,33 @@ Evidence: Missouri agreement clauses 21/25 requirement-bearing (the four left sa
 or "encouraged"); Colfax 1.1 and Federal Way Section 2 background narrative; NYESD
 "C. Project Plan" requirement-bearing (tests).
 
-### D28. Quote verification: one feedback turn, then keep the item as unverified
+### D28. Problem statement: code-owned chunk IDs in stage one, schema-validated citations in stage two
+Context: the problem statement is the output where unsupported claims are most tempting
+(the model is asked to say why the client is buying), and the traceability rule says every
+fact cites a chunk ID that exists.
+Options: let the model echo chunk IDs in both stages and check them afterwards; group
+several chunks per stage-one call; check citations in code after the call and drop bad
+ones; check citations inside the structured-output retry loop and fail on exhaustion.
+Choice: stage one is one call per chunk with the chunk ID attached by code, so there is
+nothing to validate; synthesis sees only the relevant summaries, labelled with their IDs,
+and its output schema is a per-call subclass of `ProblemStatement` whose validator rejects
+an empty list or an ID outside the evidence. `structured_call` feeds the message back and
+retries; after the budget the node raises. Stage one runs in a thread pool
+(`RFP_LLM_CONCURRENCY`, default 4). The full-text baseline is the same synthesis prompt
+over the own text of every chunk with the same labels.
+Why: an ID the model never writes cannot be wrong, and one call per chunk keeps that
+property at the cost of about seventy cheap calls per RFP ($0.01 to $0.04 on DeepSeek
+Flash, 30 to 60 s with four workers). Putting the citation check in the schema reuses the
+one retry mechanism the pipeline has (the F4 pattern) and gives the model a precise
+correction ("constraints cites chunk IDs that are not in the evidence: ['S45.3']") rather
+than a silent drop that evals would never see. Failing on exhaustion is deliberate: a
+problem statement with an unverifiable claim is worse than no problem statement, and the
+run log records the spend. Keeping the baseline's prompt identical makes the S13 comparison
+about hierarchy alone.
+Evidence: four RFPs, both modes: every citation resolves, no stage-one failure, the
+validator retried once in 2 of 4 NYESD runs and succeeded; rough checklist coverage 12/12
+hierarchical, 11 to 12/12 full text (ROADMAP S6 table). Quality comparison is S13's.
+### D29. Quote verification: one feedback turn, then keep the item as unverified
 Context: every requirement carries a verbatim quote that code must be able to find in
 the cited chunk (traceability rule); models paraphrase, fix typos and join table cells.
 Options: drop items whose quote is not found; keep them silently; retry with the failing
@@ -457,7 +483,7 @@ zero unverified items shipped. The check also catches table-cell joins
 (`"Submission of Proposals(date and time)|October 1,2025<br>by2:00 PM ET"` verifies
 because the normaliser strips pipes and tags).
 
-### D29. Grouping contract checked by code, violations fed back once, then sanitised
+### D30. Grouping contract checked by code, violations fed back once, then sanitised
 Context: D6 chose one LLM grouping pass for fuzzy dedupe and demanded that every ID land
 in exactly one group. Models put an ID in two groups, invent IDs, or list the
 representative among its members.
@@ -478,7 +504,7 @@ Evidence: first Missouri run: `R030 appears in group 6 and group 9`, `... group 
 random-grouping test asserts the invariant). After the dedupe prompt gained "an ID may
 appear once across the whole answer", all four reruns were clean after at most one turn.
 
-### D30. Extraction scope mirrors the gold scope; everything else is left to S12
+### D31. Extraction scope mirrors the gold scope; everything else is left to S12
 Context: the gold labels are core-only (D23). An extractor that lists every clause of
 Missouri's 24-clause agreement section would bury S7 in boilerplate, and an extractor
 that is stricter than gold loses recall S12 cannot see.
@@ -564,8 +590,33 @@ Fix:       drafting cap raised to 32,000 with a 600 s timeout (drafting only; pi
            settings unchanged).
 Before/after: failed to 61 requirements drafted.
 
+### F6. Synthesis claims spoke of "the evidence" instead of the RFP
+Where:     S6 `problem_synthesis` prompt, first live run on the four RFPs.
+Observed:  three of four hierarchical statements contained a constraint such as "The RFP
+           refers to documents not included in the evidence that bidders must obtain" and
+           Federal Way's client situation said the systems were "not reproduced in the
+           summarized text".
+Cause:     the prompt names its input "evidence" and told the model to cite only evidence
+           IDs; the model carried the framing into the claims, which a bid team cannot
+           use.
+Fix:       one rule added to the prompt: write about "the RFP", never "the evidence", "the
+           summaries" or "the chunks", and do not speculate about what the RFP may say
+           elsewhere.
+Before/after: 3 of 4 outputs affected to 0 of 2 re-runs (NYESD, Federal Way).
 
-### F6. Extractor reported other sections of the same RFP as ambiguities and gaps
+### F7. Citation validator retry with no recorded cause
+Where:     S6 `problem_synthesis` on NYESD, 2 of 4 live runs.
+Observed:  `retries = 1` in the node metrics; the INFO line read "attempt 1 failed: 1
+           validation error for ProblemStatement" and was cut at 200 characters before
+           the list name and the offending IDs; the two later runs did not retry.
+Cause:     `structured_call` logs the error truncated and `NodeMetrics` stores the retry
+           count only; DeepSeek Flash is not deterministic at temperature 0, so the
+           retry could not be reproduced on demand (60 to 63 relevant chunks across runs).
+Fix:       not fixed in S6 (the schema is S1's). Open issue for S12/S13: record the last
+           validation error on `NodeMetrics` so a retry is diagnosable from the run log.
+Before/after: n/a.
+
+### F8. Extractor reported other sections of the same RFP as ambiguities and gaps
 Where:     S5 `requirements_extract` prompt, Missouri (first live run).
 Observed:  105 ambiguities and 39 gaps for 144 requirements. Typical: "The specific
            data items required are in paragraph (B), which is not included in this
@@ -577,11 +628,11 @@ Cause:     the chunk-local prompt said "work only from the text you are given", 
 Fix:       ambiguities and gaps each got a "not this" list: content defined in another
            part of the same RFP (other chunks are handled separately) and ordinary lack
            of detail are neither; gaps are documents outside the RFP only; "most chunks
-           have none". Boilerplate exclusions expanded at the same time (D30).
+           have none". Boilerplate exclusions expanded at the same time (D31).
 Before/after: Missouri 144 / 105 / 39 (requirements / ambiguities / gaps) to
            131 / 53 / 12; crude recall 89% to 86% (same items, different spans).
 
-### F7. NYESD gaps listed every form twice, by name and by URL
+### F9. NYESD gaps listed every form twice, by name and by URL
 Where:     S5 `requirements_extract` prompt, NYESD (63 hyperlinks, most to forms).
 Observed:  50 gaps; "Executive Order 16 Certification" (G12) and
            "https://esd.ny.gov/sites/default/files/EO16-certification.pdf" (G29) are

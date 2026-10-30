@@ -125,9 +125,10 @@ class Settings(BaseSettings):
         description="DeepSeek thinking mode. Off: forced tool calling for structured output. "
         "On: JSON mode (thinking mode rejects forced tool_choice).",
     )
-
-    extract_concurrency: int = Field(
-        default=4, ge=1, description="Parallel per-chunk LLM calls in the requirements extractor"
+    llm_concurrency: int = Field(
+        default=4,
+        ge=1,
+        description="Parallel LLM calls in per-chunk stages (S5 extraction, S6 summaries)",
     )
 
     # Ablation flags (S10 CLI exposes them; S6 and S5 read them)

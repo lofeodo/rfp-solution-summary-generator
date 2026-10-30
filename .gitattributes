@@ -1,5 +1,15 @@
-# Prompt files are hashed byte for byte into the run log and compared in tests, and
-# JSON fixtures are compared as text, so they must not pick up CRLF on Windows checkouts.
-prompts/** text eol=lf
+# Files whose bytes matter: prompt hashes go in the run log, golden fixtures are compared
+# byte for byte, and `load_prompt` reads raw bytes. Force LF on every OS so a Windows
+# checkout with core.autocrlf=true gives the same hashes and passes the same tests as CI.
+prompts/**      text eol=lf
 tests/fixtures/** text eol=lf
-evals/gold/*.json text eol=lf
+*.md            text eol=lf
+*.json          text eol=lf
+*.py            text eol=lf
+*.toml          text eol=lf
+*.txt           text eol=lf
+*.yml           text eol=lf
+.env.example    text eol=lf
+.gitattributes  text eol=lf
+.gitignore      text eol=lf
+*.pdf           binary
