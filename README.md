@@ -7,8 +7,9 @@ cites the chunk of the RFP it came from, so the summary can be checked against t
 source. The repo includes an evaluation harness and per-run observability (tokens,
 latency, cost).
 
-**Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2)
-and renderer (S9). The pipeline lands step by step; see `docs/ROADMAP.md`.
+**Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
+section and chunk splitting (S3), parse-quality pass (S4), renderer (S9) and gold labels
+(S11). The pipeline lands step by step; see `docs/ROADMAP.md`.
 
 ## Pipeline
 
@@ -80,6 +81,24 @@ for about half a cent in total. To see the verdicts (paid, needs `DEEPSEEK_API_K
 
 ```bash
 python -m rfp_agent.parsing data/rfps/federal_way.pdf --judge --out federal_way.json
+```
+
+## Splitting
+
+`rfp_agent.splitting.split_document(parsed)` turns a `ParsedDocument` into a
+`SplitDocument`: one section per heading of the RFP, each cut into citable chunks.
+Headings come from the PDF outline when there is one (located in the page text, including
+bold labels that open a paragraph such as `**(A) Services:** ...`), from markdown
+headings otherwise, plus bold lines numbered like an existing heading ("SECTION 4" after
+"SECTION 3"). Chunks hold at most 300 words, cut at paragraphs (sentences only inside an
+over-long paragraph), never inside a table, and each chunk repeats the last sentence of
+the previous one. IDs are stable: `S7` is the seventh section in document order and
+`S7.2` its second chunk, so the same PDF always gives the same citations. Each section is
+tagged `requirement_bearing` or `narrative` by obligation cues ("shall", "must",
+"Describe ..."). No LLM is involved. To inspect it:
+
+```bash
+python -m rfp_agent.splitting data/rfps/federal_way.pdf --out federal_way_split.json
 ```
 
 ## Configuration

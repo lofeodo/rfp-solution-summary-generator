@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S4,S9,S11 done
-    class S3 ready
+    class S0,S1,S2,S3,S4,S9,S11 done
+    class S5,S6 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S4, S9, S11 (green). Ready now, all
-dependencies done (amber): S3. Update the two
+**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S9, S11 (green). Ready now, all
+dependencies done (amber): S5, S6, which may run in parallel with each other. Update the two
 `class` lines in the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
@@ -463,7 +463,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     annotation is `http://www.colfax-ca.go/`, a typo in the source, kept as-is.
 
 ### S3. Section and chunk splitting
-- **Status:** todo
+- **Status:** done
 - **Goal:** `splitting/`: split on the RFP's own headings (outline first, heading
   detection fallback for documents without an outline), keep the title attached; split
   each section into citable chunks by subsection where present, otherwise by a size cap
@@ -474,10 +474,116 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   fixtures for both an outlined and a non-outlined RFP.
 - **Depends on:** S2
 - **Parallel with:** S1, S4, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** 300-word cap (`count_words`), split at
+    paragraph boundaries, sentences only inside an over-cap paragraph, tables atomic,
+    tail under 50 words merges back, **one-sentence overlap** between consecutive chunks
+    of a section (prose only), so coverage is "every body line in at least one chunk";
+    **every heading is a Section** (outline subsections included; flat list, `level` and
+    `path` give the tree; containers with no own body have zero chunks); short bold-only
+    lines are **promoted to headings** when their label matches a numbering scheme an
+    existing heading uses; **golden split JSON** for Missouri and NYESD under
+    `tests/fixtures/` with `--update-golden`.
+  - **Taken without asking:** unlocated outline entries are dropped; text before the first
+    heading becomes a synthetic level-1 `Front matter` section; `#` lines over 20 words or
+    ending in a period are body text; section IDs number sections in document order
+    (`S5` is not the RFP's "Section 5").
+  - **Findings that shape the design:** Missouri's outline has 64 entries but only about
+    35 render as `#` lines; the rest are bold run-in labels (`**(A) Services:** The
+    Offeror shall ...`), so outline titles are located in page text by key prefix; split
+    titles (`## SECTION (1):` + `## GENERAL DESCRIPTION ...`, `## Task 1` +
+    `## Project Management`); outline entry "Expenses" is a table cell. Federal Way
+    "SECTION 4" and NYESD criterion "A." are bold lines, not headings.
+  - **Branch:** `step-03-splitting` off `core` as a worktree; PR into `core`. No schema
+    change, no new dependency.
+  - **Files:** `splitting/headings.py` (markdown headings with demotion and split-title
+    merge, outline location in text, bold-line promotion, `detect_headings`),
+    `splitting/chunker.py` (blocks, greedy cap fill, sentence split, tail merge, overlap),
+    `splitting/kind.py` (modal-verb cue density plus enumerations), `splitting/split.py`
+    (`split_document(parsed) -> SplitDocument`), `splitting/__main__.py` (debug dump).
+  - **Tests:** unit tests on literal strings for every rule; four-RFP tests for
+    determinism, line coverage, size bounds, ID sequence, page ranges, round-trip, known
+    sections (Missouri Section (5) with (A) to (Y), no "Expenses"; Colfax Tabs; NYESD X.
+    and promoted "A."; Federal Way SECTION 4), kinds; two goldens.
+  - **Docs:** DECISIONS D25 to D27, TIMELOG row, ASSUMPTIONS line (words stand in for
+    tokens), README splitting section.
+- **What was done:** (branch `step-03-splitting`, PR into `core`)
+  - `splitting/headings.py`: `Heading(page, line, title, raw_level, consumed, source)`
+    where `consumed` lists the title lines removed from the body (empty for a run-in bold
+    label, which stays in the body). `markdown_headings` (demotes `#` lines over 20 words,
+    ending in a period, not starting with a letter, digit, `(` or `"`, or colon-ended
+    with no numbering; merges split titles), `locate_outline` (title key search on the
+    entry's page then the next, after the previous match, skipping table rows and
+    contents pages; matches a `#` heading, a leading bold run with an optional label
+    outside the bold, a whole line, or two bold lines), `promote_bold_lines` (no-outline
+    documents only; schemes section, keyword Task/Tab/Exhibit/..., paren, decimal, roman,
+    lower roman, letter), `detect_headings`, `heading_paths` (stack on raw levels; a
+    contents heading never parents), `title_key`, `scheme_of`.
+  - `splitting/chunker.py`: `blocks` (paragraphs on blank lines and page breaks, table
+    runs atomic), `chunk_blocks` -> `ChunkText(text, own, page_start, page_end)`
+    (greedy 300-word packing, sentence cuts inside an over-cap paragraph, < 50-word tail
+    merged back, last sentence of the previous chunk prepended unless it ends in a table
+    or is over 60 words), `overlap_of`, `own_text` (strips the overlap, for tests and
+    any consumer that needs non-overlapping text), `sentences`.
+  - `splitting/kind.py`: `section_kind(text)` requirement-bearing on any obligation cue
+    or imperative instruction line, else narrative (D27).
+  - `splitting/split.py`: `split_document(parsed) -> SplitDocument`; `Front matter`
+    section for text before the first heading; contents-page sections are narrative;
+    section `page_end` covers its descendants; `level == len(path)`.
+  - `splitting/__main__.py`: `python -m rfp_agent.splitting <pdf> [--out file.json]`
+    prints the section tree (id, pages, kind, chunks, words).
+  - Results on the four RFPs:
+
+    | RFP | sections | outline located | chunks | mean / max words | requirement-bearing |
+    |---|---|---|---|---|---|
+    | Missouri | 75 | 63 / 64 | 67 | 82 / 330 | 45 |
+    | NYESD | 61 | no outline | 70 | 142 / 322 | 42 |
+    | Colfax | 40 | 29 / 29 | 40 | 108 / 293 | 21 |
+    | Federal Way | 15 | no outline | 21 | 178 / 362 | 7 |
+
+    (max includes the repeated overlap sentence.)
+  - Tests: `tests/test_splitting_units.py` (28 tests on literal strings) and
+    `tests/test_splitting_rfps.py` (22 tests: determinism and round-trip, every word of
+    every page in exactly one chunk or heading line once the overlap is removed, ID and
+    page invariants, size bound, known sections per RFP, kinds, goldens
+    `tests/fixtures/split_missouri.json` and `split_NYESD.json`). 210 tests pass, ruff
+    clean. Shared files touched: none (README and docs only; README status line also
+    lists S11, which had not been added).
 - **Deviations from plan:**
+  - Section kind uses "any obligation cue" instead of a cue-density threshold: the
+    threshold (1.5 per 100 words) left 8 of Missouri's 25 agreement clauses narrative
+    because long clauses say "shall" once (D27). Imperative instruction lines
+    ("- Describe ...") count as cues so NYESD's selection criteria are caught.
+  - Bold-line promotion allows up to 40 words, not 12: NYESD fuses heading "viii." and a
+    sub-heading into one 33-word bold line. Promotion still needs a whole-bold line and
+    a numbering scheme already in use.
+  - Added a lowercase-roman scheme (NYESD "i." to "xiv.") and a numbering label outside
+    the bold (`- (Y) **Information Technology:**`, Missouri p17), both found on the RFPs.
+  - Colon-ended headings with no numbering ("Name of Respondent:", "Reference 1 :",
+    "Submission Deadline:") are treated as form labels; without this, Colfax Attachment
+    D's whole body sat under "Name of Respondent:".
+  - The coverage test compares word multisets (document words = heading-line words +
+    non-overlapping chunk words) rather than lines, because over-cap paragraphs are cut
+    mid-line at sentences.
+  - Sentence cuts do not split at colons (the plan listed `:`); colons inside RFP prose
+    mostly introduce lists.
 - **Open issues:**
+  - Some front-page lines become one-line sections (Colfax "Shanna Stahl, Administrative
+    Services Officer ..."; NYESD "Issued: August 8, 2025"). Harmless for citations;
+    S6 may see them as tiny chunks.
+  - In documents without an outline, the document title heading (`#`) is the parent of
+    every section (NYESD, Federal Way), so paths start with the RFP title.
+  - Missouri "(B) Background" is tagged requirement-bearing ("required" appears in the
+    background prose); the kind is a hint only.
+  - Section numbering `S<n>` changes if parsing changes (a new heading shifts every later
+    ID). Gold labels (S11) store quotes, not chunk IDs, so they are unaffected; the
+    goldens here will flag any shift.
+  - Found while merging S4 (not an S3 change): on a Windows checkout with
+    `core.autocrlf=true`, `prompts/parse_quality.md` gets CRLF line endings and
+    `load_prompt` reads raw bytes, so `test_quality.py::
+    test_page_without_images_and_empty_text_render_placeholders` fails locally (CI on
+    Linux passes) and prompt hashes differ by OS. Fix in a later step: a `.gitattributes`
+    with `eol=lf` for `prompts/` and fixtures, or newline normalisation in `load_prompt`.
 
 ### S4. Parse quality pass (LLM judge of flagged pages, VLM hook)
 - **Status:** done

@@ -36,6 +36,15 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   that context; the VLM that would look at the image is stretch ST2 (D24).
 - Only flagged pages are judged. A damaged page that no heuristic flags is not caught.
 
+## Splitting
+
+- Chunk size is measured in words, not tokens (about 1.3 tokens per English word), so
+  splitting needs no tokenizer and does not depend on the generator model (D26).
+- When a PDF has an outline, it is the authoritative structure: bold numbered lines it
+  does not list are body text, not headings (D25).
+- Section IDs number sections in document order; `S5` is the fifth section found, not
+  the RFP's own "Section 5". The section title carries the RFP's own numbering.
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do
