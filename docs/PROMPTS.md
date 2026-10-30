@@ -97,6 +97,46 @@ evidence") came from F6.
 Known weaknesses: in 2 of 4 NYESD runs the first attempt cited an ID outside the evidence
 or left a list empty (F7); the model occasionally spends a constraint slot on a
 procedural detail (upload folder layout) rather than a solution constraint.
+### prompts/requirements_extract.md
+Purpose: extract core requirements, ambiguities and gaps from one chunk (S5); the same
+file, with `{{unit}}` and `{{mode_rules}}` swapped, serves the single-call ablation over
+every chunk.
+Inputs it receives: `{{unit}}` (what the model is given and that other chunks are handled
+separately), `{{mode_rules}}` (empty, or the chunk-ID citation rule in document mode),
+`{{title}}`, `{{input}}` (one or many `### Chunk S3.2` blocks with section path, pages and
+the text in `<chunk>` tags).
+Output contract (schema): `ChunkExtraction` or `DocumentExtraction` in `schemas.py`.
+Code assigns IDs, cites the chunk, verifies quotes (D29) and dedupes.
+Why it is written this way: the include/exclude scope is the gold prompt's, so extractor
+and labeller agree on what a requirement is (D31); the exclude list names the boilerplate
+clauses the first run kept (assignment, independent contractor, audit, FFATA) and says a
+form is one item, not one per field; "many chunks contain no requirement" and "returning
+empty lists is correct" stop the model inventing obligations from headings; the quote
+rule says code checks it verbatim, which makes the model copy rather than tidy;
+ambiguities and gaps both carry a "not this" list, because the first run reported other
+sections of the same RFP as missing (F8); the instructions come first and the chunk last
+so DeepSeek's prefix cache serves about three quarters of the input tokens.
+Known weaknesses: still generous with `submission` items (proposal-content lists split
+finely) and with ambiguities (29 to 70 per RFP); the gap definition pulls in every
+linked form on a form-heavy RFP (NYESD 38); output varies between runs at temperature 0.
+
+### prompts/requirements_dedupe.md
+Purpose: one grouping pass over the exact-deduped list: which IDs state the same
+obligation, which contradict (D6, D30).
+Inputs it receives: `{{requirements}}`, one line per item: `ID [strictness, type] text —
+"quote" (chunk IDs)`.
+Output contract (schema): `DedupeOutput` (groups with `representative_id` and
+`member_ids`, conflicts with IDs and a reason). Code checks it, feeds violations back
+once, sanitises, merges.
+Why it is written this way: "same obligation on the same party about the same thing"
+with signs for and against, because the failure mode is over-grouping a general duty with
+a specific one; the representative is the most specific statement so the merged item
+keeps the best text and quote; the one-ID-once rule is stated twice and ends with "check
+that no ID appears twice", added after the first run put R030 in three groups on both
+turns; alternatives and a standard next to its stricter version are called out as
+non-conflicts after Missouri's Oracle/SQL Server and Section 508/WCAG pairs were flagged.
+Known weaknesses: the first answer still breaks the contract on most RFPs (the feedback
+turn fixes it); alternatives are still sometimes flagged as conflicts.
 
 ## Changelog
 
@@ -104,6 +144,10 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-10-30 | requirements_extract | Gaps: name the document, never its URL; a document named with its link is one gap | NYESD listed 50 gaps, most forms twice (name and URL) (F9); 38 after |
+| 2026-10-30 | requirements_extract | Expanded boilerplate exclusions, one item per form; ambiguities and gaps exclude content defined elsewhere in the same RFP and ordinary lack of detail | Missouri first run: 144 requirements, 105 ambiguities, 39 gaps, most "not in this chunk" (F8); 131 / 53 / 12 after |
+| 2026-10-30 | requirements_dedupe | "An ID may appear once across the whole answer; check before answering"; alternatives and a standard next to its stricter version are not conflicts | Missouri first run: R030 in three groups on both turns (fallback used); clean after one turn on all reruns |
+| 2026-10-30 | requirements_extract, requirements_dedupe | Created (S5) | First version |
 | 2026-10-30 | problem_synthesis | Rule: write about the RFP, never "the evidence" or "the summaries" | F6: 3 of 4 live outputs leaked the prompt's framing into claims; 0 of 2 after |
 | 2026-10-30 | problem_chunk, problem_synthesis | Created (S6) | First version; rough checklist coverage 12/12 on four RFPs |
 | 2026-10-30 | parse_quality | Created (S4) | First version; 12 of 12 live verdicts matched manual inspection |

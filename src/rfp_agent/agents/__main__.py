@@ -90,5 +90,58 @@ def problem(
         console.print(f"\nwrote {out}")
 
 
+@app.command()
+def requirements(
+    pdf: Annotated[Path, typer.Argument(exists=True, dir_okay=False, help="RFP PDF")],
+    single_call: Annotated[
+        bool, typer.Option("--single-call", help="One call over the whole document")
+    ] = False,
+    out: Annotated[Path | None, typer.Option("--out", "-o", help="Write JSON here")] = None,
+) -> None:
+    """Requirements extractor (S5): per-chunk extraction, verified quotes, dedupe."""
+    from rfp_agent.agents.requirements import extract_requirements
+    from rfp_agent.parsing import parse_pdf
+    from rfp_agent.splitting import split_document
+
+    parsed = parse_pdf(pdf)
+    split = split_document(parsed)
+    recorder = RunRecorder.from_settings(pdf)
+    with recorder.activate(write=False):
+        output, report = extract_requirements(
+            split, title=parsed.title or pdf.name, recorder=recorder, single_call=single_call
+        )
+
+    console.print(
+        f"[bold]{pdf.name}[/bold] ({'single call' if report.single_call else 'per chunk'}): "
+        f"{report.chunks} chunks, {len(report.calls_failed)} failed, {report.pre_dedupe} "
+        f"extracted, {report.exact_merges} exact + {report.fuzzy_merges} fuzzy merges, "
+        f"{report.conflicts} conflicts, {len(report.unverified_quotes)} unverified quotes"
+        + (", dedupe fallback used" if report.dedupe_fallback else "")
+    )
+    print_metrics(recorder)
+    table = Table("id", "strict", "type", "ok", "chunks", "text", title="Requirements")
+    for r in output.requirements:
+        lineage = f" <{','.join(r.merged_from)}" if r.merged_from else ""
+        conflicts = f" !{','.join(r.conflicts_with)}" if r.conflicts_with else ""
+        table.add_row(
+            r.id,
+            r.strictness.value[:4],
+            r.type.value,
+            "" if r.quote_verified else "[red]no[/red]",
+            ",".join(r.chunk_ids) + lineage + conflicts,
+            r.text,
+        )
+    console.print(table)
+    for a in output.ambiguities:
+        refs = ", ".join(a.requirement_ids) or "-"
+        console.print(f"[yellow]{a.id}[/yellow] ({refs}) {a.description}")
+    for g in output.gaps:
+        console.print(f"[magenta]{g.id}[/magenta] [{g.referenced_document or '-'}] {g.description}")
+
+    if out:
+        out.write_text(output.model_dump_json(indent=2), encoding="utf-8")
+        console.print(f"\nwrote {out}")
+
+
 if __name__ == "__main__":
     app()

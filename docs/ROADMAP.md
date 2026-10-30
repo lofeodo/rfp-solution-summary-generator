@@ -109,12 +109,12 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S6,S9,S11 done
-    class S5 ready
+    class S0,S1,S2,S3,S4,S5,S6,S9,S11 done
+    class S7 ready
 ```
 
-**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S6, S9, S11 (green). Ready now, all
-dependencies done (amber): S5. S7 unlocks when S5 lands. Update the two `class` lines in
+**Progress (2026-10-30):** done S0, S1, S2, S3, S4, S5, S6, S9, S11 (green). Ready
+now, all dependencies done (amber): S7. Update the two `class` lines in
 the diagram whenever a step is marked `done`.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
@@ -681,7 +681,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     install points at the main checkout (same as S1's note).
 
 ### S5. Requirements extractor
-- **Status:** todo
+- **Status:** done
 - **Goal:** `agents/requirements.py`: per-chunk structured extraction (ID, text, type,
   strictness as a separate field, verbatim quote, chunk ID) plus an ambiguities list.
   Around the LLM, code does: schema validation with bounded retry, quote verification
@@ -693,10 +693,164 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   with design notes in `docs/PROMPTS.md`. Tests with a fake model for the code paths.
 - **Depends on:** S1, S3
 - **Parallel with:** S4, S6, S9, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** **core-only scope**, the same
+    include/exclude rule as `prompts/gold_requirements.md` (D23), so recall against gold
+    is like for like and S7 is not flooded with boilerplate; a fuzzy-merged requirement
+    keeps the **representative's quote only** (chunk IDs unioned, absorbed IDs in
+    `merged_from`; no schema change); the **single-call ablation path**
+    (`Settings.single_call_extraction`) is implemented now; a **live run on all four
+    RFPs** fills the results table (DeepSeek Flash, under $0.30).
+  - **Taken without asking:** ambiguities and gaps come from the per-chunk call (code
+    assigns IDs; gaps deduped by normalised document name); an unverified quote gets one
+    code-level retry with feedback naming the quote, then the item is kept with
+    `quote_verified=False` (the requirement is real even if the quote is sloppy); chunk
+    calls run in a thread pool (`Settings.llm_concurrency`, default 4) with the
+    recorder passed explicitly (contextvars do not cross threads); `.gitattributes`
+    pins `prompts/**`, `tests/fixtures/**` and `evals/gold/*.json` to LF (S3's open issue).
+  - **Branch:** `step-05-requirements` off `core` as a worktree; PR into `core`.
+  - **Files:** `textmatch.py` (`normalise`, `find_quote` moved from `evals/gold/`, which
+    becomes a re-export shim); `schemas.py` (Requirements section: LLM output contracts
+    `ExtractedRequirement`, `ExtractedAmbiguity`, `ExtractedGap`, `ChunkExtraction`,
+    `Cited*` + `DocumentExtraction` for single-call, `DedupeGroup`,
+    `RequirementConflict`, `DedupeOutput`; existing models unchanged); `config.py`
+    (`llm_concurrency`); `agents/requirements.py`; `prompts/requirements_extract.md`,
+    `prompts/requirements_dedupe.md`; debug CLI `python -m rfp_agent.agents requirements`.
+  - **Pipeline:** per chunk, one `structured_call(node="requirements_extract")` →
+    `verify_quotes` with `find_quote` → feedback retry if any quote is unverified (retry
+    accepted only if it verifies at least as many items) → a failed chunk yields nothing
+    and is counted. Code assigns `R001…` in document order, maps ambiguity indexes to
+    IDs, then **exact dedupe** on normalised text or quote (the overlap sentence makes
+    this common). One `structured_call(node="requirements_dedupe")` returns groups
+    (representative + members) and conflict pairs; code checks every ID exists, no ID in
+    two groups, representative not a member, no conflict pair inside a group; violations
+    get one feedback retry, then **fallback**: unknown IDs ignored, first membership
+    wins, ungrouped IDs are singletons, so "every original ID lands in exactly one group"
+    holds by construction and the report records the fallback. Merge keeps the
+    representative's id, text, quote, type; unions chunk IDs; max strictness; conflicts
+    set `conflicts_with` symmetrically and add an `Ambiguity`. Single-call mode: one
+    call over all chunks labelled by ID, quotes verified against the cited chunk,
+    unknown chunk IDs rejected with feedback then dropped, grouping call skipped.
+  - **Tests:** fake-model unit tests per stage (prompt rendering, quote retry paths,
+    chunk failure, assemble, exact dedupe, group checks and fallback, conflict split,
+    the exactly-one-group invariant, end-to-end with recorder, single-call path,
+    concurrency order); a live `llm` test on Missouri.
+  - **Docs:** DECISIONS D29 to D31 plus any failure modes hit, PROMPTS notes and
+    changelog, ASSUMPTIONS, TIMELOG, README requirements section, `.env.example`.
+- **What was done:** (branch `step-05-requirements`, PR into `core`)
+  - `src/rfp_agent/textmatch.py`: `normalise`, `find_quote` moved from `evals/gold/`
+    (now a re-export shim) so the package never imports `evals`.
+  - `schemas.py` (shared file, Requirements section): LLM output contracts
+    `ExtractedRequirement`, `ExtractedAmbiguity` (`requirement_indexes` into the same
+    reply), `ExtractedGap`, `ChunkExtraction`; `CitedRequirement`/`CitedAmbiguity`/
+    `CitedGap` + `DocumentExtraction` for single-call mode; `DedupeGroup`
+    (`representative_id`, `member_ids`), `RequirementConflict`, `DedupeOutput`.
+    `Requirement`, `Ambiguity`, `Gap`, `RequirementsOutput` unchanged.
+  - `config.py` (shared): the extractor reads S6's `llm_concurrency` (default 4); its
+    description now names both stages. No new setting.
+  - `agents/requirements.py`: `extract_requirements(split, title=, model=, settings=,
+    recorder=, config=, single_call=) -> (RequirementsOutput, RequirementsReport)`.
+    Per chunk: `render_chunk_prompt` → `verified_call` (a `structured_call` followed by
+    a code check and one feedback turn; the retry is kept only if it has no more
+    problems than the first reply) with `verify_quotes` (`find_quote` against the chunk)
+    → failed chunks skipped and listed in `report.calls_failed`. `extract_chunks` runs a
+    `ThreadPoolExecutor` with the recorder passed explicitly, document order kept.
+    `assemble_chunks` numbers `R001…`/`A01…`/`G01…`, cites the chunk, maps ambiguity
+    indexes to IDs (out-of-range dropped with a warning). `exact_dedupe` folds equal
+    normalised text or quote (`merge_into`: chunk IDs unioned, stricter strictness,
+    `merged_from` lineage, a verified quote replaces an unverified one). `dedupe_llm`:
+    one grouping call through `verified_call` with `check_groups` (unknown IDs,
+    representative as member, ID in two groups, conflict pair inside a group) as the
+    check, then `sanitise_groups` so any answer satisfies the contract (first membership
+    wins, unknown IDs dropped, conflicting members removed from the group, empty groups
+    dropped); `apply_groups` merges; `apply_conflicts` sets `conflicts_with` both ways and
+    adds an `Ambiguity` per conflict; `dedupe_gaps` folds gaps naming the same document
+    (prefix at a word boundary, so "Attachment F" and "ATTACHMENT F: SOFTWARE ..." are
+    one). Single-call mode: `render_document_prompt` over every chunk, `verify_document`
+    (cited chunk exists and quote found in it), items citing an unknown chunk dropped
+    after the feedback turn, grouping call skipped. Node names `requirements_extract`,
+    `requirements_extract_single`, `requirements_dedupe`.
+  - `agents/__main__.py` (S6's agents CLI, shared): a `requirements` command,
+    `python -m rfp_agent.agents requirements <pdf> [--single-call] [--out f.json]`, prints
+    the report summary, per-node metrics, the requirements table, ambiguities and gaps.
+  - Prompts `requirements_extract.md` (one file for both modes: `{{unit}}`,
+    `{{mode_rules}}`, `{{title}}`, `{{input}}`; instructions first so the provider
+    prefix cache hits, about 74% of input tokens were cache reads) and
+    `requirements_dedupe.md` (`{{requirements}}`). Tuned once after the first Missouri
+    run (F8, F9).
+  - `.gitattributes`: added here for `prompts/**`, `tests/fixtures/**`, `evals/gold/*.json`;
+    S6 landed a broader version first, which the merge kept.
+  - Tests: `tests/test_requirements.py` (23 fake-model tests: prompt rendering, numbering
+    and citation, quote feedback accepted / worse retry discarded / still unverified kept,
+    markup-tolerant matching, failed chunk skipped, exact dedupe across the overlap,
+    verified-quote adoption, group merge, violations → retry → fallback, conflict pair
+    split and flagged, conflict IDs follow merges, grouping failure, a 60-round random
+    grouping test of "every original ID lands in exactly one place", gap folding,
+    recorder nodes and prompt hashes, 8 chunks on 4 threads in document order, single-call
+    verification/drop/skip-grouping, settings default). `tests/fakes.py` gains a
+    `responder` callable and a lock. `tests/test_requirements_live.py` (`-m llm`,
+    Missouri, passes). 250 unit tests pass, ruff clean.
+  - Live results, DeepSeek Flash, thinking off, concurrency 4. "Crude recall" is quote
+    containment against gold either way after normalisation (a sanity number, not the
+    S12 metric: several "misses" are the same requirement with a different span, e.g.
+    every cover-page deadline was extracted). NYESD is the only run on the final prompt
+    (the gap-naming line was added after the first three; see F9).
+
+    | RFP | chunks | calls | pre-dedupe | exact | fuzzy | final | conflicts | ambiguities | gaps | gold | crude recall | cost | latency (summed) |
+    |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+    | Missouri | 67 | 69 | 156 | 2 | 23 | 131 | 4 | 53 | 12 | 71 | 86% | $0.040 | 182 s |
+    | NYESD | 70 | 72 | 263 | 4 | 43 | 216 | 1 | 70 | 38 | 54 | 80% | $0.056 | 207 s |
+    | Colfax | 40 | 41 | 148 | 4 | 19 | 125 | 1 | 42 | 19 | 63 | 83% | $0.027 | 121 s |
+    | Federal Way | 21 | 23 | 120 | 4 | 26 | 90 | 0 | 29 | 7 | 46 | 72% | $0.020 | 78 s |
+
+    Zero failed chunks and zero unverified quotes on all four; one quote feedback turn
+    on Missouri; the grouping call needed its feedback turn on three of four RFPs and
+    was contract-clean after it (the first Missouri run fell back once: R030 in three
+    groups twice). Wall time is about a quarter of the summed latency. Known catches:
+    Colfax Attachments F and G as gaps and the 30-day vs 15-day notification conflict
+    (S11's open issue) as a flagged conflict; Missouri's fixed milestone dates vs
+    relative deadlines as four conflicts; Federal Way's separate Requirements document
+    as a gap.
+  - Docs: DECISIONS D29 to D31, F8, F9; PROMPTS notes and changelog; ASSUMPTIONS;
+    TIMELOG; README requirements section; `prompts/README.md` rows already existed.
+    Shared files touched: `schemas.py`, `config.py`, `.env.example`, `README.md`,
+    `tests/fakes.py`, `evals/gold/textmatch.py`.
 - **Deviations from plan:**
+  - The debug CLI is a command on S6's `python -m rfp_agent.agents` app rather than a
+    module of its own: a first version under a `__main__` guard inside the agent failed
+    (with `from __future__ import annotations`, typer cannot resolve `Annotated` defined
+    inside a function), and S6 had meanwhile added the shared app.
+  - `extract_concurrency` was dropped on merge in favour of S6's `llm_concurrency`: one
+    knob for every per-chunk stage.
+  - One prompt file serves both modes (`{{unit}}`, `{{mode_rules}}`) instead of a second
+    document-mode file.
+  - Prompt tuned once after the first live run instead of shipping the first draft: the
+    model reported other sections of the same RFP as ambiguities and gaps (F8) and
+    listed NYESD forms twice, by name and by URL (F9). Requirements 144 → 131,
+    ambiguities 105 → 53, gaps 39 → 12 on Missouri.
+  - `exact_dedupe` lets a verified quote replace an unverified one on merge (not in the
+    plan; costs nothing and improves the evidence).
 - **Open issues:**
+  - Volume: 90 to 216 requirements per RFP against 46 to 71 gold. Most of the surplus is
+    `submission` (proposal-content lists split finely) and `legal_contractual`
+    (boilerplate the prompt excludes but the model keeps when a clause reads as
+    project-specific). S12 judges precision per item; S13 decides whether to tighten.
+  - Ambiguities are still many (29 to 70): the "would change the bid" bar is applied
+    loosely. S7 and S8 should treat them as a list to scan, not as facts; S13 can cut.
+  - Run-to-run variance at temperature 0: NYESD gave 196 then 216 requirements on two
+    runs of near-identical prompts. S12 should report variance over several runs (D7
+    already plans this for the problem statement).
+  - Conflicts over-flag alternatives (Missouri Oracle vs SQL Server, Missouri standard
+    vs WCAG 2.1 AA) despite the prompt line; the four date conflicts are real.
+  - The grouping call rarely passes its contract on the first try (3 of 4 RFPs needed the
+    feedback turn); `sanitise_groups` makes it safe, but it is a second call per
+    document. A smaller model-facing contract (groups only, conflicts in a separate call)
+    is an option if S13 sees quality loss.
+  - Single-call mode is unit-tested only; S13 runs it live for the D5 ablation.
+  - `RequirementsReport` is a dataclass, not in the run log; S10 can log it as JSON next
+    to the run log if the UI wants it.
+  - The worktree needs a copy of `.env` for live runs (`cp ../../../.env .env`), since
+    `Settings` reads `REPO_ROOT/.env` and `REPO_ROOT` is the worktree.
 
 ### S6. Problem statement (hierarchical)
 - **Status:** done

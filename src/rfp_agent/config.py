@@ -128,7 +128,7 @@ class Settings(BaseSettings):
     llm_concurrency: int = Field(
         default=4,
         ge=1,
-        description="Parallel LLM calls in per-chunk stages (S6 chunk summaries)",
+        description="Parallel LLM calls in per-chunk stages (S5 extraction, S6 summaries)",
     )
 
     # Ablation flags (S10 CLI exposes them; S6 and S5 read them)

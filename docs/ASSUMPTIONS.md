@@ -98,3 +98,12 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   per item and uses gold for recall.
 - Gold quotes are verified against S2's parsed text. If S2's normalisation changes, the
   committed gold check (`tests/test_gold.py`) fails and the affected quotes are updated.
+- The requirements extractor (S5) uses the gold scope: core requirements only, generic
+  contract boilerplate excluded by prompt (D31). A requirement the model keeps anyway is
+  not wrong, only surplus; S12 judges precision per item.
+- A requirement whose quote code cannot find in its chunk is kept with
+  `quote_verified=false` rather than dropped (D29); consumers treat the quote, not the
+  requirement, as suspect.
+- Ambiguities and gaps are what the model reports per chunk, deduped by code; they are a
+  list for S7 and S8 to scan, not verified facts. Conflicts found by the dedupe pass are
+  added to the ambiguities.
