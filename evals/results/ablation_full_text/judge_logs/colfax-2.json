@@ -1,0 +1,101 @@
+{
+  "run_id": "judge",
+  "source_path": "eval",
+  "started_at": "2026-10-30T22:47:07.343208Z",
+  "finished_at": "2026-10-30T22:49:30.685131Z",
+  "model": "anthropic:claude-sonnet-5-5",
+  "temperature": 0.0,
+  "prompt_hashes": {
+    "judge_checklist": "60f574fe9d751dd0e4ce729e68b239a4b664554720e5ff997b9c925d31977f67",
+    "judge_grounding": "d163218a12b85fa1f4c073f7a29e92b62373492f099b34e41a62b5fc34300480"
+  },
+  "nodes": [
+    {
+      "node": "judge_checklist",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 3734,
+      "output_tokens": 706,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.014528,
+      "latency_s": 4.543073599983472,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:07.615058Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 6043,
+      "output_tokens": 390,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.015986,
+      "latency_s": 2.720766399987042,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:12.170697Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 6450,
+      "output_tokens": 559,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.01849,
+      "latency_s": 3.9070716999995057,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:12.184909Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 5280,
+      "output_tokens": 694,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.0175,
+      "latency_s": 4.991426699998556,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:12.186972Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 7046,
+      "output_tokens": 414,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.018232,
+      "latency_s": 4.373777799977688,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:16.094034Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 12678,
+      "output_tokens": 789,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.033246,
+      "latency_s": 6.25329199997941,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:14.908621Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 4191,
+      "output_tokens": 32000,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.328382,
+      "latency_s": 138.50261500000488,
+      "retries": 0,
+      "started_at": "2026-10-30T22:47:12.170697Z",
+      "last_error": "Failed to parse ClaimVerdicts from completion {\"verdicts\": [{\"id\": \"I000\", \"verdict\": \"supported\", \"reason\": \"Population, location, and issuing City are stated; RFP issued by the City for its own project.\"}, {\"id\": \"I001\", \"verdict\": \"supported\", \"reason\": \"Revenue, employee counts, vacancy, and June 30 fiscal year-end all match the table.\"}, {\"id\": \"I002\", \"verdict\": \"supported\", \"reason\": \"Software, vendor, modules, details, and five users all match the source.\"}, {\"id\": \"I003\", \"verdict\": \"supported\", \"reason\": \"All four objectives are stated in the source, paraphrased accurately.\"}, {\"id\": \"I004\", \"verdict\": \"partially\", \"reason\": \"Issue date and email/phone/name are supported, but 'all inquiries' directed to Stahl is plausible; phone and title appear in the heading. Minor gap: none clear.The 'all' scope is acceptable.\"}, {\"id\": \"I005\", \"verdict\": \"partially\", \"reason\": \"Location and small size are stated, but the lean-staff, limited-capacity conclusion is a stretch; the 11 employees are in the source only for context.Gold Rush-era is stated.The conclusion is not drawn from the cited text.Overall the geography is correct.The inference is weak.Dropping: conclusion not stated.Result: partial.The listed facts are accurate.Reasoning: the capacity claim is unsupported.Final: partial.Final reason: limited-capacity conclusion unsupported.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Done.Don ...[truncated]"
+    }
+  ],
+  "stages": [],
+  "escalations": [],
+  "langfuse_trace_url": null
+}
