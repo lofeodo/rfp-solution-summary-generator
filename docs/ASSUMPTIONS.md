@@ -102,7 +102,7 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 
 - One judge family (Claude Sonnet 5.5) grades a pipeline from another family (DeepSeek),
   so the judge does not grade its own writing. Its reliability is measured, not assumed:
-  40 sampled verdicts were hand-labelled and agree on 34 (D35, D36).
+  40 sampled verdicts were hand-labelled and agree on 34 (D36, D37).
 - The hand labels were written by the coding agent from the item and its evidence only,
   with the judge's answer absent from the sample file; the author spot-checks them in the
   PR, as with the gold corrections (S11). The sample over-draws the judge's negative
@@ -143,6 +143,19 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   DeepSeek has no cache-write surcharge.
 - DeepSeek runs with thinking mode off by default (`RFP_DEEPSEEK_THINKING`); its API
   default is on. Whether thinking improves output quality is measured in S13.
+
+## UI
+
+- The UI is a local single-user tool, so it has no authentication and listens on
+  `127.0.0.1` by default.
+- One pipeline run executes at a time, and later uploads queue. Runs cannot be
+  cancelled or deleted from the UI. A restart or a `--reload` during a run loses that
+  run, which is reported as interrupted.
+- The committed samples are served as ordinary finished runs. Their source PDF is the
+  file in `data/rfps/` named by the run log, and is served only if it lies inside the
+  repository.
+- Uploads must be PDFs (checked by the `%PDF` header) of at most 50 MB. The limit is
+  checked after the upload has been received, which is fine for local use.
 
 ## Scope
 

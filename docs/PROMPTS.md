@@ -204,8 +204,8 @@ prompts' layout: a role line naming what is being graded, `## What to return` wi
 bullet per schema field, `## Rules` with bold rule names, data last in tagged blocks.
 Every verdict carries a short `reason` with a word cap, so the score files read as an
 audit trail and output tokens stay bounded. Every list answer is checked by a per-call
-schema that demands exactly one entry per ID shown (D35); the prompts say "use only the
-IDs shown" but code enforces it. Design decisions D35 and D36.
+schema that demands exactly one entry per ID shown (D36); the prompts say "use only the
+IDs shown" but code enforces it. Design decisions D36 and D37.
 
 ### prompts/judge_match.md
 Purpose: for gold requirements code could not match, name the extracted items that
