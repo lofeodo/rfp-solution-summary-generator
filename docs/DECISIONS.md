@@ -341,6 +341,72 @@ Evidence: 19 to 26% of drafted requirements corrected per RFP, almost all remova
 scope; 5 type or strictness edits in 265 drafted items; 0 drafted quotes failed
 verification (evals/gold/README.md).
 
+### D24. Section boundaries: the outline located in the text, then markdown, then promotion
+Context: citations print "section title, page", so sections must follow the RFP's own
+structure. pymupdf4llm renders only about half of Missouri's 64 outline entries as `#`
+headings; the rest are bold labels that open a paragraph (`**(A) Services:** The Offeror
+shall ...`). Documents without an outline have headings the renderer missed (Federal Way
+"SECTION 4", NYESD "A." and "iii.").
+Options: markdown headings only; outline entries anchored at the top of their page; the
+outline located in the text; an LLM pass to find headings.
+Choice: (1) with an outline, each entry is searched by normalised title on its page, then
+the next, after the previous match, never in a table row or on a contents page; it may
+match a `#` heading, a leading bold run (the line stays in the body, since the rest of it
+is content) or a title split over two lines; entries not found are dropped. Markdown
+headings missing from the outline nest one level under the entry in effect. (2) `#`
+lines over 20 words, ending in a period, or not starting like a title are paragraphs; a
+short label heading followed by a same-level heading is one split title ("SECTION (1):"
++ "GENERAL DESCRIPTION ..."); a colon-ended heading with no numbering ("Name of
+Respondent:") is a form label. (3) Without an outline only, a whole-bold line whose
+numbering scheme (SECTION n, (A), 4.2, IV., iv., A., Task/Tab/Exhibit n) is used by a
+detected heading is promoted at that heading's level (author decision). Every heading is
+a section; levels come from the path, which never skips; a contents heading never parents
+what follows. Text before the first heading is a "Front matter" section.
+Why: the outline is the author's own structure and is free; locating it in the text
+keeps cut points exact without an LLM. Promotion is limited to documents without an
+outline because in outlined ones the bold numbered lines are sub-items the outline chose
+not to list.
+Evidence: Missouri 63/64 outline entries located (the miss, "Expenses", is a table cell);
+Colfax 29/29; Federal Way SECTION 1 to 7 at one level; NYESD X. has i to xiv (tests).
+
+### D25. Chunks: 300-word cap, cut at paragraphs, tables atomic, one sentence of overlap
+Context: chunks are the unit every claim cites and the unit S5 extracts from. The LLM can
+read the whole document at once, so chunk size is about citation precision and
+per-chunk extraction cost, not context limits.
+Options: one chunk per section; fixed-size windows with overlap; paragraph packing up to
+a cap.
+Choice: blocks are paragraphs and whole tables; blocks are packed greedily up to 300
+words (`count_words`); a paragraph over the cap is cut at sentence ends; a table is never
+cut; a last piece under 50 words joins the previous chunk; each chunk after the first
+repeats the previous chunk's last sentence (author decision; not after a table, not if
+over 60 words). IDs: `S<n>` numbers sections in document order and `S<n>.<k>` chunks
+within a section, so the same PDF always yields the same IDs. Section kind is a separate
+cheap tag (D26).
+Why: paragraph cuts keep a requirement's sentence whole; the one-sentence overlap lets a
+requirement that straddles a cut be quoted verbatim from one chunk, which S5's quote
+check needs. Atomic tables keep schedules and pricing grids readable. Words stand in for
+tokens (about 1.3 tokens per word), which avoids a tokenizer dependency.
+Evidence: chunks per RFP 67 / 70 / 40 / 21 (Missouri, NYESD, Colfax, Federal Way), mean
+82 to 178 words; every word of every page lands in exactly one chunk or heading line
+once the overlap is removed; only two chunks exceed 300 words of their own text, both a
+single table (Missouri contents, 330; Federal Way proposal format, 353) (tests).
+
+### D26. Section kind: any obligation cue makes a section requirement-bearing
+Context: the roadmap asks for a narrative vs requirement-bearing tag by cheap heuristics.
+Options: cue density per hundred words with a threshold; any obligation cue; an LLM label.
+Choice: requirement-bearing when the section's own text contains "shall", "must",
+"required", "mandatory", "no later than" (and similar) or a line opening with an
+instruction ("Describe", "Include", "Provide", ...); "will" and "should" do not count.
+Why: a density threshold (tried first, at 1.5 cues per 100 words) tagged long legal
+clauses that say "shall" once as narrative (17 of Missouri's 25 agreement clauses
+requirement-bearing) and was an arbitrary number to defend. The tag is a hint: S5 still
+extracts from every chunk, so a false positive costs nothing and a false negative hides
+nothing. Imperative lines catch proposal-content lists ("- Describe how your
+organization ...") that use no modal verb.
+Evidence: Missouri agreement clauses 21/25 requirement-bearing (the four left say "may"
+or "encouraged"); Colfax 1.1 and Federal Way Section 2 background narrative; NYESD
+"C. Project Plan" requirement-bearing (tests).
+
 ---
 
 ## Part 2 — Failure modes hit

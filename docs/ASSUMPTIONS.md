@@ -32,6 +32,15 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   has at least 40 words; a cover page saying "provided separately" is absent (D22).
 - OCR is off: image-only pages are flagged for S4, not transcribed (D20).
 
+## Splitting
+
+- Chunk size is measured in words, not tokens (about 1.3 tokens per English word), so
+  splitting needs no tokenizer and does not depend on the generator model (D25).
+- When a PDF has an outline, it is the authoritative structure: bold numbered lines it
+  does not list are body text, not headings (D24).
+- Section IDs number sections in document order; `S5` is the fifth section found, not
+  the RFP's own "Section 5". The section title carries the RFP's own numbering.
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do
