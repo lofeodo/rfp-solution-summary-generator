@@ -11,6 +11,8 @@ One markdown file per agent, named after the agent that uses it:
 | `problem_synthesis.md` | S6 | synthesis into the problem statement |
 | `solution.md` | S7 | solution generator |
 | `risk.md` | S8 | risk assessor |
+| `gold_requirements.md` | S11 | drafts gold requirements for the eval set (judge model) |
+| `gold_checklist.md` | S11 | drafts the problem-statement checklist for the eval set (judge model) |
 
 Conventions:
 

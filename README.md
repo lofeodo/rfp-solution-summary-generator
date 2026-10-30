@@ -104,6 +104,18 @@ No RFP brief was provided with the assignment, so public US government RFPs stan
 ("Using AI/ML to Write Legal Land Descriptions"). Three more RFPs form the eval set.
 See `docs/ASSUMPTIONS.md`.
 
+### Gold labels
+
+`evals/gold/` holds reference labels for the four RFPs: core requirements and a
+12-fact problem-statement checklist per RFP, drafted by Claude and corrected by hand
+(19 to 26% of drafted requirements corrected). Format, workflow and the correction table
+are in `evals/gold/README.md`.
+
+```bash
+python -m evals.gold.label check --all   # every gold quote is in the parsed text
+python -m evals.gold.label diff --all    # draft vs final correction table
+```
+
 ## Repository layout
 
 ```

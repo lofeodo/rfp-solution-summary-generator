@@ -10,13 +10,13 @@ the end of every step. Times are estimates to the nearest half hour.
 |---|---|---|
 | 0. Reading, research, planning | 4.0 | 3.0 assignment + public RFPs + brainstorming; 1.0 input inspection, roadmap, working rules |
 | 1. Working app (pipeline, parsing, agents, CLI) | 5.0 | S0 scaffold: env, config, schemas, tests, CI; S1 LLM layer; S9 assembler and renderer; S2 parsing 2.0 |
-| 2. Prompt assets and notes | | |
-| 3. Evaluation harness and sample results | | |
+| 2. Prompt assets and notes | 0.5 | S11 gold drafting prompts and notes |
+| 3. Evaluation harness and sample results | 2.5 | S11 gold labels: format, labelling script, drafts, correction of 265 items |
 | 4. Observability | 1.0 | S1 run recorder, cost, Langfuse handler |
 | 5. DECISIONS.md and other docs | 1.0 | S0 plan, decisions, README skeleton; S9 plan and D16 |
 | 6. Demo | | |
 | UI (part of 1, tracked separately) | | |
-| **Total** | **11.0** | |
+| **Total** | **14.0** | |
 
 ## Per step
 
@@ -28,3 +28,4 @@ the end of every step. Times are estimates to the nearest half hour.
 | 2026-10-30 | S1 | 2.0 | 1, 4 | LLM factory, structured_call with retry, prompt loader, run recorder, Langfuse, live DeepSeek fix (thinking mode) |
 | 2026-10-30 | S9 | 1.5 | 1, 5 | Assembler with citation check, markdown renderer, golden tests, D16 |
 | 2026-10-30 | S2 | 2.0 | 1 | PDF parsing: inspection of the four RFPs, normaliser, header strip, flags, references, tests, docs |
+| 2026-10-30 | S11 | 3.0 | 2, 3 | Gold format and script, Claude drafts ($1.6), F4/F5 fixes, correction of all four RFPs, Federal Way image table by hand |

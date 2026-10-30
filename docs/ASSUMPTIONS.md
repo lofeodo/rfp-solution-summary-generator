@@ -67,3 +67,8 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   Langfuse being reachable; tracing is a no-op when keys are absent.
 - Local run plus a Dockerfile is the target; no cloud deployment in core.
 - The demo recording is produced by the author; the README includes the demo script.
+- Gold labels cover core requirements only (D23): a correctly extracted boilerplate
+  clause is not in gold and must not count as a false positive, so S12 judges precision
+  per item and uses gold for recall.
+- Gold quotes are verified against S2's parsed text. If S2's normalisation changes, the
+  committed gold check (`tests/test_gold.py`) fails and the affected quotes are updated.
