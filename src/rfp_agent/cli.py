@@ -153,7 +153,7 @@ def run(
         console.print(
             f"[red]run {exc.run_log.run_id} failed[/red] in stage {exc.stage}: {exc.cause}"
         )
-        console.print(f"run log and intermediates kept in {exc.run_dir}")
+        console.print(f"run log and intermediates kept in {exc.run_dir}", soft_wrap=True)
         raise typer.Exit(1) from exc
 
     log = result.run_log
@@ -167,8 +167,9 @@ def run(
         f"coverage {summary.solution.coverage.mandatory_covered}/"
         f"{summary.solution.coverage.mandatory_total} mandatory"
     )
+    # soft_wrap: never break a path across lines, whatever the terminal width.
     for name in ("summary.json", "summary.md"):
-        console.print(f"  {result.output_paths[name]}")
-    console.print(f"  {result.run_dir / 'run_log.json'}")
+        console.print(f"  {result.output_paths[name]}", soft_wrap=True)
+    console.print(f"  {result.run_dir / 'run_log.json'}", soft_wrap=True)
     if log.langfuse_trace_url:
-        console.print(f"  trace: {log.langfuse_trace_url}")
+        console.print(f"  trace: {log.langfuse_trace_url}", soft_wrap=True)
