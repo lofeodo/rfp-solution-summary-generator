@@ -121,6 +121,26 @@ def draft_req(quote: str, **kw) -> dict:
     } | kw
 
 
+CHECKLIST_OK = [
+    {"fact": f"Budget cap fact {i}", "quote": "Not to exceed $175,000"} for i in range(7)
+] + [{"fact": "Invented", "quote": "a sentence that is not there"}]
+
+
+def test_short_checklist_is_sent_back_and_retried():
+    short = {"items": CHECKLIST_OK[:3]}
+    model = ScriptedChatModel(
+        responses=[
+            tool_call_msg("DraftRequirements", {"requirements": []}),
+            tool_call_msg("DraftChecklist", short),
+            tool_call_msg("DraftChecklist", {"items": CHECKLIST_OK}),
+        ]
+    )
+    report = draft_gold("t", DOC, model)
+    assert len(report.gold.checklist) == 7
+    feedback = model.calls[2][-1].content
+    assert "between 8 and 12 facts, got 3" in feedback
+
+
 def test_draft_assigns_ids_and_drops_unmatched_quotes():
     model = ScriptedChatModel(
         responses=[
@@ -134,15 +154,7 @@ def test_draft_assigns_ids_and_drops_unmatched_quotes():
                     ]
                 },
             ),
-            tool_call_msg(
-                "DraftChecklist",
-                {
-                    "items": [
-                        {"fact": "Budget cap $175,000", "quote": "Not to exceed $175,000"},
-                        {"fact": "Invented", "quote": "a sentence that is not there"},
-                    ]
-                },
-            ),
+            tool_call_msg("DraftChecklist", {"items": CHECKLIST_OK}),
         ]
     )
     report: DraftReport = draft_gold("t", DOC, model)
@@ -151,7 +163,7 @@ def test_draft_assigns_ids_and_drops_unmatched_quotes():
     assert g.requirements[1].type is RequirementType.BUDGET_PRICING
     assert all(r.source is GoldSource.DRAFT for r in g.requirements)
     assert report.dropped_requirements == ["deliver a mobile app"]
-    assert [c.id for c in g.checklist] == ["GC01"]
+    assert [c.id for c in g.checklist] == [f"GC{i:02d}" for i in range(1, 8)]
     assert report.dropped_checklist == ["a sentence that is not there"]
     assert g.drafted_with == "fake:scripted"
     # the document reached the model inside the prompt

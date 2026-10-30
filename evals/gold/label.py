@@ -20,9 +20,11 @@ from typing import Annotated
 import typer
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import HumanMessage
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from evals.gold.schema import (
+    CHECKLIST_MAX,
+    CHECKLIST_MIN,
     GoldChecklistItem,
     GoldRequirement,
     GoldSet,
@@ -35,11 +37,12 @@ from rfp_agent.config import DATA_DIR
 from rfp_agent.schemas import ParsedDocument, RequirementType, Strictness
 
 GOLD_DIR = Path(__file__).resolve().parent
+PROMPTS_DIR = GOLD_DIR.parents[1] / "prompts"  # this checkout's prompts, not the installed one's
 RFPS = ["missouri", "NYESD", "colfax", "federal_way"]
 
 # Drafting asks for a long structured reply (40+ items with quotes); the provider default
 # output cap and the pipeline's 120 s timeout are both too tight for that.
-DRAFT_MAX_TOKENS = 16000
+DRAFT_MAX_TOKENS = 32000  # NYESD truncated at 16000 (thinking counts toward the cap)
 DRAFT_TIMEOUT_S = 600.0
 
 
@@ -69,6 +72,18 @@ class DraftChecklistItem(BaseModel):
 
 class DraftChecklist(BaseModel):
     items: list[DraftChecklistItem]
+
+    # Checked in code, not as minItems/maxItems in the JSON schema (provider structured
+    # output support for those is uneven); a violation goes back to the model as a
+    # validation error and structured_call retries (F4).
+    @field_validator("items")
+    @classmethod
+    def _size(cls, items: list[DraftChecklistItem]) -> list[DraftChecklistItem]:
+        if not CHECKLIST_MIN <= len(items) <= CHECKLIST_MAX:
+            raise ValueError(
+                f"return between {CHECKLIST_MIN} and {CHECKLIST_MAX} facts, got {len(items)}"
+            )
+        return items
 
 
 # --------------------------------------------------------------------------------------
@@ -129,11 +144,11 @@ def draft_gold(rfp: str, text: str, model: BaseChatModel) -> DraftReport:
     dropped and reported: a gold label must be checkable against the source."""
     from rfp_agent.llm import load_prompt, model_spec_of, structured_call
 
-    req_prompt = load_prompt("gold_requirements").render(document=text)
+    req_prompt = load_prompt("gold_requirements", prompts_dir=PROMPTS_DIR).render(document=text)
     req = structured_call(
         model, DraftRequirements, [HumanMessage(req_prompt)], node="gold_requirements"
     )
-    chk_prompt = load_prompt("gold_checklist").render(document=text)
+    chk_prompt = load_prompt("gold_checklist", prompts_dir=PROMPTS_DIR).render(document=text)
     chk = structured_call(model, DraftChecklist, [HumanMessage(chk_prompt)], node="gold_checklist")
 
     report = DraftReport(
