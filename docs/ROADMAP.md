@@ -650,7 +650,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S11. Gold labels
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** `evals/gold/`: for each of the four RFPs, gold requirements (text, type,
   strictness, quote) and a problem-statement checklist of 8 to 12 must-mention facts,
   drafted by Claude from the parsed text and hand-corrected; record the fraction of
@@ -658,7 +658,40 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   the known parsing miss is visible. A labelling script and a README on the format.
 - **Depends on:** S2
 - **Parallel with:** S1, S3 to S10
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** wait for S2 and verify gold quotes against
+    its parsed text (S2 merged before implementation started); drafts come from the
+    configured judge (`anthropic:claude-sonnet-5-5`) through a labelling script; the agent
+    corrects every drafted item against the full text and the author spot-checks the diff
+    in the PR; **gold is core-only**: requirements that shape the solution (functional,
+    technical, security_compliance, timeline, budget_pricing, submission; legal_contractual
+    only when it constrains the solution), about 25 to 50 per RFP, generic legal
+    boilerplate excluded. Consequence for S12: recall is measured against gold, precision
+    by a judge (an extracted boilerplate clause is not a false positive).
+  - **Branch:** `step-11-gold-labels` off `core` (worktree); PR into `core`.
+  - **Format (`evals/gold/schema.py`):** `GoldSet(rfp, source_pdf, drafted_with,
+    drafted_at, requirements, checklist, notes)`; `GoldRequirement(id GR001, text, type,
+    strictness, quote, page, section, source, quote_verifiable, note)`;
+    `GoldChecklistItem(id GC01, fact, quote, page, source, quote_verifiable, note)`;
+    `source` = draft | corrected | hand. Reuses the pipeline enums; own ID prefixes so gold
+    and pipeline IDs never collide; no chunk IDs (gold must survive re-chunking).
+  - **Quote matching (`evals/gold/textmatch.py`):** `normalise` (NFKC, quote and dash
+    style, `<br>`, markdown markers and pipes, whitespace, case) applied to both sides;
+    `find_quote`. S12 reuses it.
+  - **Script (`python -m evals.gold.label`):** `draft` (S2 parse, pages joined with
+    `[page N]` markers, two judge calls via S1's `structured_call` with prompts
+    `gold_requirements` and `gold_checklist`, items whose quote is not in the text are
+    dropped and reported, writes `<rfp>.draft.json`), `init` (draft to `<rfp>.json`,
+    appends `<rfp>.hand.json` items, refuses to overwrite), `diff` (draft vs final per
+    field; corrected fraction = (edited + removed) / drafted, additions counted
+    separately), `check` (every verifiable quote is in the parsed text, checklist has 8
+    to 12 items).
+  - **Federal Way p5:** the ERP environment table is an image; labelled by hand from the
+    page render in `federal_way.hand.json` with `quote_verifiable=false`.
+  - **Tests (`tests/test_gold.py`):** schema, quote matching, draft with the scripted fake
+    model, init, diff, and a check over every committed final gold file (parses the PDF).
+  - **Docs:** `evals/gold/README.md` (format, workflow, scope rule, correction table),
+    DECISIONS D23, PROMPTS design notes for both prompts, ASSUMPTIONS, TIMELOG, README.
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
