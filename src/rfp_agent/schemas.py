@@ -636,6 +636,10 @@ class NodeMetrics(StrictModel):
     latency_s: float = Field(ge=0, default=0.0)
     retries: int = Field(ge=0, default=0, description="Structured-output retries used")
     started_at: datetime
+    last_error: str | None = Field(
+        default=None,
+        description="Validation error of the last failed attempt, when any failed (S12)",
+    )
 
 
 class Escalation(StrictModel):
