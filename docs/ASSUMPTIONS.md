@@ -98,6 +98,27 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - Risk IDs `K01…` follow a severity-then-likelihood sort, so K01 is the top risk and
   the JSON order equals the rendered table order.
 
+## Evaluation
+
+- One judge family (Claude Sonnet 5.5) grades a pipeline from another family (DeepSeek),
+  so the judge does not grade its own writing. Its reliability is measured, not assumed:
+  40 sampled verdicts were hand-labelled and agree on 34 (D35, D36).
+- The hand labels were written by the coding agent from the item and its evidence only,
+  with the judge's answer absent from the sample file; the author spot-checks them in the
+  PR, as with the gold corrections (S11). The sample over-draws the judge's negative
+  verdicts, so the agreement rate is not a uniform-sample rate.
+- Three runs per RFP are enough to show which numbers move between runs and which do
+  not; they are not enough for confidence intervals. Run 1 of each RFP is the committed
+  S10 sample, so the baseline is the pipeline as merged after S10.
+- Grounding is judged against only the cited text, so a claim that is true somewhere
+  else in the RFP but cited to the wrong chunk counts as unsupported. That is the intent:
+  the traceability rule promises the citation, not just the fact.
+- True recall lies between the code-only and the combined figure, because judge-tier
+  matches are lenient on missing key values (F14).
+- Federal Way's page-5 table (eight gold requirements, one checklist fact) stays in the
+  denominators; "reachable" columns exclude it so the parsing gap and the extraction
+  quality can be read apart.
+
 ## Models and keys
 
 - Hosted paid APIs are used instead of local models: small local models cannot do

@@ -42,6 +42,9 @@ already have a score file unless `--force`, so an interrupted scoring run resume
   least 0.5), then the judge for the gold items code could not pair, shown only
   extracted items cited on the gold item's page plus or minus one. *by judge* counts the
   judge-tier matches.
+- *recall (code only)*: the code tier alone, a lower bound. The judge tier accepts some
+  candidates that omit the gold item's key value (a date, a named standard; F14), so
+  true recall lies between the two columns.
 - *recall (reachable)*: the same over gold items whose quote is in the parsed text.
   Federal Way's eight page-5 items (an image-only table) are unreachable without a VLM
   (ST2); they stay in plain recall so the parsing gap shows.

@@ -13,6 +13,13 @@ One markdown file per agent, named after the agent that uses it:
 | `risk.md` | S8 | risk assessor |
 | `gold_requirements.md` | S11 | drafts gold requirements for the eval set (judge model) |
 | `gold_checklist.md` | S11 | drafts the problem-statement checklist for the eval set (judge model) |
+| `judge_match.md` | S12 | eval: matches gold requirements code could not pair (judge model) |
+| `judge_requirements.md` | S12 | eval: precision and scope of every extracted requirement (judge model) |
+| `judge_grounding.md` | S12 | eval: is each cited claim supported by only what it cites (judge model) |
+| `judge_checklist.md` | S12 | eval: problem-statement coverage of the gold checklist (judge model) |
+| `judge_solution.md` | S12 | eval: solution rubric and whether components meet what they cite (judge model) |
+| `judge_risks.md` | S12 | eval: risk levels against the scales, findings coverage (judge model) |
+| `judge_pairwise.md` | S12 | eval: A/B preference with the order swapped, for ablations (judge model) |
 
 Conventions:
 

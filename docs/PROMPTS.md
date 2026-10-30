@@ -197,12 +197,125 @@ the tuned prompt), so the scales separate less than they could; `source` can fli
 between runs for the same risk (NYESD's MWBE goals: `rfp`, then `solution`), which
 S12's judge should sample.
 
+### Judge prompts (S12): shared design
+The seven `judge_*` prompts are run by the eval harness on the judge model
+(`Settings.judge_model`, effort `medium`), never by the pipeline. They follow the agent
+prompts' layout: a role line naming what is being graded, `## What to return` with one
+bullet per schema field, `## Rules` with bold rule names, data last in tagged blocks.
+Every verdict carries a short `reason` with a word cap, so the score files read as an
+audit trail and output tokens stay bounded. Every list answer is checked by a per-call
+schema that demands exactly one entry per ID shown (D35); the prompts say "use only the
+IDs shown" but code enforces it. Design decisions D35 and D36.
+
+### prompts/judge_match.md
+Purpose: for gold requirements code could not match, name the extracted items that
+state the same obligation (recall, judge tier).
+Inputs it receives: `{{gold}}` (up to 15 gold items with strictness, type, page and
+quote), `{{candidates}}` (extracted items cited on those pages plus or minus one).
+Output contract (schema): `MatchVerdicts{matches[gold_id, requirement_ids, reason]}`;
+unknown requirement IDs are dropped by code.
+Why it is written this way: "same obligation, any wording" with the bidder test ("a
+bidder who met the candidate would meet the gold item's core"), many-to-many explicitly
+allowed because the extractor splits and merges, labels shown but not graded so a type
+disagreement does not block a match.
+Known weaknesses: accepts candidates that omit the gold item's key value (F14); recall
+is therefore reported next to its code-only lower bound.
+
+### prompts/judge_requirements.md
+Purpose: precision: is each extracted requirement stated by its chunk, a real
+obligation, and in the gold scope.
+Inputs it receives: `{{sources}}` (the cited chunks with their section path and page),
+`{{requirements}}` (up to 25 items: statement, quote, cited chunk IDs).
+Output contract (schema): `ItemVerdicts{verdicts[id, supported, is_requirement,
+in_scope, reason]}`.
+Why it is written this way: the three questions are separate so surplus (out of scope)
+is never counted as error (D31); the scope definition is the gold one (D23), with the
+boilerplate and procurement-conduct examples written out; strictness and type are
+explicitly not graded, because type accuracy is measured against gold.
+Known weaknesses: `supported` is near the ceiling because quotes are already verified
+by code; the judge reads "can be found here" literally and once rejected a required
+form whose obligation sat in the section heading.
+
+### prompts/judge_grounding.md
+Purpose: is each cited assertion supported by the text it cites, and only that text.
+Inputs it receives: `{{sources}}` (every cited chunk or requirement in the batch),
+`{{items}}` (up to ten items, each with its kind and its cited IDs).
+Output contract (schema): `ClaimVerdicts{verdicts[id, verdict, reasonable_inference,
+reason]}`, verdict one of supported, partially, unsupported (checked in code).
+Why it is written this way: "only the cited sources count" makes this a citation test;
+four kinds are graded differently: facts must be stated, inferences must follow,
+assumptions are positions whose stated facts must be right and whose gap must be real,
+risks are judged on the facts they rest on; recommendations need no support.
+Known weaknesses: `partially` absorbs added consequences ("which sets the training
+cohort size"), which is correct but makes the count sensitive to style; on one sampled
+assumption the judge said "none misstated" and still answered `partially`.
+
+### prompts/judge_checklist.md
+Purpose: checklist coverage of the problem statement against the 12 gold facts.
+Inputs it receives: `{{statement}}` (every claim labelled `list[index]`), `{{facts}}`.
+Output contract (schema): `ChecklistVerdicts{facts[gold_id, status, claim, reason]}`;
+the claim label must exist when the status is not `missing`.
+Why it is written this way: `partial` is defined as "topic without the detail" or
+"part of a compound fact", and a wrong value is at best partial, so the number rewards
+concrete statements; the "read every claim" rule exists because facts land in
+unexpected lists.
+Known weaknesses: compound gold facts make `partial` common (an issue date missing from
+a list of deadlines); one sampled verdict counted a compound fact as covered with one
+part missing.
+
+### prompts/judge_solution.md
+Purpose: rubric (specificity, feasibility, consistency with constraints), judged
+coverage (does each component actually meet what it cites), calendar components.
+Inputs it receives: `{{goal}}`, `{{constraints}}`, `{{summary}}`, `{{components}}`
+(each with its description and cited requirements in full), `{{assumptions}}`.
+Output contract (schema): `SolutionVerdict` with three `RubricScore`s and
+`components[id, not_addressed, calendar, reason]`; `not_addressed` must be a subset of
+what the component cites.
+Why it is written this way: anchored 1/3/5 descriptions for each rubric axis; "actually
+meets means the description says how", with the same allowance S7 gives governance
+components (naming the obligation or its category counts); `calendar` answers S7's open
+issue directly.
+Known weaknesses: the rubric barely moves (specificity 4 on every run, feasibility 3 or
+4), so it separates little at this quality level; the category allowance is applied
+inconsistently (two of eight sampled pairs disagreed with the hand label, one each way).
+
+### prompts/judge_risks.md
+Purpose: rate each risk's severity and likelihood on the S8 scales; say which code
+findings the register addresses.
+Inputs it receives: `{{risks}}` (title, description, mitigation, cited requirements;
+not the pipeline's levels or justification), `{{findings}}` (conflict pairs, absent
+documents, flagged pages, uncovered requirements, each `F1…`).
+Output contract (schema): `RiskVerdicts{risks[id, severity, likelihood, reason],
+findings[id, covered_by]}`.
+Why it is written this way: the scales are copied from `prompts/risk.md` so both sides
+use one definition; the pipeline's levels are hidden so agreement measures the scales,
+not anchoring; "a generic risk does not cover a specific missing document".
+Known weaknesses: likelihood agreement is low (50 to 92%) because "turns on facts the
+RFP does not settle" and "expected unless someone acts" overlap; with the levels
+visible, agreement was 100%, so earlier "agreement" numbers would have meant nothing.
+
+### prompts/judge_pairwise.md
+Purpose: A/B preference between two problem statements or two solutions, for S13's
+ablations.
+Inputs it receives: `{{what}}`, `{{context}}` (the gold checklist or gold requirements,
+run-independent), `{{output_a}}`, `{{output_b}}`.
+Output contract (schema): `Preference{preferred: A|B|tie, reason}`; the harness asks
+twice with the order swapped and counts a win only when both orders agree.
+Why it is written this way: the gold reference gives the judge something to check
+accuracy against instead of preferring the longer text; "length is not quality" and
+"position is irrelevant" are stated, and the swap measures position bias anyway.
+Known weaknesses: one live comparison so far (Missouri, hierarchical won both orders);
+the two answers' reasons cited different strengths, so ties will be common on close
+pairs.
+
 ## Changelog
 
 One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |
+| 2026-10-30 | judge_match, judge_requirements, judge_grounding, judge_checklist, judge_solution, judge_risks, judge_pairwise | Created (S12) | First version; 34 of 40 sampled verdicts agree with hand labels |
 | 2026-10-30 | risk | Count rule under Rules: at most twelve, merge or drop, code rejects more than fifteen | All four first runs returned 13 against "six to twelve" (F12); 12, 13, 13, 12 after |
 | 2026-10-30 | risk | Created (S8) | First version; 12 to 13 risks per RFP, 0 validator retries, every code finding surfaced as a risk |
 | 2026-10-30 | solution | Assumptions: `chunk_ids` are the `S4.2` IDs listed after the ambiguity or gap; `A01`/`G01` are never cited | Colfax and Federal Way first runs cited ambiguity and gap IDs as chunks, caught by the validator (F10); 0 retries on the four-RFP rerun |
