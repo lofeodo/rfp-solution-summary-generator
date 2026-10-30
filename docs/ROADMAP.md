@@ -361,7 +361,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S9. JSON assembly and markdown renderer
-- **Status:** in progress
+- **Status:** done
 - **Goal:** `render/`: assemble the final `SolutionSummary` JSON (source of truth) and
   render markdown from it in code with citations shown as "section title, page" and
   requirement quotes inline. Golden-file tests from fixture JSON. No LLM.
@@ -401,9 +401,43 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     citations, file writing. No LLM.
   - **Docs:** DECISIONS D16 (layout, citation format, strict assembler, golden tests),
     TIMELOG row, README render section. PROMPTS untouched (no prompt).
-- **What was done:**
+- **What was done:** (branch `step-09-render`, PR into `core`)
+  - `src/rfp_agent/render/assemble.py`: `assemble()` (keyword-only, `generated_at`
+    injectable, `strict=True`), `chunk_refs(split)`, `dangling_citations(summary)`
+    returning `(location, id)` pairs such as `("risks.K01.chunk_ids", "S9.9")`,
+    `CitationError` carrying `.dangling`. Uses `validate_ids_exist` from `schemas.py`.
+  - `src/rfp_agent/render/markdown.py`: `render_markdown(summary)`, public helpers
+    `cite(chunk_ids, index)` and `sorted_risks(summary)` (S14/S15 can reuse them),
+    `TYPE_LABELS` and `SOURCE_LABELS` for human-readable enum labels. All free text is
+    whitespace-collapsed in list items and table cells; table cells escape `|`.
+  - `src/rfp_agent/render/io.py`: `write_summary(summary, out_dir)` writes
+    `summary.json` (indent 2) and `summary.md` (LF newlines); S10 picks `out_dir`.
+  - `render/__init__.py` re-exports `assemble`, `chunk_refs`, `dangling_citations`,
+    `CitationError`, `render_markdown`, `write_summary`.
+  - Tests: `tests/test_render.py` (14 tests: golden, determinism, section order, cite
+    grouping, unknown-ID fallback, risk sort, table escaping, empty-summary placeholders,
+    assembler chunk refs and metadata, default timestamp, strict raise, non-strict keep,
+    dangling detection across sites, writer round-trip); fixture
+    `tests/fixtures/summary_sample.json` and golden `tests/fixtures/summary_sample.md`;
+    `tests/conftest.py` adds `--update-golden`. 43 tests pass, ruff clean.
+  - Shared file touched: `pyproject.toml` gains `pythonpath = ["src"]` under pytest
+    (see deviations). README: status line, output file names and citation format,
+    `--update-golden`. DECISIONS D16. TIMELOG row.
 - **Deviations from plan:**
+  - The environment's editable install pointed at the deleted `step-00-scaffold`
+    worktree, so `rfp_agent` was not importable. Fixed twice over: re-ran
+    `pip install --no-deps -e` against the main checkout, and set pytest's
+    `pythonpath = ["src"]` so every worktree tests its own source regardless of where
+    the editable install points. Parallel steps should rely on the latter.
+  - Risk details use `###` headings (plan said `####`) so heading levels do not skip.
+  - Requirement notes (merged from, conflicts with) sit on the item line in italics
+    rather than on separate lines, because a line after a blockquote would be swallowed
+    into the quote.
 - **Open issues:**
+  - `merged_from` IDs are not checked by `dangling_citations` by design; if S5 ever
+    reuses a pre-merge ID for a different requirement, nothing flags it.
+  - The renderer trusts `Coverage` from S7; it does not recompute it.
+  - S14/S15 may want per-claim anchors in the markdown for click-to-source; not added.
 
 ### S10. LangGraph wiring and CLI
 - **Status:** todo

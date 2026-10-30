@@ -196,6 +196,27 @@ Why: a single install command and a single source of pins; no `PYTHONPATH` trick
 pydantic-settings keeps validation (ranges, types) in the same library as the schemas.
 Evidence: CI runs the same install.
 
+### D16. Markdown layout, citation format, strict assembly
+Context: S9 turns the JSON into the markdown a reviewer reads, and is the last place a
+broken citation can be caught before it ships.
+Options: citations as "section, page" only vs with the chunk ID; requirements as one
+table vs grouped lists; assembler that annotates vs raises on dangling IDs; snapshot
+tests vs assertion-only tests.
+Choice: citations render as `(Section title, p. 4 [S3.2])`, grouping IDs that share a
+section and page range; requirements grouped by type with the verbatim quote as a
+blockquote; risks as a table sorted by severity then likelihood, then per-risk details;
+`assemble()` raises `CitationError` listing every dangling ID with its location unless
+`strict=False`, while the renderer prints a bare `[S9.9]` for an unknown ID and never
+raises; one golden-file test over a fixture that hits every render branch, refreshed
+with `pytest --update-golden` (author decisions, 2026-10-30).
+Why: the chunk ID keeps the markdown traceable to the JSON and the UI's source reveal,
+at the cost of a few characters. Quotes are long and break table rows, so a list keeps
+them inline. Raising by default means a citation bug fails the run loudly instead of
+shipping an unverifiable claim; the non-strict path exists so the eval harness can still
+score a run with a bad citation and count it. A golden file makes any render change
+show up as a reviewable diff.
+Evidence: `tests/fixtures/summary_sample.md`.
+
 ---
 
 ## Part 2 — Failure modes hit
