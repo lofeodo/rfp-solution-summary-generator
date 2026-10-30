@@ -1549,6 +1549,9 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     way by script. Nothing else in the samples was edited.
   - `print_metrics` moved from the agents CLI to `cli.py` (takes a `RunLog`) so both
     entry points print the same table; the agents CLI keeps its signature.
+  - First CI run failed on a cosmetic point: rich wrapped a long temp path at the
+    80-column CI terminal and a test looked for the file name on one line. Path lines
+    are now printed with soft wrap off.
 - **Open issues:**
   - The CLI runs the quality pass always; a `--skip-quality` flag would save 4 to 8 s
     on RFPs with flagged pages when S13 reruns prompts. Not added.
