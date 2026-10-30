@@ -361,16 +361,83 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
 
 ### S9. JSON assembly and markdown renderer
-- **Status:** todo
+- **Status:** done
 - **Goal:** `render/`: assemble the final `SolutionSummary` JSON (source of truth) and
   render markdown from it in code with citations shown as "section title, page" and
   requirement quotes inline. Golden-file tests from fixture JSON. No LLM.
 - **Depends on:** S0
 - **Parallel with:** S1 to S8, S11
-- **Detailed plan:** _(fill in when the step starts)_
-- **What was done:**
+- **Detailed plan:** (approved 2026-10-30)
+  - **Author decisions, asked in one batch:** citations render as
+    `(Section title, p. 4 [S3.2])`, with the chunk ID kept so the markdown traces back to
+    the JSON and UI; `assemble()` raises `CitationError` on dangling IDs by default
+    (`strict=False` opts out) and the renderer falls back to the raw ID so it never
+    crashes; requirements grouped by type, verbatim quote as a blockquote; risks as an
+    overview table sorted by severity then likelihood, then per-risk details.
+  - **Branch:** `step-09-render` off `core` as a worktree; one commit per unit; PR into
+    `core`. No schema change, no new dependency.
+  - **`render/assemble.py`:** `assemble(*, run_id, model, parsed, split, requirements,
+    problem_statement, solution, risks, generated_at=None, strict=True)` builds
+    `ChunkRef`s from `SplitDocument` (owning section title, chunk pages), copies
+    `source_path`, `title`, `referenced_documents`, `flags` from `ParsedDocument`.
+    `dangling_citations(summary)` walks every citation site (claims, requirement
+    `chunk_ids` and `conflicts_with`, ambiguities, gaps, component `requirement_ids`,
+    `uncovered_requirement_ids`, risk IDs) and returns `(location, id)` pairs;
+    `merged_from` is not checked (pre-merge IDs are gone by design). Coverage stays S7's.
+  - **`render/markdown.py`:** `render_markdown(summary)`, pure and deterministic. Order:
+    title and metadata; problem statement (four subsections, claim bullets, inference
+    marked); requirements (count line, one subsection per type present, quote
+    blockquote, merged/conflicts lines, unverified-quote marker, ambiguities, gaps);
+    proposed solution (summary, coverage line and uncovered IDs, components, assumptions);
+    risks (sorted table, then details with why, mitigation, related requirements);
+    referenced documents table; parse flags. Empty sections print "None." so the shape is
+    stable. Citations group chunk IDs that share section title and page range.
+  - **`render/io.py`:** `write_summary(summary, out_dir)` writes `summary.json` and
+    `summary.md`; S10 decides the directory.
+  - **Tests:** `tests/fixtures/summary_sample.json` hand-built to hit every render
+    branch, golden `tests/fixtures/summary_sample.md`, `--update-golden` pytest option in
+    `tests/conftest.py`; tests for determinism, risk sort, unknown-chunk fallback, table
+    escaping, assembler chunk refs and metadata, strict and non-strict dangling
+    citations, file writing. No LLM.
+  - **Docs:** DECISIONS D16 (layout, citation format, strict assembler, golden tests),
+    TIMELOG row, README render section. PROMPTS untouched (no prompt).
+- **What was done:** (branch `step-09-render`, PR into `core`)
+  - `src/rfp_agent/render/assemble.py`: `assemble()` (keyword-only, `generated_at`
+    injectable, `strict=True`), `chunk_refs(split)`, `dangling_citations(summary)`
+    returning `(location, id)` pairs such as `("risks.K01.chunk_ids", "S9.9")`,
+    `CitationError` carrying `.dangling`. Uses `validate_ids_exist` from `schemas.py`.
+  - `src/rfp_agent/render/markdown.py`: `render_markdown(summary)`, public helpers
+    `cite(chunk_ids, index)` and `sorted_risks(summary)` (S14/S15 can reuse them),
+    `TYPE_LABELS` and `SOURCE_LABELS` for human-readable enum labels. All free text is
+    whitespace-collapsed in list items and table cells; table cells escape `|`.
+  - `src/rfp_agent/render/io.py`: `write_summary(summary, out_dir)` writes
+    `summary.json` (indent 2) and `summary.md` (LF newlines); S10 picks `out_dir`.
+  - `render/__init__.py` re-exports `assemble`, `chunk_refs`, `dangling_citations`,
+    `CitationError`, `render_markdown`, `write_summary`.
+  - Tests: `tests/test_render.py` (14 tests: golden, determinism, section order, cite
+    grouping, unknown-ID fallback, risk sort, table escaping, empty-summary placeholders,
+    assembler chunk refs and metadata, default timestamp, strict raise, non-strict keep,
+    dangling detection across sites, writer round-trip); fixture
+    `tests/fixtures/summary_sample.json` and golden `tests/fixtures/summary_sample.md`;
+    `tests/conftest.py` adds `--update-golden`. 43 tests pass, ruff clean.
+  - Shared file touched: `pyproject.toml` gains `pythonpath = ["src"]` under pytest
+    (see deviations). README: status line, output file names and citation format,
+    `--update-golden`. DECISIONS D16. TIMELOG row.
 - **Deviations from plan:**
+  - The environment's editable install pointed at the deleted `step-00-scaffold`
+    worktree, so `rfp_agent` was not importable. Fixed twice over: re-ran
+    `pip install --no-deps -e` against the main checkout, and set pytest's
+    `pythonpath = ["src"]` so every worktree tests its own source regardless of where
+    the editable install points. Parallel steps should rely on the latter.
+  - Risk details use `###` headings (plan said `####`) so heading levels do not skip.
+  - Requirement notes (merged from, conflicts with) sit on the item line in italics
+    rather than on separate lines, because a line after a blockquote would be swallowed
+    into the quote.
 - **Open issues:**
+  - `merged_from` IDs are not checked by `dangling_citations` by design; if S5 ever
+    reuses a pre-merge ID for a different requirement, nothing flags it.
+  - The renderer trusts `Coverage` from S7; it does not recompute it.
+  - S14/S15 may want per-claim anchors in the markdown for click-to-source; not added.
 
 ### S10. LangGraph wiring and CLI
 - **Status:** todo
