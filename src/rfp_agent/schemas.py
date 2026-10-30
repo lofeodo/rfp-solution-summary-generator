@@ -367,12 +367,30 @@ class RequirementsOutput(StrictModel):
 # --------------------------------------------------------------------------------------
 
 
+class ChunkSummaryDraft(StrictModel):
+    """Stage-one LLM output contract (S6): what one chunk says about what is being built,
+    for whom, why and under what constraints. The chunk ID is attached by code, never
+    written by the model."""
+
+    relevant: bool = Field(
+        description="True if the chunk says anything about the client, the need, the "
+        "deliverables, dates, money, constraints, evaluation or referenced documents"
+    )
+    summary: str = Field(
+        description="Compact factual summary keeping every number, date, amount, name and "
+        "referenced document; empty when the chunk is not relevant"
+    )
+
+
 class ChunkSummary(StrictModel):
-    """Stage-one output: what one chunk says about what is being built, for whom, why."""
+    """Stage-one output for one chunk, tagged by code with the chunk ID. ``error`` holds
+    the failure text when the summarising call failed after its retries; such a chunk is
+    kept as not relevant so one flaky call cannot stop the stage."""
 
     chunk_id: str = Field(pattern=CHUNK_ID_RE)
     summary: str
     relevant: bool = True
+    error: str | None = None
 
 
 class ProblemStatement(StrictModel):
