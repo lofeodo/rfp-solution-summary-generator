@@ -4,9 +4,29 @@ The prompts themselves live in `prompts/`, one file per agent. This file is the
 "notes on why they work" deliverable: a design note per prompt plus a changelog line
 every time a prompt changes.
 
+## Managing prompts
+
+- One file per agent under `prompts/`, loaded by `load_prompt(name)` in
+  `src/rfp_agent/llm.py`; `{{name}}` variables are substituted by code and a missing or
+  unused variable is an error, so a prompt cannot silently lose an input.
+- Every run log records the SHA-256 of each prompt file the run used
+  (`prompt_hashes` in `runs/<id>/run_log.json`), so two runs can be compared knowing
+  whether the prompt changed between them without reading the file.
+- A prompt change is one commit with one changelog line below (what changed, and the
+  observed failure or eval number that motivated it). The before/after figure comes
+  from rerunning only the stage the prompt feeds: `python -m rfp_agent.agents <stage>
+  <pdf> --requirements/--problem/--solution <json>` reuses the upstream outputs of a
+  sample or an earlier run, and `python -m evals.harness score --label <l> --only
+  <section>` reruns one judge and merges the result into the existing score file. A
+  judge-prompt change is checked against the 40 hand-labelled verdicts
+  (`evals/harness agree`) before it is kept.
+- Prompts never carry facts about a particular RFP. Everything document-specific comes
+  in through variables, and every prompt that states facts about the RFP must cite
+  chunk or requirement IDs that code then validates.
+
 ## Design notes
 
-Fill in one block per prompt when the owning step lands:
+Every prompt in `prompts/` has one block below, in this shape:
 
 ```
 ### prompts/<name>.md
