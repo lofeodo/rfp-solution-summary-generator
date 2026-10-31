@@ -2270,7 +2270,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     experiments) is stretch ST1.
 
 ### S16. Documentation, Dockerfile, demo script
-- **Status:** todo
+- **Status:** in progress
 - **Goal:** README complete (how to run CLI and UI, where the key goes, how to run
   evals, pipeline diagram, demo script listing what to click in what order, a short
   "live change rehearsal" list: swap model, edit a prompt, add a requirement type);
@@ -2279,7 +2279,42 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   and eval results committed. Then merge `core` into `main`, delete `core`, sync.
 - **Depends on:** S13, S15
 - **Parallel with:** —
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (written 2026-10-30; author's answers: regenerate the samples,
+  one multi-stage image without compose, report the real hours)
+  1. **Docker.** `Dockerfile` with two stages: `node:22-alpine` builds `ui/frontend`
+     (same Node as CI); `python:3.12-slim` installs `requirements.txt` (its `-e .`
+     line needs `pyproject.toml`, `README.md` and `src/` copied first), then copies
+     `prompts/`, `inputs/`, `data/rfps/`, `runs/samples/`, `evals/`, `tests/`,
+     `ui/backend/` and the built `dist` into `ui/frontend/dist` where `app.py` looks.
+     Non-root user, `EXPOSE 8000`, `VOLUME /app/runs`, default command
+     `python -m ui.backend --host 0.0.0.0` (the backend binds `127.0.0.1` by default,
+     which a container cannot publish). Keys come from `--env-file .env` on the host;
+     `pydantic-settings` treats the absent in-image `.env` as optional. `.dockerignore`
+     keeps `.env`, `assignment.pdf`, `.git`, `docs/`, `node_modules`, `dist` and local
+     `runs/*` except the samples out of the context. Verified by building, running
+     the UI without keys (health, runs list, index, sample chunk, sample PDF), running
+     `pytest` inside the image, and one keyed CLI run through the container.
+  2. **Samples.** Regenerate `runs/samples/{missouri,nyesd,colfax,federal_way}` in
+     place with `run_pipeline(pdf, runs_dir=runs/samples, run_id=<name>)` so the UI,
+     the demo and the image show the current prompts (the S10 samples predate the
+     S13 solution-prompt change; their `prompt_hashes.solution` differs).
+  3. **README.** Finished-project status paragraph and a table of contents; where the
+     key goes (`.env`, and `--env-file` for Docker); a Docker section; a timed
+     "Demo script (3 to 5 minutes)" listing what to open and click; a "Live-change
+     rehearsal" section with three rehearsals (swap the model, edit a prompt and
+     rerun one stage, add a requirement type) each naming the exact edit points and
+     the command that proves it.
+  4. **PROMPTS.md.** Replace the "fill in when the step lands" placeholder with the
+     statement that every prompt has a block, and add a "Managing prompts" paragraph
+     (hash per prompt in every run log, changelog discipline, how to rerun one stage
+     or one judge after a change). Check every block has its five fields.
+  5. **DECISIONS.md.** Fill the seven "Evidence: none yet" fields (D1, D2, D3, D4, D6,
+     D7, D13) from the committed baseline and ablation results and the regenerated
+     sample reports; add D41 for the image shape.
+  6. **TIMELOG.md and ASSUMPTIONS.md.** S16 row, demo-script hours under deliverable
+     6 with the recording left to the author, real total; one Scope line for Docker.
+  7. **Close.** PR into `core`, merge on green CI, delete the branch; then open the
+     PR `core` → `main` and stop (author's merge).
 - **What was done:**
 - **Deviations from plan:**
 - **Open issues:**
