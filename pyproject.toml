@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rfp-agent"
+version = "0.1.0"
+description = "LangGraph pipeline that reads an RFP PDF and produces a structured solution summary"
+requires-python = ">=3.12"
+readme = "README.md"
+# Runtime dependencies are pinned in requirements.txt (single source of truth).
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests", "."]
+extend-exclude = ["data", "inputs", "runs", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Import the package from this checkout's src/, not wherever the editable install points,
+# so each worktree tests its own code.
+pythonpath = ["src", "."]
+addopts = "-m 'not llm'"
+markers = [
+    "llm: calls a paid LLM API; skipped by default, run with -m llm",
+]

@@ -1,0 +1,5146 @@
+{
+  "rfp": "missouri",
+  "run": "2",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/ablation_full_text/missouri/2",
+  "run_id": "2",
+  "model": "deepseek:deepseek-flash",
+  "scored_at": "2026-10-30T22:46:21.306741Z",
+  "judged": true,
+  "requirements": {
+    "extracted": 114,
+    "by_type": {
+      "submission": 28,
+      "timeline": 10,
+      "budget_pricing": 5,
+      "functional": 21,
+      "technical": 18,
+      "other": 3,
+      "legal_contractual": 20,
+      "security_compliance": 9
+    },
+    "by_strictness": {
+      "mandatory": 97,
+      "desired": 15,
+      "optional": 2
+    },
+    "gold": 71,
+    "gold_reachable": 71,
+    "matched_gold": 59,
+    "matched_gold_reachable": 59,
+    "matched_by_code": 59,
+    "matched_by_judge": 0,
+    "recall": 0.8309859154929577,
+    "recall_reachable": 0.8309859154929577,
+    "type_accuracy": 0.8305084745762712,
+    "strictness_accuracy": 0.864406779661017,
+    "type_confusion": {
+      "submission": {
+        "submission": 11,
+        "other": 1
+      },
+      "budget_pricing": {
+        "budget_pricing": 2
+      },
+      "timeline": {
+        "timeline": 4
+      },
+      "functional": {
+        "functional": 12,
+        "submission": 2,
+        "timeline": 1,
+        "technical": 3
+      },
+      "technical": {
+        "technical": 10,
+        "legal_contractual": 1,
+        "functional": 1
+      },
+      "legal_contractual": {
+        "other": 1,
+        "legal_contractual": 6
+      },
+      "security_compliance": {
+        "security_compliance": 4
+      }
+    },
+    "precision": null,
+    "in_scope_share": null,
+    "judged": 0,
+    "unverified_quotes": 0,
+    "matches": [
+      {
+        "gold_id": "GR001",
+        "gold_text": "Proposals must be emailed to the Research Director at MoDOTResearchRFP@modot.mo.gov by 10 a.m. Central on the due date, August 21, 2024, according to the email time stamp.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR002",
+        "gold_text": "The submittal must include a project plan, the proposed project team and its background, and any related projects now active or recently completed by the firm.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 1,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R002"
+        ],
+        "tier": "code",
+        "best_id": "R002",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR003",
+        "gold_text": "Questions and comments about the RFP must be sent to the Research Director by email by the deadline of 7/17/2024, 4 p.m. Central.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR005",
+        "gold_text": "The proposal must include all data required in the Required Elements of Proposal section, or it may be disqualified.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R070"
+        ],
+        "tier": "code",
+        "best_id": "R070",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR007",
+        "gold_text": "The proposal should reference the project number and title, since more than one RFP may be due at the same time.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R068"
+        ],
+        "tier": "code",
+        "best_id": "R068",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR008",
+        "gold_text": "The Work Plan section of the proposal should be no longer than ten pages and use a font size of at least 12 points, excluding forms and resumes.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R077"
+        ],
+        "tier": "code",
+        "best_id": "R077",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR009",
+        "gold_text": "The project plan must include all items outlined in Section 2 (Scope of Work).",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR010",
+        "gold_text": "The project plan must recognize MoDOT's ultimate authority to approve the work plans.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R080"
+        ],
+        "tier": "code",
+        "best_id": "R080",
+        "best_type": "other",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR011",
+        "gold_text": "Proposals must include a work plan with a proposed timeline.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R027"
+        ],
+        "tier": "code",
+        "best_id": "R027",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR012",
+        "gold_text": "The Personnel section should give the name, location, telephone number and email address of the Offeror's primary contact person.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR013",
+        "gold_text": "The Offeror must provide a complete listing of each sub-offeror, if any, with complete contact information.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R083"
+        ],
+        "tier": "code",
+        "best_id": "R083",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR014",
+        "gold_text": "The proposal must clearly identify the Offeror's experience in offering the requested services during the past three years.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R084"
+        ],
+        "tier": "code",
+        "best_id": "R084",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR015",
+        "gold_text": "Proposals should give the name, title and telephone number of at least three client officials from within the past three years as references.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R086"
+        ],
+        "tier": "code",
+        "best_id": "R086",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR016",
+        "gold_text": "The proposal must be submitted as a single combined PDF document.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R087"
+        ],
+        "tier": "code",
+        "best_id": "R087",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR017",
+        "gold_text": "The proposal must contain only the required documents, in this order: Proposal Submission Form, Cover Letter, Body of Proposal (including work plan and project schedule), Personnel, Organization's Project Experience, Team Member Experience, and Organization's Client References.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R088",
+          "R089"
+        ],
+        "tier": "code",
+        "best_id": "R088",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR018",
+        "gold_text": "A cover letter is optional and, if included, must not exceed one page.",
+        "gold_type": "submission",
+        "gold_strictness": "optional",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R088",
+          "R089"
+        ],
+        "tier": "code",
+        "best_id": "R088",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR019",
+        "gold_text": "The Offeror must submit a proposed cost estimate covering all services defined in the Scope of Work.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R091"
+        ],
+        "tier": "code",
+        "best_id": "R091",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR020",
+        "gold_text": "The cost estimate must be shown on the Section (4) Price Page, which must be completed, signed and returned with the proposal.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR022",
+        "gold_text": "The services must be provided for a price not exceeding $175,000.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R041"
+        ],
+        "tier": "code",
+        "best_id": "R041",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR023",
+        "gold_text": "The contract period will be 15 months.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R015"
+        ],
+        "tier": "code",
+        "best_id": "R015",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR025",
+        "gold_text": "The Offeror must submit quarterly updates on work accomplished on or before the last working day of March, June, September and December throughout the project.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR026",
+        "gold_text": "The quarterly updates must be submitted electronically to the MoDOT project manager.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR027",
+        "gold_text": "An interim presentation to update MoDOT on progress must be completed by 9/15/2025.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR028",
+        "gold_text": "The Offeror must provide ongoing progress updates by email and phone to MoDOT contacts every month.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R031"
+        ],
+        "tier": "code",
+        "best_id": "R031",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR029",
+        "gold_text": "The draft final report, summary report and user manual are due 11/3/2025.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR030",
+        "gold_text": "The final report, summary report, presentation and user manual are due 1/1/2026, about one month before the contract ends.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR031",
+        "gold_text": "The final invoice is due and the contract ends on 2/2/2026.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R040"
+        ],
+        "tier": "code",
+        "best_id": "R040",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR032",
+        "gold_text": "The Offeror must facilitate a kick-off meeting with MoDOT to review the work plan, scope and schedule and to establish a protocol for regular communications and coordination.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R044"
+        ],
+        "tier": "code",
+        "best_id": "R044",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR033",
+        "gold_text": "The Offeror must schedule and conduct quarterly project status meetings reviewing past progress and upcoming work, in person or online.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R045"
+        ],
+        "tier": "code",
+        "best_id": "R045",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR034",
+        "gold_text": "The Offeror must develop minutes for the kick-off meeting and each quarterly status meeting.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR035",
+        "gold_text": "The Offeror must submit a Data Management Plan to MoDOT within two weeks after the project kick-off meeting.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R048"
+        ],
+        "tier": "code",
+        "best_id": "R048",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR036",
+        "gold_text": "The Data Management Plan should address use of platform-independent, non-proprietary data formats to maximize future utility of the data.",
+        "gold_type": "technical",
+        "gold_strictness": "desired",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R050"
+        ],
+        "tier": "code",
+        "best_id": "R050",
+        "best_type": "technical",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR037",
+        "gold_text": "The Offeror must conduct a thorough literature search and review of other state DOT practices using AI/ML for right-of-way purposes.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R051"
+        ],
+        "tier": "code",
+        "best_id": "R051",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR038",
+        "gold_text": "Before work begins on the proof of concept, the Offeror must provide the name of the program used to develop the legal land descriptions.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R052"
+        ],
+        "tier": "code",
+        "best_id": "R052",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR039",
+        "gold_text": "MoDOT Information Systems must approve the program before the Offeror proceeds to Task 3c (proof of concept).",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R053"
+        ],
+        "tier": "code",
+        "best_id": "R053",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR040",
+        "gold_text": "The Offeror must demonstrate that the technology can create draft legal land descriptions on a variety of properties.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R054"
+        ],
+        "tier": "code",
+        "best_id": "R054",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR041",
+        "gold_text": "The Offeror must provide training to MoDOT right-of-way staff once the system is developed and finalized.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R055"
+        ],
+        "tier": "code",
+        "best_id": "R055",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR042",
+        "gold_text": "The training must come with a user manual for staff to reference.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R056"
+        ],
+        "tier": "code",
+        "best_id": "R056",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR043",
+        "gold_text": "The Offeror must prepare a draft Synthesis Report and Research Summary with all accompanying documentation identified as beneficial during the study.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R057"
+        ],
+        "tier": "code",
+        "best_id": "R057",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR044",
+        "gold_text": "The draft documents should be final products apart from revisions based on MoDOT's review.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R058"
+        ],
+        "tier": "code",
+        "best_id": "R058",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR045",
+        "gold_text": "The final report must include a completed Technical Report Documentation page.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R059"
+        ],
+        "tier": "code",
+        "best_id": "R059",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR046",
+        "gold_text": "The Offeror must develop a final report detailing the tasks completed and all findings from the project.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R061"
+        ],
+        "tier": "code",
+        "best_id": "R061",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR047",
+        "gold_text": "The Offeror must provide a 1-2 page research summary stating the project objectives, findings and conclusions.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R062"
+        ],
+        "tier": "code",
+        "best_id": "R062",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR048",
+        "gold_text": "The Offeror must provide a presentation for MoDOT staff summarizing important details of the project.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R063"
+        ],
+        "tier": "code",
+        "best_id": "R063",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR049",
+        "gold_text": "Property descriptions prepared for MHTC must meet the requirements of the MoDOT Engineering Policy Guide.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R011"
+        ],
+        "tier": "code",
+        "best_id": "R011",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR050",
+        "gold_text": "Property rights acquired or conveyed by MHTC must be described using the metes and bounds method unless the property is acquired in its entirety.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R012"
+        ],
+        "tier": "code",
+        "best_id": "R012",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR051",
+        "gold_text": "When a property is acquired in its entirety, the description must be written exactly as it appears on the last deed of record.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R013"
+        ],
+        "tier": "code",
+        "best_id": "R013",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR055",
+        "gold_text": "Offerors are encouraged to obtain 10% MBE and 5% WBE participation.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "desired",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R107"
+        ],
+        "tier": "code",
+        "best_id": "R107",
+        "best_type": "other",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR060",
+        "gold_text": "All documents and reports produced by the Offeror at MHTC's direction, and information supplied by MHTC, remain MHTC's property.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 16,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R118"
+        ],
+        "tier": "code",
+        "best_id": "R118",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR062",
+        "gold_text": "MHTC may reproduce and use any products derived from the Offeror's work without paying royalties or fees.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 16,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R123"
+        ],
+        "tier": "code",
+        "best_id": "R123",
+        "best_type": "legal_contractual",
+        "best_strictness": "optional",
+        "reason": null
+      },
+      {
+        "gold_id": "GR064",
+        "gold_text": "The Offeror should be able to provide certificates of general liability insurance of at least $500,000 per person per occurrence and $3,000,000 per occurrence overall.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "desired",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R126",
+          "R127"
+        ],
+        "tier": "code",
+        "best_id": "R126",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR065",
+        "gold_text": "The Offeror should be able to provide certificates of automobile liability insurance of at least $500,000 per person per occurrence and $3,000,000 per occurrence overall.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "desired",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R127",
+          "R126"
+        ],
+        "tier": "code",
+        "best_id": "R127",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR066",
+        "gold_text": "The Offeror should be able to provide a Missouri workers' compensation policy or equivalent as required by state law.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "desired",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R128"
+        ],
+        "tier": "code",
+        "best_id": "R128",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR067",
+        "gold_text": "All applications must be developed with an approved runtime: a currently supported .NET 6.0 or later release, or .NET Framework 4.8 or later only where specifically needed.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R129"
+        ],
+        "tier": "code",
+        "best_id": "R129",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR068",
+        "gold_text": "Web applications must use the MVC, Razor Pages or Web API framework.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R132"
+        ],
+        "tier": "code",
+        "best_id": "R132",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR069",
+        "gold_text": "Vendors may not use third-party tools or software that place a licensing responsibility on MoDOT without prior approval from the IS Best Practices Review Team and IS management.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R134"
+        ],
+        "tier": "code",
+        "best_id": "R134",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR070",
+        "gold_text": "Large-scale use of Python requires approval of the IS Best Practices Review Team.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R136"
+        ],
+        "tier": "code",
+        "best_id": "R136",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR071",
+        "gold_text": "Customer applications should be web-based, browser applications.",
+        "gold_type": "technical",
+        "gold_strictness": "desired",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R138"
+        ],
+        "tier": "code",
+        "best_id": "R138",
+        "best_type": "technical",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR072",
+        "gold_text": "Applications should be tested and designed for the latest IS-approved browsers at a minimum.",
+        "gold_type": "technical",
+        "gold_strictness": "desired",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R139"
+        ],
+        "tier": "code",
+        "best_id": "R139",
+        "best_type": "technical",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR073",
+        "gold_text": "No client-side software other than a modern browser should be required to run the web application.",
+        "gold_type": "technical",
+        "gold_strictness": "desired",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R141"
+        ],
+        "tier": "code",
+        "best_id": "R141",
+        "best_type": "technical",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR074",
+        "gold_text": "On-premise database deployments must run on Oracle 19C or on the latest supported SQL Server (SQL Server 2016 or higher only if approved by MoDOT IS).",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R142"
+        ],
+        "tier": "code",
+        "best_id": "R142",
+        "best_type": "technical",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR075",
+        "gold_text": "No personally identifiable information may be stored in any database table unless the application has a specific business need for it.",
+        "gold_type": "security_compliance",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R144"
+        ],
+        "tier": "code",
+        "best_id": "R144",
+        "best_type": "security_compliance",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR076",
+        "gold_text": "Any stored PII must be approved by the IS Cyber Security Team.",
+        "gold_type": "security_compliance",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R145"
+        ],
+        "tier": "code",
+        "best_id": "R145",
+        "best_type": "security_compliance",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR077",
+        "gold_text": "All web applications must conform to WCAG 2.1 Level AA.",
+        "gold_type": "security_compliance",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R147"
+        ],
+        "tier": "code",
+        "best_id": "R147",
+        "best_type": "security_compliance",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR078",
+        "gold_text": "Content from another author's web pages must not be used unless the author explicitly allows free copying or arrangements are made with the author.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R148"
+        ],
+        "tier": "code",
+        "best_id": "R148",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR079",
+        "gold_text": "The Offeror must present how the AI/ML will create draft legal land descriptions by 4/25/2025.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R035"
+        ],
+        "tier": "code",
+        "best_id": "R035",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR080",
+        "gold_text": "After adjusting the tool, the Offeror must create a manual and train ROW staff by 7/25/2025.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GR081",
+        "gold_text": "New development should use the approved programming languages: C#, JavaScript, CSS and HTML (Python only for limited uses).",
+        "gold_type": "technical",
+        "gold_strictness": "desired",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R135"
+        ],
+        "tier": "code",
+        "best_id": "R135",
+        "best_type": "technical",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR082",
+        "gold_text": "All web applications must meet the State of Missouri Accessibility Standard, based on Section 508 of the Rehabilitation Act and the Web Content Accessibility Guidelines.",
+        "gold_type": "security_compliance",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R146"
+        ],
+        "tier": "code",
+        "best_id": "R146",
+        "best_type": "security_compliance",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR083",
+        "gold_text": "Vendor logos, branding or endorsements must not appear in the application where a supported, licensed option exists to remove them.",
+        "gold_type": "technical",
+        "gold_strictness": "mandatory",
+        "gold_page": 18,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R149"
+        ],
+        "tier": "code",
+        "best_id": "R149",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR084",
+        "gold_text": "Library dependencies used in the application should be reviewed and updated annually.",
+        "gold_type": "technical",
+        "gold_strictness": "desired",
+        "gold_page": 17,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R133"
+        ],
+        "tier": "code",
+        "best_id": "R133",
+        "best_type": "technical",
+        "best_strictness": "desired",
+        "reason": null
+      }
+    ],
+    "verdicts": [
+      {
+        "id": "R001",
+        "text": "The proposal must be submitted to MoDOTResearchRFP@modot.mo.gov by August 21, 2024 at 10 a.m. Central.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S1.1",
+          "S12.1",
+          "S30.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R002",
+        "text": "The submittal must include a project plan.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S1.1",
+          "S36.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R005",
+        "text": "Proposals must be submitted within the RFP's stated submission deadlines, as time is of the essence.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S4.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R006",
+        "text": "The Offeror must provide a fee proposal to MHTC on the PRICE PAGE in accordance with the terms of this RFP.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1",
+          "S45.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R007",
+        "text": "The Offeror must agree to provide the services at the fees quoted, under the terms of this RFP.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R008",
+        "text": "The proposal must be signed by an authorized signatory of the Offeror and dated.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1",
+          "S30.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R009",
+        "text": "The proposal must include the Offeror's printed or typed name, mailing address, city, state, zip, telephone, fax and electronic mail address.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S5.1",
+          "S37.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R010",
+        "text": "The bidder must be a qualified organization able to conduct the TR202504 \"Using AI/ML to Write Legal Land Descriptions\" study for the Missouri Highways and Transportation Commission (MHTC) and the Missouri Department of Transportation (MoDOT).",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R011",
+        "text": "Property descriptions prepared on behalf of the MHTC must be prepared in a manner that meets the requirements outlined in the MoDOT Engineering Policy Guide (EPG) Section 236.4.6.2.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R012",
+        "text": "Realty rights acquired or conveyed by the MHTC must be described using the metes and bounds method, unless the property is acquired in its entirety.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R013",
+        "text": "When a property is acquired in its entirety, the property description must be written exactly as it appears on the last deed of record for the subject property.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R014",
+        "text": "The AI/ML solution must produce a \"first draft\" of the legal land description (LLD) using the MHTC parameters, which MoDOT's Right of Way staff can then review and edit.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R015",
+        "text": "The contract period will run for 15 months.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S11.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R016",
+        "text": "All RFP events must occur between 7:30 a.m. and 4 p.m. Central time.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R018",
+        "text": "Email to MoDOTResearchRFP@modot.mo.gov is the only acceptable method of contact regarding the RFP, and contacting MoDOT employees by other methods is prohibited and is cause for disqualification.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1",
+          "S33.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R021",
+        "text": "A proposal is not considered submitted until the submitter receives notification of receipt from MoDOT.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R022",
+        "text": "The Offeror must provide meeting agendas, minutes, and a data management plan as task deliverables.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S14.1",
+          "S19.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R027",
+        "text": "The proposal must include a work plan with a proposed timeline.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.1",
+          "S36.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R030",
+        "text": "An interim presentation must be scheduled near the mid-point of the project to update MoDOT on progress and project direction.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.1",
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R031",
+        "text": "The vendor must maintain monthly e-mail and phone communications with MoDOT contacts to provide ongoing progress updates.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.1",
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R034",
+        "text": "The data management plan is due on 12/4/2024.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R035",
+        "text": "The Offeror must present on 4/25/2025 how the AI/ML will create draft LLDs.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R040",
+        "text": "The final invoice is due and the contract ends on 2/2/2026.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R041",
+        "text": "The successful Offeror shall provide the services described in the scope of work for a total not to exceed $175,000.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S17.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R042",
+        "text": "The Offeror shall provide the services listed in item (B) of the scope of work.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S17.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R043",
+        "text": "The Offeror must provide Construction and Materials with an electronic copy of a program proposal that will help bring the project to successful completion.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S18.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R044",
+        "text": "The Offeror must facilitate a kick-off meeting with MoDOT to review the work plan, scope and schedule and to establish a protocol for regular ongoing communications and coordination with the team.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S19.1",
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R045",
+        "text": "The Offeror must schedule and conduct quarterly project status meetings reviewing progress for the previous period and anticipated work for the next period.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S19.1",
+          "S15.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R047",
+        "text": "The finalized work plan must detail implementation of the project tasks as well as the resources and schedule required to carry them out.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S19.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R048",
+        "text": "The Offeror must submit a Data Management Plan (DMP) to MoDOT within 2 weeks after the project kick-off meeting.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S19.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R049",
+        "text": "The Data Management Plan must describe the anticipated format(s) the Offeror's data and related files will use.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S19.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R050",
+        "text": "The Data Management Plan should address how the Offeror will use platform-independent and non-proprietary formats to ensure maximum future utility of the data.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S19.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R051",
+        "text": "The vendor must conduct a thorough literature search and review of other state DOT practices using AI/ML for right-of-way (ROW) purposes.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S20.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R052",
+        "text": "Before work begins on the proof of concepts, the Offeror must provide the name of the program used to develop the LLDs.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R053",
+        "text": "MoDOT Information Systems must approve the named program before the Offeror may move forward with Task 3c.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R054",
+        "text": "The Offeror must demonstrate how its technology will create draft legal land descriptions for a variety of properties.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S23.1",
+          "S14.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R055",
+        "text": "Once the system has been developed and finalized, the Offeror will provide training to ROW staff.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1",
+          "S14.1",
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R056",
+        "text": "The training must include a user manual for staff to reference.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1",
+          "S14.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R057",
+        "text": "The Offeror must prepare a draft Synthesis Report and Research Summary along with all accompanying documentation identified as beneficial during the study.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S25.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R058",
+        "text": "The draft Synthesis Report and Research Summary must be final products except for revisions based on MoDOT's review.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S25.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R059",
+        "text": "The final report must include a completed Technical Report Documentation page.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S25.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R060",
+        "text": "The Offeror must follow the Publication Guidelines and the summary template posted on the website.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S25.1",
+          "S26.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R061",
+        "text": "The Offeror must develop a final report detailing the tasks completed during the project, including all findings generated during the project's duration.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1",
+          "S14.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R062",
+        "text": "The Offeror must provide a 1-2 page research summary stating the project objectives, findings and conclusions.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1",
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R063",
+        "text": "The Offeror must provide a presentation for MoDOT staff summarizing important or significant details of the project.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S26.1",
+          "S15.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R065",
+        "text": "The Offeror must consult MHTC's representative regarding any concerns involved with the administration of the services provided under this RFP.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R068",
+        "text": "The proposal must reference the project number and title because more than one RFP may be due at one time.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S30.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R070",
+        "text": "The Offeror must submit all data required in paragraph (B) of the RFP for its proposal to be evaluated and considered for award.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R072",
+        "text": "The Offeror must submit its proposal on the basis that all proposals and their contents will be open to public inspection, without reservations.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S32.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R074",
+        "text": "Questions must be submitted by the date and time listed in section 1E.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S33.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R075",
+        "text": "The proposal must include the Proposal Submission Form.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S35.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R077",
+        "text": "The Work Plan section must be no longer than ten (10) pages, excluding forms and resumes attached to the proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S36.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R080",
+        "text": "The project plan must recognize MoDOT's ultimate authority to approve the work plans.",
+        "type": "other",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S36.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R082",
+        "text": "The Personnel section of the proposal must highlight the Offeror's previous experience and any relevant work with other state agencies or local governments in Missouri.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S37.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R083",
+        "text": "The Offeror must furnish a complete listing of each Sub-Offeror, if any, together with complete contact information for that Sub-Offeror.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S37.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R084",
+        "text": "The proposal must clearly identify the bidder's experience in offering the services requested in this RFP during the past three (3) years.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S38.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R085",
+        "text": "The experience description should include a list of the agencies which the bidder's institution has served or currently serves.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S38.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R086",
+        "text": "The proposal should provide the name, title, and telephone number of at least three officials of client organizations from the past three years as references.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S39.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R087",
+        "text": "The proposal must be submitted as one combined PDF document.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S39.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R088",
+        "text": "The proposal must include only the required documents, organized in the order: Proposal Submission Form; Cover Letter (optional, 1 page maximum); Body of Proposal (including work plan and project schedule); Personnel; Organization's Project Experience; Team Member Experience; and Organization's Client References.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S39.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R089",
+        "text": "If a cover letter is included, it must not exceed one page.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S39.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R090",
+        "text": "The Offeror bears sole responsibility for submitting all information related to the evaluation categories with its proposal, and MHTC's representative is not obligated to solicit any information that is missing from the proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S43.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R091",
+        "text": "The Offeror must submit a proposed cost estimate covering all services defined in the Scope of Work.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S45.1",
+          "S47.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R095",
+        "text": "The Cost Estimate must be broken out into the line items Salaries, Benefits, Operating Expense, Facilities and Administration (F&A) Cost, Miscellaneous, and Total.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S47.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R096",
+        "text": "Any miscellaneous costs must be itemized, with an additional sheet attached if needed.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S47.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R097",
+        "text": "The awarded contract must incorporate the contract provisions stated in this RFP, which will also appear in the post-award negotiated contract.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S48.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R098",
+        "text": "The Offeror must accept that the award is subject to a post-award negotiated contract and that MHTC may cancel the award and select a different Offeror if the parties cannot agree on the post-award contract terms.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S48.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R099",
+        "text": "The Offeror shall fully coordinate its activities for MHTC with those of the Construction and Materials Division.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S49.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R100",
+        "text": "Throughout the effective period of the Agreement, the Offeror shall make advice and information on matters covered by the Agreement available to the Construction and Materials Division as the work progresses.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S49.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R101",
+        "text": "The Offeror must not release any material or reports it prepares to the public without the prior consent of MHTC's representative.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S50.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R102",
+        "text": "The Offeror shall not assign, delegate, or novate any interest in the services to be provided without the prior written consent of MHTC's representative.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S51.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R103",
+        "text": "The Offeror's proposal must be submitted on the basis that it is subject to acceptance by MHTC without further clarification.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S53.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R104",
+        "text": "Any change to the Agreement, whether by modification or supplementation, must be accompanied by a formal contract amendment signed and approved by the duly authorized representative of the Offeror and MHTC.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S54.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R105",
+        "text": "Offerors are encouraged to submit copies of their existing affirmative action programs, if any.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S55.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R106",
+        "text": "Offerors are encouraged to directly hire minorities and women as direct employees of the Offeror.",
+        "type": "other",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S55.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R107",
+        "text": "Offerors are encouraged to obtain 10% MBE and 5% WBE participation in this work through subcontractors, suppliers, joint ventures, or other arrangements.",
+        "type": "other",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S55.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R108",
+        "text": "The Offeror remains ultimately responsible and liable to MHTC for the complete, accurate and professional quality and performance of the services regardless of any subcontractors or suppliers used.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S55.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R110",
+        "text": "By signing the Agreement, the Offeror certifies that any employee assigned to perform services under the contract is eligible and authorized to work in the United States in compliance with federal law.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S57.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R111",
+        "text": "The Offeror must include the provisions of Section (3), paragraph I of the Agreement in every subcontract.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S58.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R112",
+        "text": "The Offeror must take such action with respect to any subcontract as the Commission may direct as a means of enforcing such provisions, including sanctions for noncompliance.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S58.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R113",
+        "text": "The business entity must, by sworn affidavit and provision of documentation, affirm its enrollment and participation in a federal work authorization program (such as E-Verify) with respect to the employees working in connection with the contracted services.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R115",
+        "text": "The business entity must, by sworn affidavit, affirm that it does not knowingly employ any person who is an unauthorized alien in connection with the contracted services.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1",
+          "S75.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R116",
+        "text": "If the business entity is a sole proprietorship or partnership, each sole proprietor and each general partner must provide affirmative proof of lawful presence in the United States pursuant to Section 208.009, RSMo.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S60.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R118",
+        "text": "All documents, reports, exhibits and other materials produced by the Offeror at the direction of MHTC's representative, along with information supplied by MHTC's representative, shall remain the property of MHTC.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S65.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R119",
+        "text": "The Offeror shall not disclose confidential factual matters provided by MHTC to third parties except as required by statute, ordinance, or court order, or as authorized by MHTC's representative.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S66.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R120",
+        "text": "The Offeror shall notify MHTC immediately of any request for such confidential information.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S66.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R121",
+        "text": "The Offeror must maintain all working papers and records relating to the Agreement.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S69.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R122",
+        "text": "The Offeror must make its records available at no charge to MHTC and/or the Missouri State Auditor at all reasonable times during the term of the Agreement and any extension, and for three (3) years from the date of final payment.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S69.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R123",
+        "text": "MHTC's representative may reproduce and use any products derived from the Offeror's work without payment of royalties or fees.",
+        "type": "legal_contractual",
+        "strictness": "optional",
+        "chunk_ids": [
+          "S69.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R124",
+        "text": "The Offeror shall comply with all reporting requirements of the Federal Funding Accountability and Transparency Act (FFATA) of 2006, as amended.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S71.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R125",
+        "text": "The Offeror may be asked, prior to contract signing, to provide certificates of insurance meeting or approaching the specified coverages.",
+        "type": "legal_contractual",
+        "strictness": "optional",
+        "chunk_ids": [
+          "S72.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R126",
+        "text": "General Liability insurance must be not less than $500,000 for any one person in a single accident or occurrence and not less than $3,000,000 for all claims arising out of a single occurrence.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S72.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R127",
+        "text": "Automobile Liability insurance must be not less than $500,000 for any one person in a single accident or occurrence and not less than $3,000,000 for all claims arising out of a single occurrence.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S72.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R128",
+        "text": "The Offeror must maintain a Missouri State Workmen's Compensation policy or equivalent in accordance with state law.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S72.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R129",
+        "text": "All applications must be developed using one of the technologies approved in the Approved Technologies section of the RFP.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R130",
+        "text": "A currently supported .NET 6.0 or above release should be used unless there is a specific need for .NET Framework.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R131",
+        "text": "If .NET Framework is required, a currently supported 4.8 release or above must be used.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R132",
+        "text": "Web applications must use either the MVC, Razor Pages or Web API framework.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R133",
+        "text": "Library dependencies used in the application should be reviewed and updated on an annual basis.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R134",
+        "text": "Vendors may not use third-party tools or software that would place a licensing responsibility on MoDOT without prior review and approval by the Information Systems Best Practices Review Team (BRPT) and IS management.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R135",
+        "text": "New development should use only the approved programming languages: C#, JavaScript, CSS, HTML and Python.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R136",
+        "text": "Python is reserved for ESRI scripts and other small one-time uses, and large-scale use of Python requires approval of the Information Systems (IS) Best Practices Review Team (BRPT).",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R137",
+        "text": "For platforms other than ArcGIS Desktop, ArcGIS Pro and ArcGIS Enterprise, version 3.x of Python from www.python.org should be used.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R138",
+        "text": "All customer applications should be web-based browser applications.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.1"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R139",
+        "text": "Applications should be tested and designed to use the latest IS-approved browser(s) at a minimum.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.1",
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R141",
+        "text": "No client-side software other than a modern browser (e.g., no Java Applets, no Silverlight) may be required to run the web application.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R142",
+        "text": "On-premise database deployments must run on Oracle 19C.",
+        "type": "technical",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R143",
+        "text": "The application should be designed and maintained to run on the latest supported version of SQL Server, with Microsoft SQL Server 2016 or higher permitted only if approved by the MoDOT IS Data Service Management team.",
+        "type": "technical",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R144",
+        "text": "No Personal Identifiable Information (PII) may be stored in any database table unless the application has a specific business need for that data.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R145",
+        "text": "All PII data that is stored must be approved by the IS Cyber Security Team.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R146",
+        "text": "All web applications must meet the State of Missouri's Accessibility Standard, which is based on Section 508 of the Rehabilitation Act (as amended) and the Web Content Accessibility Guidelines.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R147",
+        "text": "All web applications must adhere to the W3 Web Content Accessibility Guidelines 2.1 at 'AA' level of conformance (WCAG 2.1 AA).",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R148",
+        "text": "The vendor must never use text, diagrams, photographs, audio, multimedia, program source code, script or graphics from another author's web pages unless the author explicitly permits free copying or appropriate arrangements are made with the author.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      },
+      {
+        "id": "R149",
+        "text": "Vendor logos, branding or other company endorsements must not appear in the application where a supported, licensed option exists to eliminate them from the display.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S73.2"
+        ],
+        "supported": null,
+        "is_requirement": null,
+        "in_scope": null,
+        "reason": null
+      }
+    ]
+  },
+  "problem": {
+    "mode": "full_text",
+    "claims": {
+      "client_situation": 6,
+      "goal": 7,
+      "success_criteria": 8,
+      "constraints": 9
+    },
+    "facts": 29,
+    "inferences": 1,
+    "checklist_total": 12,
+    "checklist_covered": 10,
+    "checklist_partial": 2,
+    "checklist_coverage": 0.8333333333333334,
+    "checklist": [
+      {
+        "gold_id": "GC01",
+        "fact": "The RFP is issued by the Missouri Highways and Transportation Commission (MHTC), coordinated by the Research Unit of the Construction and Materials Division, for MoDOT as the beneficiary (Right of Way staff are the users of the tool).",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "client_situation[0]",
+        "reason": "MHTC issuer and Research Unit coordination stated; ROW staff as users appear elsewhere."
+      },
+      {
+        "gold_id": "GC02",
+        "fact": "The need: property descriptions for MHTC must be written by metes and bounds and reviewed by a professional land surveyor, and these descriptions are long and tedious to write.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "client_situation[1]",
+        "reason": "Metes and bounds, surveyor review (client_situation[3]) and long tedious work (client_situation[4]) all stated."
+      },
+      {
+        "gold_id": "GC03",
+        "fact": "The project goal is to determine the usefulness of AI and ML to develop a \"first draft\" legal land description using MHTC parameters, which MoDOT Right of Way staff would review and edit.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "goal[0]",
+        "reason": "AI/ML first draft LLD using MHTC parameters, reviewed by ROW staff."
+      },
+      {
+        "gold_id": "GC04",
+        "fact": "The services are capped at a not-to-exceed price of $175,000.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "constraints[0]",
+        "reason": "Not-to-exceed $175,000 stated."
+      },
+      {
+        "gold_id": "GC05",
+        "fact": "The contract period is 15 months, with the project assumed to start November 1, 2024 and the contract ending February 2, 2026 with the final invoice due.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "goal[1]",
+        "reason": "15 months, Nov 1, 2024 start, Feb 2, 2026 end stated."
+      },
+      {
+        "gold_id": "GC06",
+        "fact": "Proposals for project TR202504 must be emailed to MoDOTResearchRFP@modot.mo.gov by August 21, 2024 at 10 a.m. Central.",
+        "quote_verifiable": true,
+        "status": "partial",
+        "claim": "success_criteria[0]",
+        "reason": "Email and deadline given, but project number TR202504 missing."
+      },
+      {
+        "gold_id": "GC07",
+        "fact": "Questions must be submitted by 7/17/2024 4 p.m. Central via the RFP email only; contacting MoDOT employees by other methods is prohibited and is cause for disqualification.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "success_criteria[1]",
+        "reason": "Deadline, email only, disqualification all stated."
+      },
+      {
+        "gold_id": "GC08",
+        "fact": "Property descriptions must meet the requirements of MoDOT Engineering Policy Guide (EPG) Section 236.4.6.2, which the RFP references but does not include.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "client_situation[2]",
+        "reason": "EPG Section 236.4.6.2 requirement stated; not-included note absent but minor."
+      },
+      {
+        "gold_id": "GC09",
+        "fact": "Core deliverables include a data management plan, a proof-of-concept demonstration of AI writing legal land descriptions, training and a user manual for ROW staff, and draft and final reports; the final report, summary, presentation and user manual are due 1/1/2026.",
+        "quote_verifiable": true,
+        "status": "partial",
+        "claim": "goal[5]",
+        "reason": "Deliverables listed but the 1/1/2026 due date is missing."
+      },
+      {
+        "gold_id": "GC10",
+        "fact": "The Offeror must name the program used to develop the LLDs before proof-of-concept work, and MoDOT Information Systems must approve it before Task 3c proceeds.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "constraints[1]",
+        "reason": "Name program and obtain IS approval before Task 3c."
+      },
+      {
+        "gold_id": "GC11",
+        "fact": "Web applications must meet WCAG 2.1 AA accessibility conformance.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "constraints[4]",
+        "reason": "WCAG 2.1 AA requirement stated."
+      },
+      {
+        "gold_id": "GC12",
+        "fact": "No PII may be stored in any database table unless there is a specific business need, and any stored PII requires approval from the IS Cyber Security Team.",
+        "quote_verifiable": true,
+        "status": "covered",
+        "claim": "constraints[4]",
+        "reason": "No PII without business need and IS Cyber Security approval."
+      }
+    ]
+  },
+  "solution": {
+    "components": 10,
+    "assumptions": 16,
+    "rounds": 2,
+    "cited_total": 73,
+    "cited_covered": 73,
+    "cited_coverage": 1.0,
+    "stored_coverage_agrees": true,
+    "judged_covered": null,
+    "judged_coverage": null,
+    "rubric": {},
+    "calendar_components": [],
+    "component_records": [
+      {
+        "id": "C01",
+        "title": "Project management, governance and MoDOT coordination",
+        "description": "A named project manager runs the engagement from a kick-off meeting that reviews the work plan, scope and schedule and fixes the protocol for ongoing communication, through monthly e-mail and phone progress updates and quarterly status meetings covering the prior period's progress and the next period's planned work. A detailed work plan sets out task implementation, resources and schedule and expressly recognises MoDOT's ultimate authority to approve work plans, with all changes routed through formal contract amendment. The team coordinates fully with the Construction and Materials Division and keeps advice and information flowing to it as work progresses, consulting MHTC's representative (MoDOT's Research Director) on any administration concerns. Meeting agendas and minutes are issued for every meeting as task deliverables. The same governance function owns the RFP's question-and-comment window: all questions and comments are channelled solely through MoDOTResearchRFP@modot.mo.gov and lodged before the date and time stated in Section 1E, with no contact with MoDOT employees by any other method, and the bid team logs the posted responses of 31 July 2024 and the selection notice of 18 September 2024 as controlled inputs to the work plan.",
+        "requirement_ids": [
+          "R010",
+          "R022",
+          "R031",
+          "R044",
+          "R045",
+          "R047",
+          "R065",
+          "R074",
+          "R080",
+          "R099",
+          "R100",
+          "R104",
+          "R042"
+        ]
+      },
+      {
+        "id": "C02",
+        "title": "Schedule, milestone control and deliverable acceptance",
+        "description": "A milestone plan anchored to the RFP's fixed dates: kick-off, data management plan, the 25 April 2025 presentation of how the AI/ML creates draft LLDs, training and user manual by 25 July 2025, interim presentation near mid-point (15 September 2025), draft documents in November 2025, final documents in January 2026 and final invoice at contract end on 2 February 2026. Each deliverable is tracked to a defined acceptance step with MoDOT review, and the plan is built to absorb the RFP's stated review cycles without moving the contract end date. Progress against the plan is reported at every quarterly status meeting and in the monthly updates, and all RFP events are scheduled inside the 7:30 a.m. to 4 p.m. Central window.",
+        "requirement_ids": [
+          "R005",
+          "R015",
+          "R030",
+          "R034",
+          "R035",
+          "R040",
+          "R048",
+          "R016"
+        ]
+      },
+      {
+        "id": "C03",
+        "title": "Literature review and state-of-practice synthesis",
+        "description": "A structured search and review of published research and other state DOTs' use of AI/ML for right-of-way purposes, covering peer-reviewed literature, DOT research reports and vendor/agency practice, with a documented search protocol, inclusion criteria and a comparison matrix of use cases, methods, data needs and outcomes. Findings are distilled into the design constraints for the drafting tool and into the Synthesis Report, so the proof of concept is grounded in what has already been tried elsewhere rather than invented from scratch.",
+        "requirement_ids": [
+          "R051"
+        ]
+      },
+      {
+        "id": "C04",
+        "title": "LLD rule base from MoDOT examples and EPG 236.4.6.2",
+        "description": "Analysis of the LLD examples MoDOT supplies, combined with MoDOT Engineering Policy Guide Section 236.4.6.2, to encode the drafting rules the tool must follow: metes-and-bounds descriptions for partial acquisitions, deed-exact reproduction of the last deed of record where a property is acquired in its entirety, and explicit recital of the specific rights acquired, conveyed or leased where those rights are less than fee simple. The rule base is captured as a reviewable specification and test set of worked examples, and it is the reference against which every generated draft is checked. A professional land surveyor reviews generated descriptions against right-of-way plans and survey information before any document is presented to a grantor.",
+        "requirement_ids": [
+          "R011",
+          "R012",
+          "R013",
+          "R014"
+        ]
+      },
+      {
+        "id": "C05",
+        "title": "AI/ML drafting engine and approved-technology application",
+        "description": "A custom web application, built on .NET 6.0 or above with MVC, Razor Pages or Web API in C#, JavaScript, CSS and HTML, that takes property and right-of-way inputs and generates a first-draft LLD for ROW staff to review and edit. Python is used only for ESRI scripts and small one-time utilities unless the IS Best Practices Review Team approves larger use. The application runs in a modern browser with no client-side software, meets WCAG 2.1 AA and the State of Missouri accessibility standard, stores no PII without a documented business need and Cyber Security Team approval, carries no vendor branding where a licensed option removes it, and uses only licensed or freely usable third-party components reviewed by the BRPT. The named program is submitted to MoDOT Information Systems for approval before Task 3c begins.",
+        "requirement_ids": [
+          "R129",
+          "R131",
+          "R132",
+          "R134",
+          "R136",
+          "R138",
+          "R139",
+          "R141",
+          "R142",
+          "R143",
+          "R144",
+          "R145",
+          "R146",
+          "R147",
+          "R148",
+          "R149",
+          "R130",
+          "R133",
+          "R135",
+          "R137",
+          "R053"
+        ]
+      },
+      {
+        "id": "C06",
+        "title": "Proof of concept and demonstration on varied properties",
+        "description": "A working proof of concept that generates draft LLDs across a spread of property types and acquisition scenarios, including partial takes requiring metes-and-bounds descriptions and whole-property acquisitions requiring deed-exact text. The demonstration is presented to MoDOT on 25 April 2025, showing how the technology produces each draft, with MoDOT ROW staff reviewing the drafts and supplying improvement feedback that is folded into a documented refinement cycle before training. Sample inputs, generated drafts and reviewer comments are retained as evidence of performance.",
+        "requirement_ids": [
+          "R054",
+          "R014",
+          "R035"
+        ]
+      },
+      {
+        "id": "C07",
+        "title": "Training, user manual and knowledge transfer",
+        "description": "Once the tool is finalised, ROW staff are trained in its use, with sessions scheduled to complete by 25 July 2025 and delivered in a format agreed with MoDOT at kick-off. A user manual accompanies the training and covers the drafting workflow, the rule base, review and edit steps, and the surveyor verification step, so staff can operate and reference the tool without the vendor present. Training materials and the manual are handed over as MHTC property, and the interim presentation in September 2025 reports on adoption and remaining gaps.",
+        "requirement_ids": [
+          "R055",
+          "R056",
+          "R030"
+        ]
+      },
+      {
+        "id": "C08",
+        "title": "Data management and records",
+        "description": "A Data Management Plan submitted within two weeks of kick-off, describing the anticipated formats of the project's data and files and committing to platform-independent, non-proprietary formats so the outputs remain usable after the contract ends. The plan also sets out retention, access and handover of working papers, and the team maintains all working papers and records relating to the agreement, making them available at no charge to MHTC and the Missouri State Auditor during the term and for three years after final payment.",
+        "requirement_ids": [
+          "R049",
+          "R050",
+          "R121",
+          "R122",
+          "R022"
+        ]
+      },
+      {
+        "id": "C09",
+        "title": "Reporting, publications and research summaries",
+        "description": "A draft Synthesis Report and Research Summary delivered as final-quality products except for MoDOT review comments, followed by a final report covering every task and all findings, a completed Technical Report Documentation page, a one-to-two page research summary stating objectives, findings and conclusions, and a presentation for MoDOT staff. All documents follow the RFP's Publication Guidelines and summary template, and nothing is released publicly without MHTC's representative's prior consent.",
+        "requirement_ids": [
+          "R057",
+          "R058",
+          "R061",
+          "R062",
+          "R063",
+          "R101",
+          "R118"
+        ]
+      },
+      {
+        "id": "C10",
+        "title": "Contract, compliance and pricing obligations",
+        "description": "A compliance package that carries the non-technical obligations: acceptance of the RFP's contract provisions and of the post-award negotiated contract including MHTC's right to cancel the award if terms cannot be agreed; no assignment or delegation without written consent; full responsibility for subcontractor quality with Section (3) paragraph I flowed into every subcontract and Commission-directed sanctions accepted; E-Verify enrolment and non-employment of unauthorised aliens affirmed by sworn affidavit, with lawful-presence proof for sole proprietors and general partners; confidentiality of MHTC factual matters with immediate notice of any disclosure request; FFATA reporting; and the required general liability, automobile liability and Missouri workers' compensation coverages, with certificates available before signing. Pricing is submitted as a cost estimate within the $175,000 not-to-exceed ceiling, broken into salaries, benefits, operating expense, facilities and administration, and itemised miscellaneous costs, and the Offeror commits to the fees quoted.",
+        "requirement_ids": [
+          "R007",
+          "R041",
+          "R091",
+          "R095",
+          "R096",
+          "R097",
+          "R098",
+          "R102",
+          "R108",
+          "R110",
+          "R111",
+          "R112",
+          "R113",
+          "R115",
+          "R116",
+          "R119",
+          "R120",
+          "R124",
+          "R126",
+          "R127",
+          "R128",
+          "R123",
+          "R125",
+          "R106",
+          "R107"
+        ]
+      }
+    ],
+    "pairs": [
+      {
+        "component_id": "C01",
+        "requirement_id": "R010",
+        "requirement_text": "The bidder must be a qualified organization able to conduct the TR202504 \"Using AI/ML to Write Legal Land Descriptions\" study for the Missouri Highways and Transportation Commission (MHTC) and the Missouri Department of Transportation (MoDOT).",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R022",
+        "requirement_text": "The Offeror must provide meeting agendas, minutes, and a data management plan as task deliverables.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R031",
+        "requirement_text": "The vendor must maintain monthly e-mail and phone communications with MoDOT contacts to provide ongoing progress updates.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R044",
+        "requirement_text": "The Offeror must facilitate a kick-off meeting with MoDOT to review the work plan, scope and schedule and to establish a protocol for regular ongoing communications and coordination with the team.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R045",
+        "requirement_text": "The Offeror must schedule and conduct quarterly project status meetings reviewing progress for the previous period and anticipated work for the next period.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R047",
+        "requirement_text": "The finalized work plan must detail implementation of the project tasks as well as the resources and schedule required to carry them out.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R065",
+        "requirement_text": "The Offeror must consult MHTC's representative regarding any concerns involved with the administration of the services provided under this RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R074",
+        "requirement_text": "Questions must be submitted by the date and time listed in section 1E.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R080",
+        "requirement_text": "The project plan must recognize MoDOT's ultimate authority to approve the work plans.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R099",
+        "requirement_text": "The Offeror shall fully coordinate its activities for MHTC with those of the Construction and Materials Division.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R100",
+        "requirement_text": "Throughout the effective period of the Agreement, the Offeror shall make advice and information on matters covered by the Agreement available to the Construction and Materials Division as the work progresses.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R104",
+        "requirement_text": "Any change to the Agreement, whether by modification or supplementation, must be accompanied by a formal contract amendment signed and approved by the duly authorized representative of the Offeror and MHTC.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R042",
+        "requirement_text": "The Offeror shall provide the services listed in item (B) of the scope of work.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R005",
+        "requirement_text": "Proposals must be submitted within the RFP's stated submission deadlines, as time is of the essence.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R015",
+        "requirement_text": "The contract period will run for 15 months.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R030",
+        "requirement_text": "An interim presentation must be scheduled near the mid-point of the project to update MoDOT on progress and project direction.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R034",
+        "requirement_text": "The data management plan is due on 12/4/2024.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R035",
+        "requirement_text": "The Offeror must present on 4/25/2025 how the AI/ML will create draft LLDs.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R040",
+        "requirement_text": "The final invoice is due and the contract ends on 2/2/2026.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R048",
+        "requirement_text": "The Offeror must submit a Data Management Plan (DMP) to MoDOT within 2 weeks after the project kick-off meeting.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R016",
+        "requirement_text": "All RFP events must occur between 7:30 a.m. and 4 p.m. Central time.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R051",
+        "requirement_text": "The vendor must conduct a thorough literature search and review of other state DOT practices using AI/ML for right-of-way (ROW) purposes.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R011",
+        "requirement_text": "Property descriptions prepared on behalf of the MHTC must be prepared in a manner that meets the requirements outlined in the MoDOT Engineering Policy Guide (EPG) Section 236.4.6.2.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R012",
+        "requirement_text": "Realty rights acquired or conveyed by the MHTC must be described using the metes and bounds method, unless the property is acquired in its entirety.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R013",
+        "requirement_text": "When a property is acquired in its entirety, the property description must be written exactly as it appears on the last deed of record for the subject property.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R014",
+        "requirement_text": "The AI/ML solution must produce a \"first draft\" of the legal land description (LLD) using the MHTC parameters, which MoDOT's Right of Way staff can then review and edit.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R129",
+        "requirement_text": "All applications must be developed using one of the technologies approved in the Approved Technologies section of the RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R131",
+        "requirement_text": "If .NET Framework is required, a currently supported 4.8 release or above must be used.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R132",
+        "requirement_text": "Web applications must use either the MVC, Razor Pages or Web API framework.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R134",
+        "requirement_text": "Vendors may not use third-party tools or software that would place a licensing responsibility on MoDOT without prior review and approval by the Information Systems Best Practices Review Team (BRPT) and IS management.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R136",
+        "requirement_text": "Python is reserved for ESRI scripts and other small one-time uses, and large-scale use of Python requires approval of the Information Systems (IS) Best Practices Review Team (BRPT).",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R138",
+        "requirement_text": "All customer applications should be web-based browser applications.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R139",
+        "requirement_text": "Applications should be tested and designed to use the latest IS-approved browser(s) at a minimum.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R141",
+        "requirement_text": "No client-side software other than a modern browser (e.g., no Java Applets, no Silverlight) may be required to run the web application.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R142",
+        "requirement_text": "On-premise database deployments must run on Oracle 19C.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R143",
+        "requirement_text": "The application should be designed and maintained to run on the latest supported version of SQL Server, with Microsoft SQL Server 2016 or higher permitted only if approved by the MoDOT IS Data Service Management team.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R144",
+        "requirement_text": "No Personal Identifiable Information (PII) may be stored in any database table unless the application has a specific business need for that data.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R145",
+        "requirement_text": "All PII data that is stored must be approved by the IS Cyber Security Team.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R146",
+        "requirement_text": "All web applications must meet the State of Missouri's Accessibility Standard, which is based on Section 508 of the Rehabilitation Act (as amended) and the Web Content Accessibility Guidelines.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R147",
+        "requirement_text": "All web applications must adhere to the W3 Web Content Accessibility Guidelines 2.1 at 'AA' level of conformance (WCAG 2.1 AA).",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R148",
+        "requirement_text": "The vendor must never use text, diagrams, photographs, audio, multimedia, program source code, script or graphics from another author's web pages unless the author explicitly permits free copying or appropriate arrangements are made with the author.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R149",
+        "requirement_text": "Vendor logos, branding or other company endorsements must not appear in the application where a supported, licensed option exists to eliminate them from the display.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R130",
+        "requirement_text": "A currently supported .NET 6.0 or above release should be used unless there is a specific need for .NET Framework.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R133",
+        "requirement_text": "Library dependencies used in the application should be reviewed and updated on an annual basis.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R135",
+        "requirement_text": "New development should use only the approved programming languages: C#, JavaScript, CSS, HTML and Python.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R137",
+        "requirement_text": "For platforms other than ArcGIS Desktop, ArcGIS Pro and ArcGIS Enterprise, version 3.x of Python from www.python.org should be used.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R053",
+        "requirement_text": "MoDOT Information Systems must approve the named program before the Offeror may move forward with Task 3c.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R054",
+        "requirement_text": "The Offeror must demonstrate how its technology will create draft legal land descriptions for a variety of properties.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R014",
+        "requirement_text": "The AI/ML solution must produce a \"first draft\" of the legal land description (LLD) using the MHTC parameters, which MoDOT's Right of Way staff can then review and edit.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R035",
+        "requirement_text": "The Offeror must present on 4/25/2025 how the AI/ML will create draft LLDs.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R055",
+        "requirement_text": "Once the system has been developed and finalized, the Offeror will provide training to ROW staff.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R056",
+        "requirement_text": "The training must include a user manual for staff to reference.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R030",
+        "requirement_text": "An interim presentation must be scheduled near the mid-point of the project to update MoDOT on progress and project direction.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R049",
+        "requirement_text": "The Data Management Plan must describe the anticipated format(s) the Offeror's data and related files will use.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R050",
+        "requirement_text": "The Data Management Plan should address how the Offeror will use platform-independent and non-proprietary formats to ensure maximum future utility of the data.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R121",
+        "requirement_text": "The Offeror must maintain all working papers and records relating to the Agreement.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R122",
+        "requirement_text": "The Offeror must make its records available at no charge to MHTC and/or the Missouri State Auditor at all reasonable times during the term of the Agreement and any extension, and for three (3) years from the date of final payment.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R022",
+        "requirement_text": "The Offeror must provide meeting agendas, minutes, and a data management plan as task deliverables.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R057",
+        "requirement_text": "The Offeror must prepare a draft Synthesis Report and Research Summary along with all accompanying documentation identified as beneficial during the study.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R058",
+        "requirement_text": "The draft Synthesis Report and Research Summary must be final products except for revisions based on MoDOT's review.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R061",
+        "requirement_text": "The Offeror must develop a final report detailing the tasks completed during the project, including all findings generated during the project's duration.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R062",
+        "requirement_text": "The Offeror must provide a 1-2 page research summary stating the project objectives, findings and conclusions.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R063",
+        "requirement_text": "The Offeror must provide a presentation for MoDOT staff summarizing important or significant details of the project.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R101",
+        "requirement_text": "The Offeror must not release any material or reports it prepares to the public without the prior consent of MHTC's representative.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R118",
+        "requirement_text": "All documents, reports, exhibits and other materials produced by the Offeror at the direction of MHTC's representative, along with information supplied by MHTC's representative, shall remain the property of MHTC.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R007",
+        "requirement_text": "The Offeror must agree to provide the services at the fees quoted, under the terms of this RFP.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R041",
+        "requirement_text": "The successful Offeror shall provide the services described in the scope of work for a total not to exceed $175,000.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R091",
+        "requirement_text": "The Offeror must submit a proposed cost estimate covering all services defined in the Scope of Work.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R095",
+        "requirement_text": "The Cost Estimate must be broken out into the line items Salaries, Benefits, Operating Expense, Facilities and Administration (F&A) Cost, Miscellaneous, and Total.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R096",
+        "requirement_text": "Any miscellaneous costs must be itemized, with an additional sheet attached if needed.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R097",
+        "requirement_text": "The awarded contract must incorporate the contract provisions stated in this RFP, which will also appear in the post-award negotiated contract.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R098",
+        "requirement_text": "The Offeror must accept that the award is subject to a post-award negotiated contract and that MHTC may cancel the award and select a different Offeror if the parties cannot agree on the post-award contract terms.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R102",
+        "requirement_text": "The Offeror shall not assign, delegate, or novate any interest in the services to be provided without the prior written consent of MHTC's representative.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R108",
+        "requirement_text": "The Offeror remains ultimately responsible and liable to MHTC for the complete, accurate and professional quality and performance of the services regardless of any subcontractors or suppliers used.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R110",
+        "requirement_text": "By signing the Agreement, the Offeror certifies that any employee assigned to perform services under the contract is eligible and authorized to work in the United States in compliance with federal law.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R111",
+        "requirement_text": "The Offeror must include the provisions of Section (3), paragraph I of the Agreement in every subcontract.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R112",
+        "requirement_text": "The Offeror must take such action with respect to any subcontract as the Commission may direct as a means of enforcing such provisions, including sanctions for noncompliance.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R113",
+        "requirement_text": "The business entity must, by sworn affidavit and provision of documentation, affirm its enrollment and participation in a federal work authorization program (such as E-Verify) with respect to the employees working in connection with the contracted services.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R115",
+        "requirement_text": "The business entity must, by sworn affidavit, affirm that it does not knowingly employ any person who is an unauthorized alien in connection with the contracted services.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R116",
+        "requirement_text": "If the business entity is a sole proprietorship or partnership, each sole proprietor and each general partner must provide affirmative proof of lawful presence in the United States pursuant to Section 208.009, RSMo.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R119",
+        "requirement_text": "The Offeror shall not disclose confidential factual matters provided by MHTC to third parties except as required by statute, ordinance, or court order, or as authorized by MHTC's representative.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R120",
+        "requirement_text": "The Offeror shall notify MHTC immediately of any request for such confidential information.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R124",
+        "requirement_text": "The Offeror shall comply with all reporting requirements of the Federal Funding Accountability and Transparency Act (FFATA) of 2006, as amended.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R126",
+        "requirement_text": "General Liability insurance must be not less than $500,000 for any one person in a single accident or occurrence and not less than $3,000,000 for all claims arising out of a single occurrence.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R127",
+        "requirement_text": "Automobile Liability insurance must be not less than $500,000 for any one person in a single accident or occurrence and not less than $3,000,000 for all claims arising out of a single occurrence.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R128",
+        "requirement_text": "The Offeror must maintain a Missouri State Workmen's Compensation policy or equivalent in accordance with state law.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R123",
+        "requirement_text": "MHTC's representative may reproduce and use any products derived from the Offeror's work without payment of royalties or fees.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R125",
+        "requirement_text": "The Offeror may be asked, prior to contract signing, to provide certificates of insurance meeting or approaching the specified coverages.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R106",
+        "requirement_text": "Offerors are encouraged to directly hire minorities and women as direct employees of the Offeror.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C10",
+        "requirement_id": "R107",
+        "requirement_text": "Offerors are encouraged to obtain 10% MBE and 5% WBE participation in this work through subcontractors, suppliers, joint ventures, or other arrangements.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      }
+    ]
+  },
+  "risks": {
+    "risks": 12,
+    "severity": {
+      "high": 3,
+      "medium": 8,
+      "low": 1
+    },
+    "likelihood": {
+      "high": 2,
+      "medium": 10
+    },
+    "source": {
+      "rfp": 8,
+      "solution": 4
+    },
+    "severity_agreement": null,
+    "likelihood_agreement": null,
+    "findings": 10,
+    "findings_code_covered": 10,
+    "findings_judge_covered": null,
+    "risk_verdicts": [
+      {
+        "id": "K01",
+        "title": "Fixed $175,000 ceiling against an open-ended scope",
+        "severity": "high",
+        "likelihood": "high",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K02",
+        "title": "MoDOT Information Systems approval gate before Task 3c",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K03",
+        "title": "EPG Section 236.4.6.2 and the MHTC parameters are not supplied",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K04",
+        "title": "Oracle 19C versus SQL Server conflict drives the database design",
+        "severity": "medium",
+        "likelihood": "high",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K05",
+        "title": "Accessibility standard conflict leaves the acceptance bar undefined",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K06",
+        "title": "Contract period does not reconcile with the fixed end date",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K07",
+        "title": "Exhibits A and B are not in the RFP",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K08",
+        "title": "Unreadable pages 19 and 20 may hide scope or deliverable terms",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K09",
+        "title": "Proof of concept scope and property sample are undefined",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K10",
+        "title": "Training and user manual scope is unpriced",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K11",
+        "title": "Report review cycles and open-ended documentation are not bounded",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K12",
+        "title": "Data Management Plan due date conflict",
+        "severity": "low",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      }
+    ],
+    "finding_verdicts": [
+      {
+        "id": "F1",
+        "kind": "conflict",
+        "label": "R015 <-> R040: The contract period will run for 15 months. / The final invoice is due and the contract ends on 2/2/2026.",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K06"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F2",
+        "kind": "conflict",
+        "label": "R034 <-> R048: The data management plan is due on 12/4/2024. / The Offeror must submit a Data Management Plan (DMP) to MoDOT within 2 weeks after the project kick-off meeting.",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K12"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F3",
+        "kind": "conflict",
+        "label": "R142 <-> R143: On-premise database deployments must run on Oracle 19C. / The application should be designed and maintained to run on the latest supported version of SQL Server, with Microsoft SQL Server 2016 or higher permitted only if approved by the MoDOT IS Data Service Management team.",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K04"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F4",
+        "kind": "conflict",
+        "label": "R146 <-> R147: All web applications must meet the State of Missouri's Accessibility Standard, which is based on Section 508 of the Rehabilitation Act (as amended) and the Web Content Accessibility Guidelines. / All web applications must adhere to the W3 Web Content Accessibility Guidelines 2.1 at 'AA' level of conformance (WCAG 2.1 AA).",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K05"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F5",
+        "kind": "absent_document",
+        "label": "Exhibit A (referenced on page 15, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K07"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F6",
+        "kind": "absent_document",
+        "label": "Exhibit B (referenced on page 15, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K07"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F7",
+        "kind": "flagged_page",
+        "label": "page 19 unreadable or incomplete (low_word_count)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K08"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F8",
+        "kind": "flagged_page",
+        "label": "page 19 unreadable or incomplete (large_image_block)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K08"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F9",
+        "kind": "flagged_page",
+        "label": "page 20 unreadable or incomplete (low_word_count)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K08"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F10",
+        "kind": "flagged_page",
+        "label": "page 20 unreadable or incomplete (large_image_block)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K08"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      }
+    ]
+  },
+  "grounding": {
+    "by_output": {
+      "problem": {
+        "items": 30,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 2,
+        "judged": 30,
+        "supported": 24,
+        "partially": 6,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "solution": {
+        "items": 22,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 4,
+        "judged": 22,
+        "supported": 13,
+        "partially": 9,
+        "unsupported": 0,
+        "unreasonable_inferences": 1
+      },
+      "risks": {
+        "items": 12,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 7,
+        "judged": 12,
+        "supported": 3,
+        "partially": 8,
+        "unsupported": 1,
+        "unreasonable_inferences": 0
+      }
+    },
+    "items": [
+      {
+        "where": "problem.client_situation[0]",
+        "output": "problem",
+        "text": "The Missouri Highways and Transportation Commission (MHTC) is the issuing body, and the study is to be coordinated by the Research Unit of the Construction and Materials Division of the Missouri Department of Transportation (MoDOT).",
+        "kind": "fact",
+        "cited": [
+          "S1.1",
+          "S8.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Letter names MHTC requesting proposals, coordinated by Research Unit of Construction and Materials Division; S8.1 ties MoDOT in."
+      },
+      {
+        "where": "problem.client_situation[1]",
+        "output": "problem",
+        "text": "MoDOT's Right of Way staff must describe all realty rights acquired or conveyed by MHTC using the metes and bounds method unless a property is acquired in its entirety, in which case the description must be written exactly as it appears on the last deed of record.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Text says descriptions prepared on behalf of MHTC; it does not say Right of Way staff must write them, and 'all' is overstated."
+      },
+      {
+        "where": "problem.client_situation[2]",
+        "output": "problem",
+        "text": "Property descriptions prepared for MHTC must meet the requirements of MoDOT Engineering Policy Guide (EPG) Section 236.4.6.2 and must recite the specific rights acquired, conveyed or leased when those rights are less than fee simple title.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Both the EPG section requirement and reciting rights less than fee simple are stated in S9.1."
+      },
+      {
+        "where": "problem.client_situation[3]",
+        "output": "problem",
+        "text": "Before a general warranty deed, quitclaim deed or similar document is presented to the grantor, a professional land surveyor must review the property description to verify it corresponds with the right of way plans and that the plans correspond with the survey information gathered.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "S9.1 states the surveyor review before presenting deed, matching right of way plans and survey information."
+      },
+      {
+        "where": "problem.client_situation[4]",
+        "output": "problem",
+        "text": "Writing these legal land descriptions is described in the RFP as long and tedious work, which is the pain point driving the research.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "RFP says descriptions are long and tedious, but does not call it the pain point driving the research."
+      },
+      {
+        "where": "problem.client_situation[5]",
+        "output": "problem",
+        "text": "MoDOT's fiscal year runs from July 1 to June 30, and the RFP is issued under the Statewide Planning and Research (SPR) program whose quarterly reports the Construction and Materials Division submits to FHWA.",
+        "kind": "fact",
+        "cited": [
+          "S10.1",
+          "S15.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Fiscal year and quarterly SPR report to FHWA stated, but nothing says the RFP is issued under the SPR program."
+      },
+      {
+        "where": "problem.goal[0]",
+        "output": "problem",
+        "text": "MoDOT wants to determine the usefulness of Artificial Intelligence (AI) and Machine Learning (ML) for producing a \"first draft\" of a legal land description (LLD) using MHTC parameters, which MoDOT Right of Way staff would then review and edit.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "S9.1 states the goal of determining AI/ML usefulness for a first-draft LLD using MHTC parameters, reviewed and edited by MoDOT ROW staff."
+      },
+      {
+        "where": "problem.goal[1]",
+        "output": "problem",
+        "text": "The contract period is 15 months, with the project presumed to start November 1, 2024 and the contract ending February 2, 2026 when the final invoice is due.",
+        "kind": "fact",
+        "cited": [
+          "S11.1",
+          "S15.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "15-month period, November 1, 2024 start presumption, and February 2, 2026 final invoice and contract end are all stated."
+      },
+      {
+        "where": "problem.goal[2]",
+        "output": "problem",
+        "text": "The scope comprises six tasks: project management, literature review, MoDOT-provided LLD examples, an Offeror-supplied program, a proof of concept demonstrating AI/ML drafting of LLDs, training and a user manual, and draft and final reports with research summaries.",
+        "kind": "fact",
+        "cited": [
+          "S19.1",
+          "S20.1",
+          "S21.1",
+          "S22.1",
+          "S23.1",
+          "S24.1",
+          "S25.1",
+          "S26.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "LLD"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Tasks 3a, 3b and 3c are separate; the statement says six tasks but lists more, so the count is wrong."
+      },
+      {
+        "where": "problem.goal[3]",
+        "output": "problem",
+        "text": "The Offeror must conduct a thorough literature search and review of other state DOT practices using AI/ML for right of way purposes.",
+        "kind": "fact",
+        "cited": [
+          "S20.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Task 2 describes thorough literature search and review of other state DOT practices using AI/ML for ROW purposes."
+      },
+      {
+        "where": "problem.goal[4]",
+        "output": "problem",
+        "text": "The Offeror must demonstrate how the technology creates draft legal land descriptions on a variety of properties, with MoDOT reviewing the drafts and providing improvement feedback.",
+        "kind": "fact",
+        "cited": [
+          "S23.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Matches S23.1 closely."
+      },
+      {
+        "where": "problem.goal[5]",
+        "output": "problem",
+        "text": "Deliverables include a data management plan, meeting agendas and minutes, a demonstration of AI writing an LLD, training for ROW staff, a user manual, and draft and final reports, summaries and a presentation.",
+        "kind": "fact",
+        "cited": [
+          "S14.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "LLD"
+        ],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "All listed deliverables appear in the S14.1 table."
+      },
+      {
+        "where": "problem.goal[6]",
+        "output": "problem",
+        "text": "The final report must include a completed Technical Report Documentation page, and the Offeror must provide a 1-2 page research summary stating the project objectives, findings and conclusions plus a presentation for MoDOT staff.",
+        "kind": "fact",
+        "cited": [
+          "S25.1",
+          "S26.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Technical Report Documentation page, 1-2 page summary, and MoDOT staff presentation all stated in S25.1 and S26.1."
+      },
+      {
+        "where": "problem.success_criteria[0]",
+        "output": "problem",
+        "text": "Proposals must be emailed to MoDOTResearchRFP@modot.mo.gov by August 21, 2024 at 10 a.m. Central, and a proposal is not considered submitted until the Offeror receives notification of receipt, which should arrive by noon the same day.",
+        "kind": "fact",
+        "cited": [
+          "S1.1",
+          "S12.1",
+          "S30.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Email, deadline, receipt notification by noon all stated in sources."
+      },
+      {
+        "where": "problem.success_criteria[1]",
+        "output": "problem",
+        "text": "All questions and comments must be submitted to MoDOTResearchRFP@modot.mo.gov by July 17, 2024 at 4 p.m. Central, and contacting MoDOT employees by any other method is cause for disqualification.",
+        "kind": "fact",
+        "cited": [
+          "S12.1",
+          "S33.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Disqualification is stated, but 'all questions and comments' by 7/17 is supported; however 'by any other method' is slightly broadened; row-mixed dates acceptable. Minor overreach."
+      },
+      {
+        "where": "problem.success_criteria[2]",
+        "output": "problem",
+        "text": "MoDOT will post responses to questions publicly on July 31, 2024 and will notify submitters about project selection, or about interviews to finalize selection, on September 18, 2024.",
+        "kind": "fact",
+        "cited": [
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Dates and actions match S12.1."
+      },
+      {
+        "where": "problem.success_criteria[3]",
+        "output": "problem",
+        "text": "Awards go to the Offeror providing the best proposal, with proposals first screened for responsiveness and then evaluated against criteria established by the Technical Advisory Committee; the RFP states no weights.",
+        "kind": "fact",
+        "cited": [
+          "S41.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "S41.1 states best proposal, responsiveness, TAC criteria; absence of weights is consistent with the source."
+      },
+      {
+        "where": "problem.success_criteria[4]",
+        "output": "problem",
+        "text": "The proposal must include a work plan narrative of no more than ten pages with font no smaller than 12 points, excluding attached forms and resumes, and must recognize MoDOT's ultimate authority to approve work plans.",
+        "kind": "fact",
+        "cited": [
+          "S36.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Page limit, font size, exclusions, and MoDOT authority all in S36.1."
+      },
+      {
+        "where": "problem.success_criteria[5]",
+        "output": "problem",
+        "text": "The proposal must identify experience offering the requested services during the past three years and list at least three client references with name, title and telephone number from the past three years.",
+        "kind": "fact",
+        "cited": [
+          "S38.1",
+          "S39.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Three-year experience and three references with name, title, phone stated."
+      },
+      {
+        "where": "problem.success_criteria[6]",
+        "output": "problem",
+        "text": "Proposals must be submitted as one combined PDF containing only the required documents in the order: Proposal Submission Form, optional one-page cover letter, body of proposal with work plan and schedule, personnel, organization experience, team member experience, and client references.",
+        "kind": "fact",
+        "cited": [
+          "S39.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Order and contents match S39.1 item (6)."
+      },
+      {
+        "where": "problem.success_criteria[7]",
+        "output": "problem",
+        "text": "The Offeror must present how the AI/ML will create draft LLDs by April 25, 2025, and after adjustments must deliver the manual and train ROW staff by July 25, 2025, with the interim presentation due by September 15, 2025.",
+        "kind": "fact",
+        "cited": [
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Dates and deliverables match the schedule table."
+      },
+      {
+        "where": "problem.constraints[0]",
+        "output": "problem",
+        "text": "Services are capped at a not-to-exceed amount of $175,000, and the cost estimate must be entered on the Section (4) Price Page covering salaries, benefits, operating expense, facilities and administration cost, and miscellaneous items.",
+        "kind": "fact",
+        "cited": [
+          "S17.1",
+          "S45.1",
+          "S47.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Cap, Price Page requirement and expense categories all stated in cited sources."
+      },
+      {
+        "where": "problem.constraints[1]",
+        "output": "problem",
+        "text": "Before proof-of-concept work begins, the Offeror must name the program used to develop the LLDs and obtain approval from MoDOT Information Systems before proceeding to Task 3c.",
+        "kind": "fact",
+        "cited": [
+          "S22.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Matches Task 3b text."
+      },
+      {
+        "where": "problem.constraints[2]",
+        "output": "problem",
+        "text": "All applications must be built on approved technologies: .NET 6.0 or above (or .NET Framework 4.8 or above if specifically needed) using MVC, Razor Pages or Web API, with approved languages C#, JavaScript, CSS, HTML and Python, where Python is reserved for ESRI scripts and small one-time uses unless the IS Best Practices Review Team approves large-scale use.",
+        "kind": "fact",
+        "cited": [
+          "S73.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Matches the technology requirements in S73.1."
+      },
+      {
+        "where": "problem.constraints[3]",
+        "output": "problem",
+        "text": "Applications must be web-based browser applications requiring no client-side software beyond a modern browser (no Java Applets or Silverlight), and on-premise databases must run on Oracle 19C or the latest supported SQL Server, with SQL Server 2016 or higher only if approved by the MoDOT IS Data Service Management team.",
+        "kind": "fact",
+        "cited": [
+          "S73.1",
+          "S73.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Web-based, no client software, and database requirements match S73.1 and S73.2."
+      },
+      {
+        "where": "problem.constraints[4]",
+        "output": "problem",
+        "text": "No personally identifiable information may be stored in any database table without a specific business need and approval from the IS Cyber Security Team, and all web applications must meet WCAG 2.1 AA and the State of Missouri Accessibility Standard based on Section 508.",
+        "kind": "fact",
+        "cited": [
+          "S73.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "PII and accessibility requirements match S73.2."
+      },
+      {
+        "where": "problem.constraints[5]",
+        "output": "problem",
+        "text": "Vendors may not use third-party tools or software that would place a licensing responsibility on MoDOT without prior review and approval by the Information Systems Best Practices Review Team and IS management.",
+        "kind": "fact",
+        "cited": [
+          "S73.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Matches the third-party tools clause in S73.1."
+      },
+      {
+        "where": "problem.constraints[6]",
+        "output": "problem",
+        "text": "The Data Management Plan is due within 2 weeks after the kick-off meeting (December 4, 2024) and must describe anticipated data formats and use of platform-independent, non-proprietary formats for maximum future utility.",
+        "kind": "fact",
+        "cited": [
+          "S19.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "2-week DMP requirement and the 12/4/2024 due date both appear in sources; DMP content matches."
+      },
+      {
+        "where": "problem.constraints[7]",
+        "output": "problem",
+        "text": "All documents, reports and exhibits produced at MHTC's direction and information supplied by MHTC remain the property of MHTC, and no material or report may be released to the public without MHTC's representative's prior consent.",
+        "kind": "fact",
+        "cited": [
+          "S65.1",
+          "S50.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Both ownership and public release clauses match the sources."
+      },
+      {
+        "where": "problem.constraints[8]",
+        "output": "problem",
+        "text": "The RFP refers to the Standard Research Agreement, the Publication Guidelines and summary template, the Proposal Submission Form, and the cost estimate template on the modot.org information-researchers site, none of which are included in the RFP text and must be obtained by the bidder.",
+        "kind": "inference",
+        "cited": [
+          "S11.1",
+          "S25.1",
+          "S35.1",
+          "S45.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": true,
+        "reason": "Sources reference the website items, but 'must be obtained by the bidder' and 'none included' are not stated, though plausible."
+      },
+      {
+        "where": "solution.C01.claims[0]",
+        "output": "solution",
+        "text": "The study is coordinated by the Research Unit of the Construction and Materials Division, and the RFP names MoDOT's Research Director as MHTC's representative.",
+        "kind": "fact",
+        "cited": [
+          "S8.1",
+          "S49.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "Unit"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Research Director as MHTC representative is stated; coordination by a 'Research Unit' of Construction and Materials Division is not."
+      },
+      {
+        "where": "solution.C01.claims[1]",
+        "output": "solution",
+        "text": "Questions and comments must go only to MoDOTResearchRFP@modot.mo.gov, with responses posted publicly on 31 July 2024 and selection notices issued 18 September 2024.",
+        "kind": "fact",
+        "cited": [
+          "S12.1",
+          "S33.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Email-only contact, 7/31/2024 response posting and 9/18/2024 selection notices are all stated."
+      },
+      {
+        "where": "solution.C02.claims[0]",
+        "output": "solution",
+        "text": "The RFP presumes a 1 November 2024 start and a 2 February 2026 contract end, with the kick-off meeting on 15 November 2024.",
+        "kind": "fact",
+        "cited": [
+          "S11.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Contract end and kick-off dates supported; 1 November 2024 start date is not stated in the sources."
+      },
+      {
+        "where": "solution.C04.claims[0]",
+        "output": "solution",
+        "text": "MoDOT Right of Way staff must describe realty rights by metes and bounds unless a property is acquired in its entirety, and a professional land surveyor must review descriptions before deeds are presented to a grantor.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Metes and bounds and surveyor review supported; rule applies to MHTC descriptions, not stated as Right of Way staff writing them."
+      },
+      {
+        "where": "solution.C05.claims[0]",
+        "output": "solution",
+        "text": "MoDOT Information Systems must approve the named program before the Offeror may proceed to Task 3c.",
+        "kind": "fact",
+        "cited": [
+          "S22.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Information Systems approval is required before moving forward with Task 3c."
+      },
+      {
+        "where": "solution.C10.claims[0]",
+        "output": "solution",
+        "text": "The RFP caps services at a not-to-exceed $175,000 and requires the cost estimate on the Section (4) Price Page.",
+        "kind": "fact",
+        "cited": [
+          "S17.1",
+          "S45.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Not-to-exceed $175,000 and Section (4) Price Page cost estimate both stated."
+      },
+      {
+        "where": "solution.assumptions[0]",
+        "output": "solution",
+        "text": "The MHTC parameters the drafts must follow are assumed to be the drafting rules in EPG Section 236.4.6.2 plus the conventions visible in the MoDOT-supplied LLD examples, and the team will confirm them with MoDOT at kick-off rather than assume a separate parameter document exists.",
+        "kind": "assumption",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "EPG 236.4.6.2 and MHTC parameters are cited; no separate parameter document is named, so ambiguity is visible.\n"
+      },
+      {
+        "where": "solution.assumptions[1]",
+        "output": "solution",
+        "text": "EPG Section 236.4.6.2 is assumed to be obtainable from MoDOT's public policy guide at its current published version, and the bid price excludes any licensed third-party standards purchase.",
+        "kind": "assumption",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "EPG Section 236.4.6.2 is referenced; the availability and price assumptions are positions needing no support.\n"
+      },
+      {
+        "where": "solution.assumptions[2]",
+        "output": "solution",
+        "text": "The $175,000 is treated as a total contract ceiling covering all six tasks inclusive of all costs, not a per-task or per-year limit.",
+        "kind": "assumption",
+        "cited": [
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "$175,000 not-to-exceed is stated; 'six tasks' and 'inclusive of all costs' are not in the source."
+      },
+      {
+        "where": "solution.assumptions[3]",
+        "output": "solution",
+        "text": "The 15-month contract period is assumed to run from the 1 November 2024 start to the 2 February 2026 contract end, and the milestone dates in the RFP schedule are treated as binding rather than re-openable at kick-off.",
+        "kind": "assumption",
+        "cited": [
+          "S11.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "15-month period and 2 Feb 2026 end stated; 1 November 2024 start is not stated, and milestones are tied to a kick-off meeting."
+      },
+      {
+        "where": "solution.assumptions[4]",
+        "output": "solution",
+        "text": "The Data Management Plan is assumed due on 4 December 2024, the later of the two dates the RFP gives, and the plan will be drafted early enough to also satisfy a two-week post-kick-off reading.",
+        "kind": "assumption",
+        "cited": [
+          "S19.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "S19.1 says within 2 weeks of kickoff; S15.2 says 12/4/2024 due, kickoff 11/15/2024; the conflict is real."
+      },
+      {
+        "where": "solution.assumptions[5]",
+        "output": "solution",
+        "text": "The proof of concept is assumed to cover a sample of roughly ten to fifteen properties spanning partial takes, whole-property acquisitions and less-than-fee interests, with the exact count agreed with MoDOT at kick-off.",
+        "kind": "assumption",
+        "cited": [
+          "S23.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "Source says only 'a variety of properties'; the count and mix are unspecified, so the assumption fills a real gap."
+      },
+      {
+        "where": "solution.assumptions[6]",
+        "output": "solution",
+        "text": "Training is assumed to be delivered as a small number of sessions for the MoDOT ROW staff who will use the tool, in a mix of on-site and recorded virtual formats, with one electronic user manual rather than printed copies.",
+        "kind": "assumption",
+        "cited": [
+          "S24.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "MoDOT"
+        ],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "Source gives training and a user manual but no format, session count or delivery mode, so the gap exists."
+      },
+      {
+        "where": "solution.assumptions[7]",
+        "output": "solution",
+        "text": "The literature review is assumed to cover published DOT research and practice from the last ten years across US state DOTs, delivered as a chapter of the Synthesis Report rather than a standalone document.",
+        "kind": "assumption",
+        "cited": [
+          "S20.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "US",
+          "DOTs",
+          "Synthesis",
+          "Report"
+        ],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "Source requires a literature review of other state DOT practices but gives no time window or delivery format."
+      },
+      {
+        "where": "solution.assumptions[8]",
+        "output": "solution",
+        "text": "The drafting tool is assumed to be deployed on MoDOT's on-premise Oracle 19C platform, with SQL Server used only if the IS Data Service Management team approves it, and the choice confirmed with MoDOT Information Systems during program approval.",
+        "kind": "assumption",
+        "cited": [
+          "S73.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "C",
+          "Systems"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": false,
+        "reason": "Source lists Oracle 19C or latest SQL Server (2016+ if approved), not SQL Server only with approval; it concerns on-premise deployments only."
+      },
+      {
+        "where": "solution.assumptions[9]",
+        "output": "solution",
+        "text": "Accessibility compliance is assumed to be demonstrated against WCAG 2.1 AA, which the team treats as satisfying the State of Missouri Section 508-based standard.",
+        "kind": "assumption",
+        "cited": [
+          "S73.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "Source requires both the Missouri Section 508-based standard and WCAG 2.1 AA; the standard is based on WCAG, so the assumption addresses a possible ambiguity."
+      },
+      {
+        "where": "solution.assumptions[10]",
+        "output": "solution",
+        "text": "The draft report is assumed to include two MoDOT review cycles with a two-week turnaround each, and any further rounds are treated as a change requiring a contract amendment.",
+        "kind": "assumption",
+        "cited": [
+          "S25.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "Source says drafts are final except for MoDOT revisions but gives no number of review cycles or turnaround time."
+      },
+      {
+        "where": "solution.assumptions[11]",
+        "output": "solution",
+        "text": "The final report, research summary and staff presentation are assumed due 1 January 2026, with the presentation delivered virtually unless MoDOT requests otherwise.",
+        "kind": "assumption",
+        "cited": [
+          "S26.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": true,
+        "reason": "Final documents are due 1/1/2026 in S15.2, but the source does not specify the presentation's delivery mode."
+      },
+      {
+        "where": "solution.assumptions[12]",
+        "output": "solution",
+        "text": "The Standard Research Agreement, Publication Guidelines, Proposal Submission Form and cost estimate template are assumed to be obtainable from the modot.org information-researchers site and are reviewed before pricing is fixed.",
+        "kind": "assumption",
+        "cited": [
+          "S11.1",
+          "S25.1",
+          "S35.1",
+          "S45.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "All four items point to the modot.org information-researchers site; S45.1 says a detailed budget comes later, and the Publication Guidelines are on 'the website'."
+      },
+      {
+        "where": "solution.assumptions[13]",
+        "output": "solution",
+        "text": "The insurance limits are assumed to be binding contract requirements rather than indicative, and certificates will be provided before contract signing.",
+        "kind": "assumption",
+        "cited": [
+          "S72.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": true,
+        "reason": "Source says the Offeror 'may be asked' about coverage that 'meets or approaches' these limits, which is indicative rather than binding; the timing is prior to signing."
+      },
+      {
+        "where": "solution.assumptions[14]",
+        "output": "solution",
+        "text": "Ownership of the delivered application code, rule base and generated descriptions is assumed to transfer to MHTC, with the Offeror retaining no royalty-bearing rights, consistent with MHTC's royalty-free reproduction right.",
+        "kind": "assumption",
+        "cited": [
+          "S69.1",
+          "S65.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": true,
+        "reason": "Sources support MHTC ownership of documents/reports and royalty-free use; code and rule base specifically, and Offeror retaining no royalty rights, are not stated."
+      },
+      {
+        "where": "solution.assumptions[15]",
+        "output": "solution",
+        "text": "The question cut-off in Section 1E is assumed to be 17 July 2024 at 4 p.m. Central, and the bid team will lodge all questions through MoDOTResearchRFP@modot.mo.gov before that time rather than rely on any later clarification route.",
+        "kind": "assumption",
+        "cited": [
+          "S12.1",
+          "S33.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": true,
+        "reason": "Cut-off 7/17/2024 4 p.m. Central and the email address are stated; questions must go only through that address."
+      },
+      {
+        "where": "risks.K01",
+        "output": "risks",
+        "text": "Fixed $175,000 ceiling against an open-ended scope. The RFP caps the whole engagement at a not-to-exceed $175,000 while the scope spans six tasks, a custom .NET web application, an AI/ML drafting engine, a proof of concept across many property types, training, a user manual and multiple reports. If the cap is a total ceiling inclusive of all costs, the build and the demonstration effort can exceed it and the bidder absorbs the overrun; if it is read as per-task, the bid is mispriced. Either way the price is fixed by the RFP while the effort is not. The cap is stated as a total not-to-exceed figure and the solution treats it as covering all six tasks inclusive of all costs, yet the scope includes a custom application plus an AI/ML proof of concept, which is a large amount of work for that ceiling.",
+        "kind": "risk",
+        "cited": [
+          "R041",
+          "R091",
+          "R095",
+          "R096",
+          "R007",
+          "S17.1",
+          "S45.1",
+          "S47.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "NET",
+          "AI",
+          "ML"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "$175,000 not-to-exceed is supported; six tasks, custom .NET application, many property types and a per-task reading are not in cited sources."
+      },
+      {
+        "where": "risks.K02",
+        "output": "risks",
+        "text": "MoDOT Information Systems approval gate before Task 3c. The Offeror must name the program used to develop the LLDs and obtain MoDOT Information Systems approval before proceeding to Task 3c, and the RFP gives no approval criteria or turnaround. If approval is delayed or refused, the 25 April 2025 demonstration and everything downstream slips, and the bidder may have to rebuild on a different tool at its own cost. The gate is a hard precondition on the critical path to the fixed 25 April 2025 demonstration, and the RFP states neither the criteria nor the time MoDOT IS will take, so the schedule turns on facts the RFP does not settle.",
+        "kind": "risk",
+        "cited": [
+          "R052",
+          "R053",
+          "R035",
+          "S22.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Naming the program, IS approval before Task 3c and the 4/25/2025 presentation are stated; no criteria or turnaround given."
+      },
+      {
+        "where": "risks.K03",
+        "output": "risks",
+        "text": "EPG Section 236.4.6.2 and the MHTC parameters are not supplied. The drafting rules the tool must follow come from MoDOT Engineering Policy Guide Section 236.4.6.2 and from undefined MHTC parameters, neither of which is in the RFP. The solution assumes the EPG is publicly available at its current version and that the parameters are the EPG rules plus the conventions in the MoDOT-supplied examples. If the EPG is licensed, out of date, or the parameters are a separate document, the rule base is built on the wrong specification and the generated drafts fail review. The rule base is the core of the drafting engine and it rests on a document the RFP does not provide and a parameter set it does not define, so a wrong assumption means rework of the engine and the test set.",
+        "kind": "risk",
+        "cited": [
+          "R011",
+          "R012",
+          "R013",
+          "R014",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "EPG 236.4.6.2 and MHTC parameters are cited, but sources don't show they are missing from the RFP; the solution's assumptions are not in the sources."
+      },
+      {
+        "where": "risks.K04",
+        "output": "risks",
+        "text": "Oracle 19C versus SQL Server conflict drives the database design. One requirement mandates Oracle 19C for on-premise deployments while another directs the application to run on the latest supported SQL Server, with SQL Server 2016+ only on MoDOT IS approval. The solution assumes Oracle 19C with SQL Server as a fallback. If the assumption is wrong the data layer, the deployment and the testing are reworked late, and the AI/ML tooling may not run cleanly on the platform MoDOT actually dictates. The two requirements directly contradict each other and the RFP does not say who chooses, so the conflict is expected to surface; the solution resolves it by assumption rather than by a confirmed answer.",
+        "kind": "risk",
+        "cited": [
+          "R142",
+          "R143",
+          "S73.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "C",
+          "AI",
+          "ML"
+        ],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "Oracle 19C and the latest SQL Server with 2016+ on approval are stated; the 'or' phrasing and the solution's assumption are judgments."
+      },
+      {
+        "where": "risks.K05",
+        "output": "risks",
+        "text": "Accessibility standard conflict leaves the acceptance bar undefined. The RFP requires both the State of Missouri Section 508-based accessibility standard and WCAG 2.1 AA, and the State standard itself is not supplied. The solution assumes WCAG 2.1 AA satisfies both. If MoDOT applies additional Section 508 checks, the web application needs unplanned remediation and re-testing before acceptance, and the accessibility work was never scoped or priced. The two requirements are stated as separate obligations and the State standard document is not in the RFP, so whether WCAG 2.1 AA is sufficient is a fact the RFP does not settle.",
+        "kind": "risk",
+        "cited": [
+          "R146",
+          "R147",
+          "S73.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Both Section 508-based standard and WCAG 2.1 AA are required; the State standard not being supplied and the solution's assumption are not in the sources."
+      },
+      {
+        "where": "risks.K06",
+        "output": "risks",
+        "text": "Contract period does not reconcile with the fixed end date. The RFP states a 15-month contract period but the schedule runs from a 1 November 2024 start to a 2 February 2026 contract end, which is not 15 months. The solution treats the milestone dates as binding and the period as running to 2 February 2026. If MoDOT enforces 15 months from the actual start, the final report, summary and presentation compress into a shorter window and the January 2026 deliverables collide with the contract end. The two statements cannot both be true and the RFP does not say which governs, so the risk turns on how MoDOT reads its own schedule at contracting.",
+        "kind": "risk",
+        "cited": [
+          "R015",
+          "R040",
+          "S11.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "15-month period and 2/2/2026 end are stated; the 1 November 2024 start is not in sources (11/15/2024 kick-off is)."
+      },
+      {
+        "where": "risks.K07",
+        "output": "risks",
+        "text": "Exhibits A and B are not in the RFP. The RFP refers to Exhibit A and Exhibit B in the Agreement Requirements section but neither is included. These carry the sworn affidavits on work authorization and lawful presence that the Offeror must complete and submit. Without them the bidder cannot confirm the exact attestations, and a missing or wrongly completed affidavit can make the proposal non-responsive or delay contract signing. The exhibits are referenced but absent from the document, and the affidavit obligations they carry are mandatory conditions of the contract, so the risk is real but manageable if the forms are obtained early.",
+        "kind": "risk",
+        "cited": [
+          "R113",
+          "R115",
+          "R116"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "B",
+          "Exhibit",
+          "Agreement",
+          "Requirements"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Affidavit obligations are stated; Exhibits A and B, their absence from the RFP, and their carrying the affidavits are not in the cited sources."
+      },
+      {
+        "where": "risks.K08",
+        "output": "risks",
+        "text": "Unreadable pages 19 and 20 may hide scope or deliverable terms. Pages 19 and 20 of the RFP carry almost no extractable text and are dominated by images, so their content could not be read. These pages sit in the section that sets out the scope of work and deliverables, so they may contain task detail, deliverable definitions or milestone terms that the solution has not priced or planned for. Two consecutive pages in the scope section are unreadable, and the solution's task structure is built from the readable text only, so any obligation on those pages is currently unaddressed.",
+        "kind": "risk",
+        "cited": [
+          "R042",
+          "R022"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "19",
+          "20"
+        ],
+        "verdict": "unsupported",
+        "reasonable_inference": null,
+        "reason": "Cited sources say nothing about pages 19 and 20 being unreadable or about the document's page layout."
+      },
+      {
+        "where": "risks.K09",
+        "output": "risks",
+        "text": "Proof of concept scope and property sample are undefined. The RFP requires a demonstration on a variety of properties but does not say how many, which types, or in what format. The solution assumes roughly ten to fifteen properties spanning partial takes, whole-property acquisitions and less-than-fee interests, with the count agreed at kick-off. If MoDOT expects a larger or harder sample, the demonstration effort and the 25 April 2025 date are at risk, and the fixed price does not move. The number and type of properties drive the effort directly and the RFP leaves them open, so the assumption is plausible but unconfirmed and the date is fixed.",
+        "kind": "risk",
+        "cited": [
+          "R054",
+          "R035",
+          "S23.1",
+          "S15.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": "supported",
+        "reasonable_inference": null,
+        "reason": "RFP facts (variety of properties, no count/types specified, 4/25/2025 date) are in sources; assumptions and fixed price are bidder positions.//"
+      },
+      {
+        "where": "risks.K10",
+        "output": "risks",
+        "text": "Training and user manual scope is unpriced. The RFP requires training for ROW staff and a user manual but does not state the number of staff, the number of sessions, the delivery mode or the manual's format and length. The solution assumes a small number of on-site and recorded virtual sessions and one electronic manual. If MoDOT expects repeated on-site training or printed manuals, the effort grows against a fixed ceiling and the 25 July 2025 date tightens. Training volume and format are the main cost drivers for this task and the RFP leaves both open, so the assumption is reasonable but could be wrong in either direction.",
+        "kind": "risk",
+        "cited": [
+          "R055",
+          "R056",
+          "S24.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "25",
+          "2025",
+          "MoDOT"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Training and manual requirements are cited, but the 25 July 2025 date appears only in S15.2, which this item does not cite."
+      },
+      {
+        "where": "risks.K11",
+        "output": "risks",
+        "text": "Report review cycles and open-ended documentation are not bounded. The draft Synthesis Report and Research Summary must be final products except for MoDOT review, and the Offeror must also supply all accompanying documentation identified as beneficial during the study, with no limit on review rounds or on what counts as beneficial. The solution assumes two review cycles with two-week turnarounds and treats further rounds as an amendment. If MoDOT runs more rounds or asks for extra documents, the January 2026 final deliverables slip against the fixed contract end. The review cycle count and the scope of accompanying documentation are both unstated, and the final deliverables sit close to the 2 February 2026 contract end, so extra rounds have little room to absorb.",
+        "kind": "risk",
+        "cited": [
+          "R057",
+          "R058",
+          "R061",
+          "R062",
+          "R063",
+          "S25.1",
+          "S26.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "2026"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "January 2026 final deliverables and 2 February 2026 contract end are in S15.2, which is not cited."
+      },
+      {
+        "where": "risks.K12",
+        "output": "risks",
+        "text": "Data Management Plan due date conflict. The RFP gives the Data Management Plan as due 12/4/2024 in one place and within two weeks of the kick-off meeting in another, which on a 15 November 2024 kick-off means 29 November 2024. The solution plans to satisfy the earlier reading. If the bidder plans only to the later date and MoDOT enforces the two-week rule, the deliverable is late in the first month of the contract. The conflict is narrow and the deliverable is small, but the two dates differ by five days and the RFP does not say which applies.",
+        "kind": "risk",
+        "cited": [
+          "R034",
+          "R048",
+          "R049",
+          "R050",
+          "S15.2",
+          "S19.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "29"
+        ],
+        "verdict": "partially",
+        "reasonable_inference": null,
+        "reason": "Dates of 12/4/2024 and two-week rule are supported, but 15 November kick-off arithmetic: 29 Nov is correct; 'five days' correct; 'first month' fine. Minor: kick-off 'will be scheduled' only."
+      }
+    ]
+  },
+  "cost": {
+    "calls": 77,
+    "input_tokens": 214554,
+    "output_tokens": 34723,
+    "cached_input_tokens": 161407,
+    "cached_share": 0.7522907985868359,
+    "cost_usd": 0.058580141999999995,
+    "wall_s": 107.115837,
+    "retries": 0,
+    "stages": [
+      {
+        "stage": "parse",
+        "status": "finished",
+        "wall_s": 5.03892559997621,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "parse_quality",
+        "status": "finished",
+        "wall_s": 5.874588200007565,
+        "calls": 3,
+        "input_tokens": 3816,
+        "output_tokens": 467,
+        "cached_input_tokens": 3200,
+        "cost_usd": 0.0007643999999999999,
+        "retries": 0
+      },
+      {
+        "stage": "split",
+        "status": "finished",
+        "wall_s": 0.019978600001195446,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "problem",
+        "status": "finished",
+        "wall_s": 10.636849499976961,
+        "calls": 1,
+        "input_tokens": 11526,
+        "output_tokens": 2279,
+        "cached_input_tokens": 11392,
+        "cost_usd": 0.002843352,
+        "retries": 0
+      },
+      {
+        "stage": "requirements",
+        "status": "finished",
+        "wall_s": 42.08438899999601,
+        "calls": 70,
+        "input_tokens": 155380,
+        "output_tokens": 21309,
+        "cached_input_tokens": 131839,
+        "cost_usd": 0.033424133999999994,
+        "retries": 0
+      },
+      {
+        "stage": "solution",
+        "status": "finished",
+        "wall_s": 35.834728000016185,
+        "calls": 2,
+        "input_tokens": 27748,
+        "output_tokens": 7456,
+        "cached_input_tokens": 13440,
+        "cost_usd": 0.013320239999999999,
+        "retries": 0
+      },
+      {
+        "stage": "risk",
+        "status": "finished",
+        "wall_s": 18.23542979999911,
+        "calls": 1,
+        "input_tokens": 16084,
+        "output_tokens": 3212,
+        "cached_input_tokens": 1536,
+        "cost_usd": 0.008228016,
+        "retries": 0
+      },
+      {
+        "stage": "assemble",
+        "status": "finished",
+        "wall_s": 0.012274500011699274,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      }
+    ],
+    "retried": []
+  },
+  "judge": {
+    "model": "anthropic:claude-sonnet-5-5",
+    "calls": 8,
+    "failures": 0,
+    "totals": {
+      "input_tokens": 71101,
+      "output_tokens": 7566,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.21786200000000003,
+      "latency_s": 56.35003179998603,
+      "retries": 3
+    },
+    "per_node": {
+      "judge_checklist": {
+        "input_tokens": 4150,
+        "output_tokens": 715,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.01545,
+        "latency_s": 4.67120429998613,
+        "retries": 0
+      },
+      "judge_grounding": {
+        "input_tokens": 66951,
+        "output_tokens": 6851,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.202412,
+        "latency_s": 51.6788274999999,
+        "retries": 3
+      }
+    }
+  }
+}

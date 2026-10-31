@@ -1,0 +1,4131 @@
+{
+  "rfp": "NYESD",
+  "run": "2",
+  "run_dir": "C:/Users/danie/github/rfp-solution-summary-generator/.claude/worktrees/step-13-ablations/runs/evals/ablation_single_call/NYESD/2",
+  "run_id": "2",
+  "model": "deepseek:deepseek-flash",
+  "scored_at": "2026-10-30T22:45:10.085228Z",
+  "judged": true,
+  "requirements": {
+    "extracted": 91,
+    "by_type": {
+      "submission": 36,
+      "timeline": 3,
+      "functional": 24,
+      "other": 3,
+      "budget_pricing": 8,
+      "legal_contractual": 14,
+      "security_compliance": 3
+    },
+    "by_strictness": {
+      "mandatory": 61,
+      "desired": 30
+    },
+    "gold": 54,
+    "gold_reachable": 54,
+    "matched_gold": 53,
+    "matched_gold_reachable": 53,
+    "matched_by_code": 42,
+    "matched_by_judge": 11,
+    "recall": 0.9814814814814815,
+    "recall_reachable": 0.9814814814814815,
+    "type_accuracy": 0.9811320754716981,
+    "strictness_accuracy": 0.8679245283018868,
+    "type_confusion": {
+      "submission": {
+        "timeline": 1,
+        "submission": 19
+      },
+      "functional": {
+        "functional": 16
+      },
+      "other": {
+        "other": 3
+      },
+      "budget_pricing": {
+        "budget_pricing": 5
+      },
+      "timeline": {
+        "timeline": 1
+      },
+      "legal_contractual": {
+        "legal_contractual": 8
+      }
+    },
+    "precision": 0.978021978021978,
+    "in_scope_share": 0.945054945054945,
+    "judged": 91,
+    "unverified_quotes": 0,
+    "matches": [
+      {
+        "gold_id": "GR001",
+        "gold_text": "Proposals must be submitted by 2:00 PM ET on October 1, 2025.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 1,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R003"
+        ],
+        "tier": "judge",
+        "best_id": "R003",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": "Same deadline 2:00 PM ET October 1, 2025."
+      },
+      {
+        "gold_id": "GR004",
+        "gold_text": "The program administrator(s) must develop the curriculum for and administer AI Prep for Track A and/or Track B; ESD will award up to two contracts.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [],
+        "tier": "none",
+        "best_id": null,
+        "best_type": null,
+        "best_strictness": null,
+        "reason": "No candidate states award of up to two contracts for Track A/B administration."
+      },
+      {
+        "gold_id": "GR005",
+        "gold_text": "For Track A, the administrator must develop a targeted outreach and recruitment strategy for low-income students.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R005"
+        ],
+        "tier": "code",
+        "best_id": "R005",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR006",
+        "gold_text": "For Track A, the administrator must provide participant stipends and wrap-around supports including mentorships and career coaches with industry expertise.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R010"
+        ],
+        "tier": "code",
+        "best_id": "R010",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR007",
+        "gold_text": "The Track A curriculum should consist of online AI courses developed with input from leading researchers and industry experts, with mentorship opportunities and real-world machine learning projects.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R013"
+        ],
+        "tier": "code",
+        "best_id": "R013",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR008",
+        "gold_text": "For Track B, the administrator must deliver an industry-informed, comprehensive AI technology training program for low-income New Yorkers with barriers to employment and connect them to AI jobs.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R015"
+        ],
+        "tier": "code",
+        "best_id": "R015",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR009",
+        "gold_text": "The Track B program should consist of online AI courses with curriculum that incorporates industry input on technical skills and learning milestones.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R017"
+        ],
+        "tier": "code",
+        "best_id": "R017",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR010",
+        "gold_text": "The program should serve a minimum of 250 participants, with priority given to applicants that serve more than 400 participants.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R025"
+        ],
+        "tier": "code",
+        "best_id": "R025",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR011",
+        "gold_text": "Over 50% of program participants should be low-income.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R026"
+        ],
+        "tier": "code",
+        "best_id": "R026",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR012",
+        "gold_text": "The majority of program graduates should secure paid internships or full-time employment in AI or a closely related field.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R027"
+        ],
+        "tier": "code",
+        "best_id": "R027",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR013",
+        "gold_text": "Applicants must be organizations with a strong track record in workforce development in AI or similar fields.",
+        "gold_type": "other",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R028"
+        ],
+        "tier": "code",
+        "best_id": "R028",
+        "best_type": "other",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR014",
+        "gold_text": "If applicants form a team, one organization must be the lead for the proposed programming.",
+        "gold_type": "other",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R029"
+        ],
+        "tier": "code",
+        "best_id": "R029",
+        "best_type": "other",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR015",
+        "gold_text": "Applicants must have experience in at least three of four domains: academic services to college students, high-tech accelerated training programs, serving low-income populations, and working in the New York market.",
+        "gold_type": "other",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R030"
+        ],
+        "tier": "code",
+        "best_id": "R030",
+        "best_type": "other",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR016",
+        "gold_text": "Proposed budgets may not exceed $2M for one track or $4M for both tracks over the total contract period, or they will not be considered.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R032"
+        ],
+        "tier": "code",
+        "best_id": "R032",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR017",
+        "gold_text": "The program operating period funded by ESD is up to 18 months.",
+        "gold_type": "timeline",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R024"
+        ],
+        "tier": "judge",
+        "best_id": "R024",
+        "best_type": "timeline",
+        "best_strictness": "mandatory",
+        "reason": "Initial term up to 18 months matches funded operating period."
+      },
+      {
+        "gold_id": "GR018",
+        "gold_text": "Applicants must provide their own budget with associated justification.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R031"
+        ],
+        "tier": "code",
+        "best_id": "R031",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR019",
+        "gold_text": "Indirect costs are not allowable under this grant and must not be included in the budget.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "mandatory",
+        "gold_page": 6,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R034"
+        ],
+        "tier": "code",
+        "best_id": "R034",
+        "best_type": "budget_pricing",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR020",
+        "gold_text": "The extent of any cost matching should be indicated in the budget template.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "desired",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R035"
+        ],
+        "tier": "code",
+        "best_id": "R035",
+        "best_type": "budget_pricing",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR021",
+        "gold_text": "Awarded applicants must track and record information relevant to the success of the grant, with data points determined during contract negotiation.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 7,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R036"
+        ],
+        "tier": "code",
+        "best_id": "R036",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR022",
+        "gold_text": "The Technical Proposal must include a cover letter describing the organization's mission and history, annual budget, annual number of participants served, employer partnerships, and motivations for applying.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R037"
+        ],
+        "tier": "code",
+        "best_id": "R037",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR023",
+        "gold_text": "The proposal must describe any work the organization does to train a high-tech workforce in AI and related fields, excluding college students.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R040"
+        ],
+        "tier": "code",
+        "best_id": "R040",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR024",
+        "gold_text": "The proposal must include a monthly timeline for planning and administering the program through completion of internships or full-time jobs by the first cohort.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R044"
+        ],
+        "tier": "code",
+        "best_id": "R044",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR025",
+        "gold_text": "The process and timeline should cover curriculum development, recruitment, training duration, cohort size, stipend and supports, and internship or job placement.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 8,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R044"
+        ],
+        "tier": "judge",
+        "best_id": "R044",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": "Timeline covering the same listed activities."
+      },
+      {
+        "gold_id": "GR026",
+        "gold_text": "The proposal must describe how AI Prep funding will let the organization expand similar existing programming.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R045"
+        ],
+        "tier": "code",
+        "best_id": "R045",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR027",
+        "gold_text": "The proposal must include one-page resumes of key personnel who would administer the program.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R047"
+        ],
+        "tier": "code",
+        "best_id": "R047",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR028",
+        "gold_text": "The proposal must include letters from partner employers committing to provide paid internships or full-time employment to graduates.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R048"
+        ],
+        "tier": "code",
+        "best_id": "R048",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR029",
+        "gold_text": "The proposal must describe how the respondent would define low-income and target recruitment for the applicable Track(s).",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R049"
+        ],
+        "tier": "code",
+        "best_id": "R049",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR030",
+        "gold_text": "The proposal must estimate annual performance on participants served, low-income completion percentage, and placement rate, justified by historical experience or partner commitments.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R050"
+        ],
+        "tier": "judge",
+        "best_id": "R050",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": "Estimate annual performance on the same three metrics."
+      },
+      {
+        "gold_id": "GR031",
+        "gold_text": "Respondents should provide a line-by-line price proposal of the proposed fees to accomplish the scope of work.",
+        "gold_type": "budget_pricing",
+        "gold_strictness": "desired",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R051",
+          "R052"
+        ],
+        "tier": "judge",
+        "best_id": "R051",
+        "best_type": "budget_pricing",
+        "best_strictness": "desired",
+        "reason": "Line-by-line price proposal split into personnel and non-personnel costs."
+      },
+      {
+        "gold_id": "GR032",
+        "gold_text": "Respondents must include the Diversity Practices Questionnaire (Appendix B) in their response.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 22,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R053"
+        ],
+        "tier": "judge",
+        "best_id": "R053",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Diversity Practices Questionnaire Appendix B must be submitted."
+      },
+      {
+        "gold_id": "GR033",
+        "gold_text": "Technical Proposals should be organized with bookmarks matching the information requested in the listed outline.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 10,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R054"
+        ],
+        "tier": "code",
+        "best_id": "R054",
+        "best_type": "submission",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR034",
+        "gold_text": "Respondents should complete and submit the listed Administrative Proposal items in the order listed.",
+        "gold_type": "submission",
+        "gold_strictness": "desired",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R055"
+        ],
+        "tier": "judge",
+        "best_id": "R055",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Administrative Proposal items to be submitted in listed order."
+      },
+      {
+        "gold_id": "GR035",
+        "gold_text": "Proposals must be submitted only via the Dropbox upload; facsimile, hardcopy and email submissions will not be accepted.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 11,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R056"
+        ],
+        "tier": "code",
+        "best_id": "R056",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR036",
+        "gold_text": "Respondents must create a main folder named with the company name, RFP title and date of submission.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R056"
+        ],
+        "tier": "judge",
+        "best_id": "R056",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Main folder named company name, RFP title, date of submission."
+      },
+      {
+        "gold_id": "GR037",
+        "gold_text": "The main folder must contain two subfolders, one for the Administrative Proposal and one for the Technical Proposal.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R056"
+        ],
+        "tier": "judge",
+        "best_id": "R056",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": "Main folder contains Administrative and Technical subfolders."
+      },
+      {
+        "gold_id": "GR039",
+        "gold_text": "Questions about the RFP must be submitted by email, citing the RFP page and section, by the question deadline.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 12,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R057"
+        ],
+        "tier": "code",
+        "best_id": "R057",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR040",
+        "gold_text": "Contractor staff assigned to the project are subject to ESD approval.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R059"
+        ],
+        "tier": "code",
+        "best_id": "R059",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR041",
+        "gold_text": "The contractor may not subcontract services beyond those indicated in its proposal without prior written approval of the State Project Manager.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 14,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R061"
+        ],
+        "tier": "code",
+        "best_id": "R061",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR048",
+        "gold_text": "ESD sets an overall 30 percent MWBE participation goal, and the contractor must document good faith efforts to use MWBE subcontractors and suppliers.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 19,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R071"
+        ],
+        "tier": "judge",
+        "best_id": "R071",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": "Good faith MWBE efforts with 30 percent goal."
+      },
+      {
+        "gold_id": "GR049",
+        "gold_text": "Respondents must submit an MWBE Utilization Plan with their proposal.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 20,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R072"
+        ],
+        "tier": "code",
+        "best_id": "R072",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR053",
+        "gold_text": "ESD sets an overall 6% SDVOB participation goal for the contract.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 22,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R078",
+          "R071"
+        ],
+        "tier": "code",
+        "best_id": "R078",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR054",
+        "gold_text": "Respondents must submit a completed SDVOB Utilization Plan on Form OCSD-4 with the proposal.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 22,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R079"
+        ],
+        "tier": "code",
+        "best_id": "R079",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR058",
+        "gold_text": "The selected respondent must carry Commercial General Liability insurance of $1 million per occurrence and $2 million aggregate.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 26,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R085"
+        ],
+        "tier": "code",
+        "best_id": "R085",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR059",
+        "gold_text": "The selected respondent must carry Sexual Abuse and Molestation insurance of $1 million.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 26,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R087"
+        ],
+        "tier": "code",
+        "best_id": "R087",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR060",
+        "gold_text": "ESD must be named as additional insured on a primary and non-contributory basis on the Commercial General Liability and Auto Liability policies.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 26,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R089"
+        ],
+        "tier": "code",
+        "best_id": "R089",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR062",
+        "gold_text": "For Track A, the administrator must help students secure paid internships.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R011"
+        ],
+        "tier": "code",
+        "best_id": "R011",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR063",
+        "gold_text": "For Track A, the administrator must create a program application and evaluation process and conduct needs assessments to identify and address student barriers to success.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R006",
+          "R007"
+        ],
+        "tier": "code",
+        "best_id": "R006",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR064",
+        "gold_text": "For Track A, the administrator should propose whether training runs during the academic year or as summer courses, aligned with employer internship hiring cycles.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 4,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R014"
+        ],
+        "tier": "code",
+        "best_id": "R014",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR065",
+        "gold_text": "For Track B, the training schedule should be immersive and deliverable part-time or full-time.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R018"
+        ],
+        "tier": "code",
+        "best_id": "R018",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR066",
+        "gold_text": "For Track B, the program should provide participant stipends and wrap-around supports, including success coach staff to address barriers to completion.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R019"
+        ],
+        "tier": "code",
+        "best_id": "R019",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR067",
+        "gold_text": "For Track B, the program should provide full-time job connection support in an AI-related field.",
+        "gold_type": "functional",
+        "gold_strictness": "desired",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R022"
+        ],
+        "tier": "code",
+        "best_id": "R022",
+        "best_type": "functional",
+        "best_strictness": "desired",
+        "reason": null
+      },
+      {
+        "gold_id": "GR068",
+        "gold_text": "The administrator must cultivate and maintain relationships with leading industry employers, to inform training content and to generate internship or employment opportunities.",
+        "gold_type": "functional",
+        "gold_strictness": "mandatory",
+        "gold_page": 5,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R023"
+        ],
+        "tier": "code",
+        "best_id": "R023",
+        "best_type": "functional",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR069",
+        "gold_text": "Respondents applying for both tracks must describe their organizational capacity and strategy to manage two programs simultaneously.",
+        "gold_type": "submission",
+        "gold_strictness": "mandatory",
+        "gold_page": 9,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R046"
+        ],
+        "tier": "code",
+        "best_id": "R046",
+        "best_type": "submission",
+        "best_strictness": "mandatory",
+        "reason": null
+      },
+      {
+        "gold_id": "GR070",
+        "gold_text": "If a vehicle is used in the business, the selected respondent must carry Commercial Automobile insurance with a limit of at least $1 million.",
+        "gold_type": "legal_contractual",
+        "gold_strictness": "mandatory",
+        "gold_page": 26,
+        "quote_verifiable": true,
+        "matched_ids": [
+          "R086"
+        ],
+        "tier": "judge",
+        "best_id": "R086",
+        "best_type": "legal_contractual",
+        "best_strictness": "mandatory",
+        "reason": "Commercial Automobile insurance of at least $1 million if vehicle used."
+      }
+    ],
+    "verdicts": [
+      {
+        "id": "R001",
+        "text": "All contact and inquiries regarding this procurement must be made by email to AI.Prep@esd.ny.gov, and respondents are prohibited from contacting any other New York State employee about the procurement during the restricted period.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S2.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported, but contact restriction is procurement-conduct rule, not solution-affecting."
+      },
+      {
+        "id": "R002",
+        "text": "Proposals must be submitted to the designated Dropbox at https://www.dropbox.com/request/AIPrep.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S2.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Submission method affects how bidder submits."
+      },
+      {
+        "id": "R003",
+        "text": "Proposals must be submitted by 2:00 PM ET on October 1, 2025; late proposals will not be accepted.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S3.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Deadline in chunk heading; late proposals rejected; affects scheduling."
+      },
+      {
+        "id": "R004",
+        "text": "The respondent must develop and deliver a comprehensive AI technology training program for low-income college students that includes paid internship placements.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Core program deliverable stated in chunk."
+      },
+      {
+        "id": "R005",
+        "text": "The administrator must develop a targeted outreach and recruitment strategy for low-income students.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated administrator expectation; affects design."
+      },
+      {
+        "id": "R006",
+        "text": "The administrator must create a program application and evaluation process.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated administrator expectation."
+      },
+      {
+        "id": "R007",
+        "text": "The administrator must conduct needs assessments to identify and address student barriers to success.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated administrator expectation."
+      },
+      {
+        "id": "R008",
+        "text": "The administrator must design an industry-informed AI curriculum.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated administrator expectation."
+      },
+      {
+        "id": "R009",
+        "text": "The administrator must deliver and manage the AI training program.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated administrator expectation."
+      },
+      {
+        "id": "R010",
+        "text": "The administrator must provide participant stipends and wrap-around supports including mentorships and career coaches with industry expertise.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stipends and supports affect pricing and staffing."
+      },
+      {
+        "id": "R011",
+        "text": "The administrator must help students secure paid internships.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated administrator expectation."
+      },
+      {
+        "id": "R012",
+        "text": "The administrator must cultivate and maintain relationships with leading industry employers to inform training content and generate paid internship opportunities.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated expectation affecting staffing and partnerships."
+      },
+      {
+        "id": "R013",
+        "text": "The Track A curriculum should consist of online courses in AI developed with input from leading researchers and industry experts, with opportunities for mentorship and real-world machine learning projects.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Curriculum guidance stated with should."
+      },
+      {
+        "id": "R014",
+        "text": "The respondent should propose whether the Track A training program will be offered during the academic year or through summer courses, demonstrating alignment with employer internship hiring cycles and needs.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S8.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Proposal must address timing; affects schedule."
+      },
+      {
+        "id": "R015",
+        "text": "The Track B administrator must deliver an industry-informed, comprehensive AI technology training program that equips low-income New Yorkers with barriers to employment with in-demand technical and professional skills and connects them to AI jobs.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Core Track B deliverable stated."
+      },
+      {
+        "id": "R016",
+        "text": "The Track B program should include a tailored outreach and recruitment strategy for unemployed, underemployed, and underrepresented New Yorkers.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R017",
+        "text": "The Track B program should consist of online AI courses with curriculum that incorporates industry input on technical skills and learning milestones.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R018",
+        "text": "The Track B program should include a training schedule that is immersive and can be delivered part-time or full-time.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R019",
+        "text": "The Track B program should include participant stipends and wrap-around supports including success coach staff to help address barriers to trainee completion.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R020",
+        "text": "The Track B program should include evaluation metrics to measure participant skill attainment during training.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R021",
+        "text": "The Track B program should include professional development support for trainees throughout training.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R022",
+        "text": "The Track B program should include full-time job connection support in an AI-related field.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated program component."
+      },
+      {
+        "id": "R023",
+        "text": "The Track B administrator is expected to cultivate and maintain relationships with leading industry employers to inform training content and generate full-time employment opportunities.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated expectation for administrator."
+      },
+      {
+        "id": "R024",
+        "text": "The award is for an initial term of up to 18 months, with possible renewal or extension based on performance, need, and availability of funds.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S9.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Contract term constrains scheduling and pricing."
+      },
+      {
+        "id": "R025",
+        "text": "The program should serve a minimum of 250 participants, with priority for applicants that serve more than 400 participants.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches chunk: minimum 250 participants, priority above 400."
+      },
+      {
+        "id": "R026",
+        "text": "Over 50% of participants should be low-income.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Directly stated in chunk."
+      },
+      {
+        "id": "R027",
+        "text": "The majority of program graduates should secure paid internships or full-time employment in artificial intelligence or a closely related field.",
+        "type": "functional",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches outcome objective stated in chunk."
+      },
+      {
+        "id": "R028",
+        "text": "Applicants must be organizations with a strong track record for workforce development in AI or similar fields.",
+        "type": "other",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in chunk; affects bidder eligibility and team composition."
+      },
+      {
+        "id": "R029",
+        "text": "If applicants form a team, one organization must be designated as the lead for the proposed programming.",
+        "type": "other",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S12.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk requires one lead organization if teams form; affects team structure."
+      },
+      {
+        "id": "R030",
+        "text": "Applicants must have experience in at least three of the four following domains: providing academic services to college students, administering high-tech accelerated training programs, serving low-income populations, and working in the New York market.",
+        "type": "other",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S13.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Eligibility domains and three-of-four threshold match chunk."
+      },
+      {
+        "id": "R031",
+        "text": "Applicants must detail their own budget and associated justification.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S14.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Stated in chunk; affects pricing submission."
+      },
+      {
+        "id": "R032",
+        "text": "Budgets exceeding $2M for one track or $4M for both tracks for the total contract period will not be considered.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S14.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Budget caps $2M/$4M match chunk."
+      },
+      {
+        "id": "R033",
+        "text": "The proposed budget must be comprised of staff salary and benefits, wraparound supports and proposed participant stipend level, and other costs deemed necessary for program success, mapped to the program duration.",
+        "type": "budget_pricing",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S15.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Budget components match chunk; 'must' is stronger than 'should' but content is supported."
+      },
+      {
+        "id": "R034",
+        "text": "Indirect costs are not an allowable cost under this grant.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S15.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Indirect costs disallowed; affects pricing."
+      },
+      {
+        "id": "R035",
+        "text": "The extent of any cost matching should be indicated in the budget template.",
+        "type": "budget_pricing",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S16.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk says cost-match extent should be indicated in budget template; affects scoring."
+      },
+      {
+        "id": "R036",
+        "text": "Awarded applicants must track and record data relevant to the success of the grant, including applicant, enrollment, completion, internship placement, job placement, participating colleges and employer partners, and make it available to ESD as requested.",
+        "type": "functional",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S17.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Data tracking and reporting to ESD is stated; list is non-exhaustive but matches."
+      },
+      {
+        "id": "R037",
+        "text": "The Technical Proposal must include a cover letter describing the organization's mission and history, annual budget, annual number of participants served, employer partnerships, and motivations for applying.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S20.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Cover letter content matches chunk; affects proposal submission."
+      },
+      {
+        "id": "R038",
+        "text": "The Technical Proposal must describe how the organization delivers substantive, skill-based, college-level or accelerated immersive AI training, which industry experts it partners with, and how it keeps curriculum current and aligned with employer demand.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S20.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches chunk's qualification questions on training delivery, experts, curriculum currency."
+      },
+      {
+        "id": "R039",
+        "text": "The Technical Proposal must describe the organization's work with college students, detailing length of training, number of students served, number of cohorts, cost per student, and internship and/or job placement rates of recent graduates.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches chunk details on college student work."
+      },
+      {
+        "id": "R040",
+        "text": "The Technical Proposal must describe the organization's work training a high-tech workforce in AI and related fields excluding college students, including length of training, number of participants served, number of cohorts, cost per participant, and job placement rate of recent graduates.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches chunk details for non-college participants."
+      },
+      {
+        "id": "R041",
+        "text": "The Technical Proposal must describe the organization's work with low-income students or individuals, including the number served and any additional supports provided.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches chunk on low-income work, number served, supports."
+      },
+      {
+        "id": "R042",
+        "text": "The Technical Proposal must describe how the organization coordinates with individual employers to place participants in AI-related internships or jobs.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Employer coordination description is stated in chunk."
+      },
+      {
+        "id": "R043",
+        "text": "The Technical Proposal must describe any work the organization does in the New York market.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S21.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "New York market work description is stated."
+      },
+      {
+        "id": "R044",
+        "text": "The Technical Proposal must include a monthly timeline for planning and administering the program through completion of internships or full-time jobs by the first cohort, covering curriculum development, participant recruitment, proposed training duration, proposed cohort size, proposed stipend level and supports, and internship or full-time job placement.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Monthly timeline and listed activities match chunk."
+      },
+      {
+        "id": "R045",
+        "text": "The Technical Proposal must describe how AI Prep funding will allow the organization to expand similar existing programming, how many additional participants it will serve, and how it will maintain or enhance quality.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Expansion, additional participants, and quality maintenance match chunk."
+      },
+      {
+        "id": "R046",
+        "text": "Applicants applying for both Tracks must provide a detailed description of their organizational capacity and strategy to manage two programs simultaneously.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Dual-track capacity description stated in chunk."
+      },
+      {
+        "id": "R047",
+        "text": "The Technical Proposal must include 1-page resumes of key personnel who would be involved in administering the program.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "One-page key personnel resumes stated; affects staffing."
+      },
+      {
+        "id": "R048",
+        "text": "The Technical Proposal must include letters from partner employers demonstrating their commitment to providing paid internships or full-time employment to program graduates.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Employer commitment letters stated in chunk."
+      },
+      {
+        "id": "R049",
+        "text": "The Technical Proposal must describe how the applicant defines low-income for the program and how it would target recruitment for the applicable Track(s), including relevant partnerships with nonprofits and New York colleges or universities.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S22.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Low-income definition, recruitment targeting, partnerships match chunks."
+      },
+      {
+        "id": "R050",
+        "text": "The Technical Proposal must describe how the organization currently measures and reports program success and estimate annual performance against total participants served, percentage of low-income participants completing the curriculum, and paid internship or full-time job placement rate of graduates.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S22.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Metrics description and three annual estimates match chunk."
+      },
+      {
+        "id": "R051",
+        "text": "The Technical Proposal must include a line-by-line price proposal for Personnel Services costs including job title, name of employee if known, hourly or annual compensation rate, fringe rate, percentage of time dedicated to the project, and cost to contract.",
+        "type": "budget_pricing",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches the PS cost elements listed in S23.1."
+      },
+      {
+        "id": "R052",
+        "text": "The Technical Proposal must include a line-by-line price proposal for Other Than Personnel Services costs, listing each cost on a separate line with cost to contract and number of each item.",
+        "type": "budget_pricing",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S23.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Matches the OTPS line-by-line pricing instructions in S23.1."
+      },
+      {
+        "id": "R053",
+        "text": "The Diversity Practices Questionnaire in Appendix B must be submitted with the proposal and is scored for up to 10 points.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S24.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Questionnaire is submitted and scored up to 10 points; both are in the chunks."
+      },
+      {
+        "id": "R054",
+        "text": "The Technical Proposal must be organized with bookmarks identified to match the specific information requested, covering cover page, table of contents, firm experience and qualifications, staff experience and qualifications, project plan and approach, cost of services, and diversity practices questionnaire.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S27.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Bookmarks and the listed sections are stated in S27.1."
+      },
+      {
+        "id": "R055",
+        "text": "The Administrative Proposal must include, in the order listed, the Non-Collusive Bidding Certification, Conflict of Interest Attestation, State Finance Law §§139-j and 139-k forms, Vendor Responsibility Questionnaire, Iran Divestment Act Statement, Executive Order 16 Certification, Executive Order 177 Certification, Non-Discrimination and Contractor & Supplier Diversity forms (OCSD-1, OCSD-2, OCSD-4), Encouraging the Use of NYS Businesses in Contract Performance Form, State Tax Law Section 5-a certification (Form ST-220-CA or affidavit), and W-9 Form; failure to submit any may result in rejection.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S28.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "The listed forms, the order and the rejection risk are all in S28.1."
+      },
+      {
+        "id": "R056",
+        "text": "Proposals must be submitted only through the described Dropbox folder structure, with a main folder named \"company name – RFP title – date of Submission\" containing separate Administrative and Technical Proposal subfolders; facsimile, hardcopy, or email submissions will not be accepted.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S29.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Dropbox upload, folder naming, subfolders and rejection of other methods are in S29.1."
+      },
+      {
+        "id": "R057",
+        "text": "Questions must be submitted by email to AI.Prep@esd.ny.gov citing the RFP page and section by the deadline of August 29, 2025; questions will not be accepted orally.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S30.1"
+        ],
+        "supported": false,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "August 29, 2025 deadline not in chunk; it only refers to Section V schedule."
+      },
+      {
+        "id": "R058",
+        "text": "All costs associated with responding to this RFP are at the sole cost and expense of the respondent.",
+        "type": "budget_pricing",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S31.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Bidder bears response costs; affects pricing/bid decision, stated in chunk."
+      },
+      {
+        "id": "R059",
+        "text": "Contractor staff assigned to the project are subject to approval by the Corporation, and the Contractor must notify the Corporation immediately of any proposed staff changes, which the Corporation may approve or disapprove.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S35.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Staff approval and change notification constrain key personnel; matches chunk."
+      },
+      {
+        "id": "R060",
+        "text": "The contract resulting from this RFP may not be assigned, conveyed, transferred, or disposed of by the Contractor.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S35.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Standard assignment boilerplate; supported but generic contract term."
+      },
+      {
+        "id": "R061",
+        "text": "The Contractor may not subcontract any of its services unless indicated in its proposal and approved in advance in writing by the State Project Manager.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S35.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Subcontracting restriction affects staffing and solution design; matches chunk."
+      },
+      {
+        "id": "R062",
+        "text": "All bidders must certify that they have not colluded with any other respondents in their proposal and include the completed Non-Collusive Bidding Certification in all proposals.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S37.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Certification must be included in proposals; submission requirement matches chunk."
+      },
+      {
+        "id": "R063",
+        "text": "The respondent must attest that it has read, understood and will comply with the Conflict of Interest Attestation provisions, including not offering gifts or employment to ESD employees involved in the procurement within 30 days of their involvement closing.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S38.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Attestation and 30-day employment-offer restriction both stated in chunk."
+      },
+      {
+        "id": "R064",
+        "text": "The respondent must disclose any existing or contemplated relationship that would constitute an actual or potential conflict of interest and describe how it would eliminate or prevent it.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S38.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Disclosure plus elimination description stated across S38.1 and S38.2 (continuation); cited chunk S38.1 mostly covers."
+      },
+      {
+        "id": "R065",
+        "text": "The respondent must disclose whether it or its members, 5% or greater shareholders, parents, affiliates, or subsidiaries have been the subject of any ongoing investigation or disciplinary action by the New York State Commission on Ethics and Lobbying in Government, and describe how any matter was resolved.",
+        "type": "security_compliance",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S38.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Ethics Commission investigation disclosure and resolution description stated in S38.2."
+      },
+      {
+        "id": "R066",
+        "text": "Respondents must submit the Offeror Disclosure of Prior Non-Responsibility Determinations and the Offeror's Affirmation of Understanding and Agreement pursuant to State Finance Law as part of their submittal, and both the prime consultant and any sub-consultants must complete the forms.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S39.1"
+        ],
+        "supported": false,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Prime consultant and sub-consultant form completion is not stated in the chunk."
+      },
+      {
+        "id": "R067",
+        "text": "Respondents must register in the State's Vendor Responsibility System and include a copy of the Vend-Rep submission receipt or paper questionnaire with the proposal, completed within one year of proposal submission.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S40.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Registration, receipt inclusion, and one-year completion all stated."
+      },
+      {
+        "id": "R068",
+        "text": "Every proposal must contain the Iran Divestment Act statement, signed by the respondent on company letterhead and affirmed as true under penalty of perjury.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S41.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Signed Iran Divestment statement on letterhead under penalty of perjury required."
+      },
+      {
+        "id": "R069",
+        "text": "All bidders must certify compliance with Executive Order 16 (prohibiting contracting with businesses in Russia) by signing and including the EO-16 certification in all proposals.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S42.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Signed EO-16 certification must be included in proposals; affects submission."
+      },
+      {
+        "id": "R070",
+        "text": "All bidders must certify compliance with the New York State Human Rights Law by signing and including the Executive Order 177 certification in all proposals.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S43.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Supported, but it is a non-discrimination compliance statement, which is generic boilerplate."
+      },
+      {
+        "id": "R071",
+        "text": "The contractor must document good faith efforts to provide meaningful participation by MWBEs as subcontractors and suppliers toward an overall MWBE participation goal of 30 percent.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S45.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "30% MWBE goal with good-faith documentation affects subcontracting and staffing."
+      },
+      {
+        "id": "R072",
+        "text": "The respondent must submit an MWBE Utilization Plan with its proposal and report any modifications on a revised plan for ESD review and approval.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S45.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Utilization plan must accompany the proposal; revisions need ESD approval."
+      },
+      {
+        "id": "R073",
+        "text": "If a notice of deficiency is issued, the respondent must respond within seven business days with a written remedy, and if that remedy is untimely or inadequate, submit a request for a partial or total waiver within five business days.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S45.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Deadlines of 7 and 5 business days match the chunk and affect scheduling."
+      },
+      {
+        "id": "R074",
+        "text": "The successful respondent must submit a quarterly MWBE Contractor Compliance & Payment Report to ESD by the 10th day following each end of quarter over the term of the contract.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S45.3"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Quarterly report due by the 10th day after quarter end; affects contract administration."
+      },
+      {
+        "id": "R075",
+        "text": "The respondent must submit a Minority and Women-owned Business Enterprise and Equal Employment Opportunity Policy Statement, OCSD-1, to ESD with its proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S46.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Proposal submission item OCSD-1 stated in chunk."
+      },
+      {
+        "id": "R076",
+        "text": "If awarded a contract, the respondent must submit a Workforce Utilization Report and require each subcontractor to do so quarterly, including gross wages paid to each employee pursuant to Executive Order #162.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S46.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Quarterly reports and gross wages under EO 162 stated; affects reporting and staffing."
+      },
+      {
+        "id": "R077",
+        "text": "Respondents are expected to consider SDVOBs in fulfilling the contract requirements, including as subcontractors, suppliers, protégés, or in other partnering or supporting roles.",
+        "type": "legal_contractual",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S48.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Chunk says respondents expected to consider SDVOBs, including those partnering roles."
+      },
+      {
+        "id": "R078",
+        "text": "The contractor must document good faith efforts to provide meaningful participation by SDVOBs as subcontractors or suppliers toward an overall SDVOB participation goal of 6 percent.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S49.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Good faith documentation and 6% goal both stated in S49.1."
+      },
+      {
+        "id": "R079",
+        "text": "Respondents must submit a completed SDVOB Utilization Plan on Form OCSD-4 listing the SDVOBs to be used, the work they will perform, and the estimated dollar amounts or percentage of contract work.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S50.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "OCSD-4 plan and its contents stated in S50.1."
+      },
+      {
+        "id": "R080",
+        "text": "If a notice of deficiency is issued on the SDVOB Utilization Plan, the respondent must respond within seven business days with a written remedy, and if that is untimely or inadequate, submit a waiver request on Form OCSD-5 within five business days.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S50.2"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Seven-day remedy and five-day OCSD-5 waiver timelines match chunk."
+      },
+      {
+        "id": "R081",
+        "text": "The contractor must submit a Monthly SDVOB Contractor Compliance Report on Form OCSD-6 to OCSD@esd.ny.gov by the 10th day of each month during the contract term.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S53.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Monthly report deadline and form stated; reporting obligation affects contractor compliance planning."
+      },
+      {
+        "id": "R082",
+        "text": "Each respondent must complete the Encouraging Use of New York State Businesses in Contract Performance form.",
+        "type": "submission",
+        "strictness": "desired",
+        "chunk_ids": [
+          "S55.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "ESD requests respondents complete the form; submission item affecting proposal."
+      },
+      {
+        "id": "R083",
+        "text": "All respondents must include a properly completed Form ST-220-CA, or an affidavit that the respondent is not required to be registered with the State Department of Taxation and Finance, in their proposals; responses without it will be considered non-responsive.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S56.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Form ST-220-CA or affidavit required; incomplete responses are non-responsive."
+      },
+      {
+        "id": "R084",
+        "text": "Respondents must review Schedule A and submit any concerns in writing together with the Administrative Proposal, or objections are deemed waived.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S57.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Concerns about Schedule A must be submitted with Administrative Proposal or waived."
+      },
+      {
+        "id": "R085",
+        "text": "The selected respondent must provide Commercial General Liability insurance of $1 million per occurrence and $2 million in the aggregate.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "CGL limits match source and affect pricing."
+      },
+      {
+        "id": "R086",
+        "text": "The selected respondent must provide Commercial Automobile insurance with a limit of not less than $1 million if a vehicle is used in business.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Auto insurance minimum $1M if vehicle used; matches source."
+      },
+      {
+        "id": "R087",
+        "text": "The selected respondent must provide Sexual Abuse and Molestation Insurance of $1 million.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Sexual abuse and molestation insurance of $1 million stated."
+      },
+      {
+        "id": "R088",
+        "text": "The selected respondent must show evidence of Workers' Compensation and Employer's Liability insurance and Disability insurance coverage at State statutory limits.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Evidence of workers' comp, employer's liability, and disability at statutory limits required."
+      },
+      {
+        "id": "R089",
+        "text": "ESD must be named as additional insured on a primary and non-contributory basis on the Commercial General Liability and Auto Liability policies, and all policies must include a waiver of subrogation in favor of ESD.",
+        "type": "legal_contractual",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S59.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "Additional insured and waiver of subrogation requirements stated in source."
+      },
+      {
+        "id": "R090",
+        "text": "A completed W-9 form must be submitted with the proposal.",
+        "type": "submission",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S60.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": true,
+        "reason": "W-9 must be submitted with proposal; a submission requirement affecting bid package."
+      },
+      {
+        "id": "R091",
+        "text": "An unsuccessful respondent must request a debriefing within 15 calendar days of ESD's notification that its proposal was not selected.",
+        "type": "timeline",
+        "strictness": "mandatory",
+        "chunk_ids": [
+          "S61.1"
+        ],
+        "supported": true,
+        "is_requirement": true,
+        "in_scope": false,
+        "reason": "Debriefing request window is a post-award procurement-conduct rule, not affecting solution design or pricing."
+      }
+    ]
+  },
+  "problem": {
+    "mode": "hierarchical",
+    "claims": {
+      "client_situation": 6,
+      "goal": 7,
+      "success_criteria": 8,
+      "constraints": 10
+    },
+    "facts": 30,
+    "inferences": 1,
+    "checklist_total": 12,
+    "checklist_covered": null,
+    "checklist_partial": null,
+    "checklist_coverage": null,
+    "checklist": [
+      {
+        "gold_id": "GC01",
+        "fact": "The RFP is issued by Empire State Development (ESD) through its Office of Strategic Workforce Development (OSWD), created after Governor Hochul's April 2022 announcement of $350 million for workforce development.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC02",
+        "fact": "The need is that AI-related jobs often require specialized education and training out of reach for low-income individuals, creating a risk that AI progress will disproportionately benefit those already privileged and leave underrepresented communities behind.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC03",
+        "fact": "AI Prep is an applied training program with two tracks: Track A (AI Prep 4 Internships) for low-income matriculating undergraduates seeking paid internships, and Track B (AI Prep 4 Jobs) for low-income New Yorkers with barriers to employment via accelerated training or bootcamp.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC04",
+        "fact": "OSWD seeks to award contracts to up to two qualified program administrators to develop the curriculum for and administer AI Prep for Track A and/or Track B.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC05",
+        "fact": "Funding is up to $2M per track (up to $4M total) for an initial term of up to 18 months, with possible renewal or extension based on performance, need, and availability of funds.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC06",
+        "fact": "Budgets exceeding $2M for one track or $4M for both tracks over the contract period will not be considered, and indirect costs are not allowable.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC07",
+        "fact": "Program objectives require serving a minimum of 250 participants (priority for those serving more than 400), with over 50% low-income participants.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC08",
+        "fact": "Most graduates should secure paid internships or full-time employment in AI or a closely related field.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC09",
+        "fact": "Applicants may be non-profit or for-profit and must have experience in at least three of four domains: academic services to college students, high-tech accelerated training, serving low-income populations, and working in the New York market.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC10",
+        "fact": "Proposals are due by 2:00 PM ET on October 1, 2025, uploaded to a designated Dropbox; late proposals will not be accepted.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC11",
+        "fact": "The anticipated schedule is: winner announced November 14, 2025, and contract start January 1, 2026.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      },
+      {
+        "gold_id": "GC12",
+        "fact": "Appendix A (ESD IT Security Standard Brief), Appendix B (Diversity Practices Questionnaire) and Schedule A (standard ESD contract terms) are referenced but not included in the RFP PDF.",
+        "quote_verifiable": true,
+        "status": null,
+        "claim": null,
+        "reason": null
+      }
+    ]
+  },
+  "solution": {
+    "components": 9,
+    "assumptions": 8,
+    "rounds": 1,
+    "cited_total": 38,
+    "cited_covered": 38,
+    "cited_coverage": 1.0,
+    "stored_coverage_agrees": true,
+    "judged_covered": null,
+    "judged_coverage": null,
+    "rubric": {},
+    "calendar_components": [],
+    "component_records": [
+      {
+        "id": "C01",
+        "title": "Program management, governance and dual-track capacity",
+        "description": "A designated lead organization acts as prime and single point of accountability to ESD, with a program director, a monthly integrated timeline from planning through first-cohort internship or job placement, and a written dual-track capacity and strategy plan for running Track A and Track B simultaneously. Governance covers staff assignment and change notification to ESD, no assignment or transfer of the contract, and prior written approval for any subcontracting. Monthly status reporting to ESD covers schedule, enrollment, spend against budget and placement progress, and the plan is built to support renewal or extension decisions at the end of the initial term.",
+        "requirement_ids": [
+          "R024",
+          "R028",
+          "R029",
+          "R030",
+          "R059",
+          "R060",
+          "R061",
+          "R058"
+        ]
+      },
+      {
+        "id": "C02",
+        "title": "Curriculum design with industry input",
+        "description": "We co-design an industry-informed AI curriculum with leading researchers and employer partners, expressed as online courses with defined technical skills and learning milestones, real-world machine learning projects and mentorship. The same curriculum architecture serves both tracks: Track A is sequenced around employer internship hiring cycles (academic-year or summer, proposed explicitly with rationale), and Track B is delivered as an immersive part-time or full-time schedule for adults with barriers to employment. A curriculum advisory cadence with employers keeps content current and aligned to demand, and skill-attainment assessments are built in from the start.",
+        "requirement_ids": [
+          "R008",
+          "R013",
+          "R014",
+          "R017",
+          "R018",
+          "R020"
+        ]
+      },
+      {
+        "id": "C03",
+        "title": "Outreach, recruitment and application/assessment",
+        "description": "A targeted outreach and recruitment strategy for low-income students (Track A) and unemployed, underemployed and underrepresented New Yorkers (Track B), built on partnerships with New York colleges and universities, community nonprofits and workforce agencies. We define low-income eligibility explicitly, run an application and evaluation process with a documented scoring rubric, and conduct needs assessments at intake that identify each participant's barriers and route them to the right supports. Recruitment targets are set to exceed the 250-participant minimum with headroom toward 400+, and intake data captures low-income status so the over-50% threshold is verifiable.",
+        "requirement_ids": [
+          "R005",
+          "R006",
+          "R007",
+          "R016",
+          "R025",
+          "R026"
+        ]
+      },
+      {
+        "id": "C04",
+        "title": "Training delivery, stipends and wrap-around supports",
+        "description": "We deliver and manage both training programs end to end: cohort scheduling, instruction and mentoring, progress monitoring and completion support. Every participant receives a stipend at a proposed level stated in the budget, plus wrap-around supports — mentors, success coaches and career coaches with industry expertise — and professional development throughout training. Track B adds success-coach capacity focused on barrier removal and completion, and Track A adds mentorship and real-world project work tied to internship readiness. Completion and skill-attainment metrics are tracked per cohort.",
+        "requirement_ids": [
+          "R004",
+          "R009",
+          "R010",
+          "R015",
+          "R019",
+          "R021"
+        ]
+      },
+      {
+        "id": "C05",
+        "title": "Employer partnerships and placement services",
+        "description": "An employer-relations function cultivates and maintains relationships with leading AI employers, documented through signed commitment letters for paid internships (Track A) and full-time employment (Track B). Employer input feeds curriculum content, and we coordinate placement employer by employer — matching, interview preparation, and post-placement follow-up — with full-time job connection support in AI-related fields for Track B graduates. Placement performance is measured against a stated rate and timeframe so the majority-of-graduates expectation is demonstrably met.",
+        "requirement_ids": [
+          "R011",
+          "R012",
+          "R023",
+          "R022",
+          "R027"
+        ]
+      },
+      {
+        "id": "C06",
+        "title": "Data, performance measurement and ESD reporting",
+        "description": "A single participant data system records applicant, enrollment and completion counts with low-income percentages, paid internship and full-time job placement rates, participating colleges and employer partners, and skill-attainment measures, and exposes them to ESD on request. We publish a monthly performance dashboard and an annual performance estimate against total participants served, percentage of low-income participants completing the curriculum, and placement rate, justified by our historical results and partner commitments. Data handling is designed to the ESD IT Security Standard once Appendix A is obtained.",
+        "requirement_ids": [
+          "R036",
+          "R020",
+          "R050"
+        ]
+      },
+      {
+        "id": "C07",
+        "title": "Budget, pricing and cost justification",
+        "description": "A line-by-line budget within the $2M per track / $4M both-track ceiling, mapped to the program duration and structured to the allowable cost categories: staff salary and benefits, wraparound supports and participant stipend level, and other program costs such as curriculum development, marketing and events. No indirect costs are included. Personnel lines show job title, named employee where known, hourly or annual rate, fringe rate, percentage of time and cost to contract; other-than-personnel costs are itemized with quantities and cost to contract. Any cost match is stated in the required budget template and flagged for additional scoring credit.",
+        "requirement_ids": [
+          "R031",
+          "R032",
+          "R033",
+          "R034",
+          "R035",
+          "R051",
+          "R052"
+        ]
+      },
+      {
+        "id": "C08",
+        "title": "Compliance, diversity participation and insurance",
+        "description": "A compliance officer owns every contractual obligation from award through closeout: MWBE good-faith-effort documentation toward the 30% goal with a utilization plan and quarterly MWBE Contractor Compliance & Payment Reports by the 10th day after each quarter; SDVOB good-faith efforts toward the 6% goal with an OCSD-4 utilization plan and monthly OCSD-6 reports by the 10th of each month; quarterly Workforce Utilization Reports including gross wages under EO #162, extended to subcontractors; and the OCSD-1 EEO policy statement. Insurance is bound at award — $1M/$2M CGL, $1M Sexual Abuse and Molestation, $1M auto if a vehicle is used, statutory Workers' Compensation and Disability — with ESD as additional insured on a primary and non-contributory basis and waiver of subrogation on all policies. Conflict-of-interest attestations and disclosures, including ethics-commission investigation history, are maintained and refreshed.",
+        "requirement_ids": [
+          "R063",
+          "R064",
+          "R065",
+          "R071",
+          "R074",
+          "R076",
+          "R078",
+          "R081",
+          "R085",
+          "R086",
+          "R087",
+          "R088",
+          "R089",
+          "R077"
+        ]
+      },
+      {
+        "id": "C09",
+        "title": "Proposal assembly, forms and submission control",
+        "description": "A bid manager assembles the response in the required Dropbox structure — a main folder named \"company name – RFP title – date of Submission\" with separate Administrative and Technical Proposal subfolders — and controls the 2:00 PM ET October 1, 2025 deadline, since late, emailed, faxed or hardcopy submissions are rejected. The Administrative Proposal is compiled in the mandated order (Non-Collusive Bidding Certification, Conflict of Interest Attestation, SFL §§139-j/139-k forms, Vendor Responsibility Questionnaire completed within one year via Vend-Rep, Iran Divestment Act statement, EO-16 and EO-177 certifications, OCSD-1/2/4, NYS Businesses form, ST-220-CA or affidavit, W-9), with each linked form downloaded, signed and checked off. The Technical Proposal carries bookmarked sections, 1-page key-personnel resumes, employer commitment letters, and the Appendix B Diversity Practices Questionnaire. A debriefing request is calendared within 15 days of any non-selection notice.",
+        "requirement_ids": [
+          "R003",
+          "R091"
+        ]
+      }
+    ],
+    "pairs": [
+      {
+        "component_id": "C01",
+        "requirement_id": "R024",
+        "requirement_text": "The award is for an initial term of up to 18 months, with possible renewal or extension based on performance, need, and availability of funds.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R028",
+        "requirement_text": "Applicants must be organizations with a strong track record for workforce development in AI or similar fields.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R029",
+        "requirement_text": "If applicants form a team, one organization must be designated as the lead for the proposed programming.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R030",
+        "requirement_text": "Applicants must have experience in at least three of the four following domains: providing academic services to college students, administering high-tech accelerated training programs, serving low-income populations, and working in the New York market.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R059",
+        "requirement_text": "Contractor staff assigned to the project are subject to approval by the Corporation, and the Contractor must notify the Corporation immediately of any proposed staff changes, which the Corporation may approve or disapprove.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R060",
+        "requirement_text": "The contract resulting from this RFP may not be assigned, conveyed, transferred, or disposed of by the Contractor.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R061",
+        "requirement_text": "The Contractor may not subcontract any of its services unless indicated in its proposal and approved in advance in writing by the State Project Manager.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C01",
+        "requirement_id": "R058",
+        "requirement_text": "All costs associated with responding to this RFP are at the sole cost and expense of the respondent.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R008",
+        "requirement_text": "The administrator must design an industry-informed AI curriculum.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R013",
+        "requirement_text": "The Track A curriculum should consist of online courses in AI developed with input from leading researchers and industry experts, with opportunities for mentorship and real-world machine learning projects.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R014",
+        "requirement_text": "The respondent should propose whether the Track A training program will be offered during the academic year or through summer courses, demonstrating alignment with employer internship hiring cycles and needs.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R017",
+        "requirement_text": "The Track B program should consist of online AI courses with curriculum that incorporates industry input on technical skills and learning milestones.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R018",
+        "requirement_text": "The Track B program should include a training schedule that is immersive and can be delivered part-time or full-time.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C02",
+        "requirement_id": "R020",
+        "requirement_text": "The Track B program should include evaluation metrics to measure participant skill attainment during training.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R005",
+        "requirement_text": "The administrator must develop a targeted outreach and recruitment strategy for low-income students.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R006",
+        "requirement_text": "The administrator must create a program application and evaluation process.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R007",
+        "requirement_text": "The administrator must conduct needs assessments to identify and address student barriers to success.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R016",
+        "requirement_text": "The Track B program should include a tailored outreach and recruitment strategy for unemployed, underemployed, and underrepresented New Yorkers.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R025",
+        "requirement_text": "The program should serve a minimum of 250 participants, with priority for applicants that serve more than 400 participants.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C03",
+        "requirement_id": "R026",
+        "requirement_text": "Over 50% of participants should be low-income.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R004",
+        "requirement_text": "The respondent must develop and deliver a comprehensive AI technology training program for low-income college students that includes paid internship placements.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R009",
+        "requirement_text": "The administrator must deliver and manage the AI training program.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R010",
+        "requirement_text": "The administrator must provide participant stipends and wrap-around supports including mentorships and career coaches with industry expertise.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R015",
+        "requirement_text": "The Track B administrator must deliver an industry-informed, comprehensive AI technology training program that equips low-income New Yorkers with barriers to employment with in-demand technical and professional skills and connects them to AI jobs.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R019",
+        "requirement_text": "The Track B program should include participant stipends and wrap-around supports including success coach staff to help address barriers to trainee completion.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C04",
+        "requirement_id": "R021",
+        "requirement_text": "The Track B program should include professional development support for trainees throughout training.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R011",
+        "requirement_text": "The administrator must help students secure paid internships.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R012",
+        "requirement_text": "The administrator must cultivate and maintain relationships with leading industry employers to inform training content and generate paid internship opportunities.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R023",
+        "requirement_text": "The Track B administrator is expected to cultivate and maintain relationships with leading industry employers to inform training content and generate full-time employment opportunities.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R022",
+        "requirement_text": "The Track B program should include full-time job connection support in an AI-related field.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C05",
+        "requirement_id": "R027",
+        "requirement_text": "The majority of program graduates should secure paid internships or full-time employment in artificial intelligence or a closely related field.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R036",
+        "requirement_text": "Awarded applicants must track and record data relevant to the success of the grant, including applicant, enrollment, completion, internship placement, job placement, participating colleges and employer partners, and make it available to ESD as requested.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R020",
+        "requirement_text": "The Track B program should include evaluation metrics to measure participant skill attainment during training.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C06",
+        "requirement_id": "R050",
+        "requirement_text": "The Technical Proposal must describe how the organization currently measures and reports program success and estimate annual performance against total participants served, percentage of low-income participants completing the curriculum, and paid internship or full-time job placement rate of graduates.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R031",
+        "requirement_text": "Applicants must detail their own budget and associated justification.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R032",
+        "requirement_text": "Budgets exceeding $2M for one track or $4M for both tracks for the total contract period will not be considered.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R033",
+        "requirement_text": "The proposed budget must be comprised of staff salary and benefits, wraparound supports and proposed participant stipend level, and other costs deemed necessary for program success, mapped to the program duration.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R034",
+        "requirement_text": "Indirect costs are not an allowable cost under this grant.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R035",
+        "requirement_text": "The extent of any cost matching should be indicated in the budget template.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R051",
+        "requirement_text": "The Technical Proposal must include a line-by-line price proposal for Personnel Services costs including job title, name of employee if known, hourly or annual compensation rate, fringe rate, percentage of time dedicated to the project, and cost to contract.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C07",
+        "requirement_id": "R052",
+        "requirement_text": "The Technical Proposal must include a line-by-line price proposal for Other Than Personnel Services costs, listing each cost on a separate line with cost to contract and number of each item.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R063",
+        "requirement_text": "The respondent must attest that it has read, understood and will comply with the Conflict of Interest Attestation provisions, including not offering gifts or employment to ESD employees involved in the procurement within 30 days of their involvement closing.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R064",
+        "requirement_text": "The respondent must disclose any existing or contemplated relationship that would constitute an actual or potential conflict of interest and describe how it would eliminate or prevent it.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R065",
+        "requirement_text": "The respondent must disclose whether it or its members, 5% or greater shareholders, parents, affiliates, or subsidiaries have been the subject of any ongoing investigation or disciplinary action by the New York State Commission on Ethics and Lobbying in Government, and describe how any matter was resolved.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R071",
+        "requirement_text": "The contractor must document good faith efforts to provide meaningful participation by MWBEs as subcontractors and suppliers toward an overall MWBE participation goal of 30 percent.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R074",
+        "requirement_text": "The successful respondent must submit a quarterly MWBE Contractor Compliance & Payment Report to ESD by the 10th day following each end of quarter over the term of the contract.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R076",
+        "requirement_text": "If awarded a contract, the respondent must submit a Workforce Utilization Report and require each subcontractor to do so quarterly, including gross wages paid to each employee pursuant to Executive Order #162.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R078",
+        "requirement_text": "The contractor must document good faith efforts to provide meaningful participation by SDVOBs as subcontractors or suppliers toward an overall SDVOB participation goal of 6 percent.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R081",
+        "requirement_text": "The contractor must submit a Monthly SDVOB Contractor Compliance Report on Form OCSD-6 to OCSD@esd.ny.gov by the 10th day of each month during the contract term.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R085",
+        "requirement_text": "The selected respondent must provide Commercial General Liability insurance of $1 million per occurrence and $2 million in the aggregate.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R086",
+        "requirement_text": "The selected respondent must provide Commercial Automobile insurance with a limit of not less than $1 million if a vehicle is used in business.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R087",
+        "requirement_text": "The selected respondent must provide Sexual Abuse and Molestation Insurance of $1 million.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R088",
+        "requirement_text": "The selected respondent must show evidence of Workers' Compensation and Employer's Liability insurance and Disability insurance coverage at State statutory limits.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R089",
+        "requirement_text": "ESD must be named as additional insured on a primary and non-contributory basis on the Commercial General Liability and Auto Liability policies, and all policies must include a waiver of subrogation in favor of ESD.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C08",
+        "requirement_id": "R077",
+        "requirement_text": "Respondents are expected to consider SDVOBs in fulfilling the contract requirements, including as subcontractors, suppliers, protégés, or in other partnering or supporting roles.",
+        "in_scope": false,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R003",
+        "requirement_text": "Proposals must be submitted by 2:00 PM ET on October 1, 2025; late proposals will not be accepted.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      },
+      {
+        "component_id": "C09",
+        "requirement_id": "R091",
+        "requirement_text": "An unsuccessful respondent must request a debriefing within 15 calendar days of ESD's notification that its proposal was not selected.",
+        "in_scope": true,
+        "addressed": null,
+        "reason": null
+      }
+    ]
+  },
+  "risks": {
+    "risks": 12,
+    "severity": {
+      "high": 5,
+      "medium": 7
+    },
+    "likelihood": {
+      "high": 3,
+      "medium": 8,
+      "low": 1
+    },
+    "source": {
+      "solution": 5,
+      "rfp": 7
+    },
+    "severity_agreement": null,
+    "likelihood_agreement": null,
+    "findings": 4,
+    "findings_code_covered": 3,
+    "findings_judge_covered": null,
+    "risk_verdicts": [
+      {
+        "id": "K01",
+        "title": "Participant target allocation between tracks and administrators unresolved",
+        "severity": "high",
+        "likelihood": "high",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K02",
+        "title": "Budget cap may not cover stipends and wrap-around supports",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K03",
+        "title": "Placement performance standard undefined against a majority-of-graduates expectation",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K04",
+        "title": "Administrative forms reached only by link risk a non-responsive submission",
+        "severity": "high",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K05",
+        "title": "Dropbox-only submission with a hard 2:00 PM ET deadline",
+        "severity": "high",
+        "likelihood": "low",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K06",
+        "title": "Appendix A IT Security Standard not available before pricing and design",
+        "severity": "medium",
+        "likelihood": "high",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K07",
+        "title": "Appendix B Diversity Practices Questionnaire missing while worth 10 scoring points",
+        "severity": "medium",
+        "likelihood": "high",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K08",
+        "title": "MWBE and SDVOB goals may apply to stipend-inclusive contract value",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K09",
+        "title": "Schedule A contract terms reviewed only by assumption",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K10",
+        "title": "Dual-track delivery with a single lead and no subcontracting flexibility",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K11",
+        "title": "Mobilization timeline compressed against a January 1, 2026 start",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "rfp",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      },
+      {
+        "id": "K12",
+        "title": "Stipend level and wrap-around supports priced before participant volume is fixed",
+        "severity": "medium",
+        "likelihood": "medium",
+        "source": "solution",
+        "judge_severity": null,
+        "judge_likelihood": null,
+        "reason": null
+      }
+    ],
+    "finding_verdicts": [
+      {
+        "id": "F1",
+        "kind": "absent_document",
+        "label": "Schedule A (referenced on page 11, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K09"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F2",
+        "kind": "absent_document",
+        "label": "Appendix A (referenced on page 2, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K06"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F3",
+        "kind": "absent_document",
+        "label": "Appendix B (referenced on page 10, not in the PDF)",
+        "code_covered": true,
+        "code_risk_ids": [
+          "K07"
+        ],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      },
+      {
+        "id": "F4",
+        "kind": "absent_document",
+        "label": "Schedule B (referenced on page 20, not in the PDF)",
+        "code_covered": false,
+        "code_risk_ids": [],
+        "judge_covered": null,
+        "judge_risk_ids": []
+      }
+    ]
+  },
+  "grounding": {
+    "by_output": {
+      "problem": {
+        "items": 31,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 7,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "solution": {
+        "items": 14,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 7,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      },
+      "risks": {
+        "items": 12,
+        "uncited": 0,
+        "dangling_ids": 0,
+        "entity_misses": 9,
+        "judged": 0,
+        "supported": 0,
+        "partially": 0,
+        "unsupported": 0,
+        "unreasonable_inferences": 0
+      }
+    },
+    "items": [
+      {
+        "where": "problem.client_situation[0]",
+        "output": "problem",
+        "text": "The client is Empire State Development (\"ESD\" or the \"Corporation\"), whose mission is to promote a growing state economy, encourage business investment and job creation, and support diverse local economies across New York State through loans, grants, tax credits, real estate development and marketing.",
+        "kind": "fact",
+        "cited": [
+          "S5.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[1]",
+        "output": "problem",
+        "text": "ESD's Office of Strategic Workforce Development (OSWD) was created as part of Governor Kathy Hochul's April 2022 $350 million workforce development investment and is charged with aligning workforce efforts with employer needs and creating opportunities for unemployed, underemployed and underrepresented workers in the state's highest-growth sectors.",
+        "kind": "fact",
+        "cited": [
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[2]",
+        "output": "problem",
+        "text": "Artificial Intelligence is identified as one of New York's highest-growth sectors, with the state positioned as an AI hub through institutions such as Cornell Tech and state-backed initiatives such as Empire AI.",
+        "kind": "fact",
+        "cited": [
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[3]",
+        "output": "problem",
+        "text": "ESD's stated pain point is that rapid AI advancement may widen economic inequality, because many well-paying AI jobs require specialized education and technical training that lower-income New Yorkers cannot access.",
+        "kind": "fact",
+        "cited": [
+          "S6.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "Yorkers"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[4]",
+        "output": "problem",
+        "text": "Tech recruiting practices that favor students at elite schools and those with personal connections to prominent technology companies are the specific inequity AI Prep is designed to counter.",
+        "kind": "fact",
+        "cited": [
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.client_situation[5]",
+        "output": "problem",
+        "text": "ESD currently has no AI Prep program administrator in place; it is seeking to award contracts to up to two qualified program administrators to develop the curriculum for and administer the program.",
+        "kind": "fact",
+        "cited": [
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "ESD"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[0]",
+        "output": "problem",
+        "text": "ESD wants up to two program administrators to design and deliver AI Prep, an applied AI training program with two tracks: Track A \"AI Prep 4 Internships\" for low-income matriculating undergraduates and Track B \"AI Prep 4 Jobs\" for low-income New Yorkers with barriers to employment.",
+        "kind": "fact",
+        "cited": [
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "ESD"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[1]",
+        "output": "problem",
+        "text": "Track A requires a comprehensive AI technology training program for low-income college students that includes paid internship placements and builds a talent pipeline for AI employers.",
+        "kind": "fact",
+        "cited": [
+          "S8.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[2]",
+        "output": "problem",
+        "text": "Track B requires an industry-informed AI training program, delivered part-time or full-time, that equips low-income New Yorkers with barriers to employment with in-demand technical and professional skills and connects them to full-time AI jobs.",
+        "kind": "fact",
+        "cited": [
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[3]",
+        "output": "problem",
+        "text": "Both tracks must include targeted outreach and recruitment, an application and assessment process, online AI courses built with industry input, participant stipends and wrap-around supports such as mentors, career/success coaches, and employer relationship-building to generate placements.",
+        "kind": "fact",
+        "cited": [
+          "S8.1",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[4]",
+        "output": "problem",
+        "text": "The program must serve a minimum of 250 participants, with priority for applicants proposing to serve more than 400, and over 50% of participants must be low-income.",
+        "kind": "fact",
+        "cited": [
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[5]",
+        "output": "problem",
+        "text": "The contract term is up to 18 months, with possible renewal or extension based on performance, need and availability of funds, and the anticipated contract start date is January 1, 2026.",
+        "kind": "fact",
+        "cited": [
+          "S9.1",
+          "S18.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "1",
+          "2026"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.goal[6]",
+        "output": "problem",
+        "text": "Awarded administrators must track and report data including applicant, enrollment and completion counts with low-income percentages, paid internship and full-time job placement rates, and participating colleges and employer partners.",
+        "kind": "fact",
+        "cited": [
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[0]",
+        "output": "problem",
+        "text": "Proposals are scored out of a maximum of 100 points by an ESD selection committee, allocated as Firm Qualifications 15, Experience 25, Project Plan 30, Cost of Services 20 and Diversity Practices 10.",
+        "kind": "fact",
+        "cited": [
+          "S19.1",
+          "S20.1",
+          "S21.1",
+          "S22.1",
+          "S23.1",
+          "S24.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[1]",
+        "output": "problem",
+        "text": "The Project Plan (30 points) must include a monthly timeline from planning through first-cohort internship or job placement, covering curriculum development, recruitment, training duration, cohort size, stipend level and placement.",
+        "kind": "fact",
+        "cited": [
+          "S22.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[2]",
+        "output": "problem",
+        "text": "Proposers must estimate annual performance against three metrics — total participants served annually, percentage of low-income participants completing the curriculum, and paid internship or full-time job placement rate — justified by historical experience or partner commitments.",
+        "kind": "fact",
+        "cited": [
+          "S22.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[3]",
+        "output": "problem",
+        "text": "The Project Plan must include 1-page resumes of key personnel and letters from partner employers committing to provide paid internships or full-time employment to graduates.",
+        "kind": "fact",
+        "cited": [
+          "S22.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[4]",
+        "output": "problem",
+        "text": "The majority of graduates are expected to secure paid internships or full-time employment in AI or a closely related field.",
+        "kind": "fact",
+        "cited": [
+          "S12.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[5]",
+        "output": "problem",
+        "text": "Questions must be submitted by email to AI.Prep@esd.ny.gov by August 29, 2025, with ESD responses due September 12, 2025, and proposals are due by 2:00 PM ET on October 1, 2025.",
+        "kind": "fact",
+        "cited": [
+          "S18.1",
+          "S30.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "29",
+          "1"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[6]",
+        "output": "problem",
+        "text": "Interviews, if necessary, are scheduled for the first week of November 2025 and the successful respondent is to be announced November 14, 2025.",
+        "kind": "fact",
+        "cited": [
+          "S18.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.success_criteria[7]",
+        "output": "problem",
+        "text": "ESD reserves the right to conduct reference checks on any respondent and to use information from references in evaluating proposals.",
+        "kind": "fact",
+        "cited": [
+          "S25.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[0]",
+        "output": "problem",
+        "text": "Budgets exceeding $2M for one track or $4M for both tracks over the total contract period will not be considered, and ESD will invest up to $2M per track (up to $4M total).",
+        "kind": "fact",
+        "cited": [
+          "S14.1",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "M"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[1]",
+        "output": "problem",
+        "text": "Indirect costs are not an allowable cost under this grant, and the budget must map to Staff Salary and Benefits, Wraparound Supports and Participant Stipend Level, and other program costs such as curriculum development, marketing and events.",
+        "kind": "fact",
+        "cited": [
+          "S15.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[2]",
+        "output": "problem",
+        "text": "There is no cost-match requirement, but applicants receive additional scoring points for cost matching, which must be indicated in the budget template.",
+        "kind": "fact",
+        "cited": [
+          "S16.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[3]",
+        "output": "problem",
+        "text": "Applicants must be non-profit or for-profit entities with experience in at least three of four domains: academic services to college students, high-tech accelerated training programs, serving low-income populations, and working in the New York market.",
+        "kind": "fact",
+        "cited": [
+          "S13.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[4]",
+        "output": "problem",
+        "text": "Proposals must be uploaded to the Dropbox at https://www.dropbox.com/request/AIPrep as a main folder named \"company name – RFP title – date of Submission\" containing separate Administrative and Technical Proposal subfolders; fax, hardcopy and email submissions are not accepted and late proposals will not be considered.",
+        "kind": "fact",
+        "cited": [
+          "S29.1",
+          "S3.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[5]",
+        "output": "problem",
+        "text": "The Administrative Proposal must include, in order, the Non-Collusive Bidding Certification, Conflict of Interest Attestation, State Finance Law §§139-j/139-k forms, Vendor Responsibility Questionnaire, Iran Divestment Act Statement, EO-16 and EO-177 certifications, OCSD-1/OCSD-2/OCSD-4 diversity forms, NYS Businesses form, ST-220-CA or affidavit, and W-9, and failure to submit any may result in rejection.",
+        "kind": "fact",
+        "cited": [
+          "S28.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[6]",
+        "output": "problem",
+        "text": "The Vendor Responsibility Questionnaire must have been completed within one year of proposal submission and filed via the State Vend-Rep System or as a paper questionnaire with the receipt included.",
+        "kind": "fact",
+        "cited": [
+          "S40.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[7]",
+        "output": "problem",
+        "text": "The contract carries a 30% MWBE participation goal and a 6% SDVOB participation goal, with good faith effort documentation, utilization plans and periodic compliance reporting required.",
+        "kind": "fact",
+        "cited": [
+          "S45.1",
+          "S49.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[8]",
+        "output": "problem",
+        "text": "The selected respondent must carry Commercial General Liability of $1M per occurrence and $2M aggregate, $1M Sexual Abuse and Molestation coverage, auto liability of $1M if a vehicle is used, and statutory Workers' Compensation and Disability coverage, naming ESD as additional insured with a waiver of subrogation.",
+        "kind": "fact",
+        "cited": [
+          "S59.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "M",
+          "Workers"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "problem.constraints[9]",
+        "output": "problem",
+        "text": "Appendix A \"ESD IT Security Standard Brief\" and Appendix B \"Diversity Practices Questionnaire\" are referenced but their contents are not included in the RFP text provided, so bidders must obtain them separately.",
+        "kind": "inference",
+        "cited": [
+          "S4.1",
+          "S24.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C01.claims[0]",
+        "output": "solution",
+        "text": "ESD currently has no AI Prep program administrator in place and intends to award contracts to up to two administrators.",
+        "kind": "fact",
+        "cited": [
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "ESD"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C01.claims[1]",
+        "output": "solution",
+        "text": "The anticipated contract start date is January 1, 2026, with a term of up to 18 months and possible renewal or extension.",
+        "kind": "fact",
+        "cited": [
+          "S18.1",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "1",
+          "2026"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C06.claims[0]",
+        "output": "solution",
+        "text": "Awarded administrators must report applicant, enrollment and completion counts with low-income percentages, placement rates, and participating colleges and employer partners.",
+        "kind": "fact",
+        "cited": [
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C07.claims[0]",
+        "output": "solution",
+        "text": "ESD will invest up to $2M per track and up to $4M total, and budgets above those amounts will not be considered.",
+        "kind": "fact",
+        "cited": [
+          "S14.1",
+          "S9.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "M"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C08.claims[0]",
+        "output": "solution",
+        "text": "The contract carries a 30% MWBE participation goal and a 6% SDVOB participation goal with good faith effort documentation and periodic compliance reporting.",
+        "kind": "fact",
+        "cited": [
+          "S45.1",
+          "S49.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.C09.claims[0]",
+        "output": "solution",
+        "text": "Proposals are due by 2:00 PM ET on October 1, 2025, and must be uploaded to the ESD Dropbox in the prescribed folder structure.",
+        "kind": "fact",
+        "cited": [
+          "S18.1",
+          "S29.1",
+          "S3.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[0]",
+        "output": "solution",
+        "text": "The 250-participant minimum and the 400+ priority threshold are assumed to apply per administrator across both tracks combined, with a proposed split of roughly 60% Track A and 40% Track B, pending ESD confirmation.",
+        "kind": "assumption",
+        "cited": [
+          "S12.1",
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "60",
+          "40"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[1]",
+        "output": "solution",
+        "text": "Placement performance is assumed to be measured as the share of graduates placed in a paid internship or full-time AI-related role within six months of program completion, with internship and job placements counted separately by track.",
+        "kind": "assumption",
+        "cited": [
+          "S12.1",
+          "S22.2"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[2]",
+        "output": "solution",
+        "text": "The $2M per track and $4M both-track caps are assumed to be all-inclusive ceilings covering stipends, wrap-around supports, staff and other program costs, with any cost match counted outside the cap and shown separately in the budget template.",
+        "kind": "assumption",
+        "cited": [
+          "S9.1",
+          "S14.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "M"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[3]",
+        "output": "solution",
+        "text": "The 30% MWBE and 6% SDVOB goals are assumed to be calculated on total contract value including participant stipends, and our utilization plans are built on that base.",
+        "kind": "assumption",
+        "cited": [
+          "S45.1",
+          "S49.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[4]",
+        "output": "solution",
+        "text": "The Appendix A ESD IT Security Standard is assumed to require participant data to be held in a US-hosted system with role-based access, encryption in transit and at rest, and breach notification to ESD; we will confirm and remediate against the appendix before contract signature.",
+        "kind": "assumption",
+        "cited": [
+          "S4.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "US"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[5]",
+        "output": "solution",
+        "text": "The Appendix B Diversity Practices Questionnaire is assumed to be scored on documented workforce diversity, MWBE/SDVOB subcontracting history and inclusive hiring practices, and we will complete it from existing records rather than commissioning new data.",
+        "kind": "assumption",
+        "cited": [
+          "S4.1",
+          "S24.1",
+          "S47.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "MWBE",
+          "SDVOB"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[6]",
+        "output": "solution",
+        "text": "Schedule A is assumed to be ESD's standard contract terms without AI-Prep-specific deviations, so we will raise concerns in writing with the Administrative Proposal rather than negotiate after award.",
+        "kind": "assumption",
+        "cited": [
+          "S57.1",
+          "S28.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "solution.assumptions[7]",
+        "output": "solution",
+        "text": "The budget template is assumed to require cost match to be shown as a separate line against each cost category rather than as a single total, and we will structure our budget accordingly.",
+        "kind": "assumption",
+        "cited": [
+          "S16.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K01",
+        "output": "risks",
+        "text": "Participant target allocation between tracks and administrators unresolved. The RFP sets a 250-participant minimum with priority above 400 but does not say whether that count is per track, per administrator or across both tracks combined. The proposed solution assumes a 60/40 Track A/Track B split across both tracks combined and defers track allocation of the 250 minimum until after pricing. If ESD means 250 per track, the staffing, stipend and wrap-around cost roughly doubles against a fixed $2M per track ceiling, and the bid is either mispriced or non-compliant. The RFP leaves the allocation open and the solution explicitly prices before confirming it, so the design and price rest on an unverified assumption that changes the cost base materially.",
+        "kind": "risk",
+        "cited": [
+          "R025",
+          "R026",
+          "R024",
+          "S12.1",
+          "S7.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "60",
+          "40",
+          "M"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K02",
+        "output": "risks",
+        "text": "Budget cap may not cover stipends and wrap-around supports. The $2M per track / $4M both-track figure is presented both as the amount ESD will invest and as a ceiling, without saying whether stipends, wrap-around supports, staff and other costs must all fit inside it. The solution assumes an all-inclusive ceiling with cost match outside the cap. If stipends are expected on top of the cap, or if the cap excludes them, the budget structure and the stipend level offered to participants are wrong and the proposal is either over the ceiling or under-resourced. The RFP states the cap in two different senses and the solution resolves the ambiguity by assumption; a misreading puts the bid over a hard ceiling that disqualifies it or leaves stipends unfunded.",
+        "kind": "risk",
+        "cited": [
+          "R031",
+          "R032",
+          "R033",
+          "R034",
+          "S14.1",
+          "S9.1",
+          "S15.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "M"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K03",
+        "output": "risks",
+        "text": "Placement performance standard undefined against a majority-of-graduates expectation. The RFP expects the majority of graduates to secure paid internships or full-time employment but does not define the measurement window or whether internship and job placements are counted separately. The solution assumes placement within six months of completion, counted separately by track. If ESD measures at graduation or counts only full-time AI jobs, the placement rate the proposal commits to is unachievable and the performance estimate in the Technical Proposal is overstated. Placement rate is a scored metric and a likely performance measure under an 18-month term with renewal; the definition is unsettled and the solution's six-month assumption is an inference.",
+        "kind": "risk",
+        "cited": [
+          "R027",
+          "R050",
+          "R022",
+          "R011",
+          "S12.1",
+          "S22.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "18"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K04",
+        "output": "risks",
+        "text": "Administrative forms reached only by link risk a non-responsive submission. A long list of mandatory administrative forms — Non-Collusive Bidding Certification, Conflict of Interest Attestation, SFL §§139-j/139-k forms, EO-16 and EO-177 certifications, OCSD-1/2/4, NYS Businesses form, ST-220-CA and W-9 — must be included in a fixed order, and failure to submit any may result in rejection. All are reached by link rather than included in the RFP, and the Vendor Responsibility Questionnaire must have been filed within one year. A single missing or stale form makes the whole proposal non-responsive regardless of technical merit. The RFP states rejection is possible for any missing form, the forms are external links, and the Vend-Rep filing has a one-year currency condition that is easy to miss.",
+        "kind": "risk",
+        "cited": [
+          "R055",
+          "R067",
+          "R083",
+          "R090",
+          "R062",
+          "R066",
+          "R068",
+          "R069",
+          "R070",
+          "R075",
+          "R082",
+          "S28.1",
+          "S40.1",
+          "S37.1",
+          "S39.1",
+          "S56.1",
+          "S60.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "SFL"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K05",
+        "output": "risks",
+        "text": "Dropbox-only submission with a hard 2:00 PM ET deadline. Proposals must be uploaded to a specific Dropbox folder structure with a prescribed naming convention, and late, emailed, faxed or hardcopy submissions are rejected. The solution assigns a bid manager to control the deadline but the upload depends on external file-transfer capacity and a correctly named folder tree. A failed or late upload loses the entire bid with no remedy. The consequence is total loss of the bid, but the cause is a single controllable event; the RFP gives no grace period and no alternative channel.",
+        "kind": "risk",
+        "cited": [
+          "R003",
+          "R002",
+          "R056",
+          "S3.1",
+          "S29.1",
+          "S18.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K06",
+        "output": "risks",
+        "text": "Appendix A IT Security Standard not available before pricing and design. Appendix A, the ESD IT Security Standard Brief that the participant data system must meet, is referenced but not included in the RFP. The solution assumes US hosting, role-based access, encryption in transit and at rest, and breach notification, and defers remediation until after award. If the standard requires more — for example state-hosted data, specific certifications or audit rights — the data layer needs unplanned rework and the cost sits inside a capped budget. The document is missing from the RFP and the solution's compliance position rests on an inference; security requirements commonly drive hosting and vendor choices that are expensive to change late.",
+        "kind": "risk",
+        "cited": [
+          "R036",
+          "S4.1",
+          "S17.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "US"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K07",
+        "output": "risks",
+        "text": "Appendix B Diversity Practices Questionnaire missing while worth 10 scoring points. Appendix B, the Diversity Practices Questionnaire that must be submitted and is scored for up to 10 points, is not in the RFP. The solution plans to complete it from existing records without commissioning new data. If the questionnaire asks for evidence the organization does not hold — workforce composition data, MWBE subcontracting history, inclusive hiring metrics — the bid loses points it cannot recover or needs unplanned data collection before October 1, 2025. Ten of 100 points depend on a document the bidder cannot see, and the solution's plan to answer from existing records is an assumption about its contents.",
+        "kind": "risk",
+        "cited": [
+          "R053",
+          "S4.1",
+          "S24.1",
+          "S47.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "1",
+          "2025",
+          "100",
+          "MWBE"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K08",
+        "output": "risks",
+        "text": "MWBE and SDVOB goals may apply to stipend-inclusive contract value. The RFP sets a 30% MWBE and 6% SDVOB participation goal without stating the base. The solution assumes the goals are calculated on total contract value including participant stipends. If that is right, the dollar value of MWBE participation required is far larger than a service-only base would imply, and the utilization plans and good-faith-effort documentation may not be achievable with the subcontractors identified. The base is unsettled and the solution has already built its utilization plans on the stipend-inclusive reading; a large required dollar commitment against a capped budget is hard to source late.",
+        "kind": "risk",
+        "cited": [
+          "R071",
+          "R072",
+          "R078",
+          "R079",
+          "S45.1",
+          "S49.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K09",
+        "output": "risks",
+        "text": "Schedule A contract terms reviewed only by assumption. Schedule A, the standard contract terms respondents must review and raise written concerns about with the Administrative Proposal, is not in the RFP. The solution assumes no AI-Prep-specific deviations and plans to raise concerns in writing rather than negotiate after award. If Schedule A contains terms the bidder cannot accept — indemnification, insurance, data ownership or termination provisions — objections are deemed waived once the proposal is submitted. Objections are waived if not raised with the Administrative Proposal, and the solution has not seen the document it is waiving against.",
+        "kind": "risk",
+        "cited": [
+          "R084",
+          "S57.1",
+          "S28.1"
+        ],
+        "dangling": [],
+        "missing_entities": [],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K10",
+        "output": "risks",
+        "text": "Dual-track delivery with a single lead and no subcontracting flexibility. The solution bids both tracks under one lead with a documented dual-track capacity plan, while the contract cannot be assigned and subcontracting requires prior written approval. Running recruitment, curriculum, stipends, employer partnerships and placement for two distinct populations simultaneously in the first months after a January 1, 2026 start strains a single organization, and any partner capacity added later needs ESD approval before it can be used. The RFP requires a capacity and strategy description for both tracks and restricts assignment and subcontracting; the solution's plan relies on internal capacity that is asserted rather than demonstrated.",
+        "kind": "risk",
+        "cited": [
+          "R046",
+          "R029",
+          "R060",
+          "R061",
+          "R059",
+          "S22.1",
+          "S35.1",
+          "S35.2"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "2026",
+          "ESD"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K11",
+        "output": "risks",
+        "text": "Mobilization timeline compressed against a January 1, 2026 start. Award is announced November 14, 2025 and the contract is expected to start January 1, 2026, leaving roughly six weeks to bind insurance, execute the MWBE and SDVOB utilization plans, hire staff subject to ESD approval, and co-design curriculum before the first cohort. The solution's four-phase plan assumes mobilization, curriculum co-design and recruitment all begin in that window. Slippage pushes the first-cohort placement milestone and the 18-month term runs out before the placement results that support renewal. The RFP fixes both dates and requires ESD approval of staff and subcontractors, which adds review time the solution's timeline does not visibly absorb.",
+        "kind": "risk",
+        "cited": [
+          "R024",
+          "R044",
+          "R059",
+          "R085",
+          "R087",
+          "R088",
+          "R089",
+          "S18.1",
+          "S9.1",
+          "S22.1",
+          "S59.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "2026",
+          "MWBE",
+          "SDVOB"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      },
+      {
+        "where": "risks.K12",
+        "output": "risks",
+        "text": "Stipend level and wrap-around supports priced before participant volume is fixed. The solution commits to a stipend level and to mentors, success coaches and career coaches for every participant, with recruitment targets set to exceed 250 and headroom toward 400+. Because the participant allocation and the cap's contents are both unsettled, the per-participant cost of stipends plus coaching is not yet bounded. Serving 400+ at a stipend and coaching ratio set for 250 would overrun the $2M per track ceiling, and cutting supports to fit would weaken the completion and placement metrics the bid is scored on. The solution's own headroom ambition and its fixed support model interact with a hard cap and an unresolved participant count, so the cost per participant is not yet controlled.",
+        "kind": "risk",
+        "cited": [
+          "R010",
+          "R019",
+          "R033",
+          "R035",
+          "R025",
+          "S12.1",
+          "S14.1",
+          "S15.1",
+          "S16.1"
+        ],
+        "dangling": [],
+        "missing_entities": [
+          "M"
+        ],
+        "verdict": null,
+        "reasonable_inference": null,
+        "reason": null
+      }
+    ]
+  },
+  "cost": {
+    "calls": 74,
+    "input_tokens": 131081,
+    "output_tokens": 30856,
+    "cached_input_tokens": 87541,
+    "cached_share": 0.667838969797301,
+    "cost_usd": 0.050614445999999993,
+    "wall_s": 82.08468,
+    "retries": 0,
+    "stages": [
+      {
+        "stage": "parse",
+        "status": "finished",
+        "wall_s": 5.88241150000249,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "parse_quality",
+        "status": "finished",
+        "wall_s": 0.002783500007353723,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "split",
+        "status": "finished",
+        "wall_s": 0.018343200004892424,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      },
+      {
+        "stage": "requirements",
+        "status": "finished",
+        "wall_s": 33.73120020001079,
+        "calls": 1,
+        "input_tokens": 20900,
+        "output_tokens": 9691,
+        "cached_input_tokens": 20736,
+        "cost_usd": 0.011802815999999999,
+        "retries": 0
+      },
+      {
+        "stage": "problem",
+        "status": "finished",
+        "wall_s": 39.084288699988974,
+        "calls": 71,
+        "input_tokens": 90023,
+        "output_tokens": 14939,
+        "cached_input_tokens": 63733,
+        "cost_usd": 0.026196198,
+        "retries": 0
+      },
+      {
+        "stage": "solution",
+        "status": "finished",
+        "wall_s": 16.911611500021536,
+        "calls": 1,
+        "input_tokens": 8645,
+        "output_tokens": 2954,
+        "cached_input_tokens": 1408,
+        "cost_usd": 0.005724348,
+        "retries": 0
+      },
+      {
+        "stage": "risk",
+        "status": "finished",
+        "wall_s": 20.15326510000159,
+        "calls": 1,
+        "input_tokens": 11513,
+        "output_tokens": 3272,
+        "cached_input_tokens": 1664,
+        "cost_usd": 0.006891083999999999,
+        "retries": 0
+      },
+      {
+        "stage": "assemble",
+        "status": "finished",
+        "wall_s": 0.006149799999548122,
+        "calls": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.0,
+        "retries": 0
+      }
+    ],
+    "retried": []
+  },
+  "judge": {
+    "model": "anthropic:claude-sonnet-5-5",
+    "calls": 11,
+    "failures": 0,
+    "totals": {
+      "input_tokens": 53034,
+      "output_tokens": 5850,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.164568,
+      "latency_s": 42.316816899954574,
+      "retries": 0
+    },
+    "per_node": {
+      "judge_match": {
+        "input_tokens": 7461,
+        "output_tokens": 610,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.021022,
+        "latency_s": 3.895545500010485,
+        "retries": 0
+      },
+      "judge_requirements": {
+        "input_tokens": 45573,
+        "output_tokens": 5240,
+        "cached_input_tokens": 0,
+        "cost_usd": 0.143546,
+        "latency_s": 38.42127139994409,
+        "retries": 0
+      }
+    }
+  }
+}
