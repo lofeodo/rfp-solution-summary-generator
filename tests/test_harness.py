@@ -238,9 +238,10 @@ def test_federal_way_reachable_recall_excludes_the_image_table():
 
 
 def test_retries_are_listed_with_their_node():
-    s = score_run(EvalRun.load(SAMPLES / "federal_way"), None)
-    assert [x.node for x in s.cost.retried] == ["requirements_dedupe"]
-    assert s.cost.retried[0].last_error is None  # sample predates the F7 fix
+    s = score_run(EvalRun.load(SAMPLES / "missouri"), None)
+    assert [x.node for x in s.cost.retried] == ["problem_synthesis"]
+    # The S16 samples postdate the F7 fix, so the cause is recorded.
+    assert s.cost.retried[0].last_error.startswith("1 validation error for ProblemStatement")
 
 
 # --------------------------------------------------------------------------------------

@@ -519,7 +519,10 @@ retries and writes only the JSON (one pipeline run later carries the new prompt 
 in its `run_log.json`); the validator in `src/rfp_agent/agents/risk.py` still rejects
 fewer than three or more than fifteen risks inside the retry, so a prompt asking for
 two would show a validation retry under `-v`; and the change needs a changelog line in
-`docs/PROMPTS.md`. For a judge prompt the equivalent is
+`docs/PROMPTS.md`. Rehearsed once: "at most eight" returned ten risks for about a
+cent, which is the point to make about prompt rules versus code checks (F12 in
+`docs/DECISIONS.md`): the count rule in the prompt is advice the model overshoots, the
+band in the validator is the guarantee. For a judge prompt the equivalent is
 `python -m evals.harness score --label baseline --only risks`.
 
 **3. Add a requirement type.** Say `accessibility` as its own type instead of folding
@@ -566,6 +569,7 @@ runs/samples/      committed end-to-end outputs for the four RFPs (S10)
 ui/backend/        FastAPI app: uploads, run queue, SSE events, run outputs (S14)
 ui/frontend/       Vite + React + TypeScript + Tailwind UI (S15)
 docs/              ROADMAP, DECISIONS, ASSUMPTIONS, TIMELOG, PROMPTS
+Dockerfile         one image for the UI and the CLI; .dockerignore keeps keys and docs out (S16)
 ```
 
 ## Documentation
