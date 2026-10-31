@@ -2,615 +2,601 @@
 
 - **Source:** data/rfps/colfax.pdf
 - **Run:** colfax
-- **Generated:** 2026-10-30T19:45:27.128275+00:00
+- **Generated:** 2026-10-31T00:27:06.359669+00:00
 - **Model:** deepseek:deepseek-flash
 
 ## Problem statement
 
 ### Client situation
 
-- The City of Colfax, California — a Sierra Nevada foothills town of just under 2,000 people in Placer County at the junction of Interstate 80 and State Route 174 — is the issuing body and sole beneficiary of this RFP. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1]; Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1])
-- The City runs on annual budgeted revenues of $6 million with 11 full-time employees (one position vacant) plus one part-time/seasonal/contract employee, and its fiscal year ends June 30. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
-- The City currently uses Tyler Technologies' Fund Balance fund accounting software with modules for Accounts Payable (including 1099 filing, purchasing requisitions and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing and Business Licensing, and has five users. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- The City is replacing its current system with a cloud-based accounting and financial reporting system because it wants a streamlined package that captures financial transactions systematically, supports budgeting and forecasting, produces reports and analysis for decision-making, and maintains auditable records. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- The City's small staff size and single-vacancy headcount mean the selected vendor must carry substantial implementation and support workload rather than relying on City capacity. *(inference)* (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City of Colfax, California, a city of just under 2,000 residents in the Sierra Nevada foothills of Placer County, issued this RFP on July 1, 2025 for accounting and financial reporting software. (Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1]; 1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
+- The City operates on a $6 million annual budgeted revenue base with 11 full-time employees (one position vacant) plus 1 part-time/seasonal/contract employee, and its fiscal year ends June 30. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
+- The City currently runs Fund Balance fund accounting software from Tyler Technologies with modules for Accounts Payable (including 1099 filing, purchasing requisitions, and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing, and Business Licensing, used by five users. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City wants a streamlined package that captures financial transactions systematically and efficiently, including budgeting and forecasting, and that supports data analysis for informed decision-making. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City needs to maintain auditable records and documentation for future reference, and wants dedicated technical support during implementation and throughout annual contract renewals. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City's stated goal is to go live on the new system by July 1, 2026, aligned with the start of its new fiscal year, which implies the current Tyler Technologies Fund Balance system must be replaced within roughly nine months of contract award. *(inference)* (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
 
 ### Goal
 
-- The City wants a cloud-based accounting and financial reporting software system plus complete support for initial implementation and ongoing services for all applications the selected vendor provides. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- The City's stated go-live target is July 1, 2026, to align with the start of its new fiscal year, with the project starting soon after contract award and negotiation. (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1])
-- The scope is organized into four tasks: Task 1 Approach & Project Management Plan (weekly progress/budget/timeline meetings, dedicated project manager, audit and reporting expertise, recommended account structure), Task 2 Software Installation & Implementation (financial report writing, import of the prior 5 years of data, coordination with Accounting and IT to minimize disruption), Task 3 Staff Training During Implementation (personalized power-user training and manuals, at least one recorded session and manual for all staff, support for the first 12 months), and Task 4 Ongoing Technical Assistance & Support (automated updates and change notices, annual 1099/W-2 e-filing support, help desk or ticketing system). (5.1 TASK SUMMARY, p. 15 [S31.1])
-- Respondents must supply an implementation plan and timeline, describe support levels for implementation and for recurring licenses and services, name key implementation personnel, describe training by license level (in person, virtual or recorded), and describe the client engagement approach including use of an account manager. (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- Tab 1 requires a completed Attachment F "Software Abilities and Requirements" spreadsheet, identification of license types by level of use, a description of account number customization, disclosure of where other applications or vendors will be used, and the availability of virtual product demos. (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- The City seeks a cloud-based accounting and financial reporting software system, including complete support for initial implementation and ongoing services for all applications the selected vendor provides. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The scope covers four tasks: approach and project management plan, software installation and implementation, staff training during implementation, and ongoing technical assistance and support. (5.1 TASK SUMMARY, p. 15 [S31.1])
+- Task 1 requires weekly progress/budget/timeline meetings, a dedicated project manager and technical staff, understanding of the City's auditing and reporting requirements, and a recommended account structure for auditable reporting. (5.1 TASK SUMMARY, p. 15 [S31.1])
+- Task 2 requires assistance with financial report writing, import of the prior five years of data for history, and collaboration with Accounting and IT to minimize disruption and downtime during transition. (5.1 TASK SUMMARY, p. 15 [S31.1])
+- Task 3 requires personalized training and manuals for power users, at least one recorded training session and manual for all staff, and support for the first 12 months post-implementation. (5.1 TASK SUMMARY, p. 15 [S31.1])
+- Task 4 requires automated updates and software change communications, support for annual e-filing such as 1099s and W-2s, and a help desk or ticketing system for prioritizing support. (5.1 TASK SUMMARY, p. 15 [S31.1])
+- The City intends to award a contract to a single respondent for all items, though it reserves the right to make separate awards, not award certain items, or cancel the RFP. (3.1 METHOD OF AWARD, p. 8 [S15.1])
 
 ### Success criteria
 
-- Proposals are scored on four weighted criteria: 45% response to project goals and scope, 25% technical support during implementation and ongoing, 20% fee proposal and implementation schedule, and 10% information, qualifications and references. (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- Written questions are due July 31, 2025, the City posts its answers on www.colfax-ca.gov by August 14, 2025, and proposals are due August 28, 2025 at 4:00 PM PST. (2.2 RFP SCHEDULE, p. 5 [S9.1])
-- Finalists are notified September 11, 2025, virtual finalist interviews (if needed) are held September 25, 2025, and selection and contract award are targeted for October 22, 2025. (2.2 RFP SCHEDULE, p. 5 [S9.1])
-- Proposals must include at least three references for similar services with valid e-mail addresses, and a missing or invalid email may cause rejection of the proposal. (ATTACHMENT B: REFERENCES, p. 17 [S34.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- The City prefers at least one local referral that can host an in-person software demonstration. (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- The City may shortlist finalists for interviews with City leadership or select without interviews, and price proposals cannot be altered or modified during clarification. (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1]; 3.3 PROPOSAL EVALUATION PROCESS, p. 9 [S17.2])
-- The City may reject any proposal on fit, form, function or cost, may make separate awards for different items, may not award certain items, or may cancel the RFP entirely. (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1]; 3.1 METHOD OF AWARD, p. 8 [S15.1])
+- Proposals are scored on four weighted criteria: 45% response to project goals and scope, 25% technical support during implementation and ongoing, 20% fee proposal and implementation schedule, and 10% information, qualifications, and references. (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
+- Written questions must be submitted by July 31, 2025, with the City posting responses on www.colfax-ca.gov by August 14, 2025. (2.2 RFP SCHEDULE, p. 5 [S9.1])
+- Proposals are due August 28, 2025 at 4:00 PM PST, with finalists notified September 11, 2025, virtual finalist interviews (if needed) on September 25, 2025, and contract award by October 22, 2025. (2.2 RFP SCHEDULE, p. 5 [S9.1])
+- The City will confirm proposals meet the RFP's specifications and requirements before sending only qualified proposals to the selection committee, and may reject any proposal on the basis of fit, form, and function as well as cost. (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1])
+- Respondents must submit a completed Software Abilities and Requirements spreadsheet (Attachment F) and outline the availability of virtual demos to view product capabilities. (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- Respondents must provide at least three references for similar services with valid email addresses, and failure to provide a valid email may result in rejection of the proposal. (ATTACHMENT B: REFERENCES, p. 17 [S34.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- The City prefers at least one local referral available for an in-person software demonstration. (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
 
 ### Constraints
 
-- Proposals must be one signed original hard copy plus one digital copy, no more than 20 pages plus 2 pages for the cover letter and 5 pages for appendices, emailed to accounting@colfax-ca.gov with the subject line "Accounting and Financial Software Submission" and the hard copy received by the same August 28, 2025 4:00 PM PST deadline at Attn: Shanna Stahl, PO Box 702, Colfax, CA 95713 or 33 S. Main Street, Colfax, CA 95713. (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- Late proposals and FAX submissions will not be accepted or evaluated. (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; 4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- The City will not accept unlimited reimbursable expenses; all reimbursable expenses must be capped in the Attachment A price proposal, which must break out implementation fees, recurring fees, license fees, support costs during versus after implementation, and estimated costs for additional applications or vendors. (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- Respondents must submit Attachment C disclosing all work locations and any use of workers outside the United States, which the City will weigh for additional risks and costs before award. (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- Respondents must submit Attachment D Certification of Financial Condition (stable finances, unqualified audit opinion, no IRS or government liens, current on taxes, no disqualifying litigation) and Attachment E proof of insurance including workers compensation and commercial general liability. (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1]; ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1])
-- Attachment G requires documentation of measures protecting financial data and the secure access controls implemented. (ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1])
-- Attachment F is an Excel spreadsheet the City provides as a separate document that must be completed and returned with the submission, and the City's standard contract for services is a separate document respondents must obtain and review. (ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1]; 4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
-- Any additional or modified terms and conditions submitted with a proposal will be rejected and not evaluated, and objections to the City's terms stated in the proposal will be disregarded or cause rejection, so exceptions must be raised as written questions by July 31, 2025. (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
+- Proposals must not exceed 20 pages, with an additional two pages allowed for the cover letter and five pages for appendices, submitted as one signed original hard copy plus one digital version. (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
+- The digital copy and all attachments must be emailed to accounting@colfax-ca.gov by August 28, 2025 at 4:00 PM PST with the subject line "Accounting and Financial Software Submission," and the hard copy must arrive by the same deadline at Attn: Shanna Stahl, PO Box 702, Colfax, CA 95713 (USPS) or 33 S. Main Street, Colfax, CA 95713; late and FAX submissions will not be accepted. (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; 4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- The City will not accept unlimited reimbursable expenses, so any reimbursable expenses must be capped in the price proposal, and Attachment A requires a total price for all services and deliverables, a total reimbursable expenses cap, and a total price proposal. (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- Attachment C requires the Respondent to state whether any work will be performed outside the United States and, if so, list those locations and describe the corporate structure, which the City will evaluate for additional risks and costs before award. (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
+- Attachment G requires documentation of measures protecting financial data and the secure access controls implemented, and Attachment E requires proof of workers compensation and commercial general liability insurance. (ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1]; ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1])
+- Attachment D requires a signed Certification of Financial Condition covering an unqualified audit opinion, no outstanding IRS or government liabilities, current federal and state taxes, and no disqualifying litigation, with notice to the Contract Lead within 15 days of any material change. (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- The City rejects and will not evaluate additional or modified terms and conditions submitted with a proposal, and any attempt to alter or delete that paragraph is grounds to reject the proposal as nonresponsive; exceptions must instead be raised as questions by July 31, 2025. (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
+- The Software Abilities and Requirements spreadsheet (Attachment F) is a separate Excel document to be provided by the City and is not included in the RFP text, and the City's standard contract with terms and conditions is available only upon request, so bidders must obtain both. (ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
 
 ## Requirements
 
-120 requirements: 106 mandatory, 13 desired, 1 optional.
+116 requirements: 102 mandatory, 13 desired, 1 optional.
 
-### Functional (22)
+### Functional (20)
 
 - **R003** (mandatory) The vendor must provide complete support for the initial implementation and for ongoing services for all applications it supplies.
   > "The scope of this RFP includes complete support for both the initial implementation and ongoing services for all applications provided by the selected software vendor." (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R004** (mandatory) The proposed system must capture financial transactions systematically and efficiently, including budgeting and forecasting capabilities.
+- **R004** (mandatory) The proposed software must capture financial transactions systematically and efficiently, including budgeting and forecasting capabilities.
   > "A streamlined software package that captures financial transactions in a systematic, efficient manner, including budgeting and forecasting capabilities." (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R005** (mandatory) The proposed system must be able to generate reports and analyze data effectively to support informed decision-making.
+- **R005** (mandatory) The proposed software must be able to generate reports and analyze data to support informed decision-making.
   > "Ability to generate reports and analyze data effectively to support informed decision-making." (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R006** (mandatory) The proposed system must maintain auditable records and documentation for future reference.
+- **R006** (mandatory) The proposed software must maintain auditable records and documentation for future reference.
   > "Ability to maintain auditable records and documentation for future reference." (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
 - **R007** (mandatory) The vendor must provide dedicated technical support during implementation and throughout annual contract renewals.
   > "Dedicated technical support during implementation and throughout annual contract renewals." (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R008** (mandatory) The proposed system must cover the currently used modules: Accounts Payable (with 1099 filing, purchasing requisitions, and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing, and Business Licensing.
+- **R008** (mandatory) The proposed system must cover the functionality currently used by the City: Accounts Payable (with 1099 filing, purchasing requisitions, and purchase orders with approvals), Accounts Receivable, General Ledger, Payroll, Utility Billing, and Business Licensing.
   > "Currently, the City utilizes Fund Balance fund accounting software from Tyler Technologies, including the following modules:" (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R009** (mandatory) The proposed system must support the City's current user base of five users.
-  > "Currently, five users" (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R063** (mandatory) The proposal must describe the solution's account number customization abilities.
+- **R060** (mandatory) The response must identify the types of licenses offered for different levels of use.
+  > "Identification of the types of licenses offered for different levels of use." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- **R061** (mandatory) The response must describe the software's account number customization abilities.
   > "Description of account number customization abilities." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **R105** (mandatory) The vendor must hold weekly meetings to monitor progress, budget and timeline.
+- **R062** (mandatory) The response must identify where and when additional applications or other vendors will be utilized to meet requirements.
+  > "Identification of where/when additional applications or other vendors will be utilized to meet requirements." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- **R063** (mandatory) The response must outline the availability of virtual demos to view product capabilities.
+  > "Outline the availability of virtual demos to view product capabilities." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- **R103** (mandatory) The vendor must hold weekly meetings to monitor progress, budget and timeline.
   > "Weekly meetings for progress, budget, and timeline monitoring." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R106** (mandatory) The vendor must provide a personnel management plan with a dedicated project manager and technical staff.
+- **R104** (mandatory) The vendor must provide a personnel management plan with a dedicated project manager and technical staff.
   > "Personnel management plan with dedicated project manager and technical staff." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R107** (mandatory) The vendor must understand the auditing and reporting requirements applicable to the software implementation.
+- **R105** (mandatory) The vendor must understand the auditing and reporting requirements applicable to the software implementation.
   > "Understand auditing and reporting requirements for software implementation." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R108** (mandatory) The vendor must recommend an account structure that supports auditable reporting.
+- **R106** (mandatory) The vendor must recommend an account structure that supports auditable reporting.
   > "Recommend account structure for auditable reporting." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R109** (mandatory) The vendor must assist with financial report writing.
+- **R107** (mandatory) The vendor must assist with financial report writing.
   > "Assist with financial report writing." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R111** (mandatory) The vendor must collaborate with Accounting and IT to minimize disruptions.
+- **R109** (mandatory) The vendor must collaborate with Accounting and IT to minimize disruptions.
   > "Collaborate with Accounting and IT to minimize disruptions." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R112** (mandatory) The vendor must reduce downtime and operational impacts during the transition.
+- **R110** (mandatory) The vendor must reduce downtime and operational impacts during the transition.
   > "Reduce downtime and operational impacts during transition." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R113** (mandatory) The vendor must provide personalized training and manuals for power users.
+- **R111** (mandatory) The vendor must provide personalized training and manuals for power users.
   > "Personalized training and manuals for power users." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R114** (mandatory) The vendor must provide support for the first 12 months after implementation.
-  > "Support for first 12 months post-implementation." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R115** (mandatory) The vendor must deliver at least 1 recorded training session and a manual for all staff.
+- **R113** (mandatory) The vendor must deliver at least 1 recorded training session and a manual for all staff.
   > "At least 1 recorded training session and manual for all staff." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R116** (mandatory) The vendor must provide automated updates and communications about software changes.
-  > "Automated updates and software change communications." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R117** (mandatory) The vendor must support annual e-filing such as 1099s and W-2s.
+- **R115** (mandatory) The vendor must support annual e-filing such as 1099s and W-2s.
   > "Support for annual e-filing like 1099s and W-2s." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R118** (mandatory) The vendor must provide a help desk or ticketing system for prioritizing support requests.
-  > "Help desk or ticketing system for support prioritization." (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **R134** (mandatory) The Respondent must provide written notice to the City if it, its employees, sub-contractors, or other personnel performing services under the contract relocate to locations outside the United States.
-  > "The Respondent agrees to provide written notice to the City regarding the relocation of the Respondent, its employees, sub-contractors, or other personnel performing services under the contract to locations outside the United States." (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
 
-### Technical (2)
+### Technical (4)
 
 - **R002** (mandatory) The vendor must provide a cloud-based accounting and financial reporting software system, including acquisition and implementation.
   > "solicit comprehensive proposals for the acquisition and implementation of a cloud-based accounting and financial reporting software system" (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **R110** (mandatory) The vendor must import the prior 5 years of data for history.
+- **R108** (mandatory) The vendor must import the prior 5 years of data for history.
   > "Import prior 5 years data for history." (5.1 TASK SUMMARY, p. 15 [S31.1])
+- **R114** (mandatory) The vendor must provide automated updates and communications about software changes.
+  > "Automated updates and software change communications." (5.1 TASK SUMMARY, p. 15 [S31.1])
+- **R116** (mandatory) The vendor must provide a help desk or ticketing system for prioritizing support requests.
+  > "Help desk or ticketing system for support prioritization." (5.1 TASK SUMMARY, p. 15 [S31.1])
 
-### Security and compliance (1)
+### Legal and contractual (7)
 
-- **R102** (mandatory) The Respondent must provide documentation demonstrating the measures in place for protecting financial data and the secure access controls implemented, per Attachment G. _(merged from R142, R143)_
-  > "Provide documentation demonstrating the measures in place for protecting financial data and the secure access controls implemented." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1])
-
-### Legal and contractual (8)
-
-- **R025** (mandatory) The proposal must not include any additional or modified terms and conditions or instructions, as the City will not evaluate or consider them and they will have no force or effect. _(merged from R028)_
-  > "Other than through this process, the City rejects and will not evaluate or consider any additional or modified terms and conditions or instructions submitted with the Respondent's proposal." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
-- **R026** (mandatory) Noncompliance with, or any attempt to alter or delete, the paragraph barring modified terms and conditions is sufficient grounds for the City to reject the proposal as nonresponsive. _(merged from R029)_
-  > "Noncompliance with, or any attempt to alter or delete, this paragraph shall constitute sufficient grounds to reject the Respondent's proposal as nonresponsive." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
-- **R030** (mandatory) From proposal submission until contract award, respondents (including their representatives, subcontractors and suppliers) must not communicate with anyone inside or outside relevant agencies or private entities about their own or others' proposals or qualifications.
+- **R027** (mandatory) The Respondent must not alter or delete the paragraph on notice regarding terms and conditions, and noncompliance is grounds for rejection of the proposal as nonresponsive.
+  > "Noncompliance with, or any attempt to alter or delete, this paragraph shall constitute sufficient grounds to reject the Respondent's proposal as nonresponsive." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
+- **R028** (mandatory) From proposal submission until contract award, respondents (including their representatives, subcontractors and suppliers) must not communicate with anyone inside or outside relevant agencies or private entities about their own or others' proposals or qualifications.
   > "From proposal submission to contract award, respondents (including representatives, sub-contractors, and suppliers) must not communicate with anyone inside or outside relevant agencies or private entities about their own or others' proposals or qualifications." (3.2 CONFIDENTIALITY AND PROHIBITED COMMUNICATIONS DURING EVALUATION, p. 8 [S16.1])
-- **R031** (mandatory) A respondent that violates the prohibition on communications during evaluation is disqualified, unless the City deems the communication harmless and unintentional and in the City's best interest.
+- **R029** (mandatory) A respondent that violates the prohibition on communications during evaluation is disqualified, unless the City deems the communication harmless and unintentional and in the City's best interest.
   > "Violation of this rule leads to disqualification unless the City deems the communication harmless and unintentional, and in the City's best interest." (3.2 CONFIDENTIALITY AND PROHIBITED COMMUNICATIONS DURING EVALUATION, p. 8 [S16.1])
-- **R039** (mandatory) All terms within the RFP are enforceable as contract conditions in line with the General Contract Terms and Conditions.
+- **R037** (mandatory) All terms within the RFP are enforceable as contract conditions in line with the General Contract Terms and Conditions.
   > "all terms within the RFP shall be enforceable as contract conditions in line with the General Contract Terms and Conditions" (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
-- **R040** (mandatory) Phrases such as "shall," "must," and "requirements" in the RFP establish binding contractual obligations for respondents.
+- **R038** (mandatory) Phrases such as "shall," "must," and "requirements" in the RFP establish binding contractual obligations on the respondent.
   > "Phrases such as "shall," "must," and "requirements" are intended to establish binding contractual obligations." (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
-- **R099** (mandatory) From the date of the Certification to the expiration of the Contract, the Respondent shall notify the City within thirty (30) days of any occurrence or condition that materially alters the truth of any statement made in the Certification. _(conflicts with R139)_
+- **R097** (mandatory) From the date of the Certification to the expiration of the Contract, the Respondent shall notify the City within thirty (30) days of any occurrence or condition that materially alters the truth of any statement made in the Certification. _(conflicts with R137)_
   > "the Respondent shall notify the City within thirty (30) days of any occurrence or condition that materially alters the truth of any statement made in this Certification." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- **R139** (mandatory) The Respondent must notify the Contract Lead within 15 days of any material changes to the representations made in the financial condition certification. _(conflicts with R099)_
-  > "the Respondent must notify the Contract Lead within 15 days of any material changes to the representations made herein" (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- **R132** (mandatory) The Respondent must give the City written notice if it, its employees, sub-contractors, or other personnel performing services under the contract relocate to locations outside the United States.
+  > "The Respondent agrees to provide written notice to the City regarding the relocation of the Respondent, its employees, sub-contractors, or other personnel performing services under the contract to locations outside the United States." (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
 
-### Timeline (3)
+### Timeline (4)
 
-- **R011** (mandatory) Respondents must submit written questions by July 31, 2025. _(merged from R014)_
-  > "Submit Written Questions|Respondents|July 31, 2025" (2.2 RFP SCHEDULE, p. 5 [S9.1]; 2.3 RFP QUESTIONS, p. 6 [S10.1])
-- **R013** (mandatory) Finalists must be available for virtual finalists' interviews on September 25, 2025 if the City requires them.
+- **R012** (mandatory) Finalists must be available for virtual finalists' interviews on September 25, 2025 if the City requires them.
   > "Virtual Finalists' Interviews (If needed)|Finalists &<br>Colfax|September 25,<br>2025" (2.2 RFP SCHEDULE, p. 5 [S9.1])
-- **R068** (mandatory) The proposed implementation must target a go-live date of July 1, 2026, in coordination with the City's new fiscal year. _(merged from R119)_
-  > "The City's goal is to go live on July 1, 2026, in coordination with the new fiscal year." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1])
+- **R112** (mandatory) The vendor must provide support for the first 12 months after implementation.
+  > "Support for first 12 months post-implementation." (5.1 TASK SUMMARY, p. 15 [S31.1])
+- **R117** (mandatory) The vendor must complete implementation by July 1, 2026, in time for the new fiscal year. _(merged from R066)_
+  > "The goal is to complete implementation by July 1, 2026, for the new fiscal year." (5.2 PROJECT TIMELINE, p. 15 [S32.1]; Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
+- **R137** (mandatory) The Respondent must notify the Contract Lead within 15 days of any material changes to the representations made in the Certification of Financial Condition. _(conflicts with R097)_
+  > "the Respondent must notify the Contract Lead within 15 days of any material changes to the representations made herein" (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
 
 ### Budget and pricing (11)
 
-- **R018** (mandatory) Respondents bear all costs for preparing and submitting proposals or participating in interviews, and the City will not reimburse these costs.
+- **R017** (mandatory) Respondents bear all costs for preparing and submitting proposals or participating in interviews, and the City will not reimburse these costs.
   > "Respondents bear all costs for preparing and submitting proposals or participating in interviews." (2.4 INSTRUCTIONS, p. 6 [S11.1])
-- **R033** (mandatory) Price proposals cannot be altered or modified as part of clarification. _(merged from R034)_
+- **R031** (mandatory) Price proposals cannot be altered or modified as part of clarification. _(merged from R032)_
   > "Price proposals cannot be altered or modified as part of clarification." (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1]; 3.3 PROPOSAL EVALUATION PROCESS, p. 9 [S17.2])
-- **R087** (mandatory) The price must constitute the total cost to the City to perform all services requested, including all materials, supplies, and travel.
+- **R085** (mandatory) The price must constitute the total cost to the City to perform all services requested, including all materials, supplies, and travel.
   > "Price shall constitute the total cost to the City to perform all services requested, including all materials, supplies, and travel." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R088** (mandatory) Any proposed reimbursable expenses must be capped in the price proposal, as the City will not accept unlimited reimbursable expenses. _(merged from R122)_
+- **R086** (mandatory) Any proposed reimbursable expenses must be capped in the price proposal, as the City will not accept unlimited reimbursable expenses. _(merged from R120)_
   > "Any proposed reimbursable expenses must be capped in the price proposal." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **R091** (mandatory) The price proposal must break out the implementation fee and recurring fees in detail.
+- **R089** (mandatory) The price proposal must break out the implementation fee and recurring fees in detail.
   > "Implementation fee and recurring fees broken out in detail." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R092** (mandatory) The price proposal must include a breakout of license fees.
+- **R090** (mandatory) The price proposal must include a breakout of license fees.
   > "Breakout of license fees." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R093** (mandatory) The price proposal must list additional fees charged for support services, identifying costs during implementation separately from post-implementation.
+- **R091** (mandatory) The price proposal must list additional fees charged for support services, identifying costs during implementation separately from post-implementation.
   > "Additional fees charged for support services, identifying costs during implementation separate from post-implementation." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R094** (mandatory) The price proposal must include an estimate of costs/fees for additional applications and/or vendors.
+- **R092** (mandatory) The price proposal must include an estimate of costs/fees for additional applications and/or vendors.
   > "Estimate of costs/fees for additional applications and/or vendors." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R123** (mandatory) The price proposal must state a total price for all services and deliverables.
+- **R121** (mandatory) The price proposal must state a total price for all services and deliverables.
   > "Total price for all services and deliverables: ___________" (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **R124** (mandatory) The price proposal must state a total reimbursable expenses cap.
+- **R122** (mandatory) The price proposal must state a total reimbursable expenses cap.
   > "Total reimbursable expenses cap: ___________" (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **R125** (mandatory) The price proposal must state a total price proposal amount.
+- **R123** (mandatory) The price proposal must state a total price proposal amount.
   > "Total price proposal: ___________" (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
 
-### Submission (73)
+### Submission (70)
 
-- **R015** (mandatory) Written inquiries must be emailed to accounting@colfax-ca.gov by the date and time indicated in Section 2.2. _(merged from R024)_
-  > "Written inquiries should be emailed to accounting@colfax-ca.gov by the date and time indicated in Section 2.2." (2.3 RFP QUESTIONS, p. 6 [S10.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
-- **R016** (mandatory) The subject line of the email submitting questions must read "Accounting Software Proposal Questions."
+- **R014** (mandatory) Written inquiries must be emailed to accounting@colfax-ca.gov by the date and time indicated in Section 2.2. _(merged from R010, R013)_
+  > "Written inquiries should be emailed to accounting@colfax-ca.gov by the date and time indicated in Section 2.2." (2.3 RFP QUESTIONS, p. 6 [S10.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
+- **R015** (mandatory) The subject line of the question email must read "Accounting Software Proposal Questions."
   > "The subject line of the email should read "Accounting Software Proposal Questions."" (2.3 RFP QUESTIONS, p. 6 [S10.1])
-- **R017** (mandatory) Inquiries must refer to the relevant section of the RFP.
+- **R016** (mandatory) Inquiries must refer to the relevant section of the RFP.
   > "Inquiries must refer to the relevant section of the RFP." (2.3 RFP QUESTIONS, p. 6 [S10.1])
-- **R019** (mandatory) Each page containing trade secret information must be labeled "CONFIDENTIAL" at the top and bottom, with the specific trade secret information enclosed.
+- **R018** (mandatory) Each page containing trade secret information must be labeled "CONFIDENTIAL" at the top and bottom, with the specific trade secret information enclosed.
   > "Label each page containing such information as "CONFIDENTIAL" at the top and bottom, with specific trade secret information enclosed." (2.4 INSTRUCTIONS, p. 6 [S11.1])
-- **R020** (mandatory) Cost information in the proposal cannot be marked as confidential.
+- **R019** (mandatory) Cost information in the proposal cannot be marked as confidential.
   > "Cost information cannot be marked as confidential." (2.4 INSTRUCTIONS, p. 6 [S11.1])
-- **R021** (desired) Confidential markings must be limited as much as possible.
+- **R020** (desired) Confidential markings must be limited as much as possible.
   > "Limit confidential markings as much as possible." (2.4 INSTRUCTIONS, p. 6 [S11.1])
-- **R022** (mandatory) The Respondent must read the Instructions, the City's terms and conditions, all relevant exhibits and attachments, and any other components included in this RFP, and comply with all requirements and specifications therein. _(merged from R052)_
-  > "It is the responsibility of the Respondent to read the Instructions, the City's terms and conditions, all relevant exhibits and attachments, and any other components included in this RFP, and to comply with all requirements and specifications herein." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **R023** (mandatory) The Respondent must obtain and comply with all addenda and other changes issued in connection with this RFP. _(merged from R010)_
-  > "Respondents are also responsible for obtaining and complying with all addenda and other changes that may be issued in connection with this RFP." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.1 REQUEST FOR PROPOSALS (RFP) DOCUMENT, p. 5 [S8.1])
-- **R027** (mandatory) A Respondent that desires modification of the solicitation's terms and conditions must raise the proposed modification during the question period under Section 2.3 rather than in its proposal.
-  > "If a Respondent desires modification of the terms and conditions of this solicitation, it is urged and cautioned to inquire during the question period, in accordance with the instructions in Section 2.3, about whether specific language proposed as a modification is acceptable to or will be considered by the City." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
-- **R032** (mandatory) Proposals must be complete and reflect the most favorable terms available from the Respondent, since the City is not required to request clarification from finalists.
+- **R021** (mandatory) The Respondent must read the Instructions, the City's terms and conditions, all relevant exhibits and attachments, and any other components included in this RFP, and comply with all requirements and specifications herein. _(merged from R009, R022, R050)_
+  > "It is the responsibility of the Respondent to read the Instructions, the City's terms and conditions, all relevant exhibits and attachments, and any other components included in this RFP, and to comply with all requirements and specifications herein." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.1 REQUEST FOR PROPOSALS (RFP) DOCUMENT, p. 5 [S8.1]; 4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **R026** (mandatory) Objections or exceptions to the City's terms and conditions must not be identified in the proposal itself; doing so will result in them being disregarded or the proposal being rejected. _(merged from R023, R024, R025)_
+  > "Identification of objections or exceptions to the City's terms and conditions in the proposal itself shall not be allowed and shall be disregarded or the proposal rejected." (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
+- **R030** (mandatory) Proposals must be complete and reflect the most favorable terms available from the Respondent, since the City is not required to request clarification from finalists.
   > "Therefore, all proposals should be complete and reflect the most favorable terms available from the Respondent." (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1])
-- **R035** (mandatory) The proposal must address the project goals and scope, which carries 45% of the evaluation weight.
+- **R033** (mandatory) The proposal must address the project goals and scope, which carries 45% of the evaluation weight.
   > "**45%** Response to project goals and scope" (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- **R036** (mandatory) The proposal must describe technical support during software implementation and ongoing operations, which carries 25% of the evaluation weight.
+- **R034** (mandatory) The proposal must describe technical support during software implementation and ongoing operations, which carries 25% of the evaluation weight.
   > "**25%** Technical support during software implementation and ongoing" (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- **R037** (mandatory) The proposal must include a fee proposal and implementation schedule, which together carry 20% of the evaluation weight.
+- **R035** (mandatory) The proposal must include a fee proposal and implementation schedule, which together carry 20% of the evaluation weight.
   > "**20%** Fee proposal and implementation schedule" (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- **R038** (mandatory) The proposal must provide information, qualifications, and references, which carry 10% of the evaluation weight.
+- **R036** (mandatory) The proposal must provide information, qualifications, and references, which carry 10% of the evaluation weight.
   > "**10%** Information, qualifications, and references" (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- **R041** (mandatory) By submitting a proposal, the Respondent agrees to meet all requirements stated in Section 4.0 as well as any other specifications, requirements, and terms and conditions stated in the RFP.
+- **R039** (mandatory) By submitting a proposal, the Respondent agrees to meet all requirements stated in Section 4.0 as well as any other specifications, requirements, and terms and conditions stated in the RFP.
   > "By submitting a proposal, the Respondent agrees to meet all requirements stated in this section as well as any other specifications, requirements, and terms and conditions stated in the RFP." (4.0 PROPOSAL REQUIREMENTS & SUBMITTAL, p. 10 [S20.1])
-- **R042** (mandatory) The respondent must submit one signed original proposal in hard copy. _(merged from R043)_
+- **R040** (mandatory) The respondent must submit one signed original proposal in hard copy. _(merged from R041; conflicts with R044)_
   > "Respondents must submit one (1) signed, original proposal in hard copy and one (1) digital version, such as an Adobe Acrobat PDF." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **R044** (desired) Proposals should not exceed 20 pages, excluding an allowance of two additional pages for the cover letter and five additional pages for appendices.
+- **R042** (desired) Proposals should not exceed 20 pages, excluding an allowance of two additional pages for the cover letter and five additional pages for appendices.
   > "Proposals should not exceed 20 pages, with an allowance for an additional two (2) pages for the cover letter and five (5) pages for any appendices." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **R045** (mandatory) All proposals must be organized in the order specified in Section 4.2.
+- **R043** (mandatory) All proposals must be organized in the order specified in Section 4.2.
   > "All proposals must be organized in the specified order." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **R046** (mandatory) The proposal and all attachments must be emailed to accounting@colfax-ca.gov by August 28, 2025, at 4:00 PM PST. _(merged from R001, R012)_
+- **R044** (mandatory) The proposal and all attachments must be emailed to accounting@colfax-ca.gov by August 28, 2025, at 4:00 PM PST. _(merged from R001, R011; conflicts with R040)_
   > "The proposal and all attachments must be emailed to accounting@colfax-ca.gov by **August 28, 2025, at 4:00 PM PST** ." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
-- **R047** (mandatory) The email submitting the proposal must use "Accounting and Financial Software Submission" as the subject line.
+- **R045** (mandatory) The email submitting the proposal must use "Accounting and Financial Software Submission" as the subject line.
   > "Please use "Accounting and Financial Software Submission" as the subject line of the email." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **R048** (mandatory) The original hard copy of the proposal and all attachments must be received at the specified City of Colfax address by the submission deadline.
+- **R046** (mandatory) The original hard copy of the proposal and all attachments must be received at the specified City of Colfax address by the submission deadline.
   > "The original hard copy of the proposal must also be received by the submission deadline." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **R049** (mandatory) Proposals submitted by facsimile (FAX) will not be accepted. _(merged from R050)_
+- **R047** (mandatory) Proposals submitted by facsimile (FAX) will not be accepted. _(merged from R048)_
   > "Please note that attempts to submit a proposal via facsimile (FAX) will not be accepted." (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; 4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **R051** (desired) Respondents should regularly check the City's website at www.colfax-ca.gov for any issued addenda before the proposal deadline.
-  > "Respondents should regularly check the City's website at www.colfax-ca.gov for any issued addenda before the proposal deadline." (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **R053** (optional) A proposal may be withdrawn in writing by the office issuing the RFP before the proposal opening time stated on the cover page, or later if specified in an addendum.
-  > "Proposals can be withdrawn in writing by the office issuing the RFP before the proposal opening time stated on the cover page (or later if specified in an addendum)." (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **R054** (mandatory) Withdrawal requests must be on the Respondent's letterhead and signed by an authorized agent.
-  > "Withdrawal requests must be on the Respondent's letterhead, signed by an authorized agent." (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **R055** (mandatory) Withdrawals after proposal opening are allowed only for good cause and at the City's discretion.
-  > "Withdrawals after proposal opening are allowed only for good cause and at the City's discretion." (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **R056** (mandatory) The respondent's proposal must include all required elements outlined in the RFP's proposal contents section.
+- **R049** (desired) Respondents should regularly check the City's website at www.colfax-ca.gov for any issued addenda before the proposal deadline.
+  > "Respondents should regularly check the City's website at www.colfax-ca.gov for any issued addenda before the proposal deadline" (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **R051** (optional) A proposal may be withdrawn in writing by the office issuing the RFP before the proposal opening time stated on the cover page, or later if specified in an addendum.
+  > "Proposals can be withdrawn in writing by the office issuing the RFP before the proposal opening time stated on the cover page (or later if specified in an addendum)" (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **R052** (mandatory) Withdrawal requests must be on the Respondent's letterhead and signed by an authorized agent.
+  > "Withdrawal requests must be on the Respondent's letterhead, signed by an authorized agent" (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **R053** (mandatory) Withdrawals after proposal opening are allowed only for good cause and at the City's discretion.
+  > "Withdrawals after proposal opening are allowed only for good cause and at the City's discretion" (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **R054** (mandatory) The respondent's proposal must include all required elements outlined in the RFP's proposal contents section.
   > "Respondents' proposals must include the required elements outlined below" (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
-- **R057** (mandatory) The respondent must populate all attachments of this RFP that require information.
+- **R055** (mandatory) The respondent must populate all attachments of this RFP that require information.
   > "including populating all attachments of this RFP that require information" (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
-- **R058** (mandatory) The respondent must include an authorized signature on attachments where a signature is requested.
+- **R056** (mandatory) The respondent must include an authorized signature on attachments where a signature is requested.
   > "and include an authorized signature where requested" (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
-- **R059** (desired) The respondent's Tab 1 response should address its approach to meeting the proposal goals and producing the deliverables outlined in Section 5.0.
+- **R057** (desired) The respondent's Tab 1 response should address its approach to meeting the proposal goals and producing the deliverables outlined in Section 5.0.
   > "Respondents should address their approach to meeting the proposal goals and producing the requested deliverables outlined in Section 5.0." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **R060** (desired) Respondents are encouraged to provide suggestions that would improve the implementation and utilization of the software and technical support approach.
+- **R058** (desired) The respondent is encouraged to provide suggestions that would improve the implementation and utilization of the software and technical support approach.
   > "Respondents are encouraged to provide suggestions that would improve the implementation and" (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **R061** (mandatory) The proposal must include a completed "Software Abilities and Requirements" spreadsheet provided as Attachment F. _(merged from R101, R141)_
-  > "Submission of a completed "Software Abilities and Requirements" spreadsheet included herein as Attachment F." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1])
-- **R062** (mandatory) The proposal must identify the types of licenses offered for different levels of use.
-  > "Identification of the types of licenses offered for different levels of use." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **R064** (mandatory) The proposal must identify where and when additional applications or other vendors will be utilized to meet requirements.
-  > "Identification of where/when additional applications or other vendors will be utilized to meet requirements." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **R065** (mandatory) The proposal must outline the availability of virtual demos to view product capabilities.
-  > "Outline the availability of virtual demos to view product capabilities." (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **R066** (mandatory) The Respondent shall provide its proposed strategy and technical approach to meet the scope of work requirements outlined in Section 5.
+- **R064** (mandatory) The Respondent shall provide its proposed strategy and technical approach to meet the scope of work requirements outlined in Section 5.
   > "Respondents shall provide the firm's proposed strategy and technical approach to meet the scope of work requirements outlined in Section 5." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R067** (desired) The proposal must include an implementation plan and timeline for execution.
+- **R065** (desired) The proposal shall include a development of an implementation plan and timeline for execution.
   > "Development of an implementation plan and timeline for execution." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R069** (desired) The proposal must describe the levels of support offered for implementation.
+- **R067** (desired) The proposal shall describe the levels of support offered for implementation.
   > "Description of levels of support for implementation." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R070** (desired) The proposal must describe the levels of support offered for recurring licenses and services.
+- **R068** (desired) The proposal shall describe the levels of support offered for recurring licenses and services.
   > "Description of levels of support for recurring licenses and services." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R071** (desired) The proposal must identify the key personnel for implementation.
+- **R069** (desired) The proposal shall identify the key personnel for implementation.
   > "Identification of the key personnel for implementation." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R072** (desired) The proposal must identify the training offered for software at different license levels and state whether training is in person, virtual, or standard recordings.
+- **R070** (desired) The proposal shall identify training for software at the different license levels and indicate whether training is in person, virtual, or standard recordings.
   > "Identification of training for software for different license levels. Indicate if training is in person, virtual, or standard recordings." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R073** (desired) The proposal must describe the proposed client engagement approach, including the use of an account manager.
+- **R071** (desired) The proposal shall describe the proposed client engagement approach, including the use of an account manager.
   > "Description of the proposed client engagement approach, including the use of an account manager." (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **R074** (mandatory) If multiple firms respond as a team, the firm information and qualifications must be listed for each company.
+- **R072** (mandatory) If multiple firms respond as a team, the firm information and qualifications must be listed for each company.
   > "If multiple firms are responding as a team, this information shall be listed for each company." (Tab 3: Firm Information and Qualifications, p. 12 [S25.1])
-- **R075** (mandatory) The proposal's Organization Information tab must include the firm's name, address, phone, website, and primary contact name, title, and contact information.
+- **R073** (mandatory) The proposal's Organization Information tab must include the firm's name, address, phone, website, and primary contact name, title, and contact information.
   > "Firm name, address, phone, and website. Also include primary contact name, title, and contact information." (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
-- **R076** (mandatory) The proposal must include the firm's history, the state in which it was organized or incorporated, its number of full-time employees, and its type of ownership.
+- **R074** (mandatory) The proposal must include the firm's history, the state in which it was organized or incorporated, its number of full-time employees, and its type of ownership.
   > "History of the firm and the state in which the firm was organized or incorporated, number of full-time employees, and type of ownership." (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
-- **R077** (mandatory) The proposal must state the hours of operation during which project managers will be available for technical assistance.
+- **R075** (mandatory) The proposal must state the hours of operation during which project managers will be available for technical assistance.
   > "Hours of operation project managers will be available for technical assistance." (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
-- **R078** (mandatory) The proposal must list the office location(s) (City, State) from which key individuals on the team will operate.
+- **R076** (mandatory) The proposal must list the office location(s) (City, State) from which key individuals on the team will operate.
   > "Office location(s) (City, State) from which key individuals on this team will operate." (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
-- **R079** (mandatory) The proposal must describe how the firm or team responds to the City's desire for participation by businesses owned by minorities, women, disabled persons, disabled business enterprises, and small businesses.
+- **R077** (mandatory) The proposal must describe how the firm or team responds to the City's desire for participation by businesses owned by minorities, women, disabled persons, disabled business enterprises, and small businesses.
   > "Describe how your firm or team responds to the City's desire for participation by businesses owned by minorities, women, disabled, disabled business enterprises, and small businesses." (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
-- **R080** (mandatory) The proposal must include recent experience relevant to this project, including the location and description of the project(s), key staff who worked on the project(s), and how the results or effectiveness of the project were measured.
+- **R078** (mandatory) The proposal must include recent experience relevant to this project, including the location and description of the project(s), key staff who worked on the project(s), and how the results or effectiveness of the project were measured.
   > "Include recent experience relevant to this project, the location and description of the project(s), key staff who worked on the project(s), and how the results or effectiveness of the project were measured." (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **R081** (mandatory) The proposal must demonstrate experience implementing accounting and financial software for local governments, regional councils of government, or other federal grant-funded organizations.
+- **R079** (mandatory) The proposal must demonstrate experience implementing accounting and financial software for local governments, regional councils of government, or other federal grant-funded organizations.
   > "Experience with implementing accounting and financial software for local governments, regional councils of government, or other federal grant-funded organizations." (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **R082** (mandatory) The proposal must demonstrate experience advising clients on streamlining procedures to improve efficiency in the organization.
+- **R080** (mandatory) The proposal must demonstrate experience advising clients on streamlining procedures to improve efficiency in the organization.
   > "Experience advising clients on streamlining procedures to improve efficiency in the organization." (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **R083** (mandatory) The proposal must demonstrate experience providing continued support for improvements and/or daily operations.
+- **R081** (mandatory) The proposal must demonstrate experience providing continued support for improvements and/or daily operations.
   > "Experience providing continued support for improvements and/or daily operations." (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **R084** (mandatory) The respondent must complete and submit Attachment B: References Sheet, which may be recreated if the content remains unchanged.
+- **R082** (mandatory) The respondent must complete and submit Attachment B: References Sheet, which may be recreated if the content remains unchanged.
   > "Attachment B: References Sheet (Respondents may recreate it if the content remains unchanged)." (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **R085** (desired) The City prefers that the respondent provide at least one local referral who is available for an in-person software demonstration.
+- **R083** (desired) The City prefers that the respondent provide at least one local referral who is available for an in-person software demonstration.
   > "If possible, the City prefers at least one local referral who is available for an inperson software demonstration." (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **R086** (mandatory) The proposal must include a summary of qualifications for key personnel and any subcontractors proposed to provide services to the City under the proposed scope of work.
+- **R084** (mandatory) The proposal must include a summary of qualifications for key personnel and any subcontractors proposed to provide services to the City under the proposed scope of work.
   > "Provide a summary of qualifications for key personnel and any subcontractors proposed to provide services to the City under the proposed scope of work." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R089** (mandatory) The Respondent must complete Attachment A, which serves as a cover sheet for the price proposal.
+- **R087** (mandatory) The Respondent must complete Attachment A, which serves as a cover sheet for the price proposal.
   > "Complete Attachment A, which serves as a cover sheet for the price proposal" (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **R090** (mandatory) The price proposal must reference the specific tasks and deliverables outlined in Section 5. _(merged from R126)_
-  > "must reference the specific tasks and deliverables outlined in Section 5" (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **R095** (mandatory) The Respondent must provide a minimum of three references for whom similar services have been performed as described herein. _(merged from R127)_
+- **R093** (mandatory) The Respondent must provide a minimum of three references for whom similar services have been performed as described herein. _(merged from R125)_
   > "Provide a minimum of three (3) references for whom similar services have been performed as described herein." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT B: REFERENCES, p. 17 [S34.1])
-- **R096** (mandatory) Reference e-mail addresses provided must be valid, and failure to provide a valid email may subject the proposal to rejection. _(merged from R128)_
+- **R094** (mandatory) Reference e-mail addresses provided must be valid, and failure to provide a valid email may subject the proposal to rejection. _(merged from R126)_
   > "E-mail addresses must be valid." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT B: REFERENCES, p. 17 [S34.1])
-- **R097** (mandatory) The Respondent must detail in Attachment C the location(s) at which performance will occur and how resources or workers outside of the United States will be utilized in performing the Contract. _(merged from R130)_
+- **R095** (mandatory) The Respondent must detail in Attachment C the location(s) at which performance will occur and how resources or workers outside of the United States will be utilized in performing the Contract. _(merged from R128)_
   > "Detail the location(s) at which performance will occur, as well as the way resources or workers outside of the United States will be utilized in performing this Contract." (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- **R098** (mandatory) Each Respondent shall certify via Attachment D that it is financially stable and able to complete the scope of work outlined in this RFP. _(merged from R136)_
-  > "Each Respondent shall certify it is financially stable and able to complete the scope of work outlined in this RFP." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
-- **R100** (mandatory) The Respondent must attach proof of insurance for the type of work solicited in this RFP, including workers compensation and commercial general liability coverage, as Attachment E. _(merged from R140)_
+- **R096** (mandatory) Each Respondent shall certify via Attachment D that it is financially stable and able to complete the scope of work outlined in this RFP.
+  > "Each Respondent shall certify it is financially stable and able to complete the scope of work outlined in this RFP." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **R098** (mandatory) The Respondent must attach proof of insurance for the type of work solicited in this RFP, including workers compensation and commercial general liability coverage, via Attachment E. _(merged from R138)_
   > "Attach proof of insurance for the type of work solicited in this RFP, including, but not limited to, workers compensation and commercial general liability coverage." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1])
-- **R103** (mandatory) Respondents must fully review the standard City contract for services as part of preparing their response.
+- **R099** (mandatory) The Respondent must complete the Attachment F Excel spreadsheet of software abilities and requirements and return it with the submission. _(merged from R059, R139)_
+  > "Complete the attached excel spreadsheet and return it with the submission." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1])
+- **R100** (mandatory) The Respondent must provide documentation demonstrating the measures in place for protecting financial data and the secure access controls implemented, per Attachment G. _(merged from R140, R141)_
+  > "Provide documentation demonstrating the measures in place for protecting financial data and the secure access controls implemented." (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1])
+- **R101** (mandatory) Respondents must fully review the standard City contract for services as part of preparing their response.
   > "fully review the standard City contract for services" (4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
-- **R104** (mandatory) The Respondent's RFP submission must include all items designated as required in the scope of work.
+- **R102** (mandatory) The Respondent's RFP submission must include all items marked as required in the scope of work.
   > "Required items must be included in the response, while optional items are noted." (5.0 SCOPE OF WORK EXPECTATIONS, p. 14 [S30.1])
-- **R120** (desired) Respondents must include a proposed timeline and task sequence in their proposal based on their expertise.
+- **R118** (desired) Respondents must provide a proposed timeline and task sequence based on their expertise.
   > "Respondents should provide a proposed timeline and task sequence based on their expertise." (5.2 PROJECT TIMELINE, p. 15 [S32.1])
-- **R121** (mandatory) Respondents must submit a detailed price proposal covering the scope of services in the RFP.
-  > "Respondents must submit a detailed price proposal for the scope of services in this RFP." (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **R129** (mandatory) For each reference the respondent must supply the client name, type of service/scope of work, performance dates, contact name, phone and email.
+- **R124** (mandatory) The respondent must attach a comprehensive price proposal that details the specific tasks and deliverables identified in Section 5. _(merged from R088, R119)_
+  > "Please attach a comprehensive price proposal that details the specific tasks and deliverables identified in Section 5." (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- **R127** (mandatory) For each reference the respondent must supply the client name, type of service/scope of work, performance dates, contact name, phone and email.
   > "Client Name: _________________________ Type of Service / Scope of Work: _________________________ Performance Dates: _________________________ Contact Name: _________________________ Phone: _________________________ Email: _________________________" (ATTACHMENT B: REFERENCES, p. 17 [S34.1])
-- **R131** (mandatory) The Respondent must indicate on the form whether any work under the Contract will be performed outside the United States (Yes/No).
+- **R129** (mandatory) The Respondent must indicate on the form whether any work under the Contract will be performed outside the United States (Yes/No).
   > "Will any work under this Contract be performed outside the United States?" (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- **R132** (mandatory) If the Respondent answered "YES" to performing work outside the United States, it must list the location(s) outside the United States where work will be conducted by the Respondent, any sub-contractors, employees, or other personnel.
+- **R130** (mandatory) If the Respondent answered "YES" to offshoring, it must list the location(s) outside the United States where work will be conducted by the Respondent, any sub-contractors, employees, or other personnel.
   > "Please list the location(s) outside of the United States where work under this Contract will be conducted by the Respondent, any sub-contractors, employees, or other personnel performing work under the Contract:" (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- **R133** (mandatory) If the Respondent answered "YES", it must describe the corporate structure and the locations of corporate employees and activities of the Respondent, its affiliates, or any sub-contractors that will execute work outside the United States.
+- **R131** (mandatory) If the Respondent answered "YES" to offshoring, it must describe the corporate structure and the locations of corporate employees and activities of the Respondent, its affiliates, or any sub-contractors that will execute work outside the United States.
   > "Describe the corporate structure and the locations of corporate employees and activities of the Respondent, its affiliates, or any sub-contractors that will execute work outside the United States:" (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- **R135** (mandatory) The Respondent must identify all locations within the United States where performance will take place.
+- **R133** (mandatory) The Respondent must identify all locations within the United States where performance will take place.
   > "Identify all locations within the United States where performance will take place:" (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- **R137** (mandatory) The Respondent must explain below the certification any statement in Attachment D that it cannot check.
+- **R134** (mandatory) The Respondent must complete and sign the Certification of Financial Condition, checking all applicable statements and providing the date of its latest audit.
+  > "The undersigned certifies that the following statements are accurate: [check all applicable boxes]" (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- **R135** (mandatory) If any box in the Certification of Financial Condition is not checked, the Respondent must explain the reason in the space provided.
   > "If any box above is NOT checked, the Respondent shall explain the reason below:" (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
-- **R138** (mandatory) The Certification of Financial Condition must be signed by an individual authorized to represent the Respondent.
+- **R136** (mandatory) The Certification of Financial Condition must be signed by an individual authorized to represent the Respondent, with signature, date, printed name and title.
   > "[This Certification must be signed by an individual authorized to represent the Respondent]" (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
 
 ### Ambiguities
 
-- **A01** The chunk directs inquiries to a contact but the contact's name, email and phone are cut off, so bidders cannot tell to whom and by what channel questions must be sent. (Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1])
-- **A02** The module list is presented as the City's current Tyler Technologies configuration, not explicitly as required functionality of the new system; a bidder would ask whether all listed modules (including 1099 filing, purchasing requisitions and approvals) must be replaced one-for-one. _(affects R008)_ (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **A03** The text states the City currently has five users but does not say whether five is the licensed user count required in the new system or whether growth must be accommodated; a bidder would ask for the required user licensing quantity. _(affects R009)_ (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- **A04** The schedule says the City will make every effort to adhere to it, so it is unclear whether the proposal submission deadline of August 28, 2025 and the interview date are firm or may shift; a bidder would ask whether dates are binding and how changes will be communicated. _(affects R046, R013)_ (2.2 RFP SCHEDULE, p. 5 [S9.1])
-- **A05** The RFP does not define what counts as a trade secret or how the City will treat marked information, so a bidder cannot tell which technical or pricing-adjacent content is safe to mark; the bidder would ask what criteria the City applies and whether marking affects evaluation. _(affects R019, R021)_ (2.4 INSTRUCTIONS, p. 6 [S11.1])
-- **A06** The City's standard contract with terms and conditions is only 'available upon request', so bidders cannot see the terms they must accept before submitting; the bidder would ask for a copy of the standard contract and whether it will be attached as an exhibit. _(affects R022, R025)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
-- **A07** The text says the City may leave open later negotiation and amendment of specific contract provisions, yet also states that any modified terms submitted with a proposal will be disregarded and can render the proposal nonresponsive; the bidder would ask how exceptions can be raised without risking rejection. _(affects R015, R025, R026)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
-- **A08** The text requires modification requests to be raised "during the question period" per Section 2.3, but the dates and procedure of that question period are not given here; a bidder would ask for the question-period deadline and the required format for submitting a proposed modification. _(affects R027)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
-- **A09** The City states it may exercise discretion not to consider any proposed modifications, without saying whether or how a Respondent is notified of the outcome before the proposal deadline; a bidder would ask whether acceptance of a requested modification will be confirmed before proposals are due. _(affects R027, R025)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
-- **A10** The text allows exceptions for "general inquiries before submission and after status updates" but does not define who may be contacted, through what channel, or what counts as a general inquiry versus a prohibited communication; a bidder would ask which contact point and topics are permitted during the evaluation period. _(affects R030)_ (3.2 CONFIDENTIALITY AND PROHIBITED COMMUNICATIONS DURING EVALUATION, p. 8 [S16.1])
-- **A11** The disqualification exception turns on the City's subjective judgment that a communication is "harmless and unintentional" and in the City's best interest, with no process for the respondent to explain or cure a communication; a bidder would ask whether there is a notice-and-cure procedure. _(affects R031)_ (3.2 CONFIDENTIALITY AND PROHIBITED COMMUNICATIONS DURING EVALUATION, p. 8 [S16.1])
-- **A12** The City may reject any proposal on the basis of "fit, form, and function" without defining those terms, so bidders cannot tell what would disqualify a proposal beyond cost and stated specifications; the bidder would ask what criteria define fit, form and function. (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1])
-- **A13** The criterion "Technical support during software implementation and ongoing" is truncated and does not say what is evaluated (response times, support hours, staffing, cost) or what period "ongoing" covers; a bidder would ask what content and service levels must be described under this 25% criterion. _(affects R036)_ (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- **A14** The text says submissions deemed noncompliant or technically unqualified will not be considered but does not define the compliance or qualification threshold; a bidder would ask what minimum qualifications or compliance checklist determines disqualification. (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
-- **A15** The text says no single requirement automatically disqualifies a respondent, yet non-compliance with any individual requirement may lead the City to reject a proposal entirely; a bidder would ask which requirements are pass/fail and how partial compliance is scored. _(affects R039, R040)_ (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
-- **A16** The page limit is stated as "should not exceed 20 pages" (desired) while the surrounding text says respondents are "required to adhere" to the guidelines; it is unclear whether exceeding 20 pages (plus allowances) makes a proposal non-compliant. The bidder would ask whether the 20-page limit is a pass/fail requirement. _(affects R044)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **A17** The hard copy must be "received" at the address by the deadline, but the text does not say whether the mailed PO Box copy and the street-address copy are alternatives or whether both must be sent; it also does not state whether the hard copy may arrive after the email timestamp. The bidder would ask which address to use and whether the hard copy must physically arrive by 4:00 PM PST on August 28, 2025. _(affects R046, R048)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- **A18** The text allows post-opening withdrawal only for "good cause" without defining what qualifies, so a bidder cannot tell whether a mistake or changed circumstances would be accepted; the bidder would ask what criteria the City applies to "good cause". _(affects R055)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
-- **A19** The text refers to "the required elements outlined below" and "additional details required for each proposal section" that are not contained in this chunk, so a bidder cannot tell from this text what the full set of required proposal elements is; the bidder would ask for the complete list of required proposal sections and their contents. _(affects R056)_ (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
-- **A20** It is unclear who qualifies as an "authorized signature" (e.g., an officer of the firm, a specific title, or a notarized signatory) and which attachments require one; the bidder would ask what signatory authority and form of signature are acceptable. _(affects R058)_ (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
-- **A21** The text does not say whether the listed response elements are mandatory or merely suggested, since the lead-in only says respondents "should" address the goals; a bidder would ask whether omitting any element (e.g., virtual demos) makes the proposal non-responsive. _(affects R061, R062, R063, R064, R065)_ (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **A22** It is unclear what "account number customization abilities" covers (customer-defined account numbering scheme, format, length, or numbering of the vendor's own accounts), which affects how the design and demo are presented. _(affects R063)_ (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- **A23** The July 1, 2026 go-live is stated as the City's goal, not a contractual deadline, and no implementation start date or contract award date is given, so the bidder cannot size the implementation schedule; the bidder would ask whether July 1, 2026 is a firm requirement and when implementation is expected to begin. _(affects R067, R068)_ (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **A24** The text does not say whether the account manager is required or merely an option, nor whether that role must be dedicated or on-site; the bidder would ask what level of account management commitment is expected. _(affects R073)_ (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- **A25** The chunk refers to "this information" without defining what firm information and qualifications must be provided for each company; the bidder would ask what specific items (licenses, references, financials, resumes) are required per firm. _(affects R074)_ (Tab 3: Firm Information and Qualifications, p. 12 [S25.1])
-- **A26** The City expresses a "desire" for participation by minority-, women-, disabled- and small-business enterprises but sets no goal, percentage, or required form of evidence, so a bidder cannot tell whether a specific subcontracting commitment or documentation is expected. _(affects R079)_ (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
-- **A27** The text does not define what counts as "recent" experience (e.g., within the last three or five years), which affects which references and projects the bidder can cite; the bidder would ask for the cutoff period. _(affects R080, R081, R082, R083)_ (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **A28** It is unclear what qualifies as a "local referral" (within the City of Colfax area, the county, or the region) and whether the in-person demonstration is a scored expectation; the bidder would ask for the geographic definition and whether the demonstration is required at bid time or later. _(affects R085)_ (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
-- **A29** The text requires reimbursable expenses to be capped but does not state a cap amount or whether the City sets a maximum; a bidder would ask what cap level is acceptable or whether the cap is at the Respondent's discretion. _(affects R088)_ (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **A30** The text requires an estimate of costs/fees for "additional applications and/or vendors" without defining which applications or vendors are contemplated; a bidder would ask what additional applications/vendors must be priced. _(affects R094)_ (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **A31** The required insurance types are open-ended ("including, but not limited to") and no minimum coverage limits or additional-insured requirements are stated here, so the bidder cannot price the coverage; the bidder would ask which coverages and limits are required. _(affects R100)_ (Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- **A32** Attachment G asks for documentation of financial-data protection and secure access controls without naming a standard, framework or format, so the bidder cannot tell what evidence will be accepted; the bidder would ask which standard or format the documentation must follow. _(affects R102)_ (Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- **A33** The chunk refers to "required items" and "optional items" in the scope of work without identifying them here; a bidder would ask which deliverables are mandatory versus optional, since that determines the proposal content and price. _(affects R104)_ (5.0 SCOPE OF WORK EXPECTATIONS, p. 14 [S30.1])
-- **A34** The scope does not say whether the 12 months of post-implementation support is included in the base price or is a separately priced option, nor when that period starts (go-live vs. contract signature). The bidder would ask how to price and schedule it. _(affects R114)_ (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **A35** The text does not define the volume or format of the prior 5 years of data to be imported, nor who supplies and cleans it. The bidder would ask for data volumes, source systems and file formats to size the migration effort. _(affects R110)_ (5.1 TASK SUMMARY, p. 15 [S31.1])
-- **A36** The July 1, 2026 completion date is stated as a "goal" rather than a firm deadline, so it is unclear whether it is a binding milestone subject to penalties or an aspirational target; the bidder would ask whether the date is mandatory. _(affects R068)_ (5.2 PROJECT TIMELINE, p. 15 [S32.1])
-- **A37** The project start is described only as "soon after awarding the contract and finalizing negotiations," leaving the start date and any notice-to-proceed period undefined; the bidder would ask for the expected award date and contract start date to build the schedule. _(affects R068, R120)_ (5.2 PROJECT TIMELINE, p. 15 [S32.1])
-- **A38** The text requires a capped reimbursable expense amount but gives no ceiling or basis for the cap, so bidders cannot tell whether the City expects a specific maximum or a respondent-proposed figure; the bidder would ask whether a maximum cap value or methodology is prescribed. _(affects R088, R124)_ (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **A39** It is unclear how the 'Total price proposal' differs from the 'Total price for all services and deliverables' plus the reimbursable cap, i.e. whether the total price proposal is their sum or a separate figure; the bidder would ask how the three amounts relate. _(affects R123, R124, R125)_ (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- **A40** The references must be for "similar services ... as outlined herein", but this chunk does not define what counts as similar; the bidder would ask what scope or service categories qualify as similar references. _(affects R095)_ (ATTACHMENT B: REFERENCES, p. 17 [S34.1])
-- **A41** The form requires written notice of relocation outside the United States but sets no timeframe or recipient, so a bidder cannot tell whether notice must precede the move and to whom it must be addressed. _(affects R134)_ (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
-- **A42** The certification lists the same audit-opinion statement twice, so it is unclear whether both boxes must be checked or whether one is a drafting duplicate; the bidder would ask which representation is required. _(affects R098)_ (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
-- **A43** The certification does not define what counts as a "material change" triggering the 15-day notice, nor whether the notice obligation continues after contract award; the bidder would ask for the standard to apply. _(affects R139)_ (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
-- **A44** The required coverage limits, additional-insured status and certificate form for the workers compensation and commercial general liability policies are not stated, so the bidder cannot price the insurance or know whether its current coverage qualifies; the bidder would ask what limits and endorsements are required. _(affects R100)_ (ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1])
-- **A45** The text does not specify what form or level of detail the documentation of financial-data protection and access controls must take (e.g., policies, certifications, diagrams), nor which financial data or systems are in scope, so a bidder cannot judge what evidence will be accepted. _(affects R102)_ (ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1])
-- **A46** Conflicting requirements R099 and R139: One requires notice to the City within 30 days of material changes to the financial certification, while the other requires notice to the Contract Lead within 15 days. _(affects R099, R139)_ (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- **A01** The objectives are stated as goals without measurable acceptance criteria (e.g. "streamlined", "effectively"), so a bidder cannot tell what level of performance or functionality will be judged compliant; the bidder would ask what specific capabilities or metrics must be demonstrated for each objective. _(affects R004, R005, R006)_ (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- **A02** The text lists the City's current modules and notes "Currently, five users" but does not state whether the new system must support only five users or a different number, nor whether data migration from the Tyler Fund Balance system is required; the bidder would ask for the required user count and migration scope. _(affects R008)_ (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- **A03** The text refers to "any attachments" and "any addenda" without naming them, so a bidder cannot tell which documents are currently in force or how many there are; the bidder would ask for a list of the attachments and addenda issued to date. _(affects R021)_ (2.1 REQUEST FOR PROPOSALS (RFP) DOCUMENT, p. 5 [S8.1])
+- **A04** The schedule says the Contract Lead will make every effort to adhere to it, so it is unclear whether these dates are firm deadlines or targets; a bidder would ask whether the proposal submission date of August 28, 2025 is a hard deadline and whether late proposals are rejected. _(affects R014, R044, R012)_ (2.2 RFP SCHEDULE, p. 5 [S9.1])
+- **A05** The RFP does not define what qualifies as a trade secret or how the City will treat marked information, yet marking implies the respondent has made that determination; a bidder would ask what criteria the City applies and what happens if a marking is disputed. _(affects R018, R020)_ (2.4 INSTRUCTIONS, p. 6 [S11.1])
+- **A06** The City's standard contract with terms and conditions is only "available upon request" and is not included in this chunk, so the bidder cannot know the terms it must accept before the question deadline; the bidder would ask for a copy of the standard contract and when it will be provided. _(affects R026)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
+- **A07** The City states it may "leave open the possibility for later negotiation and amendment of specific contract provisions" while also rejecting any modified terms submitted with a proposal; it is unclear which provisions are negotiable and through what mechanism, which affects how the bidder frames exceptions. _(affects R026)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
+- **A08** The text directs bidders to the question period "in accordance with the instructions in Section 2.3" but does not state the question deadline or submission channel here; a bidder would ask for the exact question-period dates and how proposed modifications must be submitted. _(affects R026)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
+- **A09** The text allows exceptions for "general inquiries before submission and after status updates" but does not define who may be contacted or what counts as a general inquiry, so a bidder cannot tell which pre-submission contacts are safe; the bidder would ask which contact point and topics are permitted. _(affects R028)_ (3.2 CONFIDENTIALITY AND PROHIBITED COMMUNICATIONS DURING EVALUATION, p. 8 [S16.1])
+- **A10** The disqualification exception turns on the City's subjective judgment that a communication was "harmless and unintentional" and in the City's best interest, with no process for raising or curing a possible violation; the bidder would ask whether a cure or clarification procedure exists. _(affects R029)_ (3.2 CONFIDENTIALITY AND PROHIBITED COMMUNICATIONS DURING EVALUATION, p. 8 [S16.1])
+- **A11** The City may reject any proposal on the basis of "fit, form, and function" without defining those terms, so a bidder cannot tell what would make a proposal unacceptable beyond cost and stated specifications; the bidder would ask what criteria define fit, form and function. (3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1])
+- **A12** The criterion "Technical support during software implementation and ongoing" is truncated and does not say what level or duration of ongoing support is expected, so bidders cannot scope or price it; the bidder would ask what support scope, hours and term are required. _(affects R034)_ (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
+- **A13** The text says submissions deemed noncompliant or technically unqualified will not be considered but does not define what makes a submission noncompliant; the bidder would ask which mandatory requirements cause disqualification. (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1])
+- **A14** The text says no single requirement automatically disqualifies a respondent, yet non-compliance with any individual requirement may lead the City to reject a proposal entirely; a bidder would ask which requirements are pass/fail and how partial compliance is scored. _(affects R037, R038)_ (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
+- **A15** The page limit is stated as "should not exceed 20 pages" (desired) while the surrounding text says respondents are "required to adhere" to the guidelines; a bidder would ask whether exceeding 20 pages (plus allowances) makes a proposal non-responsive. _(affects R042)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
+- **A16** The hard copy must be "received" by the deadline, but the text does not state whether the 4:00 PM PST deadline applies to physical delivery as well as the email; a bidder would ask what time the hard copy must arrive and whether a postmark suffices. _(affects R046)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
+- **A17** The text refers to a proposal opening time "stated on the cover page", but the cover page is not part of this chunk, so the bidder cannot confirm the exact withdrawal cutoff from this text alone. _(affects R051)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **A18** "Good cause" for post-opening withdrawal is undefined and left to City discretion; a bidder would ask what circumstances qualify. _(affects R053)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+- **A19** The text refers to "the required elements outlined below" and "additional details required for each proposal section" that are not contained in this chunk, so a bidder cannot tell from this text which sections and elements are mandatory; the bidder would ask for the complete list of required proposal elements. _(affects R054)_ (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
+- **A20** It is unclear who qualifies as an "authorized signature" (e.g., an officer, a specific title, or a person holding a power of attorney) and whether notarization is needed; the bidder would ask what signatory authority must be documented. _(affects R056)_ (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
+- **A21** The list of "Specific elements of the RFP response" is introduced without a shall/must, so it is unclear whether these five items are mandatory contents of Tab 1 or merely suggested; a bidder would ask whether omitting any of them makes the response non-responsive. _(affects R099, R060, R061, R062, R063)_ (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- **A22** The proposal goals and the deliverables are referenced only by cross-reference to Section 5.0, which is not included in this chunk; a bidder would ask which goals and deliverables must be addressed in Tab 1. _(affects R057)_ (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
+- **A23** The July 1, 2026 go-live is stated as the City's "goal" rather than a contractual milestone, so it is unclear whether the implementation timeline is a firm commitment with penalties or an aspirational target the Respondent should plan toward. _(affects R117)_ (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
+- **A24** The text does not define what the "levels of support" and "license levels" are (e.g., tiers, SLAs, hours of coverage), so a bidder cannot tell whether to propose its own tier structure or respond to a City-defined one. _(affects R067, R068, R070)_ (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
+- **A25** The chunk refers to "this information" without defining what firm information and qualifications must be provided for each team member; a bidder would ask what specific content is required per company. _(affects R072)_ (Tab 3: Firm Information and Qualifications, p. 12 [S25.1])
+- **A26** The City expresses a "desire" for participation by minority-, women-, disabled- and small-business enterprises but sets no goal, percentage or required form of evidence, so a bidder cannot tell whether a specific subcontracting commitment or documentation is expected. _(affects R077)_ (Tab 3.1 Organization Information, pp. 12-13 [S26.1])
+- **A27** The text requires "recent experience" without defining a cutoff period, so a bidder cannot tell which past projects qualify; the bidder would ask how many years back counts as recent and how many references or projects must be listed. _(affects R078, R079, R080, R081)_ (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
+- **A28** "Local referral" is undefined (local to Colfax, to the county, or to the region), and it is unclear whether the referral must be a client reference or merely a contact able to host a demonstration; the bidder would ask what geographic area and relationship qualify. _(affects R083)_ (Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1])
+- **A29** The text requires reimbursable expenses to be capped but does not state a cap amount or whether the City sets one; a bidder would ask whether a maximum reimbursable amount or percentage is prescribed. _(affects R086)_ (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- **A30** The text does not define what constitutes "similar services" for the three required references, so a bidder cannot tell whether references must match the full scope, a subset, or a comparable industry; the bidder would ask for the criteria. _(affects R093)_ (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- **A31** The required insurance types are open-ended ("including, but not limited to") and no minimum coverage limits or additional-insured requirements are stated here, so the bidder cannot price the coverage; the bidder would ask what limits and coverages are required. _(affects R098)_ (Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **A32** It is unclear what specific documentation or format satisfies Attachment G's demonstration of financial data protection and secure access controls (e.g., policies, certifications such as SOC 2, or a completed questionnaire). _(affects R100)_ (Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **A33** The chunk refers to "required items" and "optional items" in the scope of work but does not identify which deliverables are which; a bidder would ask for the definitive list of required versus optional deliverables. _(affects R102)_ (5.0 SCOPE OF WORK EXPECTATIONS, p. 14 [S30.1])
+- **A34** The scope does not define what "support" for the first 12 months post-implementation includes (hours, response times, channels, on-site vs remote), which drives staffing and price. The bidder would ask what service levels and coverage apply during that period. _(affects R112, R116)_ (5.1 TASK SUMMARY, p. 15 [S31.1])
+- **A35** The scope does not state which software system is being implemented or whether the vendor supplies, installs or merely assists with it, so the installation and data-import obligations are unclear. The bidder would ask what product/platform is in scope and who is responsible for installation. _(affects R108, R109)_ (5.1 TASK SUMMARY, p. 15 [S31.1])
+- **A36** The July 1, 2026 completion date is stated as a "goal" rather than a firm deadline, so it is unclear whether it is a binding milestone with consequences or an aspiration; the bidder would ask whether the date is contractually enforceable. _(affects R117)_ (5.2 PROJECT TIMELINE, p. 15 [S32.1])
+- **A37** The project start is described only as "soon after awarding the contract and finalizing negotiations," leaving the start date and any notice period open; the bidder would ask for the expected award date or a defined start trigger to build the schedule. _(affects R117, R118)_ (5.2 PROJECT TIMELINE, p. 15 [S32.1])
+- **A38** The text requires a capped reimbursable expense amount but gives no cap level, ceiling or basis for setting it, so bidders cannot know whether their proposed cap will be acceptable; the bidder would ask whether the City has a maximum allowable cap or expects the respondent to propose one. _(affects R086, R122)_ (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
+- **A39** It is unclear how the three total figures (total price for services and deliverables, total reimbursable expenses cap, and total price proposal) relate, i.e. whether the total price proposal is the sum of the other two or a separate all-inclusive figure; the bidder would ask for the intended arithmetic. _(affects R121, R122, R123)_ (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
+- **A40** The references must be for "similar services ... as outlined herein", but this chunk does not define what counts as similar; the bidder would ask what scope or service categories qualify as similar references. _(affects R093)_ (ATTACHMENT B: REFERENCES, p. 17 [S34.1])
+- **A41** The form requires written notice of relocation outside the United States but sets no timeframe or notice period; a bidder would ask how far in advance notice must be given and to whom it must be addressed. _(affects R132)_ (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
+- **A42** The certification lists the same audit/unqualified-opinion statement twice as two separate checkboxes, so it is unclear whether both must be checked or whether one is a duplicate; the bidder would ask which boxes are required. _(affects R134)_ (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- **A43** The text does not say how or to whom the 15-day change notification must be delivered (form, channel, address), and 'material changes' is undefined; the bidder would ask what notification method and threshold apply. _(affects R137)_ (ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- **A44** The required coverage limits, additional-insured status and certificate form for the workers compensation and commercial general liability policies are not stated, so the bidder cannot price the insurance or know whether its current coverage qualifies; the bidder would ask what limits and endorsements are required. _(affects R098)_ (ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1])
+- **A45** The text does not specify what form or level of detail the documentation of financial-data protection and access controls must take (e.g., policies, certifications, diagrams), nor whether it is a narrative response or an attached artifact; a bidder would ask what format and evidence are expected. _(affects R100)_ (ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1])
+- **A46** Conflicting requirements R040 and R044: R040 requires a signed hard-copy original proposal while R044 requires the proposal and all attachments to be emailed, giving incompatible submission methods. _(affects R040, R044)_ (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
+- **A47** Conflicting requirements R097 and R137: R097 requires notice to the City within 30 days of material changes to the financial certification, while R137 requires notice to the Contract Lead within 15 days for the same changes. _(affects R097, R137)_ (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
 
 ### Gaps
 
-- **G01** Pricing proposal form referenced in the table of contents but provided as a separate attachment; the bidder needs it to price the response. _(referenced document: ATTACHMENT A: PRICING PROPOSAL)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **G02** References form referenced in the table of contents but provided as a separate attachment. _(referenced document: ATTACHMENT B: REFERENCES)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **G03** Location of workers form referenced in the table of contents but provided as a separate attachment. _(referenced document: ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
-- **G04** Financial condition certification form referenced in the table of contents but provided as a separate attachment. _(referenced document: ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- **G05** Insurance certification form referenced in the table of contents but provided as a separate attachment. _(referenced document: ATTACHMENT E: CERTIFICATION OF INSURANCE)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- **G06** Software abilities and requirements document referenced in the table of contents but provided as a separate attachment; it holds solution requirements. _(referenced document: ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- **G07** Software application requirements document referenced in the table of contents but provided as a separate attachment; it holds solution requirements. _(referenced document: ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS)_ (Table of Contents, pp. 2-3 [S4.1])
-- **G08** The RFP refers to attachments that are part of the solicitation package but are not included in this text; the bidder needs them to know the full requirements and forms. _(referenced document: attachments)_ (2.1 REQUEST FOR PROPOSALS (RFP) DOCUMENT, p. 5 [S8.1])
-- **G09** The City's standard contract with terms and conditions is referenced as available upon request but is not included in this text; bidders need it to assess the terms they must accept. _(referenced document: City's standard contract)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
-- **G10** The General Contract Terms and Conditions that the RFP terms are incorporated into are referenced but not included in this chunk. _(referenced document: General Contract Terms and Conditions)_ (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
-- **G11** The RFP refers to attachments that must be populated and signed, but none are provided in this text; the bidder needs the actual attachment forms to complete the proposal. (4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
-- **G12** The standard City contract for services that respondents are required to review is referenced but not included in this text; the bidder needs the document to assess contractual terms before bidding. _(referenced document: standard City contract for services)_ (4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
-- **G13** The Excel spreadsheet that respondents must complete and return with their submission is a separate document to be provided by the City and is not included in this RFP text. _(referenced document: attached excel spreadsheet)_ (ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1])
+- **G01** Pricing proposal form referenced in the table of contents; the bidder needs it to format its price submission. _(referenced document: ATTACHMENT A: PRICING PROPOSAL)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- **G02** References form referenced in the table of contents; the bidder must complete it as part of its proposal. _(referenced document: ATTACHMENT B: REFERENCES)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.2 Firm Qualifications and Experience, p. 13 [S27.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- **G03** Form for reporting the location of workers utilized by the respondent, referenced in the table of contents. _(referenced document: ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
+- **G04** Certification of financial condition form referenced in the table of contents. _(referenced document: ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **G05** Certification of insurance form referenced in the table of contents. _(referenced document: ATTACHMENT E: CERTIFICATION OF INSURANCE)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **G06** Software abilities and requirements exhibit referenced in the table of contents; it holds solution requirements the bidder must meet. _(referenced document: ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **G07** Software application requirements exhibit referenced in the table of contents; it holds solution requirements the bidder must meet. _(referenced document: ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS)_ (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- **G08** The RFP states that attachments are part of the solicitation but does not name or include them here; the bidder needs the attachment documents themselves. _(referenced document: attachments)_ (2.1 REQUEST FOR PROPOSALS (RFP) DOCUMENT, p. 5 [S8.1]; 4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
+- **G09** The City's standard contract with terms and conditions is referenced as available upon request but is not included in this chunk. _(referenced document: City's standard contract)_ (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1])
+- **G10** The General Contract Terms and Conditions document, which the RFP terms are incorporated into, is referenced but not included in this chunk. _(referenced document: General Contract Terms and Conditions)_ (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
+- **G11** The standard City contract for services that respondents are required to review is referenced but not included in this text. _(referenced document: standard City contract for services)_ (4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
+- **G12** The Excel spreadsheet that respondents must complete and return with their submission is a separate document to be provided by the City and is not included in this RFP text. _(referenced document: attached excel spreadsheet)_ (ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1])
 
 ## Proposed solution
 
-The bid delivers a hosted, cloud-based accounting and financial reporting platform for the City of Colfax, configured to replace the City's current Tyler Technologies Fund Balance modules (Accounts Payable with 1099 filing, purchasing requisitions and approvals, Accounts Receivable, General Ledger, Payroll, Utility Billing and Business Licensing) for five users, plus a full implementation services wrap. Delivery runs in four phases mirroring the RFP's task structure: an approach and project-management phase (dedicated project manager, weekly progress/budget/timeline meetings, audit-aware account structure recommendation), a build-and-migrate phase (configuration, financial report writing, import of five years of history, coordination with Accounting and IT), a training phase (power-user and all-staff training with manuals and at least one recorded session), and a twelve-month post-go-live support phase (help desk, automated update notices, annual 1099/W-2 e-filing support). The work is a build-and-configure engagement on a vendor-hosted subscription, not a custom software development, and is sequenced to reach the City's July 1, 2026 go-live at the start of its fiscal year. The team is a named implementation project manager, functional consultants per module, a report-writing specialist, a data migration engineer, a trainer, and an account manager who carries the relationship through renewal. A governance and compliance workstream runs alongside delivery to carry the RFP's contractual, insurance, certification, pricing-breakout and disclosure obligations, and the proposal itself is assembled to the RFP's required tab order and page limits.
+The bid delivers a hosted, cloud-based accounting and financial reporting platform for the City of Colfax, configured to replace the City's current Tyler Technologies Fund Balance modules (Accounts Payable with 1099 filing, purchasing requisitions and approved purchase orders, Accounts Receivable, General Ledger, Payroll, Utility Billing and Business Licensing) and implemented by a named project manager and technical team. Delivery runs in four phases that mirror the RFP's four tasks: discovery and project management planning, installation and implementation with five years of historical data imported, training and documentation, then twelve months of post-implementation support and ongoing annual services. The platform is procured as a subscription with implementation services, priced as a fixed total with a capped reimbursable allowance, and scheduled to go live by July 1, 2026. A governance and compliance workstream runs alongside delivery to carry the RFP's contractual, insurance, certification, offshoring-notice and communication obligations. The bid team is a single prime vendor accountable for all items, with any third-party applications disclosed and priced.
 
 ### Coverage
 
-Covers 47 of 47 mandatory requirements.
+Covers 46 of 46 mandatory requirements.
 
 ### Components
 
-#### C01. Project management, governance and compliance obligations
+#### C01. Project management, governance and weekly reporting
 
-A dedicated project manager runs the engagement with a written personnel management plan naming the PM, technical staff and their roles, and holds weekly meetings that track progress, budget and timeline against a published schedule. The same workstream owns the RFP's contractual and administrative obligations: no additional or modified terms are submitted with the proposal and no attempt is made to alter or delete the bar on modified terms; the team observes the no-contact rule during evaluation and accepts that a violation disqualifies it; it accepts that all RFP terms are enforceable contract conditions and that 'shall', 'must' and 'requirements' are binding; it notifies the City within 30 days of any condition materially altering the financial certification and notifies the Contract Lead within 15 days of material changes to the financial-condition representations; and it gives written notice if personnel relocate outside the United States. The bid team also files written questions by July 31, 2025, holds September 25, 2025 for virtual finalist interviews, and absorbs all proposal and interview costs without reimbursement.
+A dedicated project manager plus named technical staff run the engagement from award to go-live and through the support term, with a written personnel management plan identifying roles, hours of availability and escalation paths. The vendor holds weekly progress, budget and timeline meetings with the City's Accounting and IT staff, producing a status report, a budget-to-actual tracker and a refreshed schedule each week. The plan sequences work from contract award (targeted October 22, 2025) to the July 1, 2026 go-live, with a task-level timeline and dependencies, and it names the City staff whose time is needed at each stage so the City can plan around the fiscal year-end close. The vendor also confirms availability for a virtual finalist interview on September 25, 2025 if the City requires one.
 
-Addresses: R105, R106, R025, R026, R030, R031, R039, R040, R099, R139, R134, R011, R013, R018.
+Addresses: R103, R104, R109, R110, R117, R012.
 
-- The City's fiscal year ends June 30, which is why the go-live target is July 1, 2026. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1]; Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- The City has 11 full-time employees with one position vacant plus one part-time/seasonal/contract employee, so the vendor must carry most implementation workload. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
+- The City's stated goal is to go live on the new system by July 1, 2026, the start of its fiscal year, which leaves roughly nine months from the targeted October 22, 2025 award. (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
+- The City has 11 full-time employees (one position vacant) plus one part-time/seasonal/contract employee, so City-side project capacity is limited and the vendor must carry most of the delivery workload. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
 
 #### C02. Hosted accounting and financial reporting platform
 
-A cloud-hosted subscription platform configured to cover every module the City uses today: Accounts Payable including 1099 filing, purchasing requisitions and purchase orders with approval routing; Accounts Receivable; General Ledger; Payroll; Utility Billing; and Business Licensing. Transactions post systematically through the general ledger with budgeting and forecasting tools, and the reporting layer produces standard and ad hoc reports and analysis for Council and management decision-making. The system retains transaction detail, approval trails and documentation so records remain auditable for future reference, and it is licensed for the City's five users with a documented path to add licenses as staffing changes. The proposal identifies license types by level of use and states where any additional application or third-party vendor is used to meet a requirement.
+The vendor supplies a cloud-hosted accounting and financial reporting system covering the City's full current functional footprint: Accounts Payable including 1099 filing, purchasing requisitions and purchase orders with approval routing; Accounts Receivable; General Ledger; Payroll; Utility Billing; and Business Licensing. Transactions post systematically through configurable approval workflows, and the budgeting and forecasting module supports multi-year projections, budget-to-actual comparison and scenario modelling against the City's $6 million revenue base and June 30 fiscal year. Reporting and analysis tools include an ad hoc report writer, dashboards and export to spreadsheet for council and management reporting, and the system retains a full transaction and change audit trail with document attachment so records remain auditable and retrievable for future reference. The response identifies the license types offered at each level of use, describes how account numbers can be structured and customized, and states where any additional application or third-party vendor is used to meet a requirement rather than presenting it as native functionality.
 
-Addresses: R002, R004, R005, R006, R008, R009, R063, R064.
+Addresses: R002, R004, R005, R006, R008, R060, R061, R062.
 
-- The City currently runs Tyler Technologies Fund Balance with Accounts Payable, Accounts Receivable, General Ledger, Payroll, Utility Billing and Business Licensing modules and five users. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City currently runs Tyler Technologies Fund Balance with Accounts Payable, Accounts Receivable, General Ledger, Payroll, Utility Billing and Business Licensing modules used by five users. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City operates on a $6 million annual budgeted revenue base and its fiscal year ends June 30. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
 
-#### C03. Account structure design and financial report writing
+#### C03. Implementation, account structure and data migration
 
-Consultants with public-sector audit and reporting expertise review the City's current chart of accounts and recommend an account structure that supports auditable reporting, fund accounting and the City's budget-to-actual and financial statement needs. The team then writes the City's financial reports in the new system, including the standard reports the City produces today and the analysis views its decision-makers rely on, and documents the numbering scheme and customization options so the City can maintain the structure itself. Account number customization is described concretely in the proposal: segment definitions, format and length, and how the City can define and change its own numbering.
+Implementation is delivered as a structured build-and-configure engagement: the vendor installs and configures the hosted environment, works with the City's auditors' expectations and the City's reporting requirements to recommend an account structure that supports auditable reporting, and assists Accounting staff in writing the financial reports the City needs for council, audit and grant purposes. The vendor imports the prior five years of historical data from the City's existing system, with reconciliation and control totals signed off by Accounting before cutover. Cutover is planned around the June 30 fiscal year-end so that the prior-year close completes in the legacy system and the new system opens the fiscal year 2026-27 books, with parallel running and a documented rollback point to minimize downtime and operational disruption. The vendor coordinates directly with the City's Accounting and IT contacts on network, identity and data-extract dependencies, and the implementation completes by July 1, 2026.
 
-Addresses: R107, R108, R109, R063, R005.
+Addresses: R106, R107, R108, R109, R110, R117, R003.
 
-#### C04. Data migration of five years of history
+- The City's current system is Tyler Technologies Fund Balance, which is the source system for the five years of historical data to be imported. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- The City's fiscal year ends June 30, so the July 1, 2026 go-live coincides with the opening of a new fiscal year. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1]; Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
 
-The team extracts, maps, cleans and loads the prior five years of financial history from the City's current system into the new platform, with reconciliation and control totals signed off by Accounting before cutover. Migration runs in a rehearsal pass followed by a final load, and the team works directly with Accounting and IT on file formats, timing and validation so the transition causes minimal downtime and operational impact. The proposal states the assumed source system, record volumes and file formats used to size the effort.
+#### C04. Training, documentation and change management
 
-Addresses: R110, R111, R112, R006.
+The vendor delivers personalized, role-based training and written manuals for the City's power users in Accounting, covering configuration, period close, report writing and troubleshooting, so the City can maintain the system without vendor dependence. All remaining staff receive at least one recorded training session plus a written manual, and the recordings and manuals are handed over as City property for onboarding future employees. Training is delivered in the format appropriate to each license level and the response states whether each session is in person, virtual or a standard recording. Because the City has a small staff with one vacant position, training is scheduled in short sessions outside close periods and each session is recorded so staff can revisit it.
 
-- The prior five years of data must be imported for history. (5.1 TASK SUMMARY, p. 15 [S31.1])
+Addresses: R111, R113.
 
-#### C05. Implementation plan, schedule and go-live
+- The City has 11 full-time employees with one position vacant plus one part-time/seasonal/contract employee, so training must be repeatable and self-service for a small team. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
 
-A phased implementation plan and task sequence sized to reach go-live on July 1, 2026, aligned to the start of the City's fiscal year, with milestones for configuration, migration, parallel testing, training and cutover. The plan names key implementation personnel, describes support levels during implementation and for recurring licenses and services, and sets out the client engagement approach including the role of an account manager. Contingency is built into the schedule so a late contract award compresses scope rather than the go-live date.
+#### C05. Ongoing support, help desk and annual services
 
-Addresses: R068, R003, R007, R106, R111, R112.
+The vendor provides dedicated technical support during implementation and for the first twelve months after go-live, and continues that support through each annual contract renewal. Support is delivered through a help desk and ticketing system with defined priority levels, response and resolution targets, published hours of coverage and named escalation contacts, so the City can see how a request is prioritized and tracked. The vendor pushes automated software updates and issues advance communications describing changes, including release notes and any action required by the City. The vendor supports the City's annual e-filing obligations, including 1099 and W-2 preparation and submission, and provides an account manager as the City's single point of contact for recurring services. The response describes the support levels offered both during implementation and for recurring licenses and services, and outlines virtual demonstrations of product capabilities available to the City.
 
-- The City's stated go-live target is July 1, 2026, with the project starting soon after contract award and negotiation. (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1])
+Addresses: R003, R007, R112, R114, R115, R116, R063.
 
-#### C06. Training and change management
+- The City's current Accounts Payable module includes 1099 filing, and the City wants dedicated technical support during implementation and throughout annual contract renewals. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
 
-Personalized power-user training and manuals for the City's finance staff, plus at least one recorded training session and a written manual made available to all staff, delivered in person, virtually or as standard recordings by license level as the City prefers. Training is scheduled before go-live on configured data and repeated after cutover, and the recorded sessions and manuals stay with the City as reference material. The approach accounts for a small staff carrying full-time duties during the transition.
+#### C06. Audit-readiness and reporting assurance
 
-Addresses: R113, R115, R003.
+The vendor assigns a solution architect with local government audit experience to document how the configured system satisfies the City's auditing and reporting requirements, including segregation of duties, approval evidence, journal entry controls and retention of supporting documentation. This produces an audit-readiness pack the City can hand to its external auditors, mapping each control to where it is enforced in the system, and a recommended chart-of-accounts structure that keeps fund, function and object dimensions reportable without rework. The pack is reviewed with Accounting before go-live and refreshed after the first post-implementation audit cycle.
 
-- The City's small staff and single vacancy mean training must fit around full-time operational duties. *(inference)* (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+Addresses: R105, R106, R006.
 
-#### C07. Ongoing support, help desk and annual e-filing
+- The City needs to maintain auditable records and documentation for future reference and requires the vendor to understand its auditing and reporting requirements. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1]; 5.1 TASK SUMMARY, p. 15 [S31.1])
 
-Twelve months of post-implementation support included in the base price, covering a help desk with a ticketing system that prioritizes and tracks requests, named support hours, and escalation paths. The vendor pushes automated software updates and issues change notices so the City knows what changed and when, and provides annual 1099 and W-2 e-filing support each filing season. Support continues through annual contract renewals with the same account manager, and the proposal states response-time commitments so the City can score the technical support criterion.
+#### C07. Price proposal and cost transparency
 
-Addresses: R007, R114, R116, R117, R118, R003.
+The vendor submits a complete price proposal on the City's Attachment A cover sheet stating a total price for all services and deliverables, a total reimbursable expenses cap, and a total price proposal amount, with the arithmetic between the three figures shown explicitly. The price is all-inclusive of materials, supplies and travel, and is broken out into implementation fees and recurring fees, with license fees shown separately by license type and support fees split between implementation-period and post-implementation costs. The proposal also estimates the cost of any additional applications or third-party vendors identified in the solution, so the City can compare the total cost of ownership rather than a headline figure. Reimbursable expenses are capped at a stated ceiling with no unlimited reimbursement, and the vendor confirms that the price proposal is final and will not be altered during any clarification stage.
 
-#### C08. Security, data protection and financial-condition assurance
+Addresses: R085, R086, R089, R090, R091, R092, R121, R122, R123, R031.
 
-A security documentation package for Attachment G describing the controls protecting the City's financial data: encryption in transit and at rest, role-based access, multi-factor authentication, segregation of duties, logging and monitoring, backup and recovery, and incident response, mapped to a recognized framework so the City can compare it to its expectations. The bid also supplies Attachment D certification of financial stability with an unqualified audit opinion and no liens or disqualifying litigation, signed by an authorized representative, and Attachment E proof of workers compensation and commercial general liability coverage.
+- The City will not accept unlimited reimbursable expenses and requires the price proposal to cap them. (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
 
-Addresses: R102.
+#### C08. Contract, compliance and certification obligations
 
-#### C09. Price proposal and cost transparency
+The vendor accepts the RFP's terms as binding contract conditions, treats every "shall", "must" and "requirement" as a contractual obligation, and does not alter or delete the paragraph giving notice of the City's terms and conditions, since doing so is grounds for rejection as nonresponsive. The vendor observes the prohibition on communications with City staff, evaluation committee members and other parties about its own or competitors' proposals from submission until award, and accepts disqualification as the consequence of a violation. The vendor bears all costs of preparing and submitting its proposal and of participating in interviews, with no reimbursement from the City. The vendor signs the Certification of Financial Condition and notifies the City of any occurrence or condition that materially alters the truth of a statement in that certification within thirty days of the change. The vendor states whether any work will be performed outside the United States and, if so, lists those locations and describes the corporate structure, and gives the City written notice if it, its employees, subcontractors or other personnel relocate to locations outside the United States. The vendor also supplies proof of workers compensation and commercial general liability insurance and documentation of the measures protecting financial data and the secure access controls implemented.
 
-Attachment A is completed as the price proposal cover sheet and references the specific tasks and deliverables in the RFP's scope of work. The price breaks out the implementation fee, recurring fees, license fees, and support costs during implementation separately from post-implementation, plus an estimate for any additional applications or vendors. The total price covers all materials, supplies and travel, reimbursable expenses are capped at a stated figure rather than left unlimited, and the total price proposal amount is stated as a single figure. The price is submitted as final and is not altered during clarification.
+Addresses: R027, R028, R029, R037, R038, R017, R097, R132, R137.
 
-Addresses: R087, R088, R091, R092, R093, R094, R123, R124, R125, R033.
-
-#### C10. Proposal assembly, references and demonstrations
-
-The bid team assembles the response in the RFP's required tab order within the page allowance, with a signed original hard copy and a digital copy emailed to accounting@colfax-ca.gov under the required subject line before the August 28, 2025 4:00 PM PST deadline. The package includes a completed Attachment F software abilities spreadsheet, license types by level of use, the account-number customization description, disclosure of any additional applications or vendors, and the availability of virtual product demonstrations. It carries at least three references for similar work with valid e-mail addresses and full contact detail, a local referral able to host an in-person demonstration, and firm qualifications and key personnel summaries.
-
-Addresses: R061, R062, R063, R064, R065.
-
-- Proposals are due August 28, 2025 at 4:00 PM PST, with finalist interviews on September 25, 2025 and award targeted for October 22, 2025. (2.2 RFP SCHEDULE, p. 5 [S9.1])
+- The City rejects additional or modified terms and conditions submitted with a proposal and treats any attempt to alter the notice paragraph as grounds for rejection. (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2])
+- The City will evaluate offshoring disclosures for additional risks and costs before award. (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
 
 ### Assumptions
 
-- All six modules the City runs today, including 1099 filing, purchasing requisitions and purchase orders with approvals, are assumed to be required functionality of the new system and are replaced one-for-one. *(inference)* (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- Five users is assumed to be the licensed quantity at go-live, with additional named-user licenses priced as an option rather than included in the base. *(inference)* (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
-- July 1, 2026 is treated as a firm go-live commitment, with implementation assumed to begin within 30 days of the October 22, 2025 award target. *(inference)* (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
-- The twelve months of post-implementation support is assumed to start at go-live and to be included in the base price rather than priced as an option. *(inference)* (5.1 TASK SUMMARY, p. 15 [S31.1])
-- The five-year data migration is assumed to draw from the City's current Tyler Technologies Fund Balance system in its standard export formats, with the City supplying extracts and the vendor performing mapping and cleaning. *(inference)* (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1]; 5.1 TASK SUMMARY, p. 15 [S31.1])
-- The reimbursable expense cap is assumed to be a respondent-proposed figure stated in Attachment A, set at a level covering travel for on-site training and cutover support. *(inference)* (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- The total price proposal amount is assumed to be the sum of the total price for all services and deliverables plus the capped reimbursable expenses, stated as one figure. *(inference)* (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
-- The Attachment F software abilities spreadsheet is assumed to match the functional scope described in the RFP's scope of work, and is completed against that scope pending the City's separate file. *(inference)* (ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1])
-- The City's standard contract is assumed to be its General Contract Terms and Conditions without material deviation, so no exceptions are raised in the proposal and any concerns are raised as written questions by July 31, 2025. *(inference)* (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2]; 4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1]; 3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1])
-- Where the 30-day and 15-day financial-certification notice periods conflict, the shorter 15-day period to the Contract Lead is assumed to govern, with the City also notified within 30 days. *(inference)* (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
-- Insurance is assumed to be carried at limits customary for a municipal software and services contract, with certificates naming the City as additional insured, pending the City's stated limits. *(inference)* (ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- Attachment G documentation is assumed to be accepted as a written control narrative mapped to a recognized security framework, since the RFP names no standard. *(inference)* (ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
-- The account manager role is assumed to be a named, dedicated contact included in the base price rather than an optional or on-site resource. *(inference)* (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
-- The 20-page limit is treated as binding, with the cover letter and appendices kept within their separate allowances. *(inference)* (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
-- The hard copy is assumed to be delivered to the 33 S. Main Street address to be physically received by the 4:00 PM PST deadline, with the emailed copy sent before the same time. *(inference)* (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1])
+- The new system is assumed to be licensed for the City's current five named users plus headroom for the vacant position and seasonal staff, with additional licenses priced per user, since the RFP does not state a required user count. *(inference)* (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+- Migration of the prior five years of history is assumed to come from the City's Tyler Technologies Fund Balance system, with the City supplying extracts and the vendor performing the import and reconciliation. *(inference)* (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1]; 5.1 TASK SUMMARY, p. 15 [S31.1])
+- The July 1, 2026 go-live is treated as a firm contractual milestone with a documented contingency plan, not an aspiration, because the City ties it to the start of its fiscal year. *(inference)* (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1])
+- The twelve-month post-implementation support term is assumed to include remote help desk coverage during business hours with defined response targets, on-site visits priced separately as capped reimbursable travel, since the RFP does not define service levels. *(inference)* (5.1 TASK SUMMARY, p. 15 [S31.1])
+- The vendor proposes its own three-tier license and support structure (named user, concurrent user and read-only inquiry) and its own service levels, since the RFP does not define license or support tiers. *(inference)* (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
+- The reimbursable expenses cap is set by the vendor as a stated dollar ceiling covering travel and third-party costs, since the City prescribes no cap amount. *(inference)* (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
+- The total price proposal is presented as the sum of the total price for services and deliverables plus the reimbursable expenses cap, with all three figures shown so the City can verify the arithmetic. *(inference)* (ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
+- Material changes to the Certification of Financial Condition are notified to the Contract Lead within 15 days in writing, with a copy to the City's accounting contact, resolving the conflict between the 15-day and 30-day periods in favour of the shorter one. *(inference)* (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+- The Attachment F and Attachment G software requirements are assumed to match the functional scope described in the RFP's scope of work, and the vendor will complete both spreadsheets against that scope and flag any requirement it cannot meet natively. *(inference)* (Table of Contents, pp. 2-3 [S4.1]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1])
+- The City's standard contract and General Contract Terms and Conditions are assumed to be its standard software and services terms, which the vendor will review before the July 31, 2025 question deadline and raise any exception as a question rather than in the proposal. *(inference)* (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1]; 4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
+- Insurance is assumed to be provided at limits of $1,000,000 per occurrence and $2,000,000 aggregate for commercial general liability plus statutory workers compensation, with the City named as additional insured, pending the City's stated limits. *(inference)* (ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- Attachment G documentation is assumed to be satisfied by a SOC 2 Type II report, a written security and access-control narrative, and a completed security questionnaire. *(inference)* (ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+- The proposal is submitted both as one signed hard copy and as an emailed digital copy by the August 28, 2025 4:00 PM PST deadline, treating both methods as required rather than alternatives. *(inference)* (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
+- The implementation start is assumed to be triggered by contract award on or about October 22, 2025, with work beginning within two weeks of award and negotiation. *(inference)* (2.2 RFP SCHEDULE, p. 5 [S9.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1])
 
 ## Risks
 
 | ID | Risk | Severity | Likelihood | Source |
 |---|---|---|---|---|
-| K01 | Attachment F spreadsheet not available, so the 45%-weighted scope response is built blind | high | high | RFP |
-| K02 | City's standard contract and General Contract Terms not available before bidding | high | medium | RFP |
-| K03 | July 1, 2026 go-live is a goal, not a fixed date, and the start date is undefined | high | medium | Solution |
-| K04 | Hard-copy delivery and page-limit compliance could disqualify an otherwise strong bid | high | low | RFP |
-| K05 | Attachment G security documentation required but its standard and format are undefined | medium | high | RFP |
-| K06 | Attachments A to E missing, so pricing, references, location and certification forms must be reconstructed | medium | high | RFP |
-| K07 | Small City staff cannot carry their share of implementation and training | medium | high | RFP |
-| K08 | Conflicting 30-day and 15-day financial-certification notice periods | medium | medium | RFP |
-| K09 | Five-year data migration sized on assumed source formats and volumes | medium | medium | Solution |
-| K10 | Twelve months of post-go-live support priced into the base without a defined scope | medium | medium | Solution |
-| K11 | Reimbursable expense cap and total price structure left to the bidder's guess | medium | medium | RFP |
-| K12 | Insurance limits and additional-insured terms unstated, so coverage cannot be priced or confirmed | medium | medium | RFP |
+| K01 | Attachment F and G requirements not available before the deadline | high | high | RFP |
+| K02 | Nine-month go-live tied to the fiscal year start | high | medium | Solution |
+| K03 | Hard copy and emailed proposal conflict | high | medium | RFP |
+| K04 | City's standard contract and General Terms not available | high | medium | RFP |
+| K05 | Support scope and service levels undefined but priced as fixed | medium | high | Solution |
+| K06 | Certification change-notice period conflicts (15 vs 30 days) | medium | medium | RFP |
+| K07 | Reimbursable expense cap set by the bidder with no City guidance | medium | medium | Solution |
+| K08 | User count and license basis not stated | medium | medium | Solution |
+| K09 | Five years of historical data migration from Tyler Fund Balance | medium | medium | Solution |
+| K10 | Insurance limits and Attachment G security evidence unspecified | medium | medium | Solution |
+| K11 | Evaluation criteria and pass/fail rules are vague | medium | medium | RFP |
+| K12 | Offshoring disclosure may raise the City's cost and risk view | medium | low | RFP |
 
-### K01. Attachment F spreadsheet not available, so the 45%-weighted scope response is built blind
+### K01. Attachment F and G requirements not available before the deadline
 
-Attachment F ("Software Abilities and Requirements") is a separate Excel file the City must supply and the proposal must return completed, but it is not in the RFP package. The bid team must therefore guess the City's line-item functional requirements and price against them; if the real spreadsheet contains items the proposed platform does not cover, the bid is either non-responsive or needs unplanned configuration and third-party products after award. Because Tab 1 carries 45% of the score, a mis-scoped Attachment F also directly costs evaluation points.
+The Software Abilities and Requirements spreadsheet (Attachment F) and the Software Application Requirements exhibit (Attachment G) are referenced as mandatory submission items but are not in the RFP document. The bidder must complete and return both against a scope it cannot see, so it may miss requirements, under-scope the platform, or be judged nonresponsive for an incomplete spreadsheet. Attachment E (insurance certification) is likewise missing, so the proof-of-insurance submission cannot be prepared in its required form.
 
-**Why:** The document is mandatory (R061) and holds solution requirements, yet it is listed as a separate attachment not included in the RFP; the solution itself admits it is completed against an assumed scope pending the City's file. (Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS, p. 21 [S39.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+**Why:** Three attachments the RFP requires respondents to complete and return are absent from the document, and Attachment F alone carries the software requirements the solution must be priced against; the proposed solution already assumes the attachments match the scope of work rather than knowing it.
 
-**Mitigation:** Request Attachment F in writing before the July 31, 2025 question deadline and state in the proposal that the response is completed against the RFP scope of work pending the City's file; hold a priced contingency for any line items outside the six named modules.
+**Mitigation:** Request Attachments E, F and G in writing before the July 31, 2025 question deadline and state in the proposal that pricing is based on the scope of work in Section 5.0 pending the spreadsheets; hold a contingency in the price for requirements the spreadsheets may add.
 
-**Related requirements:** R061, R035, R057.
+**Related requirements:** R099, R100, R098, R055, R102.
 
-### K02. City's standard contract and General Contract Terms not available before bidding
+### K02. Nine-month go-live tied to the fiscal year start
 
-The RFP makes all its terms enforceable contract conditions and bars modified terms in the proposal, yet the standard contract and the General Contract Terms and Conditions are only 'available upon request' and are not in the package. The bidder must accept unseen terms covering liability, indemnity, insurance and termination, and any objection raised in the proposal risks rejection.
+The City wants the new system live by July 1, 2026, roughly nine months after a targeted October 22, 2025 award, covering discovery, configuration of six modules, five years of data migration, report writing, training and cutover. The City has 11 full-time staff with one vacancy, so City-side review, data extracts and sign-offs will be slow. A slip past July 1 forces the City to open its fiscal year on the legacy Tyler system or run parallel books, and the bidder carries the reputational and contractual cost.
 
-**Why:** R039 and R025/R026 make unseen terms binding and objections disqualifying, while the contract documents are missing; the solution assumes no material deviation without having read them. (3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2]; 4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
+**Why:** The RFP states July 1, 2026 as a goal rather than a firm milestone, but the proposed solution treats it as a firm contractual milestone with a fixed October 22, 2025 start; the compressed schedule and thin City staffing make a slip plausible. (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1]; 1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
 
-**Mitigation:** Request the standard contract and General Contract Terms in writing before July 31, 2025; if not produced, state in the proposal that the bid is conditioned on review of those documents and raise any concerns as written questions rather than as proposal exceptions.
+**Mitigation:** State in the proposal that the July 1, 2026 date is conditional on award by October 22, 2025, timely City data extracts and sign-offs, and named City staff availability; build a documented fallback that opens fiscal year 2026-27 in the legacy system if cutover slips.
 
-**Related requirements:** R039, R025, R026, R103, R022.
+**Related requirements:** R117, R108, R107, R111, R109.
 
-### K03. July 1, 2026 go-live is a goal, not a fixed date, and the start date is undefined
+### K03. Hard copy and emailed proposal conflict
 
-The RFP states July 1, 2026 as the City's goal and says work starts 'soon after' award, with award targeted for October 22, 2025 but no notice-to-proceed date. If award slips or negotiations run long, the roughly eight-month window to configure six modules, migrate five years of history, test and train compresses; the solution's answer is to cut scope rather than move the date, which risks an incomplete cutover at fiscal-year start.
+One requirement demands a signed original hard copy of the proposal and all attachments, while another requires the proposal and all attachments to be emailed by August 28, 2025 at 4:00 PM PST. A bidder that reads them as alternatives risks rejection for missing a submission method; a bidder that does both must get a physical package from its office to a small Sierra foothills address by the same deadline, with no clarity on whether the 4:00 PM cutoff applies to delivery.
 
-**Why:** The date is aspirational in the RFP and the start is undefined, yet the solution treats July 1, 2026 as a firm commitment and plans to absorb slippage by compressing scope. (Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1]; 5.2 PROJECT TIMELINE, p. 15 [S32.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
+**Why:** The two requirements are directly incompatible and the RFP does not say whether the hard copy deadline is the same 4:00 PM cutoff or whether a postmark suffices; missing either method is grounds for a nonresponsive proposal. (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; Request for Proposals: Accounting and Financial Reporting Software, p. 1 [S2.1]; 2.2 RFP SCHEDULE, p. 5 [S9.1])
 
-**Mitigation:** State in the proposal that the schedule assumes a notice to proceed by a named date (for example mid-November 2025) and define in advance which scope items are deferred if award is later, so the City chooses the trade-off rather than the vendor.
+**Mitigation:** Ask the City before the question deadline whether both methods are required and what time the hard copy must arrive; plan to courier the signed original to arrive well before 4:00 PM PST on August 28, 2025 and email the digital copy the same morning.
 
-**Related requirements:** R068, R120, R067.
+**Related requirements:** R040, R044, R046, R045, R047.
 
-### K04. Hard-copy delivery and page-limit compliance could disqualify an otherwise strong bid
+### K04. City's standard contract and General Terms not available
 
-The proposal must arrive as one signed original hard copy physically received at a Colfax address by 4:00 PM PST on August 28, 2025, alongside an emailed copy, and the RFP is unclear whether the PO Box and street address are alternatives and whether the 20-page limit is pass/fail. A courier delay or an over-length response could make the bid unevaluable regardless of its quality.
+The RFP makes all its terms enforceable contract conditions and rejects any proposal that modifies them, yet the standard City contract, the General Contract Terms and Conditions and the standard contract for services are only available on request and are not in the document. The bidder must accept unknown terms — indemnity, liability caps, termination, data ownership, insurance — or risk rejection for raising exceptions in the proposal.
 
-**Why:** Late and FAX submissions are not evaluated and the page limit is stated as 'should' while the surrounding text says respondents are required to adhere; the solution assumes the street address and treats the limit as binding. (4.1 PROPOSAL PREPARATION & SUBMITTAL, pp. 10-11 [S21.1]; 4.1 PROPOSAL PREPARATION & SUBMITTAL, p. 11 [S21.2])
+**Why:** Three separate contract documents are referenced but absent, and the RFP states that objections raised in the proposal are disregarded or cause rejection, so the bidder has no safe channel to negotiate terms it has not seen. (2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, p. 7 [S13.1]; 2.6 NOTICE TO RESPONDENTS REGARDING TERMS AND CONDITIONS, pp. 7-8 [S13.2]; 3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1]; 4.3 ADDITIONAL REQUIREMENTS, p. 14 [S29.1])
 
-**Mitigation:** Ask the City which address to use and whether the hard copy must physically arrive by the deadline, then ship by tracked courier at least three business days early and hold the response to the page allowance with the cover letter and appendices in their separate budgets.
+**Mitigation:** Request the standard contract and General Terms in writing before the question deadline and review them before pricing; if they arrive late, state in the proposal that the bid is conditional on the terms reviewed and raise any exception as a question, never in the proposal body.
 
-**Related requirements:** R042, R046, R048, R044, R045.
+**Related requirements:** R037, R038, R026, R027, R101, R021.
 
-### K05. Attachment G security documentation required but its standard and format are undefined
+### K05. Support scope and service levels undefined but priced as fixed
 
-Attachment G asks for documentation of financial-data protection and secure access controls, but the form is not in the package and no framework, format or scope is named. The bid team cannot tell whether a control narrative, a SOC 2 report or a certification will be accepted, so it may submit evidence the City scores as insufficient, or over-invest in documentation that is not what was wanted.
+The RFP requires dedicated support during implementation and for twelve months after go-live, plus ongoing annual support, but does not define hours of coverage, response and resolution targets, channels or on-site expectations. The proposed solution invents its own three-tier license and support structure and business-hours remote help desk, so if the City expects 24/7 coverage or on-site visits, the fixed price absorbs unplanned staffing cost or the City rejects the tiers as non-compliant.
 
-**Why:** R102 is mandatory and Attachment G is a referenced document absent from the PDF, while the RFP names no standard; the solution's assumption that a narrative mapped to a recognized framework will be accepted is unverified. (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1])
+**Why:** Support carries 25% of the evaluation weight and the RFP leaves the levels of support and license tiers entirely open; the solution's own tiers and service levels are stated as inferences, not City requirements. (5.1 TASK SUMMARY, p. 15 [S31.1]; 3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 2: Proposed Strategy and Technical Approach, p. 12 [S24.1])
 
-**Mitigation:** Ask the City by July 31, 2025 which standard and format Attachment G requires, and submit a control narrative mapped to a recognized framework plus the current SOC 2 report as supporting evidence.
+**Mitigation:** State the proposed service levels, coverage hours and license tiers explicitly in the proposal as the basis of the price, and price on-site visits as capped reimbursable travel so an on-site expectation does not erode the fixed fee.
 
-**Related requirements:** R102.
+**Related requirements:** R007, R112, R116, R060, R067, R068.
 
-### K06. Attachments A to E missing, so pricing, references, location and certification forms must be reconstructed
+### K06. Certification change-notice period conflicts (15 vs 30 days)
 
-Attachment A (pricing proposal), B (references), C (location of workers), D (financial condition certification) and E (insurance certification) are all referenced but supplied separately and absent from the RFP. The bid team must recreate the forms, risking a submission that is rejected as incomplete or that omits a required field, and cannot confirm the exact price breakout the City will score.
+One requirement obliges the respondent to notify the City within 30 days of anything that materially alters its financial certification; another obliges notice to the Contract Lead within 15 days of the same changes. Operating to the wrong period is a breach of a contractual obligation that runs for the whole contract term, and the RFP does not define what counts as material or how notice must be delivered.
 
-**Why:** Five mandatory submission forms (R089, R084, R097, R098, R100) are missing from the package; the RFP requires all attachments to be populated and signed, and the solution already assumes it can recreate Attachment B. (Table of Contents, pp. 2-3 [S4.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; 4.2 PROPOSAL CONTENTS, p. 11 [S22.1])
+**Why:** The two notice periods cannot both be met as written; the proposed solution resolves the conflict in favour of 15 days, which is a reasonable reading but not one the City has confirmed. (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
 
-**Mitigation:** Request the full attachment set with the written questions and, if not supplied, submit faithfully reconstructed forms with every field the RFP describes, flagging in the cover letter that the City's originals were not provided.
+**Mitigation:** Raise the conflict as a written question and, in the proposal, commit to the shorter 15-day period with written notice to both the Contract Lead and the City's accounting contact, and state that assumption explicitly.
 
-**Related requirements:** R089, R084, R097, R098, R100, R057, R058.
+**Related requirements:** R097, R137, R134.
 
-### K07. Small City staff cannot carry their share of implementation and training
+### K07. Reimbursable expense cap set by the bidder with no City guidance
 
-The City has 11 full-time employees with one vacancy plus one part-time employee, and the solution relies on City Accounting and IT to supply extracts, validate data, sign off control totals and attend training. If City staff cannot free the time, milestones slip and the vendor absorbs rework; the RFP does not commit City resources or name a project sponsor.
+The City refuses unlimited reimbursable expenses and requires a stated cap, but prescribes no ceiling or basis. The bidder must guess a cap low enough to score well on the 20% fee criterion and high enough to cover travel to Colfax and third-party costs; an under-set cap converts real travel and third-party spend into an unrecoverable cost, and the price proposal cannot be revised after submission.
 
-**Why:** The headcount is stated in the RFP and the solution itself notes the vendor must carry most of the workload, yet the plan still depends on City sign-offs and joint working sessions. (1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+**Why:** The RFP gives no cap amount and forbids altering the price during clarification, so the bidder's own number is binding; the solution sets the cap itself and treats on-site travel as reimbursable. (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1]; 3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1])
 
-**Mitigation:** State in the proposal the City effort assumed per phase (named roles and hours), propose a single City project sponsor, and schedule training and validation sessions around the City's operational calendar.
+**Mitigation:** Ask whether the City has a maximum allowable cap; set the cap from a bottom-up travel and third-party estimate with a stated margin, and state in the proposal what the cap covers and that costs above it are borne by the vendor.
 
-**Related requirements:** R111, R112, R113, R115.
+**Related requirements:** R086, R122, R085, R031, R121, R123.
 
-### K08. Conflicting 30-day and 15-day financial-certification notice periods
+### K08. User count and license basis not stated
 
-R099 requires notice to the City within 30 days of any condition materially altering the financial certification, while R139 requires notice to the Contract Lead within 15 days of material changes to the same representations. Operating to the wrong clock after award could breach a contractual notice obligation, and the RFP does not define what counts as a material change.
+The RFP says the current system is used by five users but does not say how many users the new system must support, and the City has a vacant position plus seasonal staff. The proposed solution assumes five named users plus headroom and prices additional licenses per user, so if the City expects unlimited or department-wide access, the license fee and the total price are wrong and the City may treat the bid as non-compliant.
 
-**Why:** The two requirements conflict on both the period and the recipient, and the certification does not define 'material change'; the solution resolves it by assumption rather than by the City's answer. (Tab 3.3 Key Personnel Experience, p. 14 [S28.2]; ATTACHMENT D: CERTIFICATION OF FINANCIAL CONDITION, p. 19 [S36.1])
+**Why:** The user count is an explicit ambiguity in the RFP and the solution's license assumption is an inference; license fees are a required breakout in the price proposal, so the error is visible and material. (1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1]; Tab 1: Response to Project Goals and Scope, pp. 11-12 [S23.1]; Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1])
 
-**Mitigation:** Ask the City which notice period and recipient govern, and until answered operate to the shorter 15-day period to the Contract Lead with a copy to the City.
+**Mitigation:** Ask the City for the required user count and license basis before the deadline; state the assumed user count and per-user pricing in the proposal so the City can see the cost of additional users.
 
-**Related requirements:** R099, R139.
+**Related requirements:** R060, R090, R008, R121.
 
-### K09. Five-year data migration sized on assumed source formats and volumes
+### K09. Five years of historical data migration from Tyler Fund Balance
 
-The RFP does not state the volume, format or cleanliness of the prior five years of history, nor who supplies and cleans the extracts. The solution assumes standard Tyler Technologies Fund Balance exports with the City supplying extracts and the vendor mapping and cleaning them; if the data is messier, larger or in non-standard formats, migration effort and reconciliation time grow and the go-live date is at risk.
+The solution commits to importing five years of history from the City's Tyler Technologies Fund Balance system, with the City supplying extracts and the vendor reconciling to control totals. The RFP does not state the migration scope, data volumes or extract format, and legacy fund accounting data is often incomplete or inconsistently coded. A failed reconciliation delays cutover past July 1, 2026 or forces the City to keep the legacy system for history.
 
-**Why:** R110 is mandatory and the RFP leaves volumes and formats undefined; the solution's sizing rests on an explicit assumption about the source system and export formats. (5.1 TASK SUMMARY, p. 15 [S31.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
+**Why:** Migration is a mandatory requirement but the RFP does not define its scope, and the solution's assumption that the City supplies clean extracts is an inference; the reconciliation gate sits directly on the critical path to the fiscal-year go-live. (5.1 TASK SUMMARY, p. 15 [S31.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1]; 1.1 ORGANIZATION BACKGROUND, pp. 4-5 [S6.1])
 
-**Mitigation:** Ask the City for record counts, file formats and a sample extract before the deadline, and state in the proposal that the migration price covers a defined volume and format with re-pricing for material variance.
+**Mitigation:** State in the proposal that the City provides extracts in an agreed format by a named date and that reconciliation sign-off is a prerequisite to cutover; run an early data profiling exercise in discovery and price a defined number of migration cycles.
 
-**Related requirements:** R110, R111, R112.
+**Related requirements:** R108, R109, R110, R117.
 
-### K10. Twelve months of post-go-live support priced into the base without a defined scope
+### K10. Insurance limits and Attachment G security evidence unspecified
 
-The RFP does not say whether the 12 months of support is included in the base price or optional, when it starts, or what service levels apply. The solution assumes it starts at go-live and is included in the base price, which puts a full year of help desk, update notices and annual 1099/W-2 e-filing support inside a fixed price the City will not let the bidder revise during clarification.
+The RFP requires proof of workers compensation and commercial general liability insurance and documentation of financial-data protection and access controls, but states no coverage limits, additional-insured requirements or acceptable evidence format. The proposed solution assumes $1M per occurrence and $2M aggregate and satisfies Attachment G with a SOC 2 Type II report and a security narrative; if the City requires higher limits or a different artifact, the bidder must buy coverage or rework the submission after the deadline.
 
-**Why:** R114 is mandatory but its pricing basis is undefined, and R033 bars price changes during clarification, so an under-priced support year cannot be corrected later. (5.1 TASK SUMMARY, p. 15 [S31.1]; 3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1])
+**Why:** Both requirements are mandatory submission items with open-ended wording ('including, but not limited to') and no stated limits or format, and the solution's figures and evidence are explicitly assumptions. (ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1]; ATTACHMENT G: SOFTWARE APPLICATION REQUIREMENTS, p. 22 [S40.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
 
-**Mitigation:** Ask the City to confirm the support period's start and whether it is base or optional, and price it explicitly as a separate line with stated support hours, response targets and an assumed ticket volume.
+**Mitigation:** Ask the City for the required insurance limits and endorsements and the expected Attachment G format; confirm current coverage meets the assumed limits and prepare the SOC 2 report and security narrative as a ready-to-attach package.
 
-**Related requirements:** R114, R093, R033, R118.
+**Related requirements:** R098, R100, R084.
 
-### K11. Reimbursable expense cap and total price structure left to the bidder's guess
+### K11. Evaluation criteria and pass/fail rules are vague
 
-The RFP requires a capped reimbursable figure and a total price proposal amount but gives no ceiling, no methodology and no explanation of how the total relates to the services total plus the cap. The solution assumes a respondent-proposed cap covering on-site travel and treats the total as the sum of services plus cap; if the City expected a different construction, the price sheet is scored as non-responsive or the cap under-recovers travel costs.
+The RFP scores proposals 45% on goals and scope, 25% on support, 20% on fee and schedule and 10% on qualifications, but defines none of the objectives measurably, may reject on undefined 'fit, form and function', and says no single requirement disqualifies a respondent while non-compliance with any requirement may cause rejection. The bidder cannot tell which gaps are fatal, so effort may go into the wrong sections or a minor omission may sink an otherwise strong bid.
 
-**Why:** R088, R124 and R125 are mandatory but the cap basis and the relationship between the three amounts are undefined, and the solution resolves both by assumption. (Tab 3.3 Key Personnel Experience, pp. 13-14 [S28.1]; ATTACHMENT A: PRICING PROPOSAL, p. 16 [S33.1])
+**Why:** Several ambiguities in the RFP leave the compliance threshold and the meaning of the heaviest-weighted criterion open, and the solution addresses the requirements but cannot know how they will be judged. (3.4 PROPOSAL EVALUATION CRITERIA, p. 9 [S18.1]; 3.3 PROPOSAL EVALUATION PROCESS, pp. 8-9 [S17.1]; 3.5 INTERPRETATION OF TERMS AND PHRASES, pp. 9-10 [S19.1]; 1.0 PURPOSE AND BACKGROUND, p. 4 [S5.1])
 
-**Mitigation:** Ask the City by July 31, 2025 whether a maximum cap or methodology is prescribed and how the total price proposal is composed; state the construction used in Attachment A explicitly so the City can see the arithmetic.
+**Mitigation:** Ask the City which requirements are pass/fail and what evidence it expects against the goals and scope criterion; structure the proposal to answer every mandatory item explicitly and lead Tab 1 with the Section 5.0 deliverables.
 
-**Related requirements:** R088, R124, R125, R123, R087.
+**Related requirements:** R033, R034, R035, R036, R030, R054.
 
-### K12. Insurance limits and additional-insured terms unstated, so coverage cannot be priced or confirmed
+### K12. Offshoring disclosure may raise the City's cost and risk view
 
-Attachment E requires proof of workers compensation and commercial general liability coverage, but the RFP states no limits, additional-insured requirements or certificate form. The solution assumes limits customary for a municipal software contract; if the City's actual requirements are higher, the bidder either fails a mandatory submission item or absorbs unplanned premium.
+The RFP requires the respondent to disclose any work performed outside the United States, list the locations and describe the corporate structure, and the City will evaluate that disclosure for additional risks and costs before award. If any part of the delivery or support chain is offshore, the disclosure can reduce the score or prompt the City to add conditions, and a later relocation of personnel triggers a further written-notice obligation with no stated timeframe.
 
-**Why:** R100 is mandatory and the coverage requirements are open-ended ('including, but not limited to'), while the solution's insurance position rests on an explicit assumption pending the City's stated limits. (ATTACHMENT E: CERTIFICATION OF INSURANCE, p. 20 [S37.1]; Tab 3.3 Key Personnel Experience, p. 14 [S28.2])
+**Why:** The RFP makes offshoring a scored risk factor and imposes an ongoing relocation-notice duty, but the solution does not state where delivery staff are located, so exposure depends on facts the bid does not yet settle. (ATTACHMENT C: LOCATION OF WORKERS UTILIZED BY RESPONDENT, p. 18 [S35.1])
 
-**Mitigation:** Ask the City for the required limits and endorsements before the deadline, and submit certificates at customary municipal limits naming the City as additional insured, with a note that limits will be conformed to the contract.
+**Mitigation:** Confirm the delivery and support locations before submission, disclose them accurately in Attachment C, and state in the proposal the controls (data residency, access restrictions, background checks) that mitigate offshore risk; set an internal trigger for the relocation notice.
 
-**Related requirements:** R100.
+**Related requirements:** R129, R130, R131, R132, R133, R095.
 
 ## Referenced documents
 

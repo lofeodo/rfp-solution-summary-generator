@@ -1,8 +1,8 @@
 {
   "run_id": "federal_way",
   "source_path": "data/rfps/federal_way.pdf",
-  "started_at": "2026-10-30T19:45:30.789130Z",
-  "finished_at": "2026-10-30T19:46:51.556943Z",
+  "started_at": "2026-10-31T00:27:06.401028Z",
+  "finished_at": "2026-10-31T00:28:22.907773Z",
   "model": "deepseek:deepseek-flash",
   "temperature": 0.0,
   "prompt_hashes": {
@@ -11,7 +11,7 @@
     "requirements_extract": "f3a4c387a9b319cbe11d927058ecf3fb1a6b565ad9570530c3bc05c949535f03",
     "problem_synthesis": "bca969d173914b55472eedbe7a081a458fe91ea92abdf0800e22ced4a7be8e39",
     "requirements_dedupe": "bffda155db168124e0a8bf3d0cfd402e26e71f029028f03065cf3a816b550d62",
-    "solution": "04cf8ed155c298bea6eafe0aa0c4558066d4174c79b993b230dd1cb1f85aecfc",
+    "solution": "27a84189d07768f2025a1275d8e48f3a4c33fe7b7dea48547dafc3e5e7fbf1fd",
     "risk": "fe3774f964eea43480948bce425c3d75b556eb91b9cd1f143c2c6a2893f85624"
   },
   "nodes": [
@@ -22,20 +22,22 @@
       "output_tokens": 133,
       "cached_input_tokens": 1152,
       "cost_usd": 0.00021991199999999998,
-      "latency_s": 1.5439222999848425,
+      "latency_s": 1.376811900001485,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:36.927489Z"
+      "started_at": "2026-10-31T00:27:12.048149Z",
+      "last_error": null
     },
     {
       "node": "parse_quality",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1375,
-      "output_tokens": 153,
+      "output_tokens": 151,
       "cached_input_tokens": 1152,
-      "cost_usd": 0.000257412,
-      "latency_s": 1.297346400009701,
+      "cost_usd": 0.000255012,
+      "latency_s": 1.1367199999804143,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:38.472589Z"
+      "started_at": "2026-10-31T00:27:13.426643Z",
+      "last_error": null
     },
     {
       "node": "parse_quality",
@@ -44,31 +46,10 @@
       "output_tokens": 142,
       "cached_input_tokens": 1280,
       "cost_usd": 0.00024438,
-      "latency_s": 1.4283547999802977,
+      "latency_s": 1.1516858999966644,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:39.773989Z"
-    },
-    {
-      "node": "problem_chunk",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 1022,
-      "output_tokens": 49,
-      "cached_input_tokens": 768,
-      "cost_usd": 0.000139608,
-      "latency_s": 1.0518691999895964,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:41.220878Z"
-    },
-    {
-      "node": "requirements_extract",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 1982,
-      "output_tokens": 68,
-      "cached_input_tokens": 1792,
-      "cost_usd": 0.00014935199999999998,
-      "latency_s": 1.206317299976945,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:41.230216Z"
+      "started_at": "2026-10-31T00:27:14.564774Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
@@ -77,9 +58,34 @@
       "output_tokens": 68,
       "cached_input_tokens": 2048,
       "cost_usd": 0.000139488,
-      "latency_s": 1.4862489000079222,
+      "latency_s": 0.8814358999952674,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:41.243670Z"
+      "started_at": "2026-10-31T00:27:15.741037Z",
+      "last_error": null
+    },
+    {
+      "node": "problem_chunk",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 1022,
+      "output_tokens": 49,
+      "cached_input_tokens": 768,
+      "cost_usd": 0.000139608,
+      "latency_s": 0.9810795999947004,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:15.726963Z",
+      "last_error": null
+    },
+    {
+      "node": "requirements_extract",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 1982,
+      "output_tokens": 68,
+      "cached_input_tokens": 1792,
+      "cost_usd": 0.00014935199999999998,
+      "latency_s": 1.1232052000123076,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:15.734846Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -88,9 +94,10 @@
       "output_tokens": 178,
       "cached_input_tokens": 768,
       "cost_usd": 0.000285408,
-      "latency_s": 1.849425299995346,
+      "latency_s": 1.426053699979093,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:41.219877Z"
+      "started_at": "2026-10-31T00:27:15.725963Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -99,20 +106,10 @@
       "output_tokens": 275,
       "cached_input_tokens": 1024,
       "cost_usd": 0.00038174400000000005,
-      "latency_s": 2.055647399974987,
+      "latency_s": 1.586905600008322,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:41.221878Z"
-    },
-    {
-      "node": "problem_chunk",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 980,
-      "output_tokens": 153,
-      "cached_input_tokens": 768,
-      "cost_usd": 0.000251808,
-      "latency_s": 1.0239218000206165,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:42.274517Z"
+      "started_at": "2026-10-31T00:27:15.727963Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -121,20 +118,34 @@
       "output_tokens": 263,
       "cached_input_tokens": 1024,
       "cost_usd": 0.000386544,
-      "latency_s": 2.2590611999912653,
+      "latency_s": 1.8011135999986436,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:41.222878Z"
+      "started_at": "2026-10-31T00:27:15.728963Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1952,
-      "output_tokens": 372,
+      "output_tokens": 376,
       "cached_input_tokens": 1792,
-      "cost_usd": 0.000505152,
-      "latency_s": 2.4386766999959946,
+      "cost_usd": 0.000509952,
+      "latency_s": 1.8404172000009567,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:41.228164Z"
+      "started_at": "2026-10-31T00:27:15.732343Z",
+      "last_error": null
+    },
+    {
+      "node": "problem_chunk",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 980,
+      "output_tokens": 153,
+      "cached_input_tokens": 768,
+      "cost_usd": 0.000251808,
+      "latency_s": 1.1136207999952603,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:16.709273Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
@@ -143,20 +154,22 @@
       "output_tokens": 119,
       "cached_input_tokens": 1664,
       "cost_usd": 0.00021158399999999999,
-      "latency_s": 1.1676299000100698,
+      "latency_s": 1.0732692999881692,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:42.737143Z"
+      "started_at": "2026-10-31T00:27:16.859540Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 900,
-      "output_tokens": 100,
+      "output_tokens": 92,
       "cached_input_tokens": 766,
-      "cost_usd": 0.00016479599999999999,
-      "latency_s": 1.0377988000109326,
+      "cost_usd": 0.00015519599999999997,
+      "latency_s": 1.078895199985709,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:43.070312Z"
+      "started_at": "2026-10-31T00:27:17.153677Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -165,42 +178,34 @@
       "output_tokens": 184,
       "cached_input_tokens": 896,
       "cost_usd": 0.000266976,
-      "latency_s": 1.3854433000087738,
+      "latency_s": 1.3267890000133775,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:43.277442Z"
+      "started_at": "2026-10-31T00:27:17.315612Z",
+      "last_error": null
+    },
+    {
+      "node": "requirements_extract",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 1992,
+      "output_tokens": 288,
+      "cached_input_tokens": 1792,
+      "cost_usd": 0.000416352,
+      "latency_s": 1.4766599999857135,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:17.576181Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2136,
-      "output_tokens": 694,
+      "output_tokens": 642,
       "cached_input_tokens": 1920,
-      "cost_usd": 0.0009091199999999999,
-      "latency_s": 3.531093300000066,
+      "cost_usd": 0.00084672,
+      "latency_s": 3.347557400004007,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:41.240491Z"
-    },
-    {
-      "node": "requirements_extract",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 1940,
-      "output_tokens": 461,
-      "cached_input_tokens": 1792,
-      "cost_usd": 0.0006083519999999999,
-      "latency_s": 2.6586590000079013,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:42.443749Z"
-    },
-    {
-      "node": "problem_chunk",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 1245,
-      "output_tokens": 301,
-      "cached_input_tokens": 1024,
-      "cost_usd": 0.000433644,
-      "latency_s": 1.9293019000033382,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:43.298953Z"
+      "started_at": "2026-10-31T00:27:15.737359Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -209,75 +214,82 @@
       "output_tokens": 221,
       "cached_input_tokens": 896,
       "cost_usd": 0.00032427599999999997,
-      "latency_s": 1.860668600013014,
+      "latency_s": 1.2825028000224847,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:43.483760Z"
+      "started_at": "2026-10-31T00:27:17.823705Z",
+      "last_error": null
+    },
+    {
+      "node": "problem_chunk",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 1245,
+      "output_tokens": 293,
+      "cached_input_tokens": 1024,
+      "cost_usd": 0.000424044,
+      "latency_s": 1.7402140999911353,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:17.531145Z",
+      "last_error": null
+    },
+    {
+      "node": "requirements_extract",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 1940,
+      "output_tokens": 486,
+      "cached_input_tokens": 1792,
+      "cost_usd": 0.000638352,
+      "latency_s": 2.950679499976104,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:16.632224Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1211,
-      "output_tokens": 261,
+      "output_tokens": 260,
       "cached_input_tokens": 1024,
-      "cost_usd": 0.00037544399999999995,
-      "latency_s": 1.755247099994449,
+      "cost_usd": 0.00037424400000000003,
+      "latency_s": 1.7112831000122242,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:44.110191Z"
-    },
-    {
-      "node": "requirements_extract",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 1992,
-      "output_tokens": 458,
-      "cached_input_tokens": 1792,
-      "cost_usd": 0.000620352,
-      "latency_s": 2.2844406999938656,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:43.672739Z"
+      "started_at": "2026-10-31T00:27:18.234960Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1026,
-      "output_tokens": 178,
+      "output_tokens": 172,
       "cached_input_tokens": 892,
-      "cost_usd": 0.00025915199999999996,
-      "latency_s": 1.6468828000070062,
+      "cost_usd": 0.000251952,
+      "latency_s": 1.33183189999545,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:44.664161Z"
+      "started_at": "2026-10-31T00:27:18.642188Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2205,
-      "output_tokens": 439,
+      "output_tokens": 377,
       "cached_input_tokens": 2048,
-      "cost_usd": 0.000586188,
-      "latency_s": 3.0345061999978498,
+      "cost_usd": 0.000511788,
+      "latency_s": 2.2525736000097822,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:43.907314Z"
+      "started_at": "2026-10-31T00:27:17.934580Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1312,
-      "output_tokens": 308,
+      "output_tokens": 284,
       "cached_input_tokens": 1152,
-      "cost_usd": 0.00042451199999999994,
-      "latency_s": 2.176406100013992,
+      "cost_usd": 0.000395712,
+      "latency_s": 1.740386799996486,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:45.345133Z"
-    },
-    {
-      "node": "requirements_extract",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 2035,
-      "output_tokens": 483,
-      "cached_input_tokens": 1792,
-      "cost_usd": 0.0006632519999999999,
-      "latency_s": 2.751932899991516,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:44.779005Z"
+      "started_at": "2026-10-31T00:27:19.270896Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -286,20 +298,22 @@
       "output_tokens": 354,
       "cached_input_tokens": 1280,
       "cost_usd": 0.00047958000000000007,
-      "latency_s": 2.3767346999957226,
+      "latency_s": 2.0323148000170477,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:45.228892Z"
+      "started_at": "2026-10-31T00:27:19.107082Z",
+      "last_error": null
     },
     {
-      "node": "problem_chunk",
+      "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
-      "input_tokens": 1297,
-      "output_tokens": 284,
-      "cached_input_tokens": 1152,
-      "cost_usd": 0.000391212,
-      "latency_s": 2.034886799985543,
+      "input_tokens": 2035,
+      "output_tokens": 411,
+      "cached_input_tokens": 1792,
+      "cost_usd": 0.000576852,
+      "latency_s": 2.1936292000173125,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:45.866380Z"
+      "started_at": "2026-10-31T00:27:19.056659Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -308,86 +322,94 @@
       "output_tokens": 203,
       "cached_input_tokens": 896,
       "cost_usd": 0.000297876,
-      "latency_s": 1.6960451999912038,
+      "latency_s": 1.4801027000066824,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:46.310884Z"
+      "started_at": "2026-10-31T00:27:19.976373Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1986,
-      "output_tokens": 558,
+      "output_tokens": 434,
       "cached_input_tokens": 1792,
-      "cost_usd": 0.0007385520000000001,
-      "latency_s": 3.1379300999979023,
+      "cost_usd": 0.0005897519999999999,
+      "latency_s": 2.0458856000041123,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:45.960025Z"
+      "started_at": "2026-10-31T00:27:19.589870Z",
+      "last_error": null
+    },
+    {
+      "node": "problem_chunk",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 1297,
+      "output_tokens": 283,
+      "cached_input_tokens": 1152,
+      "cost_usd": 0.00039001199999999997,
+      "latency_s": 1.976433800009545,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:19.948358Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2171,
-      "output_tokens": 949,
+      "output_tokens": 918,
       "cached_input_tokens": 1920,
-      "cost_usd": 0.00122562,
-      "latency_s": 4.204716100008227,
+      "cost_usd": 0.00118842,
+      "latency_s": 3.673199200013187,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:45.105148Z"
+      "started_at": "2026-10-31T00:27:19.087456Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1186,
-      "output_tokens": 249,
+      "output_tokens": 222,
       "cached_input_tokens": 1024,
-      "cost_usd": 0.00035354399999999996,
-      "latency_s": 1.813029099983396,
+      "cost_usd": 0.000321144,
+      "latency_s": 1.6341107999905944,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:47.606856Z"
+      "started_at": "2026-10-31T00:27:21.140682Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1219,
-      "output_tokens": 320,
+      "output_tokens": 315,
       "cached_input_tokens": 1024,
-      "cost_usd": 0.000448644,
-      "latency_s": 2.1862560999870766,
+      "cost_usd": 0.000442644,
+      "latency_s": 2.163349799986463,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:47.523406Z"
+      "started_at": "2026-10-31T00:27:21.013151Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1223,
-      "output_tokens": 260,
+      "output_tokens": 242,
       "cached_input_tokens": 1024,
-      "cost_usd": 0.000377844,
-      "latency_s": 1.8544744999962859,
+      "cost_usd": 0.00035624399999999997,
+      "latency_s": 1.8702154000056908,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:47.902444Z"
+      "started_at": "2026-10-31T00:27:21.457116Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1184,
-      "output_tokens": 270,
+      "output_tokens": 258,
       "cached_input_tokens": 1024,
-      "cost_usd": 0.000378144,
-      "latency_s": 1.9534500000008848,
+      "cost_usd": 0.000363744,
+      "latency_s": 1.6735879000043496,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:48.009286Z"
-    },
-    {
-      "node": "problem_chunk",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 992,
-      "output_tokens": 49,
-      "cached_input_tokens": 768,
-      "cost_usd": 0.000130608,
-      "latency_s": 0.9593426999927033,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:49.711578Z"
+      "started_at": "2026-10-31T00:27:21.926538Z",
+      "last_error": null
     },
     {
       "node": "problem_chunk",
@@ -396,64 +418,82 @@
       "output_tokens": 140,
       "cached_input_tokens": 896,
       "cost_usd": 0.000218376,
-      "latency_s": 1.4807608999835793,
+      "latency_s": 1.3742321000027005,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:49.422281Z"
+      "started_at": "2026-10-31T00:27:22.775903Z",
+      "last_error": null
+    },
+    {
+      "node": "problem_chunk",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 992,
+      "output_tokens": 49,
+      "cached_input_tokens": 768,
+      "cost_usd": 0.000130608,
+      "latency_s": 1.199934200005373,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:23.177075Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2019,
-      "output_tokens": 613,
+      "output_tokens": 426,
       "cached_input_tokens": 1792,
-      "cost_usd": 0.000814452,
-      "latency_s": 3.4509322999801952,
+      "cost_usd": 0.000590052,
+      "latency_s": 1.9585084000136703,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:49.313569Z"
-    },
-    {
-      "node": "requirements_extract",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 2272,
-      "output_tokens": 1438,
-      "cached_input_tokens": 2048,
-      "cost_usd": 0.001805088,
-      "latency_s": 5.6673225999984425,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:47.534929Z"
+      "started_at": "2026-10-31T00:27:22.764863Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2257,
-      "output_tokens": 887,
+      "output_tokens": 833,
       "cached_input_tokens": 2048,
-      "cost_usd": 0.0011393879999999999,
-      "latency_s": 4.113175600010436,
+      "cost_usd": 0.001074588,
+      "latency_s": 3.832685400004266,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:49.107176Z"
+      "started_at": "2026-10-31T00:27:21.647451Z",
+      "last_error": null
+    },
+    {
+      "node": "requirements_extract",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 2272,
+      "output_tokens": 1376,
+      "cached_input_tokens": 2048,
+      "cost_usd": 0.0017306880000000002,
+      "latency_s": 5.022117699991213,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:21.259482Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2397,
-      "output_tokens": 1796,
+      "output_tokens": 1768,
       "cached_input_tokens": 2176,
-      "cost_usd": 0.0022345559999999995,
-      "latency_s": 6.5235185000055935,
+      "cost_usd": 0.002200956,
+      "latency_s": 6.779478000011295,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:46.945409Z"
+      "started_at": "2026-10-31T00:27:20.191283Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2179,
-      "output_tokens": 384,
+      "output_tokens": 538,
       "cached_input_tokens": 2045,
-      "cost_usd": 0.00051327,
-      "latency_s": 2.418762199988123,
+      "cost_usd": 0.0006980700000000001,
+      "latency_s": 2.7087123000237625,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:52.769960Z"
+      "started_at": "2026-10-31T00:27:24.726200Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
@@ -462,165 +502,175 @@
       "output_tokens": 424,
       "cached_input_tokens": 2048,
       "cost_usd": 0.000561588,
-      "latency_s": 2.1642583000066224,
+      "latency_s": 2.1873722999880556,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:53.226680Z"
+      "started_at": "2026-10-31T00:27:26.290223Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2146,
-      "output_tokens": 584,
+      "output_tokens": 596,
       "cached_input_tokens": 1920,
-      "cost_usd": 0.0007801199999999999,
-      "latency_s": 3.014229099993827,
+      "cost_usd": 0.00079452,
+      "latency_s": 3.0161519999965094,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:53.209192Z"
+      "started_at": "2026-10-31T00:27:25.484975Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2006,
-      "output_tokens": 264,
+      "output_tokens": 256,
       "cached_input_tokens": 1792,
-      "cost_usd": 0.000391752,
-      "latency_s": 2.0895579000061844,
+      "cost_usd": 0.00038215199999999997,
+      "latency_s": 2.054719500010833,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:55.195774Z"
+      "started_at": "2026-10-31T00:27:27.438163Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 2144,
-      "output_tokens": 895,
+      "output_tokens": 626,
       "cached_input_tokens": 1920,
-      "cost_usd": 0.00115272,
-      "latency_s": 4.121235400001751,
+      "cost_usd": 0.0008299199999999999,
+      "latency_s": 2.670135099993786,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:53.487729Z"
+      "started_at": "2026-10-31T00:27:26.982457Z",
+      "last_error": null
     },
     {
       "node": "requirements_extract",
       "model": "deepseek:deepseek-flash",
       "input_tokens": 1952,
-      "output_tokens": 314,
+      "output_tokens": 315,
       "cached_input_tokens": 1792,
-      "cost_usd": 0.000435552,
-      "latency_s": 2.44400499999756,
+      "cost_usd": 0.000436752,
+      "latency_s": 1.9460126000049058,
       "retries": 0,
-      "started_at": "2026-10-30T19:45:55.401150Z"
-    },
-    {
-      "node": "problem_synthesis",
-      "model": "deepseek:deepseek-flash",
-      "input_tokens": 5516,
-      "output_tokens": 1867,
-      "cached_input_tokens": 1408,
-      "cost_usd": 0.003481248,
-      "latency_s": 8.36005849999492,
-      "retries": 0,
-      "started_at": "2026-10-30T19:45:50.910343Z"
+      "started_at": "2026-10-31T00:27:28.480672Z",
+      "last_error": null
     },
     {
       "node": "requirements_dedupe",
       "model": "deepseek:deepseek-flash",
-      "input_tokens": 16533,
-      "output_tokens": 845,
-      "cached_input_tokens": 9344,
-      "cost_usd": 0.0032267639999999996,
-      "latency_s": 4.3812127000128385,
-      "retries": 1,
-      "started_at": "2026-10-30T19:45:57.854113Z"
+      "input_tokens": 7485,
+      "output_tokens": 335,
+      "cached_input_tokens": 896,
+      "cost_usd": 0.002384076,
+      "latency_s": 1.7245640000037383,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:30.431904Z",
+      "last_error": null
+    },
+    {
+      "node": "problem_synthesis",
+      "model": "deepseek:deepseek-flash",
+      "input_tokens": 5406,
+      "output_tokens": 1882,
+      "cached_input_tokens": 1536,
+      "cost_usd": 0.0034286159999999998,
+      "latency_s": 7.879879899992375,
+      "retries": 0,
+      "started_at": "2026-10-31T00:27:24.380647Z",
+      "last_error": null
     },
     {
       "node": "solution_generate",
       "model": "deepseek:deepseek-flash",
-      "input_tokens": 9220,
-      "output_tokens": 3055,
+      "input_tokens": 8814,
+      "output_tokens": 3574,
       "cached_input_tokens": 1536,
-      "cost_usd": 0.005980416,
-      "latency_s": 17.98687309998786,
+      "cost_usd": 0.006481416,
+      "latency_s": 19.371314899995923,
       "retries": 0,
-      "started_at": "2026-10-30T19:46:02.254151Z"
+      "started_at": "2026-10-31T00:27:32.269330Z",
+      "last_error": null
     },
     {
       "node": "solution_revise",
       "model": "deepseek:deepseek-flash",
-      "input_tokens": 12222,
-      "output_tokens": 3395,
-      "cached_input_tokens": 8960,
-      "cost_usd": 0.00510636,
-      "latency_s": 12.922678900009487,
+      "input_tokens": 12301,
+      "output_tokens": 3972,
+      "cached_input_tokens": 8704,
+      "cost_usd": 0.005897723999999999,
+      "latency_s": 13.43916559999343,
       "retries": 0,
-      "started_at": "2026-10-30T19:46:20.245408Z"
+      "started_at": "2026-10-31T00:27:51.643763Z",
+      "last_error": null
     },
     {
       "node": "risk_assess",
       "model": "deepseek:deepseek-flash",
-      "input_tokens": 12367,
-      "output_tokens": 3047,
-      "cached_input_tokens": 1536,
-      "cost_usd": 0.006914915999999999,
-      "latency_s": 18.369020100013586,
+      "input_tokens": 12463,
+      "output_tokens": 3086,
+      "cached_input_tokens": 1664,
+      "cost_usd": 0.006952884,
+      "latency_s": 17.810255399992457,
       "retries": 0,
-      "started_at": "2026-10-30T19:46:33.178366Z"
+      "started_at": "2026-10-31T00:28:05.091737Z",
+      "last_error": null
     }
   ],
   "stages": [
     {
       "stage": "parse",
       "status": "finished",
-      "started_at": "2026-10-30T19:45:30.797768Z",
-      "latency_s": 6.11139059998095,
+      "started_at": "2026-10-31T00:27:06.406551Z",
+      "latency_s": 5.635770599998068,
       "error": null
     },
     {
       "stage": "parse_quality",
       "status": "finished",
-      "started_at": "2026-10-30T19:45:36.912962Z",
-      "latency_s": 4.2940650999953505,
+      "started_at": "2026-10-31T00:27:12.044143Z",
+      "latency_s": 3.6741094999888446,
       "error": null
     },
     {
       "stage": "split",
       "status": "finished",
-      "started_at": "2026-10-30T19:45:41.209074Z",
-      "latency_s": 0.008401300001423806,
-      "error": null
-    },
-    {
-      "stage": "problem",
-      "status": "finished",
-      "started_at": "2026-10-30T19:45:41.218874Z",
-      "latency_s": 18.053526200004853,
+      "started_at": "2026-10-31T00:27:15.719038Z",
+      "latency_s": 0.005171099997824058,
       "error": null
     },
     {
       "stage": "requirements",
       "status": "finished",
-      "started_at": "2026-10-30T19:45:41.219877Z",
-      "latency_s": 21.027410899987444,
+      "started_at": "2026-10-31T00:27:15.725963Z",
+      "latency_s": 16.433076500019524,
+      "error": null
+    },
+    {
+      "stage": "problem",
+      "status": "finished",
+      "started_at": "2026-10-31T00:27:15.724964Z",
+      "latency_s": 16.536057499994058,
       "error": null
     },
     {
       "stage": "solution",
       "status": "finished",
-      "started_at": "2026-10-30T19:46:02.247588Z",
-      "latency_s": 30.925080999993952,
+      "started_at": "2026-10-31T00:27:32.262284Z",
+      "latency_s": 32.82364580000285,
       "error": null
     },
     {
       "stage": "risk",
       "status": "finished",
-      "started_at": "2026-10-30T19:46:33.175855Z",
-      "latency_s": 18.3729068999819,
+      "started_at": "2026-10-31T00:28:05.086710Z",
+      "latency_s": 17.816248199989786,
       "error": null
     },
     {
       "stage": "assemble",
       "status": "finished",
-      "started_at": "2026-10-30T19:46:51.549419Z",
-      "latency_s": 0.006604800000786781,
+      "started_at": "2026-10-31T00:28:22.904249Z",
+      "latency_s": 0.0035370999830774963,
       "error": null
     }
   ],
@@ -635,7 +685,7 @@
       "page": 5,
       "triggered_by": "code",
       "confirmed_bad": true,
-      "action": "would escalate to VLM: The narrative text is clean and readable, but the sentence introducing \"the following tables\" is followed by a 42%-page image that almost certainly contains the current-environment/scope table, which is absent from the extracted text."
+      "action": "would escalate to VLM: The narrative text is clean, but the sentence introducing \"the following tables\" is followed by a 474x426 pt image that almost certainly contains the environment/scope table, which is absent from the extracted text."
     },
     {
       "page": 14,
