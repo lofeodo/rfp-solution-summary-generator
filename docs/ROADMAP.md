@@ -2368,8 +2368,10 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - `tests/test_harness.py::test_retries_are_listed_with_their_node` read the old
     Federal Way sample's dedupe retry; the regenerated samples have one retry in all
     (Missouri `problem_synthesis`, cause recorded since F7), so the test now reads
-    that one and asserts the cause. Full suite: 388 passed locally and inside the
-    image; ruff clean.
+    that one and asserts the cause. `ui/frontend/src/lib/lib.test.ts` hard-coded the
+    Missouri sample's 120 requirements (now 123); it compares against the sample's
+    own count, as the chunk assertion already did. Full suite: 388 passed locally
+    and inside the image, 11 Vitest tests passed; ruff clean.
 - **Deviations from plan:**
   - The sample run logs needed the path normalisation above; the plan assumed
     `run_pipeline` would record the relative path it was given.
