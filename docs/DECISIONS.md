@@ -30,7 +30,11 @@ parallel) and bounded retry loops; LangGraph expresses that explicitly, streams
 per-node events for the UI, and integrates with Langfuse through the LangChain callback.
 A hand-rolled pipeline would be less to defend but would re-implement streaming and
 checkpointing. No-code tools make the eval harness and typed schemas awkward.
-Evidence: none yet.
+Evidence: the fan-out and the two bounded loops are what the UI timeline shows live
+(S10 stage events streamed over S14's SSE). The solution loop reached 100% cited
+coverage of mandatory requirements on 12 of 12 baseline runs in one or two rounds
+(D32). Checkpointing was never needed: every stage writes its JSON as it finishes
+(D34), which is what the UI and the debug CLI reuse.
 
 ### D2. Hosted paid APIs instead of local models
 Context: the assignment encourages free/open tooling (Ollama is named) and says no paid
@@ -42,7 +46,10 @@ Why: every stage depends on reliable long-context structured output, which small
 models do not deliver, and reviewers cannot be assumed to have GPUs. The author hands
 reviewers a low-balance key out of band. The config switch keeps the door open to any
 LangChain-supported model.
-Evidence: none yet (the model-family benchmark is a stretch goal).
+Evidence: baseline (`evals/results/baseline/summary.md`): $0.046 to $0.101 and 79 to
+132 s per RFP on DeepSeek Flash, $0.84 for 12 runs; every live run of the whole
+project together cost under $10 of generation. The model-family benchmark is still
+ST7.
 
 ### D3. DeepSeek generates, Claude judges; single family per role
 Context: the original plan benchmarked Claude vs DeepSeek and used three model families
@@ -53,7 +60,11 @@ drafter. Cross-family benchmarks are a stretch goal.
 Why: time budget. Two families still keep the judge independent of the generator, which
 is the bias that matters most. Labels are hand-corrected, so the drafter's family
 matters less; the corrected fraction is recorded.
-Evidence: none yet.
+Evidence: the judge agrees with 34 of 40 hand-labelled verdicts
+(`evals/results/baseline/agreement_labels.json`). Judging costs about six times
+generation ($5.14 against $0.84 for the 12 baseline runs), which is why S13 added
+`score --only` to rerun one judge at a time. Gold drafts needed 19 to 26% correction
+per RFP (`evals/gold/README.md`).
 
 ### D4. Chunk-ID citations instead of retrieval-based grounding
 Context: the assignment lists "RAG grounding on provided data" as a stretch; outputs must
@@ -67,7 +78,11 @@ Why: the documents fit in one context window, so retrieval buys nothing for cove
 while citations make "unsupported claim" a countable eval metric and let the UI show
 the source paragraph for any claim. Cheap to implement: an ID field in a few schemas
 and one rule in three prompts.
-Evidence: none yet.
+Evidence: 0 dangling IDs on every scored run (baseline, both ablations, the fix label),
+because the schemas reject an unknown ID inside the retry. Grounding is a countable
+column: on the baseline 4 to 10 of 25 to 32 problem claims per run are judged
+unsupported by the text they cite, the rest supported or partial. The UI's source
+reveal (D38) and the cited-text judge (D37) both rest on the IDs.
 
 ### D5. Exhaustive per-chunk extraction, no RAG in extraction
 Context: requirement extraction must not miss requirements.
@@ -91,7 +106,13 @@ keeps all quotes and chunk IDs, keeps the stricter strictness, and asserts every
 lands in exactly one group. Conflicting requirements are flagged, not merged.
 Why: at tens of requirements per document, embeddings are overkill and need a tuned
 threshold; a grouping call is one request and its output is checkable by assertion.
-Evidence: none yet.
+Evidence: the regenerated samples' `requirements_report.json` (S16): 122 to 259 items
+before dedupe per RFP, 3 to 7 exact merges, 22 to 31 fuzzy merges, 0 to 3 conflicts
+flagged, the grouping answer fed back once on two of four RFPs and the sanitised
+fallback never used; every quote verified (0 unverified, at most one fix-up turn). The
+contract violations the check catches are real (F8, D30: an ID in three groups on
+Missouri's first run). Baseline precision 95 to 99% suggests the merges are not
+hiding distinct requirements.
 
 ### D7. Hierarchical summarisation for the problem statement, no boilerplate removal
 Context: the problem statement must capture why the client is buying, not just what.
@@ -102,7 +123,12 @@ boilerplate removal.
 Why: hierarchical scales past the context window and yields per-chunk citations
 naturally. Boilerplate detection is untrustworthy: Missouri's "boilerplate" IT
 standards section contains hard technical constraints.
-Evidence: none yet (compare in the eval step, several runs each, report variance).
+Evidence: S13's full-text ablation (D39): checklist coverage within one sd of the
+hierarchical path on all four RFPs, pipeline cost 10 to 25% lower, pairwise preference
+split two RFPs to one with one tie. Hierarchical is kept for the per-chunk summaries
+the UI's chunk view and the grounding judge use, and for documents that do not fit one
+call. No boilerplate removal: Missouri's IT-standards section, boilerplate by name,
+supplied several of its top risks (D33).
 
 ### D8. Markdown rendered by code from JSON
 Context: the deliverable is a structured summary; the UI and download need markdown.
@@ -168,7 +194,11 @@ Why: Flash is the cheapest model with a 1M context, enough for structured extrac
 documents that fit one window; the model is one env var away if evals show it is too
 weak. Sonnet halves judge cost against Opus and keeps the judge in a different family
 from the generator (D3). Peak pricing never under-reports cost.
-Evidence: none yet; S12 reads the run logs.
+Evidence: baseline cost per RFP $0.046 to $0.101 at peak rates, with 68 to 73% of
+input tokens served from the prefix cache (S10). Sonnet as judge costs $0.34 to $0.63
+per run. Flash was never swapped out: recall 80 to 100% and precision 95 to 99% on the
+baseline (D36), and the one failure mode traced to the model was a truncated single
+call at the default output cap (F16), fixed by a setting.
 
 ### D14. Schema conventions
 Context: `schemas.py` is the contract between every step and the thing most likely to be
@@ -843,6 +873,35 @@ its effect. The threshold for revisiting: a metric a code check can compute, the
 coverage is, that sits well below 90% after prompt work; today none does.
 Evidence: `evals/results/baseline/summary.md` (precision, unsupported, consistency),
 `fix_solution_naming/diff_solution.md`, F14's before/after, D39.
+
+### D41. One Docker image for the UI and the CLI, keys from the host's `.env`
+Context: the scope assumption promised a Dockerfile for a local run (ASSUMPTIONS,
+Scope). S16 adds it once the CLI, the backend and the frontend exist, so the reviewer's
+question "does it run" has a one-command answer on a machine with nothing but Docker.
+Options: one multi-stage image that serves the UI by default and runs the CLI when the
+command is overridden; the same plus a `docker-compose.yml`; a CLI-only image without
+the frontend; a published image on a registry.
+Choice: one `Dockerfile`. A `node:22-alpine` stage builds the frontend (the Node CI
+uses), a `python:3.12-slim` stage installs the pinned `requirements.txt`, copies the
+prompts, the default input, the public RFPs, the committed samples, the evals and the
+tests, runs as a non-root user and starts `python -m ui.backend --host 0.0.0.0` on
+port 8000. Keys are passed at run time with `--env-file .env`; `runs/` is a mounted
+volume. No compose file, no registry.
+Why: `docker build` plus one `docker run` covers the UI, the CLI, the tests and the
+evals from the same image, and the CLI is one command override away. A compose file
+would save a line of flags and add a file to explain. The frontend is built inside
+the image so `dist` stays out of git (D38). The image never holds a key: `.env` is in
+`.dockerignore`, `pydantic-settings` treats the missing in-image `.env` as optional and
+reads the variables `--env-file` sets. The backend's default bind is `127.0.0.1`, which
+a container cannot publish, so the image passes `--host 0.0.0.0` and the README keeps
+the local default unchanged. The samples are copied in so the unkeyed UI works from the
+image alone.
+Evidence: the image is about 900 MB and builds in about four minutes cold, under
+fifteen seconds warm. Inside it `pytest -q` passes 388 tests. Without a key the UI answers
+`/api/health`, lists the four samples, serves the built index, a sample chunk and a
+sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
+data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
+host (50 calls, $0.050, 85 s) as the non-root user.
 
 ---
 

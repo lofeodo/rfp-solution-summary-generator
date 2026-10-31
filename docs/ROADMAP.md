@@ -109,13 +109,14 @@ flowchart TD
 
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15 done
-    class S16 ready
+    class S0,S1,S2,S3,S4,S5,S6,S7,S8,S9,S10,S11,S12,S13,S14,S15,S16 done
+    %% nothing ready: core is complete (stretch steps get their own graph when started)
 ```
 
-**Progress (2026-10-30):** done S0 to S15 (green). Ready now, all dependencies done
-(amber): S16, the last core step. Update the two `class` lines in the diagram whenever
-a step is marked `done`.
+**Progress (2026-10-31):** every core step, S0 to S16, is done (green). The PR from
+`core` into `main` is open and waits for the author. Stretch goals (section 3) start
+from `main` once it is merged; ST1 is first in the priority order. Update the two
+`class` lines in the diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
 | ------------------------------------ | ---------- | ------------------------ | ---------------------------------------------------- |
@@ -2270,7 +2271,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     experiments) is stretch ST1.
 
 ### S16. Documentation, Dockerfile, demo script
-- **Status:** todo
+- **Status:** done
 - **Goal:** README complete (how to run CLI and UI, where the key goes, how to run
   evals, pipeline diagram, demo script listing what to click in what order, a short
   "live change rehearsal" list: swap model, edit a prompt, add a requirement type);
@@ -2279,10 +2280,112 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   and eval results committed. Then merge `core` into `main`, delete `core`, sync.
 - **Depends on:** S13, S15
 - **Parallel with:** —
-- **Detailed plan:** _(fill in when the step starts)_
+- **Detailed plan:** (written 2026-10-30; author's answers: regenerate the samples,
+  one multi-stage image without compose, report the real hours)
+  1. **Docker.** `Dockerfile` with two stages: `node:22-alpine` builds `ui/frontend`
+     (same Node as CI); `python:3.12-slim` installs `requirements.txt` (its `-e .`
+     line needs `pyproject.toml`, `README.md` and `src/` copied first), then copies
+     `prompts/`, `inputs/`, `data/rfps/`, `runs/samples/`, `evals/`, `tests/`,
+     `ui/backend/` and the built `dist` into `ui/frontend/dist` where `app.py` looks.
+     Non-root user, `EXPOSE 8000`, `VOLUME /app/runs`, default command
+     `python -m ui.backend --host 0.0.0.0` (the backend binds `127.0.0.1` by default,
+     which a container cannot publish). Keys come from `--env-file .env` on the host;
+     `pydantic-settings` treats the absent in-image `.env` as optional. `.dockerignore`
+     keeps `.env`, `assignment.pdf`, `.git`, `docs/`, `node_modules`, `dist` and local
+     `runs/*` except the samples out of the context. Verified by building, running
+     the UI without keys (health, runs list, index, sample chunk, sample PDF), running
+     `pytest` inside the image, and one keyed CLI run through the container.
+  2. **Samples.** Regenerate `runs/samples/{missouri,nyesd,colfax,federal_way}` in
+     place with `run_pipeline(pdf, runs_dir=runs/samples, run_id=<name>)` so the UI,
+     the demo and the image show the current prompts (the S10 samples predate the
+     S13 solution-prompt change; their `prompt_hashes.solution` differs).
+  3. **README.** Finished-project status paragraph and a table of contents; where the
+     key goes (`.env`, and `--env-file` for Docker); a Docker section; a timed
+     "Demo script (3 to 5 minutes)" listing what to open and click; a "Live-change
+     rehearsal" section with three rehearsals (swap the model, edit a prompt and
+     rerun one stage, add a requirement type) each naming the exact edit points and
+     the command that proves it.
+  4. **PROMPTS.md.** Replace the "fill in when the step lands" placeholder with the
+     statement that every prompt has a block, and add a "Managing prompts" paragraph
+     (hash per prompt in every run log, changelog discipline, how to rerun one stage
+     or one judge after a change). Check every block has its five fields.
+  5. **DECISIONS.md.** Fill the seven "Evidence: none yet" fields (D1, D2, D3, D4, D6,
+     D7, D13) from the committed baseline and ablation results and the regenerated
+     sample reports; add D41 for the image shape.
+  6. **TIMELOG.md and ASSUMPTIONS.md.** S16 row, demo-script hours under deliverable
+     6 with the recording left to the author, real total; one Scope line for Docker.
+  7. **Close.** PR into `core`, merge on green CI, delete the branch; then open the
+     PR `core` → `main` and stop (author's merge).
 - **What was done:**
+  - `Dockerfile` (two stages: `node:22-alpine` builds `ui/frontend`, `python:3.12-slim`
+    installs `requirements.txt` after copying `pyproject.toml`, `README.md` and `src/`
+    for the editable install, then copies prompts, inputs, `data/rfps`, `runs/samples`,
+    `evals`, `tests`, `ui/backend` and the built `dist`; non-root user; `EXPOSE 8000`;
+    `VOLUME /app/runs`; `CMD python -m ui.backend --host 0.0.0.0 --port 8000`) and
+    `.dockerignore` (`.env`, `assignment.pdf`, `.git`, `.claude`, `docs`, caches,
+    `node_modules`, `dist`, `runs/*` except the samples). Image about 900 MB. Verified:
+    `pytest -q` inside the image passes 388 tests; the unkeyed container answers
+    health, lists the four samples, serves the built index, a sample chunk and a
+    sample PDF (scripted smoke test); a keyed `python -m rfp_agent run
+    data/rfps/federal_way.pdf` inside the container with `runs/` bind-mounted wrote
+    the full run directory to the host as the non-root user (50 calls, $0.050, 85 s).
+    Docker Desktop was not running at first; the engine was started for the build.
+  - Samples regenerated in place with the current prompts, sequentially, through
+    `run_pipeline(pdf, runs_dir=runs/samples, run_id=<name>)`: Missouri 102 s $0.079,
+    NYESD 110 s $0.104, Colfax 76 s $0.057, Federal Way 77 s $0.048 ($0.29 in all);
+    `prompt_hashes.solution` now matches `prompts/solution.md`. The run logs,
+    `parsed.json`, `summary.json` and `summary.md` carried the absolute worktree path
+    the run was started with; a script rewrote it to the repo-relative posix path
+    (`data/rfps/<name>.pdf`), as S10 did, so the UI resolves the sample PDF under any
+    checkout and inside the image. Nothing else in the samples was edited.
+  - README: finished-project status paragraph and a one-line table of contents;
+    "Where the key goes" under Quickstart; a Docker section (build, UI, CLI, any
+    command, PowerShell note); "Demo script (3 to 5 minutes)", seven timed steps
+    walked once with Playwright against the UI served from the image (runs list,
+    Solution tab with coverage rounds and requirement chips, the source slide-over
+    with the quote, the chunk reference and the PDF iframe, Requirements type and
+    strictness toggles, Risks with the code-findings block, Metrics tab contents);
+    "Live-change rehearsal" with three rehearsals and the exact edit points, each
+    checked against the code (the renderer's `TYPE_LABELS` and the frontend's label
+    map were added to the type rehearsal after inspection; the debug CLI writes no run
+    log, so the prompt-hash claim was corrected); `Dockerfile` in the layout block.
+  - Rehearsal 1 run for real: `--model anthropic:claude-haiku-5-5` on Federal Way,
+    49 calls, $0.047, 0 retries, 147 s, all stages finished, `model` recorded in the
+    log (`runs/s16/haiku_swap`, local only).
+  - Rehearsal 2 run for real: `prompts/risk.md` count rule changed from twelve to
+    eight, `python -m rfp_agent.agents -v risk` on the Colfax sample's JSON, then the
+    edit reverted (no changelog entry, nothing committed). The model returned ten
+    risks, over the asked eight and inside the validator's band, which the README now
+    uses as the talking point about prompt rules versus code checks (F12).
+  - `docs/PROMPTS.md`: the "fill in when the step lands" placeholder replaced by a
+    "Managing prompts" section (loader contract, hash per prompt in every run log,
+    changelog discipline, how to rerun one stage or one judge, no RFP facts in
+    prompts); every one of the 16 prompt files already had its five-field block.
+  - `docs/DECISIONS.md`: evidence filled for D1, D2, D3, D4, D6, D7 and D13 from the
+    baseline and ablation results and the regenerated `requirements_report.json`
+    files; D41 (image shape) added. `docs/ASSUMPTIONS.md`: Docker line under Scope.
+    `docs/TIMELOG.md`: S16 row, deliverables 5 and 6, total 38.25 h stated as such.
+  - `tests/test_harness.py::test_retries_are_listed_with_their_node` read the old
+    Federal Way sample's dedupe retry; the regenerated samples have one retry in all
+    (Missouri `problem_synthesis`, cause recorded since F7), so the test now reads
+    that one and asserts the cause. `ui/frontend/src/lib/lib.test.ts` hard-coded the
+    Missouri sample's 120 requirements (now 123); it compares against the sample's
+    own count, as the chunk assertion already did. Full suite: 388 passed locally
+    and inside the image, 11 Vitest tests passed; ruff clean.
 - **Deviations from plan:**
+  - The sample run logs needed the path normalisation above; the plan assumed
+    `run_pipeline` would record the relative path it was given.
+  - One test depended on the sample contents (above) and was updated; no code
+    changed.
+  - The first image build ran while the samples were still regenerating, so the image
+    was rebuilt once the samples were committed; the smoke test was rerun on the
+    final image.
 - **Open issues:**
+  - The demo recording is the author's; the script assumes the UI served from the
+    image or a built frontend and a key in `.env`.
+  - The image is about 900 MB (PyMuPDF, LangChain and the Anthropic and DeepSeek
+    SDKs on a slim base); no size work was done.
+  - ST10 (cloud deployment) would start from this image.
 
 ---
 

@@ -137,7 +137,7 @@ describe("format and ids", () => {
       solution: { solution: s.solution, rounds: [] },
       risks: { assessment: s.risks, findings: {} as RiskResult["findings"] },
     });
-    expect(idx.requirements.size).toBe(120);
+    expect(idx.requirements.size).toBe(s.requirements.requirements.length);
     expect(idx.chunks.get("S9.1")?.page_start).toBe(5);
     expect(idx.chunks.size).toBe(s.chunks.length);
     expect(idx.addressedBy.get("R005")).toContain("C01");

@@ -10,7 +10,7 @@
       "content_missing": false,
       "page_kind": "form",
       "confirmed_flags": [],
-      "reason": "The page is a short price/cost-estimate form; the two-column table was flattened into one column with <br>, but every row label (Salaries, Benefits, Operating Expense, F&A Cost, Miscellaneous, Total) and the header wording remain readable and attributable, so the flags are false alarms."
+      "reason": "The page is a short price/cost-estimate form; the one-column table with merged cells still lists every expense row and the \"Estimated Amount\" header in order, so the low word count and broken-table flags are harmless."
     },
     "19": {
       "text_usable": true,
@@ -20,7 +20,7 @@
         "low_word_count",
         "large_image_block"
       ],
-      "reason": "The page is an affidavit form whose title was extracted, but the large image (54% of the page) almost certainly contains the affidavit's fill-in fields and body wording, which are absent from the text."
+      "reason": "The page is an affidavit form whose title is extracted but the 460x568 pt image almost certainly contains the affidavit's fill-in fields and wording, which are absent from the text."
     },
     "20": {
       "text_usable": true,
@@ -30,7 +30,7 @@
         "low_word_count",
         "large_image_block"
       ],
-      "reason": "The page is the start of an applicant affidavit form whose body (the affidavit fields and wording) sits in the large image and is absent from the extracted text, leaving only the exhibit heading and a parenthetical note."
+      "reason": "The page is the start of an applicant affidavit form whose body (the affidavit fields and wording) appears to be contained in the large image, so only the exhibit heading and a parenthetical note were extracted."
     }
   },
   "escalations": [
@@ -38,19 +38,19 @@
       "page": 12,
       "triggered_by": "code",
       "confirmed_bad": false,
-      "action": "cleared by judge: The page is a short price/cost-estimate form; the two-column table was flattened into one column with <br>, but every row label (Salaries, Benefits, Operating Expense, F&A Cost, Miscellaneous, Total) and the header wording remain readable and attributable, so the flags are false alarms."
+      "action": "cleared by judge: The page is a short price/cost-estimate form; the one-column table with merged cells still lists every expense row and the \"Estimated Amount\" header in order, so the low word count and broken-table flags are harmless."
     },
     {
       "page": 19,
       "triggered_by": "code",
       "confirmed_bad": true,
-      "action": "would escalate to VLM: The page is an affidavit form whose title was extracted, but the large image (54% of the page) almost certainly contains the affidavit's fill-in fields and body wording, which are absent from the text."
+      "action": "would escalate to VLM: The page is an affidavit form whose title is extracted but the 460x568 pt image almost certainly contains the affidavit's fill-in fields and wording, which are absent from the text."
     },
     {
       "page": 20,
       "triggered_by": "code",
       "confirmed_bad": true,
-      "action": "would escalate to VLM: The page is the start of an applicant affidavit form whose body (the affidavit fields and wording) sits in the large image and is absent from the extracted text, leaving only the exhibit heading and a parenthetical note."
+      "action": "would escalate to VLM: The page is the start of an applicant affidavit form whose body (the affidavit fields and wording) appears to be contained in the large image, so only the exhibit heading and a parenthetical note were extracted."
     }
   ]
 }

@@ -173,7 +173,10 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
 - Observability: Langfuse cloud free tier via the LangChain callback, plus a local JSON
   run log per run. The eval harness and UI read the JSON log, so nothing depends on
   Langfuse being reachable; tracing is a no-op when keys are absent.
-- Local run plus a Dockerfile is the target; no cloud deployment in core.
+- Local run plus a Dockerfile is the target; no cloud deployment in core. The Docker
+  image (S16, D41) serves the UI by default and the CLI by overriding the command;
+  keys come from the host's `.env` through `--env-file` and are never copied into the
+  image, and `runs/` is a mounted volume so run directories outlive the container.
 - A pipeline run writes every stage's JSON into its run directory as the stage
   finishes, next to the summary and the run log, so a failed run keeps what it had and
   the UI can serve intermediates without re-running anything. Run directories are

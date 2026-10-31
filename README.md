@@ -7,15 +7,25 @@ cites the chunk of the RFP it came from, so the summary can be checked against t
 source. The repo includes an evaluation harness and per-run observability (tokens,
 latency, cost).
 
-**Status:** scaffold (S0), LLM layer with observability (S1), PDF parsing (S2),
-section and chunk splitting (S3), parse-quality pass (S4), requirements extractor
-(S5), problem statement (S6), solution generator (S7), risk assessor (S8),
-renderer (S9), the end-to-end graph and CLI (S10), gold labels (S11), the evaluation
-harness with baseline results (S12), the UI backend (S14), the UI frontend (S15) and
-the eval-driven ablations and fixes (S13). Sample outputs for the four RFPs are under
-`runs/samples/`, eval results under `evals/results/` (baseline, two ablations, one
-prompt fix). Next: documentation, Dockerfile and demo script (S16); see
-`docs/ROADMAP.md`.
+**Status:** core complete. The pipeline and its CLI, a browser UI with live stage
+progress and source reveal, an evaluation harness with committed results (a baseline,
+two ablations and one prompt fix), per-run observability, a Docker image and the
+living docs under `docs/` are all in. Sample outputs for the four public RFPs are
+under `runs/samples/` and need no API key to browse. Stretch goals (VLM transcription
+of image pages, fetching referenced documents, a critic agent, a model-family
+benchmark, cloud deployment) are listed at the end of `docs/ROADMAP.md` and are not
+started.
+
+**Contents:** [Pipeline](#pipeline) · [Quickstart](#quickstart) ·
+[Running the pipeline](#running-the-pipeline) · [UI](#ui) · [Docker](#docker) ·
+[Parsing](#parsing) · [Splitting](#splitting) ·
+[Requirements extraction](#requirements-extraction) ·
+[Problem statement](#problem-statement) · [Solution generator](#solution-generator) ·
+[Risk assessor](#risk-assessor) · [Configuration](#configuration) ·
+[Observability](#observability) · [Inputs](#inputs) · [Evaluation](#evaluation) ·
+[Demo script](#demo-script-3-to-5-minutes) ·
+[Live-change rehearsal](#live-change-rehearsal) ·
+[Repository layout](#repository-layout) · [Documentation](#documentation)
 
 ## Pipeline
 
@@ -47,6 +57,14 @@ cp .env.example .env                     # then fill in DEEPSEEK_API_KEY (and AN
 pytest                                   # unit tests; nothing here calls a paid API
 pytest --update-golden                   # rewrite golden files after an intended render change
 ```
+
+**Where the key goes:** `.env` at the repository root, which is gitignored. Everything
+(CLI, UI, evals, Docker via `--env-file .env`) reads it from there; `.env.example`
+lists every variable. The pipeline needs `DEEPSEEK_API_KEY` (or the key of whichever
+provider `RFP_MODEL` names); the eval judge and the gold-label scripts need
+`ANTHROPIC_API_KEY`. Without any key the unit tests, the committed samples and the UI's
+sample browsing still work. No Docker is needed for a local run; see
+[Docker](#docker) for the containerised one.
 
 Run the pipeline on the default brief:
 
@@ -133,6 +151,35 @@ The upload form takes the CLI's options as fields: `model`, `full_text_problem`,
 before anything is written. When `ui/frontend/dist` exists, the same process serves the
 built frontend. `--reload` is for development only, because a reload loses a run that
 is in flight.
+
+## Docker
+
+One image serves the UI and runs the CLI; nothing but Docker is needed on the host.
+The build has two stages: Node 22 builds the frontend, then `python:3.12-slim`
+installs the pinned requirements and copies the prompts, the public RFPs, the committed
+samples, the evals and the tests. The image never contains a key: `.env` is in
+`.dockerignore`, and the keys are passed at run time with `--env-file`.
+
+```bash
+docker build -t rfp-agent .
+
+# UI and API on http://127.0.0.1:8000 (the four samples work with no key at all)
+docker run --rm -p 8000:8000 --env-file .env -v "$PWD/runs:/app/runs" rfp-agent
+
+# CLI: the run directory lands in ./runs on the host through the mounted volume
+docker run --rm --env-file .env -v "$PWD/runs:/app/runs" rfp-agent \
+    python -m rfp_agent run inputs/rfp_brief.pdf
+
+# any other command works the same way
+docker run --rm rfp-agent pytest -q
+docker run --rm --env-file .env -v "$PWD/runs:/app/runs" rfp-agent \
+    python -m rfp_agent run data/rfps/colfax.pdf --single-call-extraction
+```
+
+On PowerShell replace `$PWD` with `${PWD}`. The container runs as a non-root user and
+writes only under `/app/runs`; mount an empty or existing `runs/` directory there.
+Settings are read from the environment, so any `RFP_*` variable in `.env` (or passed
+with `-e`) applies inside the container exactly as it does locally.
 
 ## Parsing
 
@@ -394,6 +441,111 @@ and judged coverage of mandatory requirements 70 to 100% against 100% cited. The
 agrees with 34 of 40 hand labels. How to read every column is in
 `evals/results/README.md`.
 
+## Demo script (3 to 5 minutes)
+
+Before recording: `python -m ui.backend --port 8000` with a built frontend (or the
+Docker image), `DEEPSEEK_API_KEY` in `.env`, and `evals/results/baseline/summary.md`
+open in an editor. Times are cumulative.
+
+1. **0:00 The problem and the shape of the answer.** Show this README's pipeline
+   diagram. One sentence on the traceability rule: every factual claim cites a chunk
+   ID, code checks the IDs, so "unsupported claim" is a number the evals count.
+2. **0:30 Start a live run.** In the UI, upload `data/rfps/colfax.pdf` with the
+   defaults and submit. The timeline shows the stages: parse, parse quality, split,
+   then requirements and the problem statement side by side, then solution, risks,
+   assemble. Point at the per-stage wall time, calls and cost as each finishes. The
+   run takes 80 to 110 seconds; do not wait for it.
+3. **1:00 Read a finished output.** Open the `missouri` sample from the runs list.
+   Solution tab: the summary, the components, each with the requirement IDs it
+   satisfies, and the coverage figure. Click one requirement chip: the slide-over shows
+   the cited chunk with the verbatim quote highlighted and the PDF open at that page.
+   That is the traceability rule made visible.
+4. **1:45 Requirements and risks.** Requirements tab: filter to `mandatory`, then to
+   type `technical`; show the strictness and the `R`-IDs. Risks tab: K01 is the top
+   risk because code sorts by severity then likelihood; the findings block (uncovered
+   mandatory requirements, absent referenced documents, unreadable pages) is computed
+   by code and the model must address every item. Missouri's list leads with the IS
+   approval gate on the named program and the EPG rules the RFP points at but does
+   not contain.
+5. **2:30 Observability.** Metrics tab of the same run: cost, input, cached and output
+   tokens and retries for the run, wall time and cost per stage, and a per-node table
+   sorted by cost. Then `runs/samples/missouri/run_log.json` in the editor for what the tab
+   does not show: the prompt hashes, each retry's cause, the parse-quality
+   escalations. The same trace goes to Langfuse when keys are set.
+6. **3:15 Evaluation.** Switch to `evals/results/baseline/summary.md`: recall against
+   hand-corrected gold with the code-matched share, judged precision, checklist
+   coverage, grounding, judged coverage of mandatory requirements, consistency across
+   three runs. Then one ablation diff (`evals/results/ablation_single_call/diff_requirements.md`):
+   the single call is cheaper and matches recall, but truncates on the largest RFP and
+   drops whole obligations, which is why per-chunk extraction stays the default (D39).
+7. **4:00 Back to the live run.** The Colfax run has finished: show its risk list,
+   which on every run so far leads with the absent Attachments F and G (a gap the
+   parser recorded and the extractor reported), and its cost on the timeline. Close on `docs/DECISIONS.md`: D40
+   explains what the evals did not justify building (a critic loop), which is the
+   decision to defend first.
+
+## Live-change rehearsal
+
+The follow-up asks for a small change made live. Three rehearsed ones, each with the
+exact edit points and the command that proves it worked.
+
+**1. Swap the generator model.** No edit: `--model` or `RFP_MODEL`.
+
+```bash
+python -m rfp_agent run data/rfps/colfax.pdf --model anthropic:claude-haiku-5-5
+```
+
+What to point at: the run log records `model`; cost comes from the pricing table
+`PRICING` in `src/rfp_agent/config.py`, so a model with no row there is recorded at
+cost 0 with one warning in the log, and the fix is one dictionary entry. Anthropic
+models are not sent a temperature (they reject non-default sampling), which
+`src/rfp_agent/llm.py` handles per provider. Provider packages are the pinned
+`langchain-deepseek` and `langchain-anthropic`; another provider needs its LangChain
+package added to `requirements.txt`.
+
+**2. Edit a prompt and rerun only its stage.** Edit a rule in `prompts/risk.md` (for
+example, cap the list at eight risks), then rerun the risk stage on a sample's
+upstream outputs instead of the whole pipeline:
+
+```bash
+python -m rfp_agent.agents -v risk data/rfps/colfax.pdf \
+    --requirements runs/samples/colfax/requirements.json \
+    --problem runs/samples/colfax/problem.json \
+    --solution runs/samples/colfax/solution.json --out /tmp/colfax_risks.json
+```
+
+What to point at: the debug command prints the stage's calls, tokens, cost and
+retries and writes only the JSON (one pipeline run later carries the new prompt hash
+in its `run_log.json`); the validator in `src/rfp_agent/agents/risk.py` still rejects
+fewer than three or more than fifteen risks inside the retry, so a prompt asking for
+two would show a validation retry under `-v`; and the change needs a changelog line in
+`docs/PROMPTS.md`. Rehearsed once: "at most eight" returned ten risks for about a
+cent, which is the point to make about prompt rules versus code checks (F12 in
+`docs/DECISIONS.md`): the count rule in the prompt is advice the model overshoots, the
+band in the validator is the guarantee. For a judge prompt the equivalent is
+`python -m evals.harness score --label baseline --only risks`.
+
+**3. Add a requirement type.** Say `accessibility` as its own type instead of folding
+it into `technical`. Edit points, in order:
+
+- `src/rfp_agent/schemas.py`: add the member to `RequirementType` (the contract; the
+  extractor's structured output and the assembler validate against it).
+- `prompts/requirements_extract.md`: add it to the list of kinds and to the `type`
+  enum line, with one sentence on when it applies.
+- `src/rfp_agent/render/markdown.py`: add its heading to `TYPE_LABELS` (the
+  requirements section is grouped by type in enum order).
+- `ui/frontend/src/api/types.ts`: add it to the `type` union;
+  `ui/frontend/src/lib/requirements.ts`: add its label so the filter and the source
+  panel show it (`npm run typecheck` fails until both are done).
+- Optional for the evals: `prompts/gold_requirements.md` and
+  `prompts/judge_requirements.md` list the types too; leaving them alone only means
+  the type-accuracy column counts the new type as a mismatch against gold.
+
+The solution generator, the risk assessor and the UI backend need no change; they
+carry the type through. Prove it with `pytest` (the schema tests and the fake-model
+extractor tests) and `cd ui/frontend && npm run typecheck && npm test`; then one paid
+run on a PDF with such a clause shows the new type in the Requirements filter.
+
 ## Repository layout
 
 ```
@@ -417,6 +569,7 @@ runs/samples/      committed end-to-end outputs for the four RFPs (S10)
 ui/backend/        FastAPI app: uploads, run queue, SSE events, run outputs (S14)
 ui/frontend/       Vite + React + TypeScript + Tailwind UI (S15)
 docs/              ROADMAP, DECISIONS, ASSUMPTIONS, TIMELOG, PROMPTS
+Dockerfile         one image for the UI and the CLI; .dockerignore keeps keys and docs out (S16)
 ```
 
 ## Documentation
