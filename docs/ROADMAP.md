@@ -2323,7 +2323,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `evals`, `tests`, `ui/backend` and the built `dist`; non-root user; `EXPOSE 8000`;
     `VOLUME /app/runs`; `CMD python -m ui.backend --host 0.0.0.0 --port 8000`) and
     `.dockerignore` (`.env`, `assignment.pdf`, `.git`, `.claude`, `docs`, caches,
-    `node_modules`, `dist`, `runs/*` except the samples). Image 899 MB. Verified:
+    `node_modules`, `dist`, `runs/*` except the samples). Image about 900 MB. Verified:
     `pytest -q` inside the image passes 388 tests; the unkeyed container answers
     health, lists the four samples, serves the built index, a sample chunk and a
     sample PDF (scripted smoke test); a keyed `python -m rfp_agent run
@@ -2381,8 +2381,8 @@ one-line note in the step's "What was done" so merges are easy to resolve.
 - **Open issues:**
   - The demo recording is the author's; the script assumes the UI served from the
     image or a built frontend and a key in `.env`.
-  - The image is 899 MB (PyMuPDF, LangChain and the Anthropic and DeepSeek SDKs on a
-    slim base); no size work was done.
+  - The image is about 900 MB (PyMuPDF, LangChain and the Anthropic and DeepSeek
+    SDKs on a slim base); no size work was done.
   - ST10 (cloud deployment) would start from this image.
 
 ---

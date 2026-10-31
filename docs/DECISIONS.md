@@ -896,8 +896,8 @@ reads the variables `--env-file` sets. The backend's default bind is `127.0.0.1`
 a container cannot publish, so the image passes `--host 0.0.0.0` and the README keeps
 the local default unchanged. The samples are copied in so the unkeyed UI works from the
 image alone.
-Evidence: the image is 899 MB and builds in about four minutes cold, under ten
-seconds warm. Inside it `pytest -q` passes 388 tests. Without a key the UI answers
+Evidence: the image is about 900 MB and builds in about four minutes cold, under
+fifteen seconds warm. Inside it `pytest -q` passes 388 tests. Without a key the UI answers
 `/api/health`, lists the four samples, serves the built index, a sample chunk and a
 sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
 data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
