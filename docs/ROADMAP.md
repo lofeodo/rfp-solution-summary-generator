@@ -2386,6 +2386,24 @@ one-line note in the step's "What was done" so merges are easy to resolve.
   - The image is about 900 MB (PyMuPDF, LangChain and the Anthropic and DeepSeek
     SDKs on a slim base); no size work was done.
   - ST10 (cloud deployment) would start from this image.
+- **Follow-up (2026-11-02, PR into `core` after the author read the README):**
+  - The author found `python -m rfp_agent` failing with `No module named rfp_agent`:
+    the env's editable install pointed at a deleted worktree
+    (`.claude/worktrees/step-12-eval-harness/src`), because a `pip install` had once
+    run inside a worktree. Fixed with `pip install -e .` from the main checkout; a
+    troubleshooting entry and the rule "never pip install inside a worktree" recorded.
+  - README rewritten as a short public page: what it does in two sentences, a UI
+    screenshot (`docs/images/ui-solution.png`), "Open the UI" as numbered commands
+    (Docker first, local second), a "Using the UI" section (five steps, a tab-by-tab
+    table, the start-page screenshot `docs/images/ui-home.png`, both taken with
+    Playwright against the image), a coloured pipeline diagram (code vs. model stages),
+    a traceability diagram, a per-RFP results table, the eval loop, a repository map
+    and a docs table. Nothing author-specific remains in it.
+  - The long sections moved, verbatim where possible, into three new docs:
+    `docs/PIPELINE.md` (every stage, assembly, configuration, observability, inputs
+    and gold labels), `docs/USAGE.md` (local setup, CLI, UI dev mode, backend API,
+    Docker, evals, troubleshooting) and `docs/AUTHOR.md` (status, demo script,
+    live-change rehearsals: author-only, kept out of the README).
 
 ---
 
