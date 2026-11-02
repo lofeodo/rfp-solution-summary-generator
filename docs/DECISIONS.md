@@ -903,6 +903,44 @@ sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
 data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
 host (50 calls, $0.050, 85 s) as the non-root user.
 
+### D42. One prompt structure for every prompt (ST12)
+Context: the 16 prompts were written step by step and shared only a loose shape (a
+role sentence, sometimes `## What to return`, `## Rules`, data blocks), applied
+unevenly: the gold and parse-quality prompts put the data before the output
+contract, the extractor had no output section, the dedupe prompt had no rules
+section, the personas were generic ("You extract requirements"), tone was one bullet
+in two prompts, and no prompt told the model what to check before answering. The
+author asked for one structure grounded in prompt-engineering practice, applied to
+every prompt and written down.
+Options: (a) one fixed section order inside the single human message, no code change;
+(b) the same plus a system message carrying the persona and tone, which means a new
+message layout in six call sites and two hashes per prompt; (c) data first and
+instructions last, which Anthropic recommends for long documents.
+Choice: (a). Fixed `##` headings in a fixed order: Role, Task, Context, Output, Rules,
+Examples (optional), Tone, one heading per input block, Final checks. The persona is
+a role at a Big Four advisory practice named by function (proposal manager, solution
+architect, bid risk manager, procurement analyst, independent reviewer), never a real
+firm. Instructions stay first and data last. The structure is documented in
+`prompts/README.md` and enforced by `tests/test_prompt_structure.py`, which also pins
+the placeholder sets, the judge recognition phrases the scripted judge depends on,
+and the definitions shared between prompts (the D31 scope, the risk scales).
+Why: (a) changes nothing about how prompts are loaded, hashed, cached or tested, and
+a persona inside the human message reaches DeepSeek and Claude alike. (b) would buy a
+cleaner separation at the cost of touching every call site and the run-log hash
+contract for a difference no eval measures. (c) would defeat the DeepSeek prefix cache
+(S5: about 74% of extractor input tokens were cache reads) and break the tests that
+look for `## Rules` before the data; the judge inputs are short enough that the
+long-document advice does not apply. Final checks come after the data on purpose:
+the self-check sits next to the answer, which is where the dedupe prompt's ad hoc
+"check that no ID appears twice" already worked. Content that evals had tuned (the
+include/exclude scope, F6, F8 to F10, F12, F14 rules) is kept verbatim; only its place
+and framing changed, so a score movement reads as the structure's effect.
+Evidence: 73 structure checks and the 227 existing prompt-dependent tests pass. The
+measured effect is in `docs/PROMPTS.md` (ST12 comparison) and in
+`evals/results/prompt_structure/` (fresh runs, new prompts) and
+`evals/results/baseline_rejudged/` (baseline runs, new judge prompts, agreement with
+the 40 hand labels).
+
 ---
 
 ---

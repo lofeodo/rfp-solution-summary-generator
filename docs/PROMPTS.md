@@ -9,6 +9,11 @@ every time a prompt changes.
 - One file per agent under `prompts/`, loaded by `load_prompt(name)` in
   `src/rfp_agent/llm.py`; `{{name}}` variables are substituted by code and a missing or
   unused variable is an error, so a prompt cannot silently lose an input.
+- Every prompt follows the structure in `prompts/README.md` (ST12): Role, Task,
+  Context, Output, Rules, Examples (optional), Tone, input blocks, Final checks.
+  `tests/test_prompt_structure.py` enforces the heading order, the placeholder sets,
+  the phrases the scripted judge recognises each judge prompt by, and the definitions
+  two prompts share. A prompt edit that keeps the structure needs no test change.
 - Every run log records the SHA-256 of each prompt file the run used
   (`prompt_hashes` in `runs/<id>/run_log.json`), so two runs can be compared knowing
   whether the prompt changed between them without reading the file.
@@ -24,9 +29,62 @@ every time a prompt changes.
   in through variables, and every prompt that states facts about the RFP must cite
   chunk or requirement IDs that code then validates.
 
+## Structure and principles (ST12)
+
+The structure in `prompts/README.md` applies these prompt-engineering principles. Each
+is a reason a section exists, not a style preference.
+
+- **A specific persona, stated once.** The Role names a function at a Big Four advisory
+  practice (requirements analyst, proposal manager, solution architect, bid risk
+  manager, procurement analyst, independent reviewer, document QA specialist) and the
+  standard that function holds. A persona fixes the register and the default judgment
+  for every field without repeating it in every rule; no real firm is named.
+- **The task in plain words before any detail.** One or two sentences with the verb,
+  the object and the reader, so the model knows what the rest of the prompt serves.
+- **Boundaries and consequences before instructions.** Context says what the model
+  sees and does not see (one chunk, summaries only, no RFP text, no page image,
+  levels hidden) and what code does with the answer (verifies quotes, assigns IDs,
+  computes coverage, sends feedback, rejects what). A model that knows its evidence
+  boundary invents less; one that knows code checks the IDs copies them.
+- **Semantics in the prompt, syntax in the schema.** Output explains each field's
+  meaning, allowed values, size and citation need; the Pydantic schema (sent as a tool
+  or JSON schema) enforces the shape. Scales and rubric anchors live under the field
+  they define.
+- **Rules that carry their reason.** Bold-named, most important first, each with why
+  or with what code does about it. Names are shared across prompts (Scope, Cite only
+  IDs that are shown, No invented facts, Verbatim quotes, Count, Only the cited
+  sources count, Judge independently, Use the full scale), so the same rule reads the
+  same everywhere.
+- **Contrastive examples in one place.** "Not this / This" pairs show the boundary a
+  rule draws; they were already in several prompts, scattered through the prose.
+- **Tone as a section, not a bullet.** Register, audience, banned meta-references ("the
+  inputs", "the evidence", "the findings"), no hedging or marketing language, no
+  markdown inside string fields. Before ST12 the F6 leak rule lived in two prompts.
+- **Data last, in tagged blocks with a legend.** The instruction prefix is identical
+  across calls and the provider caches it; each block says its line format once.
+- **A self-check next to the answer.** Final checks list the three to five things a
+  reviewer would check first (IDs exist, counts in range, quotes verbatim, no ID twice,
+  one entry per ID shown). The dedupe prompt's "check that no ID appears twice"
+  fixed its double grouping in S5; ST12 makes it a standing section.
+
+Personas and what moved per prompt:
+
+| Prompt | Persona | What moved or was added in ST12 |
+|---|---|---|
+| `requirements_extract` | senior requirements analyst seconded to a bid team | Output section (fields were implied by Rules), Context carries `{{unit}}` and what code checks, Examples gathered, Tone and Final checks added |
+| `requirements_dedupe` | senior requirements analyst consolidating a register | Rules section (the prompt was prose), Examples, Final checks (the one-ID-once rule is stated twice on purpose) |
+| `problem_chunk` | senior proposal manager taking notes | instructions moved before the chunk; Rules, Tone, Final checks added |
+| `problem_synthesis` | senior proposal manager writing the opening page | evidence moved after the instructions; claim fields split out; Examples and Final checks added |
+| `solution` | senior solution architect leading public-sector bids | Context says what code computes and rejects; "assumptions are positions" became a rule; Examples and Final checks added |
+| `risk` | senior bid risk manager | scales moved under `severity` and `likelihood`; "use the full scale" copied from the judge; Examples and Final checks added |
+| `parse_quality` | document-processing quality specialist | flag glossary became Context; Output and Rules moved before the page text; Final checks added |
+| `gold_requirements`, `gold_checklist` | senior procurement analyst building an answer key | Output and Rules split out; document last; Examples (checklist) and Final checks added |
+| `judge_*` | senior reviewer in an independent quality-assurance function | Context says what is hidden from the judge and why, and that code demands one entry per ID; Examples gathered; Final checks restate the ID and word-cap contracts |
+
 ## Design notes
 
-Every prompt in `prompts/` has one block below, in this shape:
+Every prompt in `prompts/` has one block below, in this shape (the layout itself is
+the ST12 structure above; the notes record the content choices):
 
 ```
 ### prompts/<name>.md
@@ -223,11 +281,14 @@ S12's judge should sample.
 
 ### Judge prompts (S12): shared design
 The seven `judge_*` prompts are run by the eval harness on the judge model
-(`Settings.judge_model`, effort `medium`), never by the pipeline. They follow the agent
-prompts' layout: a role line naming what is being graded, `## What to return` with one
-bullet per schema field, `## Rules` with bold rule names, data last in tagged blocks.
-Every verdict carries a short `reason` with a word cap, so the score files read as an
-audit trail and output tokens stay bounded. Every list answer is checked by a per-call
+(`Settings.judge_model`, effort `medium`), never by the pipeline. They follow the ST12
+structure like the agent prompts: the Role is an independent reviewer, the Task names
+what is graded (and carries the phrase the scripted judge in `tests/test_harness.py`
+recognises the prompt by), Context says what is hidden from the judge and that code
+demands exactly one entry per ID shown, Output has one bullet per schema field, Rules
+are bold-named, data comes last in tagged blocks, and Final checks restate the ID and
+word-cap contracts. Every verdict carries a short `reason` with a word cap, so the
+score files read as an audit trail and output tokens stay bounded. Every list answer is checked by a per-call
 schema that demands exactly one entry per ID shown (D36); the prompts say "use only the
 IDs shown" but code enforces it. Design decisions D36 and D37.
 
