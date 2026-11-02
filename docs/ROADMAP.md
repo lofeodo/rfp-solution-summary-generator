@@ -613,7 +613,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `structured_call(node="parse_quality")`, one call per flagged page. `escalate(page,
     flags, judgement, hook)` replaces the S2 stub and applies the attribution rule. The
     VLM hook is a callable `(page, judgement) -> action text`; the default
-    `record_only_hook` returns "would escalate to VLM: <reason>" (ST2 swaps in
+    `record_only_hook` returns `"would escalate to VLM: <reason>"` (ST2 swaps in
     transcription). `run_quality_pass(parsed, ...) -> (ParsedDocument, ParseQualityReport)`
     judges each flagged page, records every escalation on the run recorder, and returns a
     copy of the document holding only confirmed and model-raised flags.
