@@ -1,6 +1,7 @@
-"""FastAPI app for the UI (S14): upload a PDF, run the pipeline, stream stage events over
-SSE, serve every intermediate output of a run. The API contract is in ``README.md`` next
-to this file. Built by ``create_app`` (uvicorn runs it as a factory), so importing this
+"""FastAPI app for the UI (S14, ST12c): upload a PDF, run the pipeline to the checkpoint,
+take the reviewer's checkpoint, revisions, regenerations and sign-off, stream stage and
+state events over SSE, serve every output of a run. The API contract is in ``README.md``
+next to this file. Built by ``create_app`` (uvicorn runs it as a factory), so importing this
 module has no side effects.
 """
 
@@ -20,19 +21,45 @@ from fastapi import APIRouter, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 
+from rfp_agent.brief import parse_brief
+from rfp_agent.checkpoint import CONFIRMED_REQUIREMENTS_FILENAME, validate_checkpoint
 from rfp_agent.config import REPO_ROOT, RUNS_DIR, Settings, get_settings
+from rfp_agent.graph import STAGES, StageEvent
 from rfp_agent.llm import MissingApiKeyError
 from rfp_agent.observability import new_run_id
-from rfp_agent.schemas import CHUNK_ID_RE, Chunk, RunTotals
+from rfp_agent.refine import RefineError
+from rfp_agent.schemas import (
+    CHUNK_ID_RE,
+    Artefact,
+    CheckpointRecord,
+    Chunk,
+    RequirementsOutput,
+    RevisionLog,
+    RunTotals,
+)
 
-from .models import DOWNLOADS, Health, RunCreated, RunListItem, RunStatus
-from .runs import RunEntry, RunRegistry
+from .models import (
+    DOWNLOADS,
+    CheckpointRequest,
+    Health,
+    JobAccepted,
+    RegenerateRequest,
+    ReviewState,
+    ReviseRequest,
+    RunCreated,
+    RunListItem,
+    RunStatus,
+    SignOffRequest,
+)
+from .runs import RunBusy, RunEntry, RunRegistry
 from .store import (
     SOURCE_PDF,
     UPLOAD_META,
     RunLocation,
     RunStore,
     list_item_from_log,
+    load_revisions,
+    review_state,
     stages_from_log,
     status_from_log,
 )
@@ -96,6 +123,7 @@ def create_app(
             nodes=[],
             langfuse_trace_url=None,
             artifacts=store.available_artifacts(loc) if loc else [],
+            review=review_state(loc, entry.status) if loc else ReviewState(),
         )
 
     def live_item(entry: RunEntry) -> RunListItem:
@@ -109,7 +137,7 @@ def create_app(
             finished_at=None,
             cost_usd=round(entry.totals().cost_usd, 6),
             latency_s=None,
-            stages_done=sum(1 for e in stages if e.status == "finished"),
+            stages_done=sum(1 for e in stages if e.stage in STAGES and e.status == "finished"),
         )
 
     # -- routes ------------------------------------------------------------------------
@@ -125,6 +153,9 @@ def create_app(
         full_text_problem: Annotated[bool | None, Form()] = None,
         single_call_extraction: Annotated[bool | None, Form()] = None,
         max_iterations: Annotated[int | None, Form(ge=1, le=10)] = None,
+        unattended: Annotated[
+            bool, Form(description="Run to the end without pausing at the checkpoint")
+        ] = False,
     ) -> RunCreated:
         source_name = Path(file.filename or "").name or "upload.pdf"
         run_id = new_run_id()
@@ -150,6 +181,7 @@ def create_app(
                     "full_text_problem": full_text_problem,
                     "single_call_extraction": single_call_extraction,
                     "max_iterations": max_iterations,
+                    "unattended": unattended,
                 },
             }
             (run_dir / UPLOAD_META).write_text(json.dumps(meta, indent=2), encoding="utf-8")
@@ -162,6 +194,7 @@ def create_app(
                     full_text_problem=full_text_problem,
                     single_call_extraction=single_call_extraction,
                     max_iterations=max_iterations,
+                    unattended=unattended,
                 )
             except MissingApiKeyError as exc:
                 raise HTTPException(503, str(exc)) from exc
@@ -180,7 +213,7 @@ def create_app(
             if log is not None and loc.run_id not in items:
                 items[loc.run_id] = list_item_from_log(store, loc, log)
         for entry in registry.entries():
-            if not entry.is_terminal or entry.run_id not in items:
+            if not entry.is_idle or entry.run_id not in items:
                 items[entry.run_id] = live_item(entry)
         runs = sorted(
             (i for i in items.values() if not i.sample),
@@ -193,7 +226,7 @@ def create_app(
     def run_status(run_id: str) -> RunStatus:
         entry = registry.get(run_id)
         loc = store.locate(run_id)
-        if entry is not None and not entry.is_terminal:
+        if entry is not None and not entry.is_idle:
             return live_status(entry, loc)
         log = store.read_log(loc) if loc is not None else None
         if loc is not None and log is not None:
@@ -287,6 +320,135 @@ def create_app(
             raise HTTPException(404, f"no chunk {chunk_id!r} in run {run_id!r}")
         return found
 
+    # -- the human in the loop (ST12c) --------------------------------------------------
+
+    def mutable(run_id: str) -> tuple[RunLocation, RunEntry]:
+        """The run and its registry entry (adopted from disk after a restart), for a
+        request that changes it. Samples are read-only."""
+        loc = locate(run_id)
+        if loc.sample:
+            raise HTTPException(403, f"{run_id!r} is a sample run; samples are read-only")
+        entry = registry.adopt(run_id)
+        if entry is None:
+            raise HTTPException(409, f"run {run_id!r} has no run log yet")
+        return loc, entry
+
+    def refusal(entry: RunEntry, what: str) -> HTTPException:
+        """409 saying why the run cannot take ``what`` in its current state."""
+        status = entry.status
+        if status == "signed_off":
+            why = "it was signed off; a signed-off run is frozen"
+        elif status == "awaiting_checkpoint":
+            why = "it is waiting at the checkpoint; confirm the checkpoint first"
+        elif status == "finished":
+            why = "it is past the checkpoint"
+        elif status == "failed":
+            why = "it failed"
+        else:
+            why = f"it is {status}; wait for the current job to end"
+        return HTTPException(409, f"run {entry.run_id} cannot {what}: {why}")
+
+    def start(fn, *args, **kwargs):
+        """Call a registry method that builds a model and queues a job; map its errors."""
+        try:
+            return fn(*args, **kwargs)
+        except RunBusy as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except MissingApiKeyError as exc:
+            raise HTTPException(503, str(exc)) from exc
+        except RefineError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except Exception as exc:  # unknown provider, bad model spec, missing package
+            raise HTTPException(400, f"cannot build model: {exc}") from exc
+
+    @api.post("/runs/{run_id}/checkpoint", status_code=202)
+    def confirm_checkpoint(run_id: str, body: CheckpointRequest) -> JobAccepted:
+        loc, entry = mutable(run_id)
+        if entry.status != "awaiting_checkpoint":
+            raise refusal(entry, "take a checkpoint")
+        confirmed = loc.path / CONFIRMED_REQUIREMENTS_FILENAME
+        source = confirmed if confirmed.is_file() else loc.path / "requirements.json"
+        requirements = RequirementsOutput.model_validate_json(source.read_text(encoding="utf-8"))
+        record = CheckpointRecord(
+            reviewer=body.reviewer,
+            confirmed_at=datetime.now(UTC),
+            decisions=body.decisions,
+            brief=parse_brief(body.brief),
+            note=body.note.strip() if body.note and body.note.strip() else None,
+        )
+        problems = validate_checkpoint(requirements, record)
+        if problems:
+            raise HTTPException(400, "; ".join(problems))
+        start(
+            registry.checkpoint,
+            entry,
+            record,
+            model_spec=body.model,
+            max_iterations=body.max_iterations,
+        )
+        return JobAccepted(run_id=run_id, status=entry.status)
+
+    @api.post("/runs/{run_id}/revise", status_code=202)
+    def revise_artefact(run_id: str, body: ReviseRequest) -> JobAccepted:
+        loc, entry = mutable(run_id)
+        if body.artefact not in review_state(loc, entry.status).allowed.revise:
+            raise refusal(entry, f"revise the {body.artefact.value}")
+        revision_id = start(
+            registry.revise,
+            entry,
+            body.artefact,
+            reviewer=body.reviewer,
+            instruction=body.instruction,
+            model_spec=body.model,
+        )
+        return JobAccepted(run_id=run_id, status=entry.status, revision_id=revision_id)
+
+    @api.post("/runs/{run_id}/regenerate", status_code=202)
+    def regenerate_stage(run_id: str, body: RegenerateRequest) -> JobAccepted:
+        loc, entry = mutable(run_id)
+        if body.stage not in review_state(loc, entry.status).allowed.regenerate:
+            raise refusal(entry, f"regenerate the {body.stage} stage")
+        revision_id = start(
+            registry.regenerate,
+            entry,
+            body.stage,
+            reviewer=body.reviewer,
+            model_spec=body.model,
+            max_iterations=body.max_iterations,
+        )
+        return JobAccepted(run_id=run_id, status=entry.status, revision_id=revision_id)
+
+    @api.post("/runs/{run_id}/sign-off")
+    def sign_off_run(run_id: str, body: SignOffRequest) -> RunStatus:
+        loc, entry = mutable(run_id)
+        review = review_state(loc, entry.status)
+        if not review.allowed.sign_off:
+            if entry.status == "finished" and review.stale:
+                stale = ", ".join(a.value for a in review.stale)
+                raise HTTPException(
+                    409,
+                    f"run {run_id} cannot be signed off: stale {stale}; regenerate or revise first",
+                )
+            raise refusal(entry, "be signed off")
+        start(registry.sign_off, entry, reviewer=body.reviewer, note=body.note)
+        return run_status(run_id)
+
+    @api.get("/runs/{run_id}/revisions")
+    def revisions(run_id: str) -> RevisionLog:
+        return load_revisions(locate(run_id).path)
+
+    @api.get("/runs/{run_id}/versions/{artefact}/{version}")
+    def version(run_id: str, artefact: str, version: int) -> FileResponse:
+        loc = locate(run_id)
+        try:
+            which = Artefact(artefact)
+        except ValueError as exc:
+            raise HTTPException(404, f"no artefact {artefact!r}") from exc
+        path = store.version_file(loc, which, version)
+        if path is None:
+            raise HTTPException(404, f"run {run_id!r} has no {artefact} v{version}")
+        return FileResponse(path, media_type="application/json")
+
     app.include_router(api)
 
     # The built frontend, when present. Registered last so /api routes win.
@@ -296,14 +458,16 @@ def create_app(
 
 
 async def live_events(entry: RunEntry) -> AsyncIterator[str]:
-    """Every event of a registry run from the first, then live ones, then ``done``."""
+    """Every event of a registry run from the first, then live ones, then ``done`` once
+    the run rests (paused at the checkpoint, finished, signed off or failed)."""
     cursor = 0
     while True:
-        new, terminal = await asyncio.to_thread(entry.wait, cursor, KEEPALIVE_S)
+        new, resting = await asyncio.to_thread(entry.wait, cursor, KEEPALIVE_S)
         for event in new:
-            yield sse("stage", event.model_dump_json())
+            kind = "stage" if isinstance(event, StageEvent) else "state"
+            yield sse(kind, event.model_dump_json())
         cursor += len(new)
-        if terminal:
+        if resting:
             yield sse("done", json.dumps({"status": entry.status, "error": entry.error}))
             return
         if not new:
