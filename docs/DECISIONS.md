@@ -903,7 +903,7 @@ sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
 data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
 host (50 calls, $0.050, 85 s) as the non-root user.
 
-### D42. Human in the loop as a pursuit lead would use it: one checkpoint before drafting, one sign-off after, instruction-driven refinement between
+### D43. Human in the loop as a pursuit lead would use it: one checkpoint before drafting, one sign-off after, instruction-driven refinement between
 Context: the author asked for a human-in-the-loop design for a financial-services
 deployment, chosen from the chair of an RFP pursuit lead rather than from the shape of
 the pipeline. A pursuit runs: read the RFP, sign the compliance matrix, storyboard the
@@ -932,7 +932,7 @@ same eight stages as before; the paused run stops with every read-stage file on 
 and a `waiting` record; the resumed run drafts on the same log with the time waited
 recorded as the checkpoint's latency (`tests/test_graph_checkpoint.py`).
 
-### D43. Pause and resume through the run directory, not a LangGraph checkpointer (D1 extended)
+### D44. Pause and resume through the run directory, not a LangGraph checkpointer (D1 extended)
 Context: a checkpoint needs the run to stop with its state kept, possibly for days, and
 to continue later, possibly after the backend restarted; the backend runs one pipeline
 at a time on a single worker thread (D35).
@@ -956,7 +956,7 @@ a graph built from `solution` holds exactly `solution`, `risk`, `assemble`; a se
 resume of the same run is refused as "not waiting"; a bad record is refused before any
 file is written (`tests/test_graph_checkpoint.py`).
 
-### D44. The pursuit brief is citable evidence; row actions are deterministic; the reviewer is a name
+### D45. The pursuit brief is citable evidence; row actions are deterministic; the reviewer is a name
 Context: the brief tells the drafter things the RFP does not, and the traceability rule
 (every factual claim cites an ID that code checks) must survive human input. At the
 checkpoint the reviewer also acts on individual requirements. There is no
@@ -989,11 +989,11 @@ it with one; the rendered summary shows the brief citation and a "Review history
 section with reviewer, time waited, rejected and edited IDs and the brief
 (`tests/test_checkpoint.py`).
 
-### D45. Revision by instruction: a patch for requirements, the whole artefact for the rest, the producing stage's validators either way
+### D46. Revision by instruction: a patch for requirements, the whole artefact for the rest, the producing stage's validators either way
 Context: after the checkpoint, review happens in prose ("merge R014 and R022", "add a
 component for accessibility", "the timeline risk is overstated"). ST12b needed one
 primitive that applies such an instruction to any artefact without weakening the
-traceability and compliance guards (D42). D40 rejected a free revision loop; this is
+traceability and compliance guards (D43). D40 rejected a free revision loop; this is
 not one: the target of each revision is a human instruction, applied once, and nothing
 loops on a model's judgment of its own output.
 Options: (a) the model returns the whole revised artefact for everything; (b) a patch
@@ -1015,7 +1015,7 @@ S7 coverage rule); coverage and the risk findings are recomputed by code. Every
 revision's diff is computed by code and stored.
 Why: the confirmed list runs past a hundred requirements on Missouri and NYESD; a whole
 rewrite would hit the output cap (F16) and could drop or reword items silently, which
-is exactly the regression guard D42 lists. A patch also makes the audit trail exact:
+is exactly the regression guard D43 lists. A patch also makes the audit trail exact:
 the diff is the patch. The other three artefacts are small, their validators already
 exist, and a patch over claims that have no IDs (the problem statement) would need its
 own matching rules for no gain. Stable IDs keep a version-to-version diff readable and
@@ -1027,10 +1027,10 @@ retry after a bad quote, stable and next-free IDs, unknown IDs and coverage regr
 refused, the count band and must-cite still enforced on risks, brief IDs accepted only
 with a brief); the live Missouri run in `docs/hitl/ST12b-revise.md`.
 
-### D46. Versions, stale flags and sign-off live in the run directory; assembly always re-runs, LLM stages never do on their own
+### D47. Versions, stale flags and sign-off live in the run directory; assembly always re-runs, LLM stages never do on their own
 Context: refinement needs versions to diff and roll back to, a way to tell the reviewer
 that the risks no longer match a revised solution, an audit trail with cost, and a final
-freeze. The run directory is already the state store (D43), and the backend (ST12c) must
+freeze. The run directory is already the state store (D44), and the backend (ST12c) must
 recover all of it after a restart.
 Options: a version field inside each stage file; a database; copies next to the live
 files plus two small index files. For staleness: regenerate downstream automatically;
@@ -1053,7 +1053,7 @@ while anything is stale and freezes the run.
 Why: the readers of the live files (load_state, renderer, backend, frontend) stay as
 they are. Automatic regeneration would throw away a reviewer's revision of the risks
 whenever the solution changed, and spend money without being asked (cost blindness is
-one of D42's guards); a stale flag puts that call in the reviewer's hands and sign-off
+one of D43's guards); a stale flag puts that call in the reviewer's hands and sign-off
 makes them settle it. A failed stage record would make the backend show a finished run
 as failed for a revision that changed nothing.
 Evidence: `tests/test_versions.py`; `tests/test_graph_refine.py` (v1 and v2 files,
@@ -1063,7 +1063,7 @@ a requirement realigns solution and risks so the strict assembler passes, regene
 one stage leaves the other untouched, a failed revision leaves files and stages as they
 were, sign-off refused while stale and then final).
 
-### D47. The backend runs every human-loop step as a job on the one worker; state is read from the run directory
+### D48. The backend runs every human-loop step as a job on the one worker; state is read from the run directory
 Context: the UI must drive the checkpoint, revisions, regenerations and sign-off that
 ST12a and ST12b built for the CLI, show where a run stands, and survive a restart (a
 paused run can wait for days).
@@ -1086,12 +1086,12 @@ no job table exists: after a restart the backend adopts a run on its first reque
 backend computes `review.allowed` (what the run takes now) and the frontend shows only
 that, so the state rules live in one place. SSE gains `event: state`; a stream closes
 when the run rests and the client subscribes again after each action.
-Why: one worker keeps provider rate limits and spend predictable (D42's cost-blindness
+Why: one worker keeps provider rate limits and spend predictable (D43's cost-blindness
 guard), at the price of a revision waiting behind another run's pipeline (rare with one
 reviewer). Setting the state at queue time closes the window where two clicks would
-queue two jobs on one run. Deriving state from files keeps D43's "the run directory is
+queue two jobs on one run. Deriving state from files keeps D44's "the run directory is
 the state store" and makes restart recovery free. A failed revision is not a failed run
-because the artefact is unchanged (D46); showing the run as failed would hide a usable
+because the artefact is unchanged (D47); showing the run as failed would hide a usable
 draft.
 Evidence: `tests/test_ui_backend.py` (default pause; checkpoint with a brief and
 decisions drafts the rest; 400/403/409/422 refusals, including a second checkpoint while
@@ -1100,7 +1100,7 @@ failed revise and failed regenerate leave the run `finished`, also when read bac
 fresh app; a paused and revised run confirmed from a fresh app); the live Missouri loop
 in `docs/hitl/ST12c-backend.md`.
 
-### D48. The checkpoint is a tab on the run page; the draft lives in the browser until confirmed; the brief is previewed as the server will split it
+### D49. The checkpoint is a tab on the run page; the draft lives in the browser until confirmed; the brief is previewed as the server will split it
 Context: ST12d puts the checkpoint in the UI. The reviewer may spend a while on it (the
 live run waited 2 minutes; a real one can wait days), may steer with model instructions
 in between, and must see what the drafter will cite before confirming.
@@ -1139,10 +1139,10 @@ lifecycle, diff grouping); the live Missouri checkpoint through the UI in
 
 ---
 
-### D49. Refine controls sit on each artefact tab; the Review tab holds sign-off and history; diffs are the stored ones; old versions are read-only
+### D50. Refine controls sit on each artefact tab; the Review tab holds sign-off and history; diffs are the stored ones; old versions are read-only
 Context: ST12e puts the refine loop and the sign-off in the UI. The backend already
 records every revision with a code-computed diff, keeps every version on disk and says
-which actions are allowed (D46, D47). The reviewer needs to change an artefact while
+which actions are allowed (D47, D48). The reviewer needs to change an artefact while
 reading it, see what a change did, notice what went stale, and sign off knowing what is
 frozen.
 Options: one central Review tab with an artefact picker, or controls on each artefact

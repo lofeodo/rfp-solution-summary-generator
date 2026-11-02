@@ -60,7 +60,7 @@
      `tests/test_graph_refine.py`, plus render and schema cases; no paid calls.
   10. **Live check** on Missouri: pause, revise requirements, checkpoint with a brief,
       revise the solution, sign-off refused while risks are stale, regenerate risks,
-      sign off. **Docs:** D45, D46, assumptions, prompt notes, usage, README, time log.
+      sign off. **Docs:** D46, D47, assumptions, prompt notes, usage, README, time log.
 - **What was done:** (2026-11-02, branch `st12b-revise` → `hitl`)
   - Roadmap: ST12 moved from `docs/ROADMAP.md` section 3.1 into `docs/hitl/` (index
     plus one file per step, text verbatim); section 3.1 is now a pointer; the project
@@ -111,7 +111,7 @@
     call, $0.013); `sign-off` refused while the risks were stale (exit 2);
     `regenerate risk` (1 call, $0.009); `sign-off` froze requirements v2, problem v1,
     solution v2, risks v2. Whole run $0.109, 147 calls.
-  - Docs: D45, D46; `ASSUMPTIONS.md` three bullets; `PROMPTS.md` design block and
+  - Docs: D46, D47; `ASSUMPTIONS.md` three bullets; `PROMPTS.md` design block and
     changelog row; `prompts/README.md`; `USAGE.md` "Refine and sign off"; README
     checkpoint paragraph; `TIMELOG.md`.
 - **Deviations from plan:** the orchestration lives in a new `refine.py` and
@@ -131,4 +131,4 @@
   regenerated or revised (it is marked stale). The live run's extraction skipped one
   chunk (S75.1, no structured output after three attempts), a pre-existing extractor
   behaviour unrelated to this step.
-- **Decisions:** D45, D46
+- **Decisions:** D46, D47

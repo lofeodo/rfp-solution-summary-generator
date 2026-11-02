@@ -24,7 +24,7 @@ either passes through (unattended) or records a ``waiting`` stage and routes to 
 so the run stops with every read-stage file on disk and the worker free. ``resume_pipeline``
 reloads those files into the state (``load_state``), applies the reviewer's record
 (``apply_checkpoint``), continues the same run log and invokes the graph from
-``solution``. No checkpointer: the run directory already is one (D43).
+``solution``. No checkpointer: the run directory already is one (D44).
 """
 
 from __future__ import annotations

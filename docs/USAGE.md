@@ -50,7 +50,7 @@ that the solution and the risks cite like an RFP chunk, so the summary shows whi
 claims rest on the team's input. The reviewer's name, the decisions, the brief and the
 time the run waited are recorded in `checkpoint.json` and rendered as "Review history"
 in `summary.md`; the extractor's `requirements.json` is kept untouched next to
-`requirements_confirmed.json`. See [DECISIONS.md](DECISIONS.md) D42 to D44 for why
+`requirements_confirmed.json`. See [DECISIONS.md](DECISIONS.md) D43 to D45 for why
 the checkpoint sits where it does.
 
 ```bash
@@ -130,7 +130,7 @@ the sign-off) and `revisions.json` (append-only: reviewer, instruction, diff, ve
 calls, cost, status). A revision the model cannot make valid is recorded as `failed`
 and changes nothing. Exit codes as above: 2 for a request the run cannot take (signed
 off, still waiting, stale at sign-off, unknown artefact, missing key), 1 when the model
-or a regenerated stage fails. See [DECISIONS.md](DECISIONS.md) D45 and D46.
+or a regenerated stage fails. See [DECISIONS.md](DECISIONS.md) D46 and D47.
 
 | Flag | Command | Effect |
 |---|---|---|

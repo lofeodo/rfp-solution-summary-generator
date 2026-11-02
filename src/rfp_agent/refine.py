@@ -1,7 +1,7 @@
 """Refinement of a run by a reviewer (ST12b): revise, regenerate, sign off.
 
 Each operation works on a run directory and continues its run log, like the checkpoint
-(D43): it loads the stage files (with the confirmed requirement list), changes one
+(D44): it loads the stage files (with the confirmed requirement list), changes one
 artefact, versions it (``rfp_agent.versions``), marks what depends on it stale, appends a
 record to ``revisions.json`` and, once the run is drafted, re-assembles the summary so
 ``summary.json`` and ``summary.md`` always show the current versions and the review

@@ -53,7 +53,7 @@
   sign-off and the frozen run; failed revise and failed regenerate leave the run
   `finished`; restart recovery of a paused run.
 
-  *Docs*: backend README contract, D47, USAGE, README, TIMELOG, this file and the index.
+  *Docs*: backend README contract, D48, USAGE, README, TIMELOG, this file and the index.
 - **What was done:** (2026-11-02, branch `st12c-backend` → `hitl`)
   - `ui/backend/models.py`: `RunState` with eight values and `RESTING` (replaces
     `TERMINAL`); `ARTIFACTS` gains `checkpoint`, `requirements_confirmed`, `current`,
@@ -124,4 +124,4 @@
     plus the job's ended stages; exact once the run rests.
   - One worker serves all runs, so a revision can wait behind another run's pipeline
     (shown as `refining` meanwhile).
-- **Decisions:** D47
+- **Decisions:** D48

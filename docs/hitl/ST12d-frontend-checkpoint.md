@@ -87,7 +87,7 @@
     without edits, pruning, counts, lifecycle, diff grouping) and 2 new stage tests in
     `lib/lib.test.ts`; 27 Vitest tests, typecheck and build clean; Python suite
     unchanged (see below).
-  - Docs: D48, README checkpoint paragraph, USAGE UI section, TIMELOG, this file and
+  - Docs: D49, README checkpoint paragraph, USAGE UI section, TIMELOG, this file and
     the index.
   - Live (Missouri, run `20261102-200113-0557af`, copied to the main checkout's
     `runs/st12d/`, gitignored), driven with Playwright on the built UI: upload paused
@@ -121,4 +121,4 @@
     only the record view was checked (no overflow).
   - `main` has ST2's VLM checkbox in `UploadForm.tsx`; the `hitl` → `main` merge will
     need both checkboxes kept.
-- **Decisions:** D48
+- **Decisions:** D49
