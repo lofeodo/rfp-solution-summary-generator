@@ -88,6 +88,16 @@ Blue stages are plain code. Orange stages call the model, but code checks every
 answer: quotes must appear in the source, cited IDs must exist, coverage is counted,
 and a bad answer goes back to the model with the error before anything is kept.
 
+**The checkpoint (human in the loop).** From the command line, a run stops after the
+requirements and the problem statement, before anything is drafted. A pursuit lead
+confirms the requirement list (reject one, change a strictness or a type) and writes a
+pursuit brief: win themes, the bidder's capabilities and constraints, what the client
+said outside the RFP. The brief becomes citable evidence (`H1`, `H2`...), so the
+summary shows which claims rest on the RFP and which on the team, and the reviewer,
+the decisions and the brief are rendered as the summary's review history. See
+[docs/USAGE.md](docs/USAGE.md) for the two commands and `--unattended` for the
+one-shot run; the UI gets the checkpoint in a later step.
+
 ## Why you can trust a claim
 
 ```mermaid

@@ -165,6 +165,21 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   Without a build, the backend still serves the API, and `npm run dev` serves the
   UI on `:5173`.
 
+## Human in the loop (ST12)
+
+- The reviewer who confirms the checkpoint is a free-text name recorded with the
+  decisions and the brief. There is no authentication, so the name is not verified; a
+  deployment behind SSO would take it from the session.
+- The pursuit brief is trusted input from the bid team. Its chunks are citable like RFP
+  chunks and labelled as pursuit-team evidence; the model is told the brief never waives
+  a mandatory requirement, and code does not check the brief's content.
+- A paused run waits indefinitely. Nothing expires or reminds; the run directory holds
+  everything needed to resume after a restart.
+- The CLI `run` stops at the checkpoint by default; `--unattended` keeps the pre-ST12
+  behaviour, and the eval harness and the committed samples always run unattended.
+- The resumed draft uses the model configured at resume time (the environment or
+  `--model`), not necessarily the one the read stages used; both are in the run log.
+
 ## Scope
 
 - Five pipeline outputs are the deliverable: parsed document, requirements (with

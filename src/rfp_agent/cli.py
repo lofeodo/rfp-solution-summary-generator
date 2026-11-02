@@ -78,7 +78,9 @@ def print_stages(log: RunLog) -> None:
 
 def print_totals(log: RunLog) -> None:
     t = log.totals()
-    wall = (log.finished_at - log.started_at).total_seconds() if log.finished_at else 0.0
+    # A paused run has no finished_at: its wall time so far is "until now".
+    end = log.finished_at or datetime.now(UTC)
+    wall = (end - log.started_at).total_seconds()
     console.print(
         f"[bold]total[/bold]: {len(log.nodes)} calls, {t.input_tokens} in / {t.output_tokens} "
         f"out tokens ({t.cached_input_tokens} cached), ${t.cost_usd:.4f}, {t.retries} "
