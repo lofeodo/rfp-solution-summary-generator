@@ -1100,6 +1100,43 @@ failed revise and failed regenerate leave the run `finished`, also when read bac
 fresh app; a paused and revised run confirmed from a fresh app); the live Missouri loop
 in `docs/hitl/ST12c-backend.md`.
 
+### D48. The checkpoint is a tab on the run page; the draft lives in the browser until confirmed; the brief is previewed as the server will split it
+Context: ST12d puts the checkpoint in the UI. The reviewer may spend a while on it (the
+live run waited 2 minutes; a real one can wait days), may steer with model instructions
+in between, and must see what the drafter will cite before confirming.
+Options: a full-page takeover while the run waits, or a tab; row decisions sent one by
+one to the server, or held in the browser and sent with the confirmation; the brief as
+five fixed fields, or one text box; the H-chunk split shown only after drafting, or
+previewed from a client-side copy of `parse_brief`, or from a new preview endpoint.
+Choice: a **Checkpoint tab**, first, opened by default while the run waits and showing
+the confirmed record afterwards, under a **lifecycle banner** (Read, Checkpoint, Draft,
+Refine, Sign-off) that says what happens next. Row actions (reject, strictness, type)
+are a **browser-side draft**: only rows that differ from the list are kept, a rejection
+carries no edits, and the draft is **pruned** whenever a revision changes the list (a
+removed requirement's row goes, a change the model already made stops being a change).
+The draft, the brief and the note sit in `localStorage` per run, and the reviewer's name
+globally, so a reload or a backend restart loses nothing; nothing is sent until
+"Confirm and draft". The brief is **one text box** with an "insert template" button and
+a **live H1..Hn preview** from a TypeScript port of `parse_brief`, tested on the Python
+cases; the template's own headings left empty are dropped before sending, the
+reviewer's own headings never are. The instruction box revises requirements or the
+problem (what `review.allowed` lists at the checkpoint) and shows each revision as one
+line grouped by item (removed R005, changed R001, A01); the full diff is ST12e's. Once
+a confirmed list exists, every view reads it instead of the extracted one.
+Why: a tab keeps the RFP outputs (problem, parse) one click away while checking, which
+the reviewer needs to judge a requirement. Holding decisions client-side matches the
+server contract (one checkpoint record, validated whole by `validate_checkpoint`) and
+keeps the server free of half-made decisions; pruning keeps that record valid after a
+revision, which ST12c found to be a 400 trap otherwise. The preview is the guard against
+"ungrounded claims" from the reviewer's side: they see exactly which paragraphs become
+H1, H2 before the drafter cites them. A port over an endpoint avoids a round trip per
+keystroke; the risk of drift is bounded by mirrored tests and by the server re-splitting
+whatever is sent.
+Evidence: `ui/frontend/src/lib/review.test.ts` (brief split mirrors
+`tests/test_checkpoint.py`, template dropping, draft to decisions, pruning, counts,
+lifecycle, diff grouping); the live Missouri checkpoint through the UI in
+`docs/hitl/ST12d-frontend-checkpoint.md`.
+
 ---
 
 ---

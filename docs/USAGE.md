@@ -150,6 +150,24 @@ views, and a metrics dashboard. Click any chunk, requirement, component or risk 
 open its source: the cited chunk with the verbatim quote highlighted, and the PDF at
 that page. The four samples need no API key.
 
+An upload pauses at the checkpoint unless "unattended" is ticked. The run page then
+opens on the **Checkpoint** tab, under a banner showing where the run stands (Read,
+Checkpoint, Draft, Refine, Sign-off):
+
+- *Reviewing as*: your name, remembered in this browser, recorded with every action.
+- *Requirements*: the extracted list with the usual filters plus "changed"; per row,
+  reject, or change the type or strictness. Nothing is sent until you confirm; the
+  draft survives a reload.
+- *Instructions*: for changes that need new text (merge, split, add, reword), on the
+  requirements or the problem statement. The model applies it, code checks it, and each
+  revision is listed with its cost and what it added, removed or changed; your draft
+  drops rows the revision removed.
+- *Pursuit brief*: one text box ("insert template" gives five headed sections); the
+  preview shows the H1, H2... paragraphs the drafter will cite. Template headings left
+  empty are not sent.
+- *Confirm and draft*: sends the decisions, the brief and an optional note; the run
+  drafts and the page follows it live. Afterwards the tab shows the checkpoint record.
+
 ```bash
 # once: build the frontend (Node 20+)
 cd ui/frontend && npm ci && npm run build && cd ../..
