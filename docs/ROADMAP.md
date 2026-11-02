@@ -2394,7 +2394,9 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     troubleshooting entry and the rule "never pip install inside a worktree" recorded.
   - README rewritten as a short public page: what it does in two sentences, a UI
     screenshot (`docs/images/ui-solution.png`), "Open the UI" as numbered commands
-    (Docker first, local second), a coloured pipeline diagram (code vs. model stages),
+    (Docker first, local second), a "Using the UI" section (five steps, a tab-by-tab
+    table, the start-page screenshot `docs/images/ui-home.png`, both taken with
+    Playwright against the image), a coloured pipeline diagram (code vs. model stages),
     a traceability diagram, a per-RFP results table, the eval loop, a repository map
     and a docs table. Nothing author-specific remains in it.
   - The long sections moved, verbatim where possible, into three new docs:

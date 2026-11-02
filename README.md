@@ -29,6 +29,32 @@ Four public RFPs are already loaded as samples and need no key. On PowerShell wr
 `${PWD}` instead of `$PWD`. More ways to run it (CLI, dev mode, API, evals) are in
 [`docs/USAGE.md`](docs/USAGE.md).
 
+## Using the UI
+
+![The start page: drop a PDF, pick options, and the list of finished runs](docs/images/ui-home.png)
+
+1. **Drop an RFP PDF** on the start page (or open one of the four samples below it).
+   The options can stay at their defaults.
+2. **Watch it run.** The left rail shows the eight stages ticking through, with time,
+   calls and cost for each. A run takes one to two minutes.
+3. **Read the result** in six tabs (table below). Start with Solution.
+4. **Click any ID** such as `R017`, `C05`, `K01` or `S9.1`: a panel opens with the
+   cited paragraph, the exact quote highlighted, and the PDF at that page.
+5. **Download** `summary.md` or `summary.json` from the header, or come back later:
+   every run stays in the list.
+
+| Tab | What you see |
+|---|---|
+| **Solution** | The proposed approach: a summary, the components with the requirements each one addresses, the assumptions made, and how many mandatory requirements are covered. The problem statement sits underneath. |
+| **Requirements** | Every requirement with its type and strictness, filterable by both, plus the ambiguities and the documents the RFP refers to but does not include. |
+| **Risks** | Risks ranked by severity and likelihood, each with a justification and a mitigation, and the code-computed findings the assessor had to address. |
+| **Problem** | What the client is really asking for: situation, goal, success criteria, constraints, each marked fact or inference. |
+| **Parse & chunks** | The RFP as the pipeline read it: pages, flagged pages, sections and the citable chunks. |
+| **Metrics** | Cost, tokens, retries and time per stage and per model call. |
+
+How each tab's content is produced is in [`docs/PIPELINE.md`](docs/PIPELINE.md); the
+CLI, the API and development mode are in [`docs/USAGE.md`](docs/USAGE.md).
+
 ## What happens to your PDF
 
 ```mermaid
