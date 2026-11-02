@@ -233,6 +233,40 @@ the tuned prompt), so the scales separate less than they could; `source` can fli
 between runs for the same risk (NYESD's MWBE goals: `rfp`, then `solution`), which
 S12's judge should sample.
 
+### prompts/revise_requirements.md, revise_problem.md, revise_solution.md, revise_risk.md (ST12b)
+Purpose: apply one reviewer instruction to one artefact after (or, for requirements and
+the problem statement, before) the checkpoint (D45).
+Inputs it receives: all four get `{{title}}` and `{{instruction}}` near the top, then the
+current artefact, then the context the producing stage's prompt showed:
+`revise_requirements` the current list (`ID [strictness, type] text — "quote" (chunks)`)
+and `{{chunks}}`, every chunk's own text with its ID, section and pages, so a new quote
+can be copied; `revise_problem` the statement, `{{evidence_kind}}` and `{{evidence}}` as
+the synthesis saw them (summaries, or the full text) and `{{brief}}`; `revise_solution`
+the solution as the risk prompt formats it plus problem, requirements, ambiguities, gaps
+and brief; `revise_risk` the current risks (`ID [severity/likelihood, source] title
+(requirement IDs; chunk IDs)` with description, justification, mitigation), the findings
+recomputed by code, and the risk prompt's other blocks.
+Output contract (schema): `RequirementsPatch` (edits by ID with only the changed fields,
+additions with quote and chunk ID, removals); `ProblemStatement`; `SolutionDraft` with an
+optional `id` per component (`SolutionRevision`); `RiskAssessmentDraft` with an optional
+`id` per risk (`RiskAssessmentRevision`). The tool names are the stage's, and the
+per-call validators are the stage's own plus ID checks and, for the solution, a refusal
+of any coverage regression.
+Why it is written this way: "only what the instruction asks; everything else exactly as
+it is now" is the first rule of each, because the diff is the audit trail and an
+unasked rewording is noise in it; requirements return a patch because the list is too
+long to return whole (D45, F16) and the patch explains how to merge and split with
+edit, add and remove; the quote rule says code checks every quote, and an empty patch is
+named as the right answer when the RFP does not support the instruction, so the model is
+not pushed to invent a requirement; the solution prompt states that code refuses a
+coverage regression, so the model keeps mandatory IDs instead of learning it from a
+retry; the guidance rules are the same as in the drafting prompts (cite `H` IDs, never
+waive a mandatory requirement); "never mention the instruction or the reviewer" keeps
+the deliverable free of meta-talk.
+Known weaknesses: the requirements prompt shows every chunk (about 11k tokens of text on
+Missouri), which is the price of letting an addition quote anywhere; whole-artefact
+revisions can still reword untouched text slightly, which the diff shows as changes.
+
 ### Judge prompts (S12): shared design
 The seven `judge_*` prompts are run by the eval harness on the judge model
 (`Settings.judge_model`, effort `medium`), never by the pipeline. They follow the agent
@@ -353,6 +387,7 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-11-02 | revise_requirements, revise_problem, revise_solution, revise_risk | Created (ST12b) | First version; instruction-driven revision of one artefact under the producing stage's validators (D45); first live results in `docs/hitl/ST12b-revise.md` |
 | 2026-11-02 | solution, risk | "Pursuit team guidance" input block (`{{brief}}`, `H1: text` lines or "None provided.") and a rule: follow it for design choices, cite `H` IDs for anything that rests on it, never waive a mandatory requirement (solution); cite `H` IDs for risks that rest on it, `source` `solution` for risks it creates (risk) | ST12 checkpoint: the brief written by the pursuit lead must reach the drafter and stay traceable (D44); unattended runs render "None provided." so their output is unchanged |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |

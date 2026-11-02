@@ -286,6 +286,239 @@ def checkpoint(
     _report(result, Path(result.run_log.source_path).name)
 
 
+# --------------------------------------------------------------------------------------
+# Refinement (ST12b): revise, regenerate, sign off, history
+# --------------------------------------------------------------------------------------
+
+RunsDirOption = Annotated[
+    Path | None, typer.Option("--runs-dir", help="Parent of the run directory (default runs/)")
+]
+ReviewerOption = Annotated[str, typer.Option("--reviewer", help="Who asks for it (recorded)")]
+ModelOption = Annotated[
+    str | None, typer.Option("--model", help="Generator, <provider>:<model_id> (RFP_MODEL)")
+]
+
+
+def _run_dir(runs_dir: Path | None, run_id: str) -> Path:
+    from rfp_agent.config import RUNS_DIR
+
+    return (runs_dir or RUNS_DIR) / run_id
+
+
+def _print_diff(diff, limit: int = 40) -> None:
+    """``+`` added, ``-`` removed, ``~`` changed paths of a revision's diff."""
+    if diff is None:
+        return
+    if diff.empty:
+        console.print("no change")
+        return
+    lines = [f"[green]+ {p}[/green]" for p in diff.added]
+    lines += [f"[red]- {p}[/red]" for p in diff.removed]
+    lines += [f"[yellow]~ {c.path}[/yellow]" for c in diff.changed]
+    for line in lines[:limit]:
+        console.print(line, soft_wrap=True, markup=True, highlight=False)
+    if len(lines) > limit:
+        console.print(f"... and {len(lines) - limit} more (see revisions.json)")
+
+
+def _report_refine(result) -> None:
+    """The diff, the version change, what went stale, cost, then the summary paths."""
+    r = result.record
+    _print_diff(r.diff)
+    if r.artefact is not None and r.to_version is not None:
+        console.print(f"{r.artefact.value} v{r.from_version} -> v{r.to_version}")
+    stale = [(a.value, v.stale_because) for a, v in result.versions.artefacts.items() if v.stale]
+    if stale:
+        console.print(
+            "[yellow]stale[/yellow]: " + "; ".join(f"{a} ({why})" for a, why in stale),
+            soft_wrap=True,
+        )
+    console.print(f"{r.id}: {r.calls} calls, ${r.cost_usd:.4f}, {r.latency_s:.1f} s")
+    print_totals(result.run_log)
+    if result.summary is not None and result.output_paths:
+        for name in ("summary.json", "summary.md"):
+            if name in result.output_paths:
+                console.print(f"  {result.output_paths[name]}", soft_wrap=True)
+    elif result.summary is None:
+        console.print("the run is still waiting at the checkpoint; nothing was re-assembled")
+
+
+@app.command()
+def revise(
+    run_id: Annotated[str, typer.Argument(help="Run directory name")],
+    artefact: Annotated[
+        str, typer.Argument(help="What to revise: requirements, problem, solution or risks")
+    ],
+    reviewer: ReviewerOption,
+    instruction: Annotated[
+        str | None, typer.Option("--instruction", help="What to change, in plain words")
+    ] = None,
+    instruction_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--instruction-file", exists=True, dir_okay=False, help="The instruction from a file"
+        ),
+    ] = None,
+    model: ModelOption = None,
+    runs_dir: RunsDirOption = None,
+) -> None:
+    """Apply one instruction to one artefact: the model revises it, code re-validates it
+    with the producing stage's checks, the change is versioned with a diff, what depends
+    on it is marked stale, and the summary is re-assembled. Requirements and the problem
+    statement can be revised while the run waits at the checkpoint."""
+    from rfp_agent.graph import PipelineStateError
+    from rfp_agent.llm import MissingApiKeyError
+    from rfp_agent.refine import RefineError, RevisionFailed
+    from rfp_agent.refine import revise as do_revise
+    from rfp_agent.schemas import Artefact
+
+    try:
+        kind = Artefact(artefact.strip().lower())
+    except ValueError as exc:
+        allowed = ", ".join(a.value for a in Artefact)
+        raise typer.BadParameter(f"artefact must be one of {allowed}, not {artefact!r}") from exc
+    if (instruction is None) == (instruction_file is None):
+        raise typer.BadParameter("give exactly one of --instruction or --instruction-file")
+    text = instruction if instruction is not None else instruction_file.read_text(encoding="utf-8")
+    try:
+        result = do_revise(
+            _run_dir(runs_dir, run_id),
+            kind,
+            reviewer=reviewer,
+            instruction=text,
+            model_spec=model,
+            on_event=_print_event,
+        )
+    except (MissingApiKeyError, PipelineStateError, RefineError) as exc:
+        console.print(f"[red]error[/red]: {exc}")
+        raise typer.Exit(2) from exc
+    except RevisionFailed as exc:
+        print_totals(exc.run_log)
+        console.print(f"[red]{exc.record.id} failed[/red]: {exc.record.error}", soft_wrap=True)
+        console.print(f"{kind.value} unchanged; the failure is in revisions.json")
+        raise typer.Exit(1) from exc
+    _report_refine(result)
+
+
+@app.command()
+def regenerate(
+    run_id: Annotated[str, typer.Argument(help="Run directory name")],
+    stage: Annotated[str, typer.Argument(help="The stage to re-run: solution or risk")],
+    reviewer: ReviewerOption,
+    max_iterations: Annotated[
+        int | None,
+        typer.Option(
+            "--max-iterations", min=1, help="Solution rounds (RFP_SOLUTION_MAX_ITERATIONS)"
+        ),
+    ] = None,
+    model: ModelOption = None,
+    runs_dir: RunsDirOption = None,
+) -> None:
+    """Re-run the solution or the risk stage alone on the current inputs (after an
+    upstream change made it stale) and make its output the next version. Never cascades:
+    regenerating the solution leaves the risks stale until you regenerate or revise them."""
+    from rfp_agent.graph import PipelineError, PipelineStateError
+    from rfp_agent.llm import MissingApiKeyError
+    from rfp_agent.refine import RefineError
+    from rfp_agent.refine import regenerate as do_regenerate
+
+    try:
+        result = do_regenerate(
+            _run_dir(runs_dir, run_id),
+            stage.strip().lower(),
+            reviewer=reviewer,
+            model_spec=model,
+            max_iterations=max_iterations,
+            on_event=_print_event,
+        )
+    except (MissingApiKeyError, PipelineStateError, RefineError) as exc:
+        console.print(f"[red]error[/red]: {exc}")
+        raise typer.Exit(2) from exc
+    except PipelineError as exc:
+        _report_failure(exc)
+        raise typer.Exit(1) from exc
+    _report_refine(result)
+
+
+@app.command("sign-off")
+def sign_off(
+    run_id: Annotated[str, typer.Argument(help="Run directory name")],
+    reviewer: ReviewerOption,
+    note: Annotated[str | None, typer.Option("--note", help="Free-text note")] = None,
+    runs_dir: RunsDirOption = None,
+) -> None:
+    """Freeze the run at its current versions and render the sign-off. Refused while an
+    artefact is stale; nothing can be revised or regenerated afterwards."""
+    from rfp_agent.graph import PipelineStateError
+    from rfp_agent.refine import RefineError
+    from rfp_agent.refine import sign_off as do_sign_off
+
+    try:
+        result = do_sign_off(
+            _run_dir(runs_dir, run_id), reviewer=reviewer, note=note, on_event=_print_event
+        )
+    except (PipelineStateError, RefineError) as exc:
+        console.print(f"[red]error[/red]: {exc}", soft_wrap=True)
+        raise typer.Exit(2) from exc
+    so = result.versions.signed_off
+    versions = ", ".join(f"{a.value} v{v}" for a, v in so.versions.items())
+    console.print(f"[green]signed off[/green] by {so.reviewer}: {versions}")
+    for name in ("summary.json", "summary.md"):
+        if result.output_paths and name in result.output_paths:
+            console.print(f"  {result.output_paths[name]}", soft_wrap=True)
+
+
+@app.command()
+def history(
+    run_id: Annotated[str, typer.Argument(help="Run directory name")],
+    runs_dir: RunsDirOption = None,
+) -> None:
+    """The review history of a run: the checkpoint, every revision, regeneration and
+    sign-off with its cost, and where each artefact stands now."""
+    from rfp_agent import versions
+
+    run_dir = _run_dir(runs_dir, run_id)
+    if not (run_dir / "run_log.json").is_file():
+        console.print(f"[red]error[/red]: {run_dir} has no run log", soft_wrap=True)
+        raise typer.Exit(2)
+    review = versions.review_history(run_dir)
+    state = versions.load_version_state(run_dir)
+    cp = review.checkpoint if review is not None else None
+    if cp is not None:
+        console.print(
+            f"checkpoint: confirmed by {cp.reviewer} on {cp.confirmed_at:%Y-%m-%d %H:%M} UTC, "
+            f"{len(cp.rejected_ids())} rejected, {len(cp.edited_ids())} edited, "
+            f"brief {'with ' + str(len(cp.brief.chunks)) + ' chunks' if cp.brief else 'none'}"
+        )
+    else:
+        console.print("checkpoint: none (unattended run, or still waiting)")
+    revisions = review.revisions if review is not None else []
+    table = Table("id", "kind", "artefact", "reviewer", "versions", "calls", "cost $", "status")
+    for r in revisions:
+        span = f"v{r.from_version}->v{r.to_version}" if r.to_version is not None else ""
+        table.add_row(
+            r.id,
+            r.kind.value,
+            r.artefact.value if r.artefact else "",
+            r.reviewer,
+            span,
+            str(r.calls),
+            f"{r.cost_usd:.4f}",
+            r.status.value,
+        )
+    console.print(table)
+    for r in revisions:
+        if r.instruction:
+            console.print(f"  {r.id}: {r.instruction.strip()}", soft_wrap=True)
+    now = Table("artefact", "version", "stale")
+    for a, v in state.artefacts.items():
+        now.add_row(a.value, f"v{v.version}", (v.stale_because or "yes") if v.stale else "")
+    console.print(now)
+    if state.signed_off is not None:
+        so = state.signed_off
+        console.print(f"signed off by {so.reviewer} on {so.signed_at:%Y-%m-%d %H:%M} UTC")
+
+
 def _print_event(e) -> None:
     with _print_lock:
         if e.status == StageStatus.STARTED:

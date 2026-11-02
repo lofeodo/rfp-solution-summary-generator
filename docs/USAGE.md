@@ -93,6 +93,54 @@ and cost) from each node, which is what the UI backend streams. Per-agent debug
 commands with JSON reuse of upstream outputs live in `python -m rfp_agent.agents`
 (see `PIPELINE.md` for one per stage).
 
+### Refine and sign off
+
+Once a run is drafted, review it in prose:
+
+```bash
+python -m rfp_agent revise <run_id> solution --reviewer "Dana" \
+    --instruction "Add a component for accessibility testing, citing the brief"
+python -m rfp_agent history <run_id>
+python -m rfp_agent regenerate <run_id> risk --reviewer "Dana"
+python -m rfp_agent sign-off <run_id> --reviewer "Lee" --note "Red team done"
+```
+
+`revise` applies one instruction to one artefact (`requirements`, `problem`,
+`solution` or `risks`). The model revises it under the producing stage's own checks:
+every ID it cites must exist, a new requirement's quote must be verbatim in the chunk
+it names, and a solution revision may not leave a mandatory requirement uncovered that
+is covered now. The requirement list is revised as a patch (edit, add, remove by ID);
+the other three are returned whole, with component and risk IDs kept stable. The CLI
+prints the diff (`+` added, `-` removed, `~` changed), the version change, what went
+stale and the cost. `requirements` and `problem` can also be revised while the run
+waits at the checkpoint (merge, split or reword before confirming); the checkpoint's
+decisions then apply on top of the revised list.
+
+A change marks what depends on it stale: requirements or problem → solution and risks;
+solution → risks. Nothing is regenerated automatically; `regenerate <run_id>
+solution|risk` re-runs that one stage on the current inputs (it never cascades), or a
+`revise` of the stale artefact clears it too. The summary is re-assembled after every
+change, so `summary.md` always shows the current versions and a "Revisions" list.
+`sign-off` is refused while anything is stale; afterwards the run is frozen and the
+header names who signed off which versions.
+
+Files added to the run directory: `<artefact>.vN.json` (a copy of every version, v1
+taken before the first change), `current.json` (version and stale flag per artefact,
+the sign-off) and `revisions.json` (append-only: reviewer, instruction, diff, versions,
+calls, cost, status). A revision the model cannot make valid is recorded as `failed`
+and changes nothing. Exit codes as above: 2 for a request the run cannot take (signed
+off, still waiting, stale at sign-off, unknown artefact, missing key), 1 when the model
+or a regenerated stage fails. See [DECISIONS.md](DECISIONS.md) D45 and D46.
+
+| Flag | Command | Effect |
+|---|---|---|
+| `--reviewer NAME` | revise, regenerate, sign-off | who asks for it (required, recorded) |
+| `--instruction TEXT`, `--instruction-file FILE` | revise | what to change, in plain words (exactly one) |
+| `--note TEXT` | sign-off | recorded with the sign-off |
+| `--max-iterations N` | regenerate | solution rounds for this regeneration |
+| `--model provider:id` | revise, regenerate | generator for this call (`RFP_MODEL`) |
+| `--runs-dir DIR` | all four | parent of the run directory (default `runs/`) |
+
 ## UI
 
 Upload an RFP and watch each stage run live, with per-stage time, calls, tokens and

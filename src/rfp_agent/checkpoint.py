@@ -54,11 +54,8 @@ def apply_checkpoint(
     if problems:
         raise CheckpointError("; ".join(problems))
     by_id = {d.requirement_id: d for d in record.decisions}
-    rejected = set(record.rejected_ids())
     kept = []
     for r in requirements.requirements:
-        if r.id in rejected:
-            continue
         updates: dict[str, object] = {}
         d = by_id.get(r.id)
         if d is not None:
@@ -68,14 +65,27 @@ def apply_checkpoint(
                 updates["type"] = d.type
             if updates:
                 updates["origin"] = RequirementOrigin.REVIEWED
-        if rejected & set(r.conflicts_with):
-            updates["conflicts_with"] = [c for c in r.conflicts_with if c not in rejected]
         kept.append(r.model_copy(update=updates) if updates else r)
+    edited = requirements.model_copy(update={"requirements": kept})
+    return strip_references(edited, set(record.rejected_ids()))
+
+
+def strip_references(requirements: RequirementsOutput, removed: set[str]) -> RequirementsOutput:
+    """``requirements`` without the ``removed`` IDs, and without any reference to them in
+    ``conflicts_with`` or an ambiguity's ``requirement_ids``, so no citation dangles. Used
+    by the checkpoint's rejections and by a revision's removals (ST12b)."""
+    if not removed:
+        return requirements
+    kept = [
+        r.model_copy(update={"conflicts_with": [c for c in r.conflicts_with if c not in removed]})
+        if removed & set(r.conflicts_with)
+        else r
+        for r in requirements.requirements
+        if r.id not in removed
+    ]
     ambiguities = [
-        a.model_copy(
-            update={"requirement_ids": [i for i in a.requirement_ids if i not in rejected]}
-        )
-        if rejected & set(a.requirement_ids)
+        a.model_copy(update={"requirement_ids": [i for i in a.requirement_ids if i not in removed]})
+        if removed & set(a.requirement_ids)
         else a
         for a in requirements.ambiguities
     ]

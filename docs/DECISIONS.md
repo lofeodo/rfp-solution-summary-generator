@@ -989,6 +989,80 @@ it with one; the rendered summary shows the brief citation and a "Review history
 section with reviewer, time waited, rejected and edited IDs and the brief
 (`tests/test_checkpoint.py`).
 
+### D45. Revision by instruction: a patch for requirements, the whole artefact for the rest, the producing stage's validators either way
+Context: after the checkpoint, review happens in prose ("merge R014 and R022", "add a
+component for accessibility", "the timeline risk is overstated"). ST12b needed one
+primitive that applies such an instruction to any artefact without weakening the
+traceability and compliance guards (D42). D40 rejected a free revision loop; this is
+not one: the target of each revision is a human instruction, applied once, and nothing
+loops on a model's judgment of its own output.
+Options: (a) the model returns the whole revised artefact for everything; (b) a patch
+(edit, add, remove by ID) for everything; (c) a patch for the requirement list, the whole
+artefact for the problem statement, the solution and the risks.
+Choice: (c), asked of the author at planning. Requirements: `RequirementsPatch` (edits by
+ID with only the changed fields, additions quoting a chunk, removals); the per-call
+validator refuses unknown or duplicate IDs, empty edits, a quote without its chunk and a
+quote not found verbatim in the chunk it names (the extractor's rule, now inside the
+retry loop), and `apply_patch` assigns fresh IDs (`max+1`, never reused), sets
+`origin = reviewed`, and strips removed IDs from conflicts and ambiguities
+(`strip_references`, shared with the checkpoint). Problem, solution and risks: the model
+returns the whole artefact through the stage's own per-call schema (`problem_schema`,
+`solution_schema`, `risk_schema`, which gained `base` and `extra` hooks), with an
+optional `id` on components and risks: a kept item keeps its ID, a new one gets the next
+free, an ID the artefact does not have is refused. A solution revision that uncovers a
+mandatory requirement covered today is refused with the IDs named (code-computed, the
+S7 coverage rule); coverage and the risk findings are recomputed by code. Every
+revision's diff is computed by code and stored.
+Why: the confirmed list runs past a hundred requirements on Missouri and NYESD; a whole
+rewrite would hit the output cap (F16) and could drop or reword items silently, which
+is exactly the regression guard D42 lists. A patch also makes the audit trail exact:
+the diff is the patch. The other three artefacts are small, their validators already
+exist, and a patch over claims that have no IDs (the problem statement) would need its
+own matching rules for no gain. Stable IDs keep a version-to-version diff readable and
+keep citations elsewhere in the summary valid. Refusing a coverage regression makes the
+compliance guard survive human edits: an instruction cannot quietly drop a mandatory
+obligation.
+Evidence: `tests/test_revise.py` (patch refusals, quote check against the named chunk,
+retry after a bad quote, stable and next-free IDs, unknown IDs and coverage regression
+refused, the count band and must-cite still enforced on risks, brief IDs accepted only
+with a brief); the live Missouri run in `docs/hitl/ST12b-revise.md`.
+
+### D46. Versions, stale flags and sign-off live in the run directory; assembly always re-runs, LLM stages never do on their own
+Context: refinement needs versions to diff and roll back to, a way to tell the reviewer
+that the risks no longer match a revised solution, an audit trail with cost, and a final
+freeze. The run directory is already the state store (D43), and the backend (ST12c) must
+recover all of it after a restart.
+Options: a version field inside each stage file; a database; copies next to the live
+files plus two small index files. For staleness: regenerate downstream automatically;
+flag it and let the reviewer decide.
+Choice: the live files stay where every reader expects them (`requirements_confirmed.json`,
+`problem.json`, `solution.json`, `risks.json`), and each change keeps a copy
+`<stem>.vN.json` (v1 taken just before the first change, so an unrevised run gains no
+files). `current.json` holds each artefact's version and stale flag and the sign-off;
+`revisions.json` is append-only (reviewer, instruction, versions, diff, what went stale,
+calls, cost, status). A change to the requirements or the problem makes the solution and
+the risks stale; a change to the solution makes the risks stale; a revision or
+regeneration of an artefact clears its own flag. `regenerate` re-runs one stage through
+the graph (`build_pipeline` gained `end_stage`) and never cascades. Assembly is code
+only, so it re-runs after every change and the summary always shows the current
+versions and the review history. Requirements can be revised while the run waits at the
+checkpoint: the first revision starts `requirements_confirmed.json` from the extractor's
+file (which never changes) and the checkpoint applies its decisions on top. A failed
+revision is a `failed` record, never a failed stage of the run. Sign-off is refused
+while anything is stale and freezes the run.
+Why: the readers of the live files (load_state, renderer, backend, frontend) stay as
+they are. Automatic regeneration would throw away a reviewer's revision of the risks
+whenever the solution changed, and spend money without being asked (cost blindness is
+one of D42's guards); a stale flag puts that call in the reviewer's hands and sign-off
+makes them settle it. A failed stage record would make the backend show a finished run
+as failed for a revision that changed nothing.
+Evidence: `tests/test_versions.py`; `tests/test_graph_refine.py` (v1 and v2 files,
+stale risks after a solution revision, `revise` then `assemble` records on the same log,
+a waiting run that stays waiting with the extractor's file byte-identical, removal of
+a requirement realigns solution and risks so the strict assembler passes, regenerating
+one stage leaves the other untouched, a failed revision leaves files and stages as they
+were, sign-off refused while stale and then final).
+
 ---
 
 ---

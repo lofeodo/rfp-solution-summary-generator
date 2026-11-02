@@ -179,6 +179,15 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   behaviour, and the eval harness and the committed samples always run unattended.
 - The resumed draft uses the model configured at resume time (the environment or
   `--model`), not necessarily the one the read stages used; both are in the run log.
+- Revisions (ST12b) are made by one reviewer at a time. Nothing locks a run directory,
+  so two concurrent revisions of the same run would race; the backend's single worker
+  (D35) serialises them.
+- Ambiguities and gaps are not revised by instruction; a requirement removal only strips
+  its ID from them. A requirement added by revision makes the solution stale, but the
+  solution's coverage figure stays the one computed when it was drafted until it is
+  regenerated or revised.
+- A signed-off run is final. There is no "reopen"; a new round of review starts from a
+  new run.
 
 ## Scope
 
