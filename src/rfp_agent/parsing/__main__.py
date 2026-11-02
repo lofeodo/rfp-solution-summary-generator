@@ -26,11 +26,27 @@ def main(
         bool,
         typer.Option("--judge", help="Run the S4 parse-quality judge on flagged pages (paid)"),
     ] = False,
+    vlm: Annotated[
+        bool,
+        typer.Option(
+            "--vlm",
+            help="Re-render confirmed-bad pages with the vision model (ST2, paid; implies "
+            "--judge unless --vlm-scope flagged)",
+        ),
+    ] = False,
+    vlm_scope: Annotated[
+        str | None,
+        typer.Option(
+            "--vlm-scope",
+            help="judged (the judge gates the VLM) or flagged (every flagged page, no judge); "
+            "default RFP_VLM_SCOPE",
+        ),
+    ] = None,
 ) -> None:
     doc = parse_pdf(pdf)
     console = Console(stderr=True)
-    if judge:
-        doc = _judge(doc, console)
+    if judge or vlm:
+        doc = _judge(doc, console, pdf, vlm=vlm, vlm_scope=vlm_scope)
     console.print(
         f"[bold]{doc.title or pdf.name}[/bold]: {doc.page_count} pages, "
         f"{sum(p.word_count for p in doc.pages)} words, {len(doc.tables)} tables, "
@@ -53,14 +69,33 @@ def main(
         sys.stdout.write(payload + "\n")
 
 
-def _judge(doc: ParsedDocument, console: Console) -> ParsedDocument:
+def _judge(
+    doc: ParsedDocument, console: Console, pdf: Path, *, vlm: bool, vlm_scope: str | None
+) -> ParsedDocument:
     """Run the quality pass and print one row per judged page. Flags printed afterwards
-    are the surviving ones."""
-    from rfp_agent.parsing.quality import run_quality_pass
+    are the surviving ones; with ``--vlm`` the transcribed pages are listed too."""
+    from rfp_agent.config import get_settings
+    from rfp_agent.parsing.quality import record_only_hook, run_quality_pass
 
-    rec = RunRecorder.from_settings(doc.source_path)
+    settings = get_settings()
+    if vlm_scope is not None:
+        settings = settings.model_copy(update={"vlm_scope": vlm_scope})
+    hook = record_only_hook
+    if vlm:
+        from rfp_agent.parsing.vlm import get_vlm_model, make_vlm_hook
+
+        hook = make_vlm_hook(
+            pdf,
+            title=doc.title or pdf.name,
+            page_count=doc.page_count,
+            model=get_vlm_model(settings),
+            settings=settings,
+        )
+    rec = RunRecorder.from_settings(doc.source_path, settings)
     with rec.activate(write=False):
-        doc, report = run_quality_pass(doc)
+        doc, report = run_quality_pass(
+            doc, settings=settings, hook=hook, scope=settings.vlm_scope if vlm else "judged"
+        )
     table = Table("page", "kind", "usable", "missing", "confirmed", "trigger", "action")
     for esc in report.escalations:
         j = report.judgements.get(esc.page)
@@ -74,10 +109,16 @@ def _judge(doc: ParsedDocument, console: Console) -> ParsedDocument:
             esc.action,
         )
     console.print(table)
+    if report.transcriptions:
+        tx = Table("page", "model", "library words", "VLM words", "notes", title="Transcriptions")
+        for r in report.transcriptions:
+            tx.add_row(str(r.page), r.model, str(r.library_words), str(r.vlm_words), r.notes)
+        console.print(tx)
     t = rec.totals()
     console.print(
-        f"judge: {len(report.judged_pages)} calls, {t.input_tokens} in / {t.output_tokens} out "
-        f"tokens, ${t.cost_usd:.5f}, {t.latency_s:.1f} s, {t.retries} retries"
+        f"quality pass ({report.scope}): {len(rec.log.nodes)} calls, {t.input_tokens} in / "
+        f"{t.output_tokens} out tokens, ${t.cost_usd:.5f}, {t.latency_s:.1f} s, "
+        f"{t.retries} retries"
     )
     return doc
 

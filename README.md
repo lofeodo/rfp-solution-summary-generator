@@ -43,7 +43,9 @@ mode, API, evals) are in [`docs/USAGE.md`](docs/USAGE.md).
 ![The start page: drop a PDF, pick options, and the list of finished runs](docs/images/ui-home.png)
 
 1. **Drop an RFP PDF** on the start page (or open one of the four samples below it).
-   The options can stay at their defaults.
+   The options can stay at their defaults. Tick `vlm` if the PDF has tables or forms
+   that are images (Federal Way's page 5): a vision model then re-renders the pages the
+   quality pass escalates, for a few cents more.
 2. **Watch it run.** The left rail shows the eight stages ticking through, with time,
    calls and cost for each. A run takes one to two minutes.
 3. **Read the result** in six tabs (table below). Start with Solution.
@@ -58,7 +60,7 @@ mode, API, evals) are in [`docs/USAGE.md`](docs/USAGE.md).
 | **Requirements** | Every requirement with its type and strictness, filterable by both, plus the ambiguities and the documents the RFP refers to but does not include. |
 | **Risks** | Risks ranked by severity and likelihood, each with a justification and a mitigation, and the code-computed findings the assessor had to address. |
 | **Problem** | What the client is really asking for: situation, goal, success criteria, constraints, each marked fact or inference. |
-| **Parse & chunks** | The RFP as the pipeline read it: pages, flagged pages, sections and the citable chunks. |
+| **Parse & chunks** | The RFP as the pipeline read it: pages, flagged pages, sections and the citable chunks. With the `vlm` option on, each page the vision model re-rendered, with the library parser's text and the transcription side by side. |
 | **Metrics** | Cost, tokens, retries and time per stage and per model call. |
 
 How each tab's content is produced is in [`docs/PIPELINE.md`](docs/PIPELINE.md); the
@@ -120,6 +122,12 @@ each, DeepSeek as the generator and Claude as the judge
 
 Mandatory requirements covered by the solution: 100% cited, 70 to 100% confirmed by
 the judge. The judge agrees with 34 of 40 hand-checked verdicts.
+
+Federal Way's gap is its page 5: the table of systems to replace is an image. With the
+vision-model option (`--vlm`, or the `vlm` checkbox), that page is re-rendered and
+Federal Way's recall rises to 95% with every page-5 item found, for about 2 cents and
+6 seconds more per run; the other three RFPs are unchanged
+([`evals/results/ablation_vlm/summary.md`](evals/results/ablation_vlm/summary.md)).
 
 The prompts were later rewritten into one documented structure (ST12, see
 [`prompts/README.md`](prompts/README.md)); the rerun with the new prompts is under

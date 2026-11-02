@@ -5,6 +5,7 @@ One markdown file per agent, named after the agent that uses it:
 | File | Owner step | Used by |
 |---|---|---|
 | `parse_quality.md` | S4 | LLM judge of heuristically flagged pages |
+| `parse_vlm.md` | ST2 | vision-model transcription of an escalated page (judge model, image in the same message) |
 | `requirements_extract.md` | S5 | per-chunk requirement extraction |
 | `requirements_dedupe.md` | S5 | one grouping pass for fuzzy dedupe |
 | `problem_chunk.md` | S6 | per-chunk problem summary |

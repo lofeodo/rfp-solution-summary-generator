@@ -57,7 +57,7 @@ def sections(text: str) -> dict[str, str]:
 
 
 def test_every_prompt_is_listed():
-    assert len(PROMPT_FILES) == 16
+    assert len(PROMPT_FILES) == 17
 
 
 @pytest.mark.parametrize("name", PROMPT_FILES)

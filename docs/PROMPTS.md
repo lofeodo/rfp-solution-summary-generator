@@ -78,6 +78,7 @@ Personas and what moved per prompt:
 | `solution` | senior solution architect leading public-sector bids | Context says what code computes and rejects; "assumptions are positions" became a rule; Examples and Final checks added |
 | `risk` | senior bid risk manager | scales moved under `severity` and `likelihood`; "use the full scale" copied from the judge; Examples and Final checks added |
 | `parse_quality` | document-processing quality specialist | flag glossary became Context; Output and Rules moved before the page text; Final checks added |
+| `parse_vlm` (ST2, restructured at the merge) | document-processing specialist | `{{reason}}` moved into a "Quality check" input block; transcription rules bold-named; Examples and Final checks added |
 | `gold_requirements`, `gold_checklist` | senior procurement analyst building an answer key | Output and Rules split out; document last; Examples (checklist) and Final checks added |
 | `judge_*` | senior reviewer in an independent quality-assurance function | Context says what is hidden from the judge and why, and that code demands one entry per ID; Examples gathered; Final checks restate the ID and word-cap contracts |
 
@@ -136,7 +137,34 @@ sees the image, so it reasons from captions and lead-in sentences ("the followin
 tables") instead of guessing. No citations: it makes no claims about the RFP's content.
 Known weaknesses: cannot see the image, so a decorative large image next to a sentence
 that sounds like a lead-in could be escalated; blank fill-in forms (Missouri affidavits)
-are escalated although transcribing them adds little.
+are escalated although transcribing them adds little. ST2 added one line for the
+`garbled_text` flag (encoding failures), which no public RFP triggers.
+
+### prompts/parse_vlm.md
+Purpose: transcribe one page the parse-quality pass escalated from its rendered image,
+so the transcription can replace the library parser's markdown (ST2).
+Inputs it receives: `{{title}}`, `{{page_number}}`, `{{page_count}}`, `{{reason}}` (the
+judge's one-sentence verdict, or the flagged-scope note), `{{library_markdown}}` (the
+page text the library produced, or "(empty)"). The page image travels in the same
+message as an `image_url` block ahead of the text.
+Output contract (schema): `VlmTranscription` in `schemas.py` (`markdown`, `notes`). Code
+replaces the page's markdown, recounts words, rebuilds that page's tables, clears its
+flags and keeps the library text beside the transcription in a `TranscriptionRecord`.
+Why it is written this way: the splitter and the extractors read the page as markdown
+and quote it verbatim, so the prompt asks for reading order, exact heading wording (the
+splitter locates PDF outline entries by their text), pipe tables with one header row and
+columns in the image's order, and spanning values repeated rather than merged, which
+is what the gold quotes look like ("Quadrant | Cashiering | Replace | ..."). The library
+text is passed as a labelled reference because it is usually right about spelling and
+numbers in the clean parts of a page; the image wins on any conflict. `[illegible]`
+instead of guessing keeps the quote-verification contract honest. At the merge with
+ST12 the prompt was put into the shared structure with the document-processing persona;
+`{{reason}}` moved from the opening sentence into its own "Quality check" input block,
+and the table, form and illegible rules became bold-named Rules with Examples and Final
+checks. Not re-measured live after the restructure.
+Known weaknesses: a repeated header row inside a printed table comes back as a data row
+(Federal Way p5); multi-line bullet lists inside a cell are joined with semicolons, so a
+gold quote that spans two cells may not match by containment.
 
 ### prompts/problem_chunk.md
 Purpose: stage one of the problem statement (S6): what one chunk says about who the
@@ -438,7 +466,9 @@ One line per change. Newest first.
 | 2026-11-02 | requirements_dedupe | Examples no longer group a general duty with a specific one; "when unsure, leave apart"; Final checks for mixed values and false conflicts | First ST12 pass: fallback in 2 of 8 runs (baseline 0 of 12), NYESD fuzzy merges 52 and 131 (baseline 27 to 41), Missouri conflicts 4 and 9 (baseline 2). Final pass: 0 fallbacks, correction turns 2 of 8 (baseline 6 of 12) |
 | 2026-11-02 | requirements_extract | Context says surplus is cheap and a miss is lost; Final checks ask that every imposing sentence has an item | First ST12 pass: NYESD 226 to 210 extracted, recall 99% to 93% (scope statement, fax/email rule and MWBE plan missed). Final pass: NYESD 226 extracted, recall 99% |
 | 2026-11-02 | judge_requirements | The three questions are answered separately; a changed modal verb is strictness, not a support failure | First ST12 wording: hand-label agreement 32 of 40 (precision 8 of 12). After: 35 of 40 (precision 11 of 12); baseline 34 of 40 |
-| 2026-11-02 | all 16 | Rewritten into the ST12 structure: Role (Big Four persona), Task, Context, Output, Rules, Examples, Tone, input blocks, Final checks; rule content kept | See "ST12 comparison" below |
+| 2026-11-02 | all prompts | Rewritten into the ST12 structure (16 at the time; `parse_vlm` from ST2 joined at the merge with `main`): Role (Big Four persona), Task, Context, Output, Rules, Examples, Tone, input blocks, Final checks; rule content kept | See "ST12 comparison" below |
+| 2026-11-02 | parse_vlm | Created (ST2) | First version; live Federal Way p5 returned the full ERP environment table (18 rows, every gold row verbatim), Missouri p19/p20 forms at 420 and 453 words with their exhibit headings |
+| 2026-11-02 | parse_quality | One line describing the `garbled_text` flag and its false alarm | ST2 added the flag for undecodable fonts; the judge must know what it means |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |

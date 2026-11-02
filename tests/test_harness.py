@@ -582,7 +582,12 @@ def test_cli_run_reuses_the_sample_and_adds_fresh_runs(cli_dirs, monkeypatch):
     assert sorted(p.name for p in (runs / "t" / "federal_way").iterdir()) == ["1", "2", "3"]
     assert [c[1] for c in calls] == ["2", "3"]
     assert calls[0][0].endswith("data/rfps/federal_way.pdf")
-    assert calls[0][2] == {"full_text_problem": None, "single_call_extraction": None}
+    assert calls[0][2] == {
+        "full_text_problem": None,
+        "single_call_extraction": None,
+        "vlm": None,
+        "vlm_scope": None,
+    }
 
 
 def test_cli_run_forwards_the_ablation_flags(cli_dirs, monkeypatch):
@@ -590,10 +595,26 @@ def test_cli_run_forwards_the_ablation_flags(cli_dirs, monkeypatch):
     result = CliRunner().invoke(
         cli.app,
         ["run", "--label", "t", "--rfp", "Federal_Way", "--runs", "1", "--full-text-problem",
-         "--no-single-call-extraction"],
+         "--no-single-call-extraction", "--vlm", "--vlm-scope", "flagged"],
     )  # fmt: skip
     assert result.exit_code == 0, result.output
-    assert [c[2] for c in calls] == [{"full_text_problem": True, "single_call_extraction": False}]
+    assert [c[2] for c in calls] == [
+        {
+            "full_text_problem": True,
+            "single_call_extraction": False,
+            "vlm": True,
+            "vlm_scope": "flagged",
+        }
+    ]
+
+
+def test_cli_run_rejects_an_unknown_vlm_scope(cli_dirs, monkeypatch):
+    calls = _stub_pipeline(monkeypatch)
+    result = CliRunner().invoke(
+        cli.app, ["run", "--label", "t", "--rfp", "federal_way", "--vlm-scope", "all"]
+    )
+    assert result.exit_code != 0
+    assert calls == []
 
 
 def test_gold_name_is_case_insensitive():

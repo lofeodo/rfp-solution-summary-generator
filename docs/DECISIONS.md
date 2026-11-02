@@ -903,7 +903,7 @@ sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
 data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
 host (50 calls, $0.050, 85 s) as the non-root user.
 
-### D42. One prompt structure for every prompt (ST12)
+### D43. One prompt structure for every prompt (ST12)
 Context: the 16 prompts were written step by step and shared only a loose shape (a
 role sentence, sometimes `## What to return`, `## Rules`, data blocks), applied
 unevenly: the gold and parse-quality prompts put the data before the output
@@ -942,6 +942,56 @@ measured effect is in `docs/PROMPTS.md` (ST12 comparison) and in
 the 40 hand labels).
 
 ---
+
+---
+
+### D42. Vision-model transcription replaces the page, gated by the judge, off by default (ST2)
+Context: the S4 pass escalated confirmed-bad pages to a hook that only recorded "would
+escalate to VLM". Federal Way's page 5 (the systems-to-replace table, an image) never
+reached the extractors: eight gold requirements and one checklist fact were unreachable
+and Federal Way's recall was capped at 81% against 93 to 96% on its readable pages. The
+author asked for the VLM to cover both image content and poorly rendered text, tables
+above all.
+Options: (a) transcribe only the image regions; (b) render the whole page and replace
+its markdown; (c) append the transcription after the library text; trigger by (i) the
+judge's verdict, (ii) every heuristic flag, or (iii) both as a setting; model: Sonnet
+5.5 (the eval judge), Opus 5.5, Haiku 5.5; on or off by default.
+Choice: (b) whole page, replacing the markdown, with the library text passed to the
+model as a labelled reference and the image as the truth. The judge's two verdicts
+already separate the author's two triggers (`text_usable=false` for broken tables and
+garbled layout, `content_missing=true` for images), so the judge gates the VLM by
+default and `RFP_VLM_SCOPE=flagged` sends every heuristically flagged page without a
+judge call, so the two policies can be compared. `anthropic:claude-sonnet-5-5`, the
+same model as the judge, since the DeepSeek generator takes no images. Off by default
+(`--vlm`, `RFP_VLM=true`, or the run-form checkbox). A fifth heuristic, `garbled_text`,
+catches undecodable fonts (`(cid:NN)`, U+FFFD, symbol soup) that none of the public
+RFPs has. The page's flags are cleared once it is transcribed (it is parsed now; a
+"transcribed" flag would reach the risk agent's unparsed-pages list), and
+`quality.json` keeps the library and VLM markdown side by side.
+Why: `ImageBlock` stores no bounding box, and one whole-page path covers an image table
+and a merged-cell table alike; replacing keeps the splitter, the quote verification and
+the citations unchanged (a chunk on page 5 now holds the table rows verbatim), where
+appending would duplicate the clean prose and leave the broken table in place. The
+judge gate keeps the cost to the pages that need it: the judge clears 9 of 12 flagged
+pages on the four RFPs, and a transcription costs about ten times a judge call. Off by
+default so the baseline, the keyless UI and the samples stay reproducible; the ablation
+is the evidence for flipping it.
+Evidence (`evals/results/ablation_vlm/`, two runs per RFP, judge-gated): Federal Way
+recall 81% → 95% (code-only 67% → 84%), all eight page-5 gold items matched in both
+runs, checklist 8 to 9 → 10 to 11 of 12 with GC12 covered; Colfax, Missouri and NYESD
+within run-to-run noise (recall 100, 92, 99%). The VLM ran once per Federal Way run
+($0.017, 6 s, 3.6k in / 1k out tokens, no retries) and twice per Missouri run (p19 and
+p20, $0.035, 15 s); never on Colfax (six flagged pages, all cleared) or NYESD (no
+flags). Pipeline cost per run: Federal Way $0.05 → $0.07, Missouri $0.08 → $0.13 (the
+two transcribed affidavits add about 850 words of chunks to extract). The `flagged`
+scope (`evals/results/ablation_vlm_flagged/`, Federal Way and Missouri, two runs each)
+re-rendered every flagged page (Federal Way p2, p5, p14; Missouri p12, p19, p20): the
+same recall (Federal Way 94% ± 3, Missouri 93% ± 4) for three VLM calls per run instead
+of one or two ($0.043 against $0.017 on Federal Way), with more run-to-run spread
+(code-only recall 76% ± 10 against 84% ± 7, checklist 83% ± 24 against 88% ± 6) and a
+worse page 14 than the library's (the pricing form's title cell came back tripled
+across three columns). The judge was right to clear those pages; `judged` stays the
+default and `flagged` stays a setting for comparison.
 
 ---
 

@@ -2,7 +2,13 @@ import { useState, type DragEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, type RunOptions } from "../api/client";
 
-export default function UploadForm({ defaultModel }: { defaultModel: string | null }) {
+export default function UploadForm({
+  defaultModel,
+  vlmModel = null,
+}: {
+  defaultModel: string | null;
+  vlmModel?: string | null;
+}) {
   const nav = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [over, setOver] = useState(false);
@@ -11,6 +17,8 @@ export default function UploadForm({ defaultModel }: { defaultModel: string | nu
     fullTextProblem: false,
     singleCallExtraction: false,
     maxIterations: null,
+    vlm: false,
+    vlmScope: "judged",
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -113,6 +121,37 @@ export default function UploadForm({ defaultModel }: { defaultModel: string | nu
           />
           <span className="text-muted">coverage rounds</span>
         </label>
+        <label className="flex items-start gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={opts.vlm}
+            onChange={(e) => setOpts({ ...opts, vlm: e.target.checked })}
+            className="mt-1 accent-accent"
+          />
+          <span>
+            <span className="font-mono text-xs">vlm</span>
+            <span className="block text-muted">
+              Re-render pages the quality pass escalates (image tables, broken tables) with a vision model
+              {vlmModel ? ` (${vlmModel})` : ""} and use its transcription
+            </span>
+          </span>
+        </label>
+        {opts.vlm && (
+          <label className="flex items-baseline gap-3 pl-6 text-sm">
+            <span className="font-mono text-xs">vlm_scope</span>
+            <select
+              value={opts.vlmScope}
+              onChange={(e) => setOpts({ ...opts, vlmScope: e.target.value as RunOptions["vlmScope"] })}
+              className="border-b-2 border-ink bg-transparent py-0.5 font-mono text-sm focus:border-accent focus:outline-none"
+            >
+              <option value="judged">judged</option>
+              <option value="flagged">flagged</option>
+            </select>
+            <span className="text-muted">
+              {opts.vlmScope === "judged" ? "only pages the LLM judge confirms bad" : "every heuristically flagged page, no judge"}
+            </span>
+          </label>
+        )}
       </fieldset>
 
       {error && (
