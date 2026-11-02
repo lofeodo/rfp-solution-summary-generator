@@ -36,3 +36,10 @@ export function prettySource(source: string): string {
 export function cleanTitle(t: string): string {
   return t.replace(/\*\*|__|<\/?[a-z][^>]*>/gi, "").trim();
 }
+
+// The short form of an escalation action: the text before the first ":" or "(".
+// "cleared by judge: ..." -> "cleared by judge"; "transcribed by VLM (310 words, ...)"
+// -> "transcribed by VLM"; "VLM failed: ...; flags kept" -> "VLM failed".
+export function escalationLabel(action: string): string {
+  return action.split(/[:(]/)[0].trim();
+}

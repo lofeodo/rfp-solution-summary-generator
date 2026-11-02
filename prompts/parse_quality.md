@@ -32,6 +32,9 @@ What each flag usually means:
   is still readable.
 - `fragmented_lines`: many lines of one or two words. A real problem when sentences are
   broken apart so that the meaning is lost; harmless for lists of short items.
+- `garbled_text`: the text holds `(cid:NN)` glyph codes, replacement characters, or is
+  mostly symbols, which means a font could not be decoded. Almost always a real
+  problem; harmless only when the affected characters are decoration (bullets, rules).
 
 ## Images on this page
 

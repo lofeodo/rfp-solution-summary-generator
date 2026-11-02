@@ -1,0 +1,41 @@
+{
+  "run_id": "judge",
+  "source_path": "eval",
+  "started_at": "2026-11-02T15:53:23.991047Z",
+  "finished_at": "2026-11-02T15:53:33.813635Z",
+  "model": "anthropic:claude-sonnet-5-5",
+  "temperature": 0.0,
+  "prompt_hashes": {
+    "judge_match": "9ca20a12b8c87506ced15ed90b464299ee70e3845203b7c06a5c87a1d0ebe787",
+    "judge_checklist": "60f574fe9d751dd0e4ce729e68b239a4b664554720e5ff997b9c925d31977f67"
+  },
+  "nodes": [
+    {
+      "node": "judge_match",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 7380,
+      "output_tokens": 594,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.0207,
+      "latency_s": 3.92472749999979,
+      "retries": 0,
+      "started_at": "2026-11-02T15:53:24.273279Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_checklist",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 3679,
+      "output_tokens": 778,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.015138,
+      "latency_s": 5.572792999999365,
+      "retries": 0,
+      "started_at": "2026-11-02T15:53:28.207977Z",
+      "last_error": null
+    }
+  ],
+  "stages": [],
+  "escalations": [],
+  "langfuse_trace_url": null
+}

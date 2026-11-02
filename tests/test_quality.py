@@ -9,7 +9,12 @@ import pytest
 from fakes import ScriptedChatModel, text_msg, tool_call_msg
 from rfp_agent.config import Settings
 from rfp_agent.observability import RunRecorder
-from rfp_agent.parsing.quality import escalate, record_only_hook, run_quality_pass
+from rfp_agent.parsing.quality import (
+    EscalationOutcome,
+    escalate,
+    record_only_hook,
+    run_quality_pass,
+)
 from rfp_agent.schemas import (
     EscalationTrigger,
     FlagReason,
@@ -20,6 +25,7 @@ from rfp_agent.schemas import (
     PageKind,
     ParsedDocument,
     ParseQualityReport,
+    Table,
 )
 
 SETTINGS = Settings(_env_file=None, max_structured_retries=1)
@@ -199,16 +205,18 @@ def test_escalations_and_metrics_land_on_active_recorder(tmp_path):
 def test_custom_hook_action_is_used():
     calls = []
 
-    def hook(page: Page, j: PageJudgement) -> str:
+    def hook(page: Page, j: PageJudgement) -> EscalationOutcome:
         calls.append((page.number, j.page_kind))
-        return "transcribed by test hook"
+        return EscalationOutcome(action="recorded by test hook")
 
     parsed = doc([PageFlag(page=2, reason=IMG)])
-    _, _, report = run(
+    _, out, report = run(
         parsed, [verdict(missing=True, kind="table", confirmed=["large_image_block"])], hook=hook
     )
     assert calls == [(2, PageKind.TABLE)]
-    assert report.escalations[0].action == "transcribed by test hook"
+    assert report.escalations[0].action == "recorded by test hook"
+    assert [f.reason for f in out.flags] == [IMG]  # no markdown: flags stay
+    assert report.transcriptions == []
 
 
 def test_escalate_directly_with_default_hook():
@@ -221,9 +229,117 @@ def test_escalate_directly_with_default_hook():
         confirmed_flags=[TABLE],
         reason="Cells merged.",
     )
-    esc, kept = escalate(page, [flag], j)
+    esc, kept, outcome = escalate(page, [flag], j)
     assert kept == [flag]
-    assert esc.action == record_only_hook(page, j) == "would escalate to VLM: Cells merged."
+    assert outcome == record_only_hook(page, j)
+    assert esc.action == outcome.action == "would escalate to VLM: Cells merged."
+    assert outcome.markdown is None
+
+
+# --------------------------------------------------------------------------------------
+# ST2: a hook that returns markdown (the VLM path), exercised with a fake hook
+# --------------------------------------------------------------------------------------
+
+VLM_MARKDOWN = (
+    "## Scope\n\n| System | Function | Action |\n| --- | --- | --- |\n"
+    "| Eden | Financials | Replace |\n| Quadrant | Cashiering | Replace |\n"
+)
+
+
+def transcribing_hook(page: Page, j: PageJudgement) -> EscalationOutcome:
+    return EscalationOutcome(
+        action="transcribed by VLM (9 words, fake:vlm)",
+        markdown=VLM_MARKDOWN,
+        notes="footer illegible",
+        model="fake:vlm",
+    )
+
+
+def test_markdown_outcome_replaces_page_and_clears_flags():
+    parsed = doc([PageFlag(page=2, reason=IMG, detail="image covers 42% of the page")])
+    parsed.tables.append(Table(page=2, markdown="| a |\n| --- |"))
+    parsed.tables.append(Table(page=3, markdown="| keep |\n| --- |"))
+    _, out, report = run(
+        parsed,
+        [verdict(missing=True, kind="table", confirmed=["large_image_block"])],
+        hook=transcribing_hook,
+    )
+    page = out.pages[1]
+    assert page.markdown == VLM_MARKDOWN
+    assert page.word_count == 10  # heading + header row + two rows, pipes ignored
+    assert out.flags == []
+    assert [(t.page, t.markdown.splitlines()[0]) for t in out.tables] == [
+        (2, "| System | Function | Action |"),
+        (3, "| keep |"),
+    ]
+    # the input is untouched and the comparison record keeps the library text
+    assert parsed.pages[1].markdown == "## Scope\n\nThe modules are listed below."
+    (rec,) = report.transcriptions
+    assert (rec.page, rec.model, rec.library_words, rec.vlm_words, rec.notes) == (
+        2,
+        "fake:vlm",
+        7,
+        10,
+        "footer illegible",
+    )
+    assert rec.library_markdown == parsed.pages[1].markdown
+    assert rec.vlm_markdown == VLM_MARKDOWN
+    assert report.escalations[0].action.startswith("transcribed by VLM")
+    assert report.escalations[0].confirmed_bad is True
+
+
+def test_failed_outcome_keeps_flags_and_text():
+    def failing_hook(page: Page, j: PageJudgement) -> EscalationOutcome:
+        return EscalationOutcome(action="VLM failed: boom; flags kept")
+
+    parsed = doc([PageFlag(page=2, reason=IMG)])
+    _, out, report = run(
+        parsed, [verdict(missing=True, confirmed=["large_image_block"])], hook=failing_hook
+    )
+    assert [f.reason for f in out.flags] == [IMG]
+    assert out.pages[1].markdown == parsed.pages[1].markdown
+    assert report.transcriptions == []
+    assert report.escalations[0].action == "VLM failed: boom; flags kept"
+
+
+def test_flagged_scope_skips_the_judge_and_sends_every_flagged_page():
+    seen = []
+
+    def hook(page: Page, j: PageJudgement) -> EscalationOutcome:
+        seen.append((page.number, j.reason, list(j.confirmed_flags)))
+        return transcribing_hook(page, j)
+
+    parsed = doc(
+        [PageFlag(page=1, reason=LOW), PageFlag(page=2, reason=IMG), PageFlag(page=2, reason=TABLE)]
+    )
+    model = ScriptedChatModel(responses=[])  # any call would raise: out of responses
+    out, report = run_quality_pass(
+        parsed, model=model, settings=SETTINGS, hook=hook, scope="flagged"
+    )
+    assert model.calls == []
+    assert report.scope == "flagged"
+    assert seen == [
+        (1, "flagged scope: every heuristically flagged page goes to the VLM", [LOW]),
+        (2, "flagged scope: every heuristically flagged page goes to the VLM", [TABLE, IMG]),
+    ]
+    assert out.flags == []
+    assert [r.page for r in report.transcriptions] == [1, 2]
+    assert all(
+        e.triggered_by is EscalationTrigger.CODE and e.confirmed_bad for e in report.escalations
+    )
+    assert report.judgements[2].bad is True
+
+
+def test_flagged_scope_without_flags_makes_no_call_and_builds_no_model():
+    out, report = run_quality_pass(doc([]), settings=SETTINGS, scope="flagged")
+    assert (out.flags, report.scope, report.transcriptions) == ([], "flagged", [])
+
+
+def test_old_quality_json_without_st2_fields_still_loads():
+    payload = {"judged_pages": [5], "judgements": {}, "escalations": []}
+    report = ParseQualityReport.model_validate(payload)
+    assert (report.scope, report.transcriptions) == ("judged", [])
+    assert json.loads(report.model_dump_json())["transcriptions"] == []
 
 
 @pytest.mark.parametrize(

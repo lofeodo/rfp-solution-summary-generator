@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -143,6 +144,29 @@ class Settings(BaseSettings):
         ge=1,
         description="Solution generator rounds: one generation plus revisions while "
         "mandatory requirements are uncovered (S7); 1 means no revision",
+    )
+
+    # Vision-model transcription of poorly rendered pages (ST2)
+    vlm: bool = Field(
+        default=False,
+        description="Re-render pages the parse-quality pass escalates with a vision model "
+        "and replace their markdown with the transcription",
+    )
+    vlm_model: str = Field(
+        default="anthropic:claude-sonnet-5-5",
+        description="Vision model, provider:model_id; must accept image input",
+    )
+    vlm_scope: Literal["judged", "flagged"] = Field(
+        default="judged",
+        description="judged: only pages the LLM judge confirms bad go to the VLM; "
+        "flagged: every heuristically flagged page goes, without a judge call",
+    )
+    vlm_dpi: int = Field(
+        default=140,
+        ge=50,
+        le=300,
+        description="Render resolution for the page image (140 dpi keeps a letter page "
+        "under 1568 px on its long edge)",
     )
 
     # Provider keys (no RFP_ prefix: these are the names the SDKs expect)

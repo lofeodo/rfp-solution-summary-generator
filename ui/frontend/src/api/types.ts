@@ -82,6 +82,7 @@ export interface RunStatus {
 export interface Health {
   status: "ok";
   model: string;
+  vlm_model: string;
   runs_dir: string;
 }
 
@@ -301,10 +302,25 @@ export interface PageJudgement {
   reason: string;
 }
 
+/** One page the vision model re-rendered (ST2): the library parser's markdown next to the
+ *  transcription that replaced it. */
+export interface TranscriptionRecord {
+  page: number;
+  model: string;
+  library_markdown: string;
+  vlm_markdown: string;
+  library_words: number;
+  vlm_words: number;
+  notes: string;
+}
+
 export interface ParseQualityReport {
   judged_pages: number[];
   judgements: Record<string, PageJudgement>;
   escalations: { page: number; triggered_by: string; confirmed_bad: boolean; action: string }[];
+  /** Older runs predate these two fields. */
+  scope?: "judged" | "flagged";
+  transcriptions?: TranscriptionRecord[];
 }
 
 export interface Section {

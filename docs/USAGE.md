@@ -65,6 +65,8 @@ and what the eval harness and the committed samples use.
 | `--unattended` | run | no checkpoint: draft right after the read stages |
 | `--full-text-problem` | run | ablation: problem statement from one full-text call (`RFP_FULL_TEXT_PROBLEM`) |
 | `--single-call-extraction` | run | ablation: one extraction call over the whole document (`RFP_SINGLE_CALL_EXTRACTION`) |
+| `--vlm` | run | re-render pages the parse-quality pass escalates (image tables, broken tables) with the vision model `RFP_VLM_MODEL` and use its transcription; needs that provider's key (`RFP_VLM`) |
+| `--vlm-scope judged\|flagged` | run | `judged`: the LLM judge gates the VLM (default); `flagged`: every heuristically flagged page goes, no judge call (`RFP_VLM_SCOPE`) |
 | `--reviewer NAME` | checkpoint | who confirms (required, recorded) |
 | `--brief FILE` | checkpoint | the pursuit brief, one citable chunk per paragraph |
 | `--reject ID`, `--strictness ID=LEVEL`, `--type ID=TYPE`, `--note TEXT` | checkpoint | the decisions; repeatable |
@@ -148,7 +150,12 @@ cost. Then read the proposed solution, the requirements (filterable by type and
 strictness), the risks (sorted by severity), the problem statement, the parse and chunk
 views, and a metrics dashboard. Click any chunk, requirement, component or risk ID to
 open its source: the cited chunk with the verbatim quote highlighted, and the PDF at
-that page. The four samples need no API key.
+that page. The four samples need no API key. The options under the drop zone mirror the
+CLI flags; the `vlm` checkbox (ST2) re-renders pages the quality pass escalates with the
+vision model shown next to it and needs `ANTHROPIC_API_KEY` (the upload is refused with
+a 503 otherwise). A `vlm_scope` select appears under it. The Parse tab then lists each
+re-rendered page with a "compare" toggle showing the library parser's markdown and the
+vision model's side by side.
 
 An upload pauses at the checkpoint unless "unattended" is ticked. The run page then
 opens on the **Checkpoint** tab, under a banner showing where the run stands (Read,
@@ -293,18 +300,20 @@ python -m evals.harness report --label baseline           # summary.md and summa
 python -m evals.harness compare RUN_A RUN_B --what problem --rfp missouri   # pairwise
 python -m evals.harness score --label baseline --only match   # re-run one judge, merged
 python -m evals.harness run --label ablation_full_text --all --full-text-problem   # ablation
+python -m evals.harness run --label ablation_vlm --all --vlm                       # ST2 ablation
 python -m evals.harness diff baseline ablation_full_text --what problem     # before/after
 ```
 
 `--only` takes `match`, `precision`, `problem`, `solution`, `risks`, `grounding` and
 `cost`; the other sections are kept from the existing score file, so a prompt change to
 one judge costs one judge. `diff` prints per-RFP mean ± sd of two labels with the delta
-(free); `run` takes the same `--full-text-problem` and `--single-call-extraction` flags
-as the pipeline CLI.
+(free); `run` takes the same `--full-text-problem`, `--single-call-extraction`, `--vlm`
+and `--vlm-scope` flags as the pipeline CLI.
 
 Baseline (`evals/results/baseline/summary.md`): three runs per RFP, recall 80 to 100%,
 with 61 to 94% matched by code alone. Federal Way's lower figure is its image-only page 5;
-reachable recall is 93 to 96%. Precision is 95 to 99%, checklist coverage 67 to 92%,
+reachable recall is 93 to 96%, and `--vlm` lifts plain recall to 94 to 96% there
+(`evals/results/ablation_vlm/`). Precision is 95 to 99%, checklist coverage 67 to 92%,
 and judged coverage of mandatory requirements 70 to 100% against 100% cited. The judge
 agrees with 34 of 40 hand labels. How to read every column is in
 `evals/results/README.md`.

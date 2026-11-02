@@ -51,10 +51,13 @@ on every committed final file.
 
 ## Federal Way page 5
 
-The ERP Environment table on page 5 is an embedded image, so the parser cannot see it.
-Its rows are labelled by hand from the page render in `federal_way.hand.json`, with
-`quote_verifiable=false`. A pipeline that misses them shows the known parsing gap as lost
-recall rather than hiding it.
+The ERP Environment table on page 5 is an embedded image, so the library parser cannot
+see it. Its rows are labelled by hand from the page render in `federal_way.hand.json`,
+with `quote_verifiable=false`. A pipeline that misses them shows the known parsing gap
+as lost recall rather than hiding it. With the ST2 vision-model transcription on
+(`--vlm`), the page is re-rendered and these rows become reachable; the
+`quote_verifiable` flag stays false because it describes the library parser's text,
+which is what "reachable recall" is defined against (`evals/results/README.md`).
 
 ## Fraction corrected
 

@@ -20,6 +20,7 @@ import ui.backend.app as app_mod
 from fakes import ScriptedChatModel, tool_call_msg
 from pipeline_stubs import PDF, SETTINGS, Stubs
 from rfp_agent.graph import RISK, SOLUTION, STAGES, StageEvent, run_pipeline
+from rfp_agent.parsing.quality import record_only_hook
 from rfp_agent.schemas import SplitDocument
 from ui.backend.app import create_app
 from ui.backend.models import ARTIFACTS
@@ -141,6 +142,7 @@ def test_health(make_client):
     assert r.status_code == 200
     assert r.json()["status"] == "ok"
     assert r.json()["model"] == SETTINGS.model
+    assert r.json()["vlm_model"] == SETTINGS.vlm_model
 
 
 def test_upload_runs_and_serves_every_output(make_client, chunk_id):
@@ -212,6 +214,37 @@ def test_form_options_reach_the_pipeline(make_client, chunk_id):
     assert client.get(f"/api/runs/{run_id}").json()["model"] == "deepseek:deepseek-other"
     meta = json.loads((client.app.state.store.runs_dir / run_id / "upload.json").read_text())
     assert meta["options"]["max_iterations"] == 2
+    assert meta["options"]["vlm"] is None
+    assert stubs.calls["parse_quality"]["scope"] == "judged"
+
+
+def test_vlm_form_option_reaches_the_pipeline_with_the_vision_model(
+    make_client, chunk_id, monkeypatch
+):
+    monkeypatch.setattr("ui.backend.runs.get_vlm_model", lambda settings: ScriptedChatModel())
+    stubs = Stubs(chunk_id)
+    client = make_client(stubs)
+    run_id = run_to_end(client, vlm=True, vlm_scope="flagged")
+    call = stubs.calls["parse_quality"]
+    assert call["settings"].vlm is True
+    assert call["scope"] == "flagged"
+    assert call["hook"] is not record_only_hook
+    meta = json.loads((client.app.state.store.runs_dir / run_id / "upload.json").read_text())
+    assert (meta["options"]["vlm"], meta["options"]["vlm_scope"]) == (True, "flagged")
+
+
+def test_vlm_without_its_provider_key_is_a_503_before_queueing(make_client, chunk_id):
+    unkeyed = SETTINGS.model_copy(update={"anthropic_api_key": None})
+    client = make_client(Stubs(chunk_id), settings=unkeyed)
+    r = upload(client, vlm=True)
+    assert r.status_code == 503
+    assert "ANTHROPIC_API_KEY" in r.json()["detail"]
+    assert all(run["sample"] for run in client.get("/api/runs").json())  # nothing queued
+
+
+def test_unknown_vlm_scope_is_a_422(make_client, chunk_id):
+    client = make_client(Stubs(chunk_id))
+    assert upload(client, vlm_scope="all").status_code == 422
 
 
 def test_events_replay_after_the_run(make_client):

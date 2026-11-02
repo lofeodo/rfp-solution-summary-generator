@@ -81,6 +81,10 @@ export const api = {
     if (opts.singleCallExtraction) form.append("single_call_extraction", "true");
     if (opts.maxIterations !== null) form.append("max_iterations", String(opts.maxIterations));
     if (opts.unattended) form.append("unattended", "true");
+    if (opts.vlm) {
+      form.append("vlm", "true");
+      form.append("vlm_scope", opts.vlmScope);
+    }
     const res = await fetch(`${API}/runs`, { method: "POST", body: form });
     if (!res.ok) throw new ApiError(res.status, await errorText(res));
     return (await res.json()) as RunCreated;
@@ -101,6 +105,7 @@ export const VERSION_FILE = {
   risks: "risks",
 } as const satisfies Record<Artefact, ArtifactName>;
 type VersionFile = typeof VERSION_FILE;
+export type VlmScope = "judged" | "flagged";
 
 export interface RunOptions {
   model: string;
@@ -108,4 +113,8 @@ export interface RunOptions {
   singleCallExtraction: boolean;
   maxIterations: number | null;
   unattended: boolean; // run to the end without pausing at the checkpoint
+  /** Re-render pages the parse-quality pass escalates with a vision model (ST2). */
+  vlm: boolean;
+  /** judged: the LLM judge gates the VLM; flagged: every heuristically flagged page goes. */
+  vlmScope: VlmScope;
 }
