@@ -168,6 +168,22 @@ Checkpoint, Draft, Refine, Sign-off):
 - *Confirm and draft*: sends the decisions, the brief and an optional note; the run
   drafts and the page follows it live. Afterwards the tab shows the checkpoint record.
 
+Once drafted, the run is in the Refine phase until signed off:
+
+- *Suggest edits* (bottom of Solution, Requirements, Risks and Problem): an instruction
+  for that artefact. The model applies it, code checks it; the panel lists the
+  artefact's changes with cost and a "show diff" (before → after per field).
+- *Version bar* (top of the same tabs): v1..vN; an older version is shown read-only
+  until "back to the current version".
+- *Stale banner*: when an upstream change made the solution or risks stale, with the
+  reason and **Regenerate** (re-runs that stage on the current inputs). Regenerating the
+  solution makes the risks stale in turn.
+- *Review* tab: the sign-off form (blocked, with the reason, while anything is stale or
+  a job runs), the versions of the four artefacts, and the whole history (checkpoint,
+  revisions, regenerations, sign-off) with diffs. After sign-off every control is gone
+  and the run is frozen; `summary.md` carries the review history.
+- Brief citations (H1, H2...) in the draft are chips that open the brief paragraph.
+
 ```bash
 # once: build the frontend (Node 20+)
 cd ui/frontend && npm ci && npm run build && cd ../..

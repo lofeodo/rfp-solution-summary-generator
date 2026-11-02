@@ -1139,6 +1139,42 @@ lifecycle, diff grouping); the live Missouri checkpoint through the UI in
 
 ---
 
+### D49. Refine controls sit on each artefact tab; the Review tab holds sign-off and history; diffs are the stored ones; old versions are read-only
+Context: ST12e puts the refine loop and the sign-off in the UI. The backend already
+records every revision with a code-computed diff, keeps every version on disk and says
+which actions are allowed (D46, D47). The reviewer needs to change an artefact while
+reading it, see what a change did, notice what went stale, and sign off knowing what is
+frozen.
+Options: one central Review tab with an artefact picker, or controls on each artefact
+tab; a client-side diff between any two versions, or the stored diff of each revision;
+version browsing or none; brief citations as plain text, or chips.
+Choice: each artefact tab (Solution, Requirements, Risks, Problem) is wrapped, once the
+run has a draft, in a **version bar** (v1..vN; picking an old one swaps it in read-only
+and hides the edit panel), a **stale banner** with the reason and **Regenerate**
+(solution and risks; requirements and the problem are never stale), and a **"Suggest
+edits" panel** (instruction, what the change sets off downstream, this artefact's
+revisions). A **Review tab** holds the **sign-off** form, which lists its blockers
+(mirroring the server's refusals, the server re-checks), or the signed-off record, plus
+a versions table with regenerate and the **whole history** (checkpoint, revisions,
+regenerations, sign-off) with each **stored diff** as before → after per field. The
+lifecycle banner says "Stale: …" or "Ready to sign off" with a link. The views stay
+unaware of review: a wrapper swaps in the version. The reviewer's name is shared by
+every form through one context. Brief IDs (`H1`) are chips that open the paragraph,
+marked as human input.
+Why: editing next to the text being read is how a pursuit lead works, and keeps the
+instruction concrete; the Review tab is where the "can I sign?" question is answered in
+one place. The stored diff is what code computed when the change was applied, on the
+reviewer-visible part, so the UI shows exactly what the audit trail records rather than
+a second, possibly different, diff (guard: silent regressions). Read-only old versions
+answer "what did it say before" without a restore operation the backend does not have.
+The chips make claims that rest on the reviewer's word visibly distinct (guard:
+ungrounded claims).
+Evidence: `ui/frontend/src/lib/refine.test.ts`; the live loop on the Missouri run in
+`docs/hitl/ST12e-frontend-refine.md` (revise, stale, regenerate, v1 view, sign-off;
+$0.020).
+
+---
+
 ---
 
 ## Part 2 — Failure modes hit

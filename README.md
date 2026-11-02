@@ -106,8 +106,10 @@ run. The backend API takes the same checkpoint, revisions, regenerations and sig
 and an upload through the UI pauses at the checkpoint too: the run page opens on a
 Checkpoint tab with the requirement table (reject, strictness, type per row), an
 instruction box for model edits, the brief with a live preview of its H1, H2...
-paragraphs, and "Confirm and draft" under the reviewer's name. The refine and sign-off
-screens come in ST12e (until then, use the CLI or the API after the draft).
+paragraphs, and "Confirm and draft" under the reviewer's name. After the draft, each
+artefact tab has a "Suggest edits" panel, a version bar (older versions read-only) and a
+stale banner with Regenerate; the Review tab signs off and shows the whole history with
+each change's diff. Brief citations (H1, H2...) open the reviewer's paragraph.
 
 ## Why you can trust a claim
 
