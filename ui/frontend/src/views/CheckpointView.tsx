@@ -9,6 +9,7 @@ import { BRIEF_TEMPLATE, dropUnfilledTemplate, parseBrief } from "../lib/brief";
 import { counts, decisions, prune, setRow, type CheckpointDraft, type RowDraft } from "../lib/checkpoint";
 import { secs, usd, when } from "../lib/format";
 import { TYPE_LABELS } from "../lib/requirements";
+import { compactDiff } from "../lib/revisions";
 import { REVIEWER_KEY, checkpointKey, load, save } from "../lib/storage";
 import CheckpointRows from "./CheckpointRows";
 
@@ -140,7 +141,7 @@ function CheckpointForm({ runId, data, status, refresh }: Props & { status: RunS
               className={`${AREA} min-h-72`}
               value={brief}
               onChange={(e) => update({ brief: e.target.value })}
-              placeholder={"Win themes:\n\nFast start: a team on site in two weeks.\n\nAvoid:\n\nNo promises on data migration dates."}
+              placeholder="Paragraphs separated by blank lines. A line ending in a colon heads the paragraph under it. Or insert the template."
               disabled={busy}
               aria-label="Pursuit brief"
             />
@@ -326,9 +327,7 @@ const LIST_ITEMS = 6;
 
 // A compact account of one revision; the full diff view is ST12e's.
 function RevisionLine({ r }: { r: RevisionRecord }) {
-  const d = r.diff;
-  const ids = (paths: string[]) => paths.map((p) => p.split(/[./[\]]/).filter(Boolean).pop() ?? p);
-  const changedItems = d ? [...new Set(d.changed.map((c) => c.path.split(".")[0]))] : [];
+  const d = r.diff ? compactDiff(r.diff) : null;
   return (
     <li className="hair space-y-1 py-2.5">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -343,9 +342,9 @@ function RevisionLine({ r }: { r: RevisionRecord }) {
       {r.error && <p className="font-mono text-[11px] text-accent">{r.error}</p>}
       {d && r.status === "applied" && (
         <p className="font-mono text-[11px]">
-          {d.added.length > 0 && <span className="mr-3">+ {short(ids(d.added))}</span>}
-          {d.removed.length > 0 && <span className="mr-3 text-accent">− {short(ids(d.removed))}</span>}
-          {changedItems.length > 0 && <span className="text-muted">~ {short(changedItems)}</span>}
+          {d.added.length > 0 && <span className="mr-3">+ added {short(d.added)}</span>}
+          {d.removed.length > 0 && <span className="mr-3 text-accent">− removed {short(d.removed)}</span>}
+          {d.changed.length > 0 && <span className="text-muted">~ changed {short(d.changed)}</span>}
           {d.added.length + d.removed.length + d.changed.length === 0 && <span className="text-muted">no change</span>}
         </p>
       )}

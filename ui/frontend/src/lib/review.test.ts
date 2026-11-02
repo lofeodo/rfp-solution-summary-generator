@@ -3,6 +3,7 @@ import type { Requirement } from "../api/types";
 import { BRIEF_TEMPLATE, dropUnfilledTemplate, parseBrief } from "./brief";
 import { counts, decisions, prune, setRow } from "./checkpoint";
 import { lifecycle, phaseIndex } from "./lifecycle";
+import { compactDiff } from "./revisions";
 
 // Mirrors tests/test_checkpoint.py so the preview splits like rfp_agent.brief.parse_brief.
 describe("parseBrief", () => {
@@ -96,6 +97,32 @@ describe("checkpoint draft", () => {
     let d = setRow({}, reqs[0], { reject: true });
     d = setRow(d, reqs[1], { strictness: "mandatory" });
     expect(counts(d, reqs)).toEqual({ total: 3, rejected: 1, edited: 1, kept: 2, mandatoryKept: 2 });
+  });
+});
+
+describe("compactDiff", () => {
+  it("groups nested paths by item (the live Missouri merge of R005 into R001)", () => {
+    const d = compactDiff({
+      added: ["requirements[R001].chunk_ids[S4.1]"],
+      removed: ["requirements[R001].chunk_ids[S1.1]", "requirements[R005]", "ambiguities[A01].requirement_ids[R005]"],
+      changed: [
+        { path: "requirements[R001].text", before: "a", after: "b" },
+        { path: "requirements[R001].origin", before: "generated", after: "reviewed" },
+      ],
+    });
+    expect(d).toEqual({ added: [], removed: ["R005"], changed: ["R001", "A01"] });
+  });
+
+  it("keeps the field for index items and groups plain paths", () => {
+    const d = compactDiff({
+      added: ["goal[2]"],
+      removed: [],
+      changed: [
+        { path: "goal[0].text", before: 1, after: 2 },
+        { path: "summary", before: 1, after: 2 },
+      ],
+    });
+    expect(d).toEqual({ added: ["goal[2]"], removed: [], changed: ["goal[0]", "summary"] });
   });
 });
 
