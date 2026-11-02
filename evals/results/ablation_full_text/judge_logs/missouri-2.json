@@ -1,0 +1,113 @@
+{
+  "run_id": "judge",
+  "source_path": "eval",
+  "started_at": "2026-10-30T22:45:54.508939Z",
+  "finished_at": "2026-10-30T22:46:21.306741Z",
+  "model": "anthropic:claude-sonnet-5-5",
+  "temperature": 0.0,
+  "prompt_hashes": {
+    "judge_checklist": "60f574fe9d751dd0e4ce729e68b239a4b664554720e5ff997b9c925d31977f67",
+    "judge_grounding": "d163218a12b85fa1f4c073f7a29e92b62373492f099b34e41a62b5fc34300480"
+  },
+  "nodes": [
+    {
+      "node": "judge_checklist",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 4150,
+      "output_tokens": 715,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.01545,
+      "latency_s": 4.67120429998613,
+      "retries": 0,
+      "started_at": "2026-10-30T22:45:55.062499Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 6072,
+      "output_tokens": 447,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.016614,
+      "latency_s": 3.5580400000035297,
+      "retries": 0,
+      "started_at": "2026-10-30T22:45:59.781562Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 5312,
+      "output_tokens": 495,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.015574,
+      "latency_s": 3.7779653999896254,
+      "retries": 0,
+      "started_at": "2026-10-30T22:45:59.781562Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 13565,
+      "output_tokens": 1172,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.03885,
+      "latency_s": 8.85979360001511,
+      "retries": 1,
+      "started_at": "2026-10-30T22:45:59.781562Z",
+      "last_error": "Failed to parse ClaimVerdicts from completion {\"verdicts\": [{\"id\": \"I000\", \"verdict\": \"supported\", \"reason\": \"Letter names MHTC requesting proposals, coordinated by Research Unit of Construction and Materials Division; S8.1 ties MoDOT in.\"}, {\"id\": \"I001\", \"verdict\": \"partially\", \"reason\": \"Text says descriptions prepared on behalf of MHTC; it does not say Right of Way staff must write them, and 'all' is overstated.\"}, {\"id\": \"I002\", \"verdict\": \"supported\", \"reason\": \"Both the EPG section requirement and reciting rights less than fee simple are stated in S9.1.\"}, {\"id\": \"I003\", \"verdict\": \"supported\", \"reason\": \"S9.1 states the surveyor review before presenting deed, matching right of way plans and survey information.\"}, {\"id\": \"I004\", \"verdict\": \"partially\", \"reason\": \"RFP says descriptions are long and tedious, but does not call it the pain point driving the research.\"}, {\"id\": \"I005\", \"verdict\": \"partially\", \"reason\": \"Fiscal year and quarterly SPR report to FHWA stated, but nothing says the RFP is issued under the SPR program.\"}, {\"id\": \"I007\", \"verdict\": \"supported\", \"reason\": \"15-month period, November 1, 2024 start presumption, and February 2, 2026 final invoice and contract end are all stated.\"}, {\"id\": \"I008\", \"verdict\": \"partially\", \"reason\": \"Tasks 3a, 3b and 3c are separate; the statement lists six tasks but describes more, and the count is wrong.\"}, {\"id\": \"I009\", \"verdict\": \"supported\", \"reason\": \"Task 2 describes thorough literature search and review of other state DOT practices using AI/ML for ROW purposes.\"}]}. Got: 1 validation error for ClaimVerdicts\n  Value error, Return exactly one `verdicts` entry per id shown: missing entries for ['I006'] [type=value_error, input_value={'verdicts': [{'id': 'I00...ML for ROW purposes.'}]}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langchain/errors/OUTPUT_PARSING_FAILURE "
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 9557,
+      "output_tokens": 713,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.026244,
+      "latency_s": 5.313685999979498,
+      "retries": 0,
+      "started_at": "2026-10-30T22:46:03.566270Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 5260,
+      "output_tokens": 770,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.01822,
+      "latency_s": 5.546237200003816,
+      "retries": 0,
+      "started_at": "2026-10-30T22:46:03.347868Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 4960,
+      "output_tokens": 305,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.01297,
+      "latency_s": 3.1096229999966454,
+      "retries": 0,
+      "started_at": "2026-10-30T22:46:08.646236Z",
+      "last_error": null
+    },
+    {
+      "node": "judge_grounding",
+      "model": "anthropic:claude-sonnet-5-5",
+      "input_tokens": 22225,
+      "output_tokens": 2949,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.07394,
+      "latency_s": 21.513482300011674,
+      "retries": 2,
+      "started_at": "2026-10-30T22:45:59.794119Z",
+      "last_error": "Failed to parse ClaimVerdicts from completion {\"verdicts\": [{\"id\": \"I030\", \"verdict\": \"partially\", \"reason\": \"Research Director as MHTC representative is supported; 'Research Unit' of Construction and Materials Division coordinating the study is not stated.\"}, {\"id\": \"I031\", \"verdict\": \"supported\", \"reason\": \"Email-only contact, 7/31/2024 response posting and 9/18/2024 selection notices are all stated.\"}, {\"id\": \"I032\", \"verdict\": \"partially\", \"reason\": \"Contract end and kick-off dates supported; 1 November 2024 start date is not stated in the sources.\"}, {\"id\": \"I033\", \"verdict\": \"partially\", \"reason\": \"Metes and bounds and surveyor review supported; requirement applies to MHTC descriptions, not stated as Right of Way staff writing them.\"}, {\"id\": \"I034\", \"verdict\": \"supported\", \"reason\": \"Information Systems approval required before Task 3c, after Offeror names the program.\"}, {\"id\": \"I035\", \"verdict\": \"supported\", \"reason\": \"Not-to-exceed $175,000 and Section (4) Price Page cost estimate both stated.\"}, {\"id\": \"I036\", \"verdict\": \"partially\", \"reason\": \"EPG 236.4.6.2 and MHTC parameters are stated; MoDOT-supplied LLD examples and kick-off are not in S9.1.  ambiguity is visible.  ok.  fine.  done.  stop.  end.  yes.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  stop.  end.  done.  ok.  done.  final.  ok.  done.  st ...[truncated]"
+    }
+  ],
+  "stages": [],
+  "escalations": [],
+  "langfuse_trace_url": null
+}

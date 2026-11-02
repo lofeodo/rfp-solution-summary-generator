@@ -1,0 +1,307 @@
+{
+  "assessment": {
+    "risks": [
+      {
+        "id": "K01",
+        "title": "Attachment F and G requirements not available before the deadline",
+        "description": "The Software Abilities and Requirements spreadsheet (Attachment F) and the Software Application Requirements exhibit (Attachment G) are referenced as mandatory submission items but are not in the RFP document. The bidder must complete and return both against a scope it cannot see, so it may miss requirements, under-scope the platform, or be judged nonresponsive for an incomplete spreadsheet. Attachment E (insurance certification) is likewise missing, so the proof-of-insurance submission cannot be prepared in its required form.",
+        "severity": "high",
+        "likelihood": "high",
+        "justification": "Three attachments the RFP requires respondents to complete and return are absent from the document, and Attachment F alone carries the software requirements the solution must be priced against; the proposed solution already assumes the attachments match the scope of work rather than knowing it.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R099",
+          "R100",
+          "R098",
+          "R055",
+          "R102"
+        ],
+        "chunk_ids": [],
+        "mitigation": "Request Attachments E, F and G in writing before the July 31, 2025 question deadline and state in the proposal that pricing is based on the scope of work in Section 5.0 pending the spreadsheets; hold a contingency in the price for requirements the spreadsheets may add."
+      },
+      {
+        "id": "K02",
+        "title": "Nine-month go-live tied to the fiscal year start",
+        "description": "The City wants the new system live by July 1, 2026, roughly nine months after a targeted October 22, 2025 award, covering discovery, configuration of six modules, five years of data migration, report writing, training and cutover. The City has 11 full-time staff with one vacancy, so City-side review, data extracts and sign-offs will be slow. A slip past July 1 forces the City to open its fiscal year on the legacy Tyler system or run parallel books, and the bidder carries the reputational and contractual cost.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The RFP states July 1, 2026 as a goal rather than a firm milestone, but the proposed solution treats it as a firm contractual milestone with a fixed October 22, 2025 start; the compressed schedule and thin City staffing make a slip plausible.",
+        "source": "solution",
+        "requirement_ids": [
+          "R117",
+          "R108",
+          "R107",
+          "R111",
+          "R109"
+        ],
+        "chunk_ids": [
+          "S24.1",
+          "S32.1",
+          "S9.1",
+          "S6.1"
+        ],
+        "mitigation": "State in the proposal that the July 1, 2026 date is conditional on award by October 22, 2025, timely City data extracts and sign-offs, and named City staff availability; build a documented fallback that opens fiscal year 2026-27 in the legacy system if cutover slips."
+      },
+      {
+        "id": "K03",
+        "title": "Hard copy and emailed proposal conflict",
+        "description": "One requirement demands a signed original hard copy of the proposal and all attachments, while another requires the proposal and all attachments to be emailed by August 28, 2025 at 4:00 PM PST. A bidder that reads them as alternatives risks rejection for missing a submission method; a bidder that does both must get a physical package from its office to a small Sierra foothills address by the same deadline, with no clarity on whether the 4:00 PM cutoff applies to delivery.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "The two requirements are directly incompatible and the RFP does not say whether the hard copy deadline is the same 4:00 PM cutoff or whether a postmark suffices; missing either method is grounds for a nonresponsive proposal.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R040",
+          "R044",
+          "R046",
+          "R045",
+          "R047"
+        ],
+        "chunk_ids": [
+          "S21.1",
+          "S2.1",
+          "S9.1"
+        ],
+        "mitigation": "Ask the City before the question deadline whether both methods are required and what time the hard copy must arrive; plan to courier the signed original to arrive well before 4:00 PM PST on August 28, 2025 and email the digital copy the same morning."
+      },
+      {
+        "id": "K04",
+        "title": "City's standard contract and General Terms not available",
+        "description": "The RFP makes all its terms enforceable contract conditions and rejects any proposal that modifies them, yet the standard City contract, the General Contract Terms and Conditions and the standard contract for services are only available on request and are not in the document. The bidder must accept unknown terms — indemnity, liability caps, termination, data ownership, insurance — or risk rejection for raising exceptions in the proposal.",
+        "severity": "high",
+        "likelihood": "medium",
+        "justification": "Three separate contract documents are referenced but absent, and the RFP states that objections raised in the proposal are disregarded or cause rejection, so the bidder has no safe channel to negotiate terms it has not seen.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R037",
+          "R038",
+          "R026",
+          "R027",
+          "R101",
+          "R021"
+        ],
+        "chunk_ids": [
+          "S13.1",
+          "S13.2",
+          "S19.1",
+          "S29.1"
+        ],
+        "mitigation": "Request the standard contract and General Terms in writing before the question deadline and review them before pricing; if they arrive late, state in the proposal that the bid is conditional on the terms reviewed and raise any exception as a question, never in the proposal body."
+      },
+      {
+        "id": "K05",
+        "title": "Support scope and service levels undefined but priced as fixed",
+        "description": "The RFP requires dedicated support during implementation and for twelve months after go-live, plus ongoing annual support, but does not define hours of coverage, response and resolution targets, channels or on-site expectations. The proposed solution invents its own three-tier license and support structure and business-hours remote help desk, so if the City expects 24/7 coverage or on-site visits, the fixed price absorbs unplanned staffing cost or the City rejects the tiers as non-compliant.",
+        "severity": "medium",
+        "likelihood": "high",
+        "justification": "Support carries 25% of the evaluation weight and the RFP leaves the levels of support and license tiers entirely open; the solution's own tiers and service levels are stated as inferences, not City requirements.",
+        "source": "solution",
+        "requirement_ids": [
+          "R007",
+          "R112",
+          "R116",
+          "R060",
+          "R067",
+          "R068"
+        ],
+        "chunk_ids": [
+          "S31.1",
+          "S18.1",
+          "S23.1",
+          "S24.1"
+        ],
+        "mitigation": "State the proposed service levels, coverage hours and license tiers explicitly in the proposal as the basis of the price, and price on-site visits as capped reimbursable travel so an on-site expectation does not erode the fixed fee."
+      },
+      {
+        "id": "K06",
+        "title": "Certification change-notice period conflicts (15 vs 30 days)",
+        "description": "One requirement obliges the respondent to notify the City within 30 days of anything that materially alters its financial certification; another obliges notice to the Contract Lead within 15 days of the same changes. Operating to the wrong period is a breach of a contractual obligation that runs for the whole contract term, and the RFP does not define what counts as material or how notice must be delivered.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The two notice periods cannot both be met as written; the proposed solution resolves the conflict in favour of 15 days, which is a reasonable reading but not one the City has confirmed.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R097",
+          "R137",
+          "R134"
+        ],
+        "chunk_ids": [
+          "S28.2",
+          "S36.1"
+        ],
+        "mitigation": "Raise the conflict as a written question and, in the proposal, commit to the shorter 15-day period with written notice to both the Contract Lead and the City's accounting contact, and state that assumption explicitly."
+      },
+      {
+        "id": "K07",
+        "title": "Reimbursable expense cap set by the bidder with no City guidance",
+        "description": "The City refuses unlimited reimbursable expenses and requires a stated cap, but prescribes no ceiling or basis. The bidder must guess a cap low enough to score well on the 20% fee criterion and high enough to cover travel to Colfax and third-party costs; an under-set cap converts real travel and third-party spend into an unrecoverable cost, and the price proposal cannot be revised after submission.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The RFP gives no cap amount and forbids altering the price during clarification, so the bidder's own number is binding; the solution sets the cap itself and treats on-site travel as reimbursable.",
+        "source": "solution",
+        "requirement_ids": [
+          "R086",
+          "R122",
+          "R085",
+          "R031",
+          "R121",
+          "R123"
+        ],
+        "chunk_ids": [
+          "S28.1",
+          "S33.1",
+          "S17.1"
+        ],
+        "mitigation": "Ask whether the City has a maximum allowable cap; set the cap from a bottom-up travel and third-party estimate with a stated margin, and state in the proposal what the cap covers and that costs above it are borne by the vendor."
+      },
+      {
+        "id": "K08",
+        "title": "User count and license basis not stated",
+        "description": "The RFP says the current system is used by five users but does not say how many users the new system must support, and the City has a vacant position plus seasonal staff. The proposed solution assumes five named users plus headroom and prices additional licenses per user, so if the City expects unlimited or department-wide access, the license fee and the total price are wrong and the City may treat the bid as non-compliant.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "The user count is an explicit ambiguity in the RFP and the solution's license assumption is an inference; license fees are a required breakout in the price proposal, so the error is visible and material.",
+        "source": "solution",
+        "requirement_ids": [
+          "R060",
+          "R090",
+          "R008",
+          "R121"
+        ],
+        "chunk_ids": [
+          "S5.1",
+          "S23.1",
+          "S28.1"
+        ],
+        "mitigation": "Ask the City for the required user count and license basis before the deadline; state the assumed user count and per-user pricing in the proposal so the City can see the cost of additional users."
+      },
+      {
+        "id": "K09",
+        "title": "Five years of historical data migration from Tyler Fund Balance",
+        "description": "The solution commits to importing five years of history from the City's Tyler Technologies Fund Balance system, with the City supplying extracts and the vendor reconciling to control totals. The RFP does not state the migration scope, data volumes or extract format, and legacy fund accounting data is often incomplete or inconsistently coded. A failed reconciliation delays cutover past July 1, 2026 or forces the City to keep the legacy system for history.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "Migration is a mandatory requirement but the RFP does not define its scope, and the solution's assumption that the City supplies clean extracts is an inference; the reconciliation gate sits directly on the critical path to the fiscal-year go-live.",
+        "source": "solution",
+        "requirement_ids": [
+          "R108",
+          "R109",
+          "R110",
+          "R117"
+        ],
+        "chunk_ids": [
+          "S31.1",
+          "S5.1",
+          "S6.1"
+        ],
+        "mitigation": "State in the proposal that the City provides extracts in an agreed format by a named date and that reconciliation sign-off is a prerequisite to cutover; run an early data profiling exercise in discovery and price a defined number of migration cycles."
+      },
+      {
+        "id": "K10",
+        "title": "Insurance limits and Attachment G security evidence unspecified",
+        "description": "The RFP requires proof of workers compensation and commercial general liability insurance and documentation of financial-data protection and access controls, but states no coverage limits, additional-insured requirements or acceptable evidence format. The proposed solution assumes $1M per occurrence and $2M aggregate and satisfies Attachment G with a SOC 2 Type II report and a security narrative; if the City requires higher limits or a different artifact, the bidder must buy coverage or rework the submission after the deadline.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "Both requirements are mandatory submission items with open-ended wording ('including, but not limited to') and no stated limits or format, and the solution's figures and evidence are explicitly assumptions.",
+        "source": "solution",
+        "requirement_ids": [
+          "R098",
+          "R100",
+          "R084"
+        ],
+        "chunk_ids": [
+          "S37.1",
+          "S40.1",
+          "S28.2"
+        ],
+        "mitigation": "Ask the City for the required insurance limits and endorsements and the expected Attachment G format; confirm current coverage meets the assumed limits and prepare the SOC 2 report and security narrative as a ready-to-attach package."
+      },
+      {
+        "id": "K11",
+        "title": "Evaluation criteria and pass/fail rules are vague",
+        "description": "The RFP scores proposals 45% on goals and scope, 25% on support, 20% on fee and schedule and 10% on qualifications, but defines none of the objectives measurably, may reject on undefined 'fit, form and function', and says no single requirement disqualifies a respondent while non-compliance with any requirement may cause rejection. The bidder cannot tell which gaps are fatal, so effort may go into the wrong sections or a minor omission may sink an otherwise strong bid.",
+        "severity": "medium",
+        "likelihood": "medium",
+        "justification": "Several ambiguities in the RFP leave the compliance threshold and the meaning of the heaviest-weighted criterion open, and the solution addresses the requirements but cannot know how they will be judged.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R033",
+          "R034",
+          "R035",
+          "R036",
+          "R030",
+          "R054"
+        ],
+        "chunk_ids": [
+          "S18.1",
+          "S17.1",
+          "S19.1",
+          "S5.1"
+        ],
+        "mitigation": "Ask the City which requirements are pass/fail and what evidence it expects against the goals and scope criterion; structure the proposal to answer every mandatory item explicitly and lead Tab 1 with the Section 5.0 deliverables."
+      },
+      {
+        "id": "K12",
+        "title": "Offshoring disclosure may raise the City's cost and risk view",
+        "description": "The RFP requires the respondent to disclose any work performed outside the United States, list the locations and describe the corporate structure, and the City will evaluate that disclosure for additional risks and costs before award. If any part of the delivery or support chain is offshore, the disclosure can reduce the score or prompt the City to add conditions, and a later relocation of personnel triggers a further written-notice obligation with no stated timeframe.",
+        "severity": "medium",
+        "likelihood": "low",
+        "justification": "The RFP makes offshoring a scored risk factor and imposes an ongoing relocation-notice duty, but the solution does not state where delivery staff are located, so exposure depends on facts the bid does not yet settle.",
+        "source": "rfp",
+        "requirement_ids": [
+          "R129",
+          "R130",
+          "R131",
+          "R132",
+          "R133",
+          "R095"
+        ],
+        "chunk_ids": [
+          "S35.1"
+        ],
+        "mitigation": "Confirm the delivery and support locations before submission, disclose them accurately in Attachment C, and state in the proposal the controls (data residency, access restrictions, background checks) that mitigate offshore risk; set an internal trigger for the relocation notice."
+      }
+    ]
+  },
+  "findings": {
+    "uncovered_requirement_ids": [],
+    "conflicts": [
+      [
+        "R040",
+        "R044"
+      ],
+      [
+        "R097",
+        "R137"
+      ]
+    ],
+    "absent_documents": [
+      {
+        "name": "Attachment E",
+        "kind": "attachment",
+        "url": null,
+        "page": 14,
+        "section": "Tab 3.3 Key Personnel Experience",
+        "present": false
+      },
+      {
+        "name": "Attachment F",
+        "kind": "attachment",
+        "url": null,
+        "page": 12,
+        "section": "Tab 1: Response to Project Goals and Scope",
+        "present": false
+      },
+      {
+        "name": "Attachment G",
+        "kind": "attachment",
+        "url": null,
+        "page": 14,
+        "section": "Tab 3.3 Key Personnel Experience",
+        "present": false
+      }
+    ],
+    "flags": [],
+    "budget_requirement_count": 11
+  }
+}

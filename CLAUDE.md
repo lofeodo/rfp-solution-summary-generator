@@ -32,12 +32,15 @@ half-build.**
    `docs/TIMELOG.md` (hours, mapped to the deliverable). If a prompt changed, add a
    line to `docs/PROMPTS.md` saying what changed and why.
 8. Update `README.md` if behaviour or how-to-run changed.
-9. Commit, push, open the PR, mark the step `done`, sync the branch.
+9. Commit, push, open the PR into `core`, mark the step `done`.
+10. When CI is green, merge the PR into `core` (merge commit, no squash), delete the
+    step branch locally and remotely, and sync local `core`. The agent does this itself;
+    it does not wait for the author.
 
 ## Definition of done per step
 
 Tests pass, roadmap updated, README updated if behaviour changed, decisions and time
-logged, PR opened.
+logged, PR merged into `core`, step branch deleted.
 
 ## Branches and PRs
 
@@ -47,9 +50,16 @@ logged, PR opened.
   steps at once; steps are scoped to touch separate files where possible, and the
   roadmap's dependency table says which steps may run in parallel.
 - Before starting a step, sync `core` (`git pull`) and branch from it.
+- Step PRs into `core` are merged by the agent as soon as CI passes (see step 10 of
+  the loop). Stretch-goal PRs into `main` are merged the same way once core is on `main`.
 - When all core steps are done: merge `core` into `main`, delete `core` locally and
-  remotely, sync `main`. Stretch goals get their own branches off `main`.
-- Never push to `main` directly. Never force-push. Never merge without the author.
+  remotely, sync `main`. **This merge into `main` is the author's call: open the PR and
+  stop.** Stretch goals get their own branches off `main`.
+- **Never check out `main`.** The agent lives on `core` and on step branches off it
+  until every core step is done. `main` is touched once, by the final `core` into
+  `main` sync that the author drives; until then, if you find yourself on `main`,
+  switch back to `core` before doing anything. Never push to `main` directly. Never
+  force-push.
 
 ## Environment
 

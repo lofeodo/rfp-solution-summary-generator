@@ -1,0 +1,28 @@
+# Never in the image: secrets, the assignment, git and tooling state.
+.env
+assignment.pdf
+.git
+.github
+.claude
+.playwright-mcp
+.vscode
+.idea
+
+# Local run directories (the committed samples are copied in).
+runs/*
+!runs/samples
+
+# Build outputs and caches: the image builds its own.
+ui/frontend/node_modules
+ui/frontend/dist
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+*.egg-info
+
+# Living docs are read on GitHub, not inside the container.
+docs
+CLAUDE.md
+Dockerfile
+.dockerignore
