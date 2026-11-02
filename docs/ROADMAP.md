@@ -2429,6 +2429,59 @@ Priority order. Each gets the same entry structure when started.
 | ST9 | Observability dashboard in the UI beyond live progress | S15 | |
 | ST10 | Cloud deployment | S16 | Only with all core and evals done |
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
+| ST12 | One prompt structure: every prompt in `prompts/` rewritten into one documented section order (role, task, context, output, rules, examples, tone, input blocks, final checks), full eval rerun against the baseline | S13 | In progress 2026-11-02 on branch `prompt-structure` |
+
+### ST12. One prompt structure
+- **Status:** in progress
+- **Goal:** every prompt in `prompts/` follows one documented structure grounded in
+  prompt-engineering practice: a specific persona, the task in one or two sentences,
+  the context the model works in (what it sees, what code does with the answer), the
+  output contract field by field, bold-named rules, optional contrastive examples, an
+  explicit tone section, the input blocks last, and a short list of final checks. The
+  structure is written down in `prompts/README.md` and enforced by a unit test. The
+  full eval harness is rerun with the new prompts and compared with the baseline.
+- **Depends on:** S13 (baseline results and the hand-labelled agreement sample)
+- **Parallel with:** ST1, ST9, ST10
+- **Detailed plan:** (written 2026-11-02; author's answers: generic Big Four persona
+  wording with no real firm name; one branch `prompt-structure` off `main` with one PR
+  into `main` left for the author; full eval rerun and comparison with the baseline)
+  1. **Structure.** Fixed `##` headings in a fixed order: `Role`, `Task`, `Context`,
+     `Output`, `Rules`, `Examples` (optional), `Tone`, one heading per input block
+     (`Document`, `Requirements`, `Sources`, ...), `Final checks`. Instructions first
+     and data last so the provider prefix cache keeps serving the instruction prefix
+     (S5 measured about 74% cache reads). Personas per family: generator prompts, a
+     senior proposal professional at a Big Four advisory practice; gold prompts, a
+     senior procurement analyst building an answer key; judge prompts, an independent
+     quality assessor; `parse_quality`, a document-processing QA specialist.
+  2. **Rewrite the 16 prompts** one family per commit (requirements, problem,
+     solution and risk, parse quality, gold, judges). Every placeholder set, ID format,
+     schema field name, definition, scale, count and rule that code, tests or another
+     prompt depend on is kept: the `{{unit}}` sentence and the `{{mode_rules}}` bullet
+     spliced by `agents/requirements.py`, the `{{evidence_kind}}` sentence from
+     `agents/problem.py`, the literal `Title:`, `Chunk:`, `Section:`, `Pages:` and
+     `Page N of M` lines, the `## Images on this page` heading and the tagged blocks the
+     tests look for, the phrase each judge prompt is recognised by in the scripted judge
+     of `tests/test_harness.py`, the D31 scope shared by the gold, extract and
+     requirements-judge prompts, and the risk scales shared by `risk.md` and
+     `judge_risks.md`.
+  3. **Enforce.** `tests/test_prompt_structure.py` reads every prompt and asserts the
+     heading order, that every prompt has the required sections, that placeholders
+     appear only in input blocks (plus the two spliced ones), and that no `###` heading
+     is used (code-built input uses that level).
+  4. **Docs.** `prompts/README.md` carries the structure (purpose and content of each
+     section, a skeleton, the shared rule names, the personas, the test-coupled
+     phrases); `docs/PROMPTS.md` gets a principles section, a persona line per design
+     note, the rewritten judge layout note, and changelog lines with the measured
+     before and after; `docs/DECISIONS.md` D42; `docs/TIMELOG.md`; this entry.
+  5. **Evaluate.** `evals.harness run --label prompt_structure --all --runs 2`, scored
+     in full with the new judge prompts, then `diff baseline prompt_structure` for the
+     problem, requirements and solution column sets. To read the judge change alone,
+     the baseline run directories are rescored with the new judge prompts under label
+     `baseline_rejudged` and checked against the 40 hand labels with `agree`. Both
+     result sets are committed under `evals/results/` and listed in its README.
+- **What was done:** (filled as the work proceeds)
+- **Deviations from plan:**
+- **Open issues:**
 
 ---
 
