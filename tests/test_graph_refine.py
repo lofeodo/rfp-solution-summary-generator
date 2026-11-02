@@ -230,6 +230,10 @@ def test_revise_requirements_while_waiting_edits_the_confirmed_copy_only(
     assert not (run_dir / "summary.json").exists()
     log = log_of(run_dir)
     assert log.finished_at is None and waiting_checkpoint(log) is not None
+    # Nothing is drafted yet, so nothing can be stale (seen live on Missouri: the risks
+    # drafted after the checkpoint were flagged stale by a revision made before them).
+    assert result.record.made_stale == []
+    assert versions.stale_artefacts(versions.load_version_state(run_dir)) == []
 
     # The checkpoint applies its decisions on top of the revised list, and versions it.
     resumed = resume_pipeline(

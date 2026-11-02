@@ -452,7 +452,10 @@ def revise(
             versions.commit(run_dir, other, realigned, vstate)
             state[other.value] = realigned  # type: ignore[literal-required]
         made_stale = versions.mark_stale(
-            vstate, artefact, f"{artefact.value} changed in {revision_id} (v{to_version})"
+            vstate,
+            artefact,
+            f"{artefact.value} changed in {revision_id} (v{to_version})",
+            present=[a for a in Artefact if a.value in state],
         )
         versions.save_version_state(run_dir, vstate)
     else:

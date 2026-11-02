@@ -23,6 +23,7 @@ remains is a field change with its before and after values.
 from __future__ import annotations
 
 import shutil
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
@@ -156,11 +157,22 @@ def commit(
     return new
 
 
-def mark_stale(state: VersionState, changed: Artefact, because: str) -> list[Artefact]:
+def mark_stale(
+    state: VersionState,
+    changed: Artefact,
+    because: str,
+    *,
+    present: Iterable[Artefact] | None = None,
+) -> list[Artefact]:
     """Mark the artefacts downstream of ``changed`` stale; return the ones newly marked.
-    An artefact already stale keeps its first reason."""
+    An artefact already stale keeps its first reason. With ``present``, only those
+    artefacts are marked: one not drafted yet (a run waiting at the checkpoint) will be
+    drafted from the current inputs, so it cannot be stale."""
+    allowed = set(present) if present is not None else set(Artefact)
     marked = []
     for a in DOWNSTREAM[changed]:
+        if a not in allowed:
+            continue
         v = state.artefacts.get(a, ArtefactVersion())
         if not v.stale:
             state.artefacts[a] = v.model_copy(update={"stale": True, "stale_because": because})
