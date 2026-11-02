@@ -16,6 +16,7 @@ from rfp_agent.schemas import (
     ChunkRef,
     Claim,
     ClaimKind,
+    DecisionAction,
     Likelihood,
     Requirement,
     RequirementType,
@@ -62,9 +63,19 @@ def _ids(ids: Iterable[str]) -> str:
 
 
 def _pages(ref: ChunkRef) -> str:
+    """``p. 4`` or ``pp. 4-6``; empty for a pursuit-brief chunk, which has no pages."""
+    if ref.page_start is None or ref.page_end is None:
+        return ""
     if ref.page_start == ref.page_end:
         return f"p. {ref.page_start}"
     return f"pp. {ref.page_start}-{ref.page_end}"
+
+
+def _location(ref: ChunkRef) -> str:
+    """``Title, p. 4`` for an RFP chunk; ``Pursuit brief`` for a brief chunk."""
+    pages = _pages(ref)
+    title = _inline(ref.section_title)
+    return f"{title}, {pages}" if pages else title
 
 
 def cite(chunk_ids: list[str], index: dict[str, ChunkRef]) -> str:
@@ -73,7 +84,7 @@ def cite(chunk_ids: list[str], index: dict[str, ChunkRef]) -> str:
     IDs sharing a section title and page range are grouped in first-seen order; an ID
     missing from ``index`` renders as a bare ``[S9.9]``.
     """
-    groups: dict[tuple[str, int, int] | None, list[str]] = {}
+    groups: dict[tuple[str, int | None, int | None] | None, list[str]] = {}
     for cid in chunk_ids:
         ref = index.get(cid)
         key = (ref.section_title, ref.page_start, ref.page_end) if ref else None
@@ -86,8 +97,7 @@ def cite(chunk_ids: list[str], index: dict[str, ChunkRef]) -> str:
         if key is None:
             parts.append(bracket)
         else:
-            ref = index[ids[0]]
-            parts.append(f"{_inline(ref.section_title)}, {_pages(ref)} {bracket}")
+            parts.append(f"{_location(index[ids[0]])} {bracket}")
     return f"({'; '.join(parts)})" if parts else ""
 
 
@@ -116,15 +126,17 @@ def _rank(level: Severity | Likelihood) -> int:
 
 def _header(s: SolutionSummary) -> list[str]:
     title = s.document_title or PurePath(s.source_path).name
-    meta = "\n".join(
-        [
-            f"- **Source:** {s.source_path}",
-            f"- **Run:** {s.run_id}",
-            f"- **Generated:** {s.generated_at.isoformat()}",
-            f"- **Model:** {s.model}",
-        ]
-    )
-    return [f"# Solution summary: {_inline(title)}", meta]
+    lines = [
+        f"- **Source:** {s.source_path}",
+        f"- **Run:** {s.run_id}",
+        f"- **Generated:** {s.generated_at.isoformat()}",
+        f"- **Model:** {s.model}",
+    ]
+    if s.review is not None and s.review.checkpoint is not None:
+        cp = s.review.checkpoint
+        when = cp.confirmed_at.isoformat()
+        lines.append(f"- **Checkpoint:** confirmed by {_inline(cp.reviewer)} on {when}")
+    return [f"# Solution summary: {_inline(title)}", "\n".join(lines)]
 
 
 def _problem(s: SolutionSummary, index: dict[str, ChunkRef]) -> list[str]:
@@ -272,6 +284,46 @@ def _flags(s: SolutionSummary) -> list[str]:
     return ["## Parse flags", _id_list(lines)]
 
 
+def _review(s: SolutionSummary) -> list[str]:
+    """The human touchpoints of the run (ST12): who confirmed the checkpoint, when, what
+    they changed, and the pursuit brief the draft was built on. Omitted for an
+    unattended run."""
+    if s.review is None or s.review.checkpoint is None:
+        return []
+    cp = s.review.checkpoint
+    lines = [
+        "- **Checkpoint:** confirmed by "
+        + _join(
+            _inline(cp.reviewer),
+            f"on {cp.confirmed_at.isoformat()}",
+            f"after {cp.waited_s:.0f} s" if cp.waited_s else "",
+        )
+    ]
+    if cp.note:
+        lines.append(f"- **Note:** {_inline(cp.note)}")
+    rejected = cp.rejected_ids()
+    lines.append(f"- **Rejected requirements:** {_ids(rejected) if rejected else NONE}")
+    edits = []
+    for d in cp.decisions:
+        if d.action is DecisionAction.REJECT:
+            continue
+        changes = []
+        if d.strictness is not None:
+            changes.append(f"strictness set to {d.strictness.value}")
+        if d.type is not None:
+            changes.append(f"type set to {d.type.value}")
+        if not changes:
+            continue
+        note = f" ({_inline(d.note)})" if d.note else ""
+        edits.append(f"  - **{d.requirement_id}:** {'; '.join(changes)}{note}")
+    lines.append("- **Edited requirements:**" + ("\n" + "\n".join(edits) if edits else f" {NONE}"))
+    blocks = ["## Review history", "\n".join(lines)]
+    if cp.brief is not None:
+        brief_lines = [f"- **{c.id}** {_inline(c.text)}" for c in cp.brief.chunks]
+        blocks += ["### Pursuit brief", "\n".join(brief_lines)]
+    return blocks
+
+
 # --------------------------------------------------------------------------------------
 # Entry point
 # --------------------------------------------------------------------------------------
@@ -288,5 +340,6 @@ def render_markdown(summary: SolutionSummary) -> str:
         *_risks(summary, index),
         *_referenced(summary),
         *_flags(summary),
+        *_review(summary),
     ]
     return "\n\n".join(b for b in blocks if b) + "\n"

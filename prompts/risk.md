@@ -64,9 +64,16 @@ Likelihood is the chance it happens given the RFP and the solution as written:
   or one restates a requirement: merge or drop before answering. Code rejects more than
   fifteen.
 - **Cite only IDs that are shown.** Requirement IDs (`R012`) come from the requirement
-  list; chunk IDs (`S4.2`) from the labels in brackets or parentheses. Ambiguity IDs
-  (`A01`), gap IDs (`G01`) and component IDs (`C01`) are never cited in `chunk_ids`.
-  Never invent an ID.
+  list; chunk IDs (`S4.2`) from the labels in brackets or parentheses; brief IDs (`H2`)
+  from the pursuit team guidance. Ambiguity IDs (`A01`), gap IDs (`G01`) and component
+  IDs (`C01`) are never cited in `chunk_ids`. Never invent an ID.
+- **Pursuit team guidance.** The guidance block is what the bid team decided or learned
+  outside the RFP: win themes, the bidder's capabilities, team and commercial
+  constraints, what the client said informally. A risk that rests on it (a constraint
+  the team set, a fact the client gave informally, a design choice the team made)
+  cites its ID (`H2`) in `chunk_ids` so a reviewer can tell what came from the team
+  rather than from the RFP; a risk the guidance creates has `source` `solution`. When
+  the block says "None provided." assess from the RFP and the solution alone.
 - **No invented facts.** If a risk rests on something the inputs do not say (market
   rates, the client's staffing, a vendor's behaviour), say in the description that it
   is an assumption rather than stating it as fact.
@@ -129,3 +136,12 @@ included.
 <gaps>
 {{gaps}}
 </gaps>
+
+## Pursuit team guidance
+
+What the bid team decided or learned outside the RFP, one paragraph per line, each
+labelled with the ID to cite (`H1`). "None provided." when the team gave none.
+
+<guidance>
+{{brief}}
+</guidance>
