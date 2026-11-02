@@ -2404,6 +2404,11 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     and gold labels), `docs/USAGE.md` (local setup, CLI, UI dev mode, backend API,
     Docker, evals, troubleshooting) and `docs/AUTHOR.md` (status, demo script,
     live-change rehearsals: author-only, kept out of the README).
+  - Second follow-up (2026-11-02): the "Open the UI" steps assumed a Unix shell (`cp`,
+    `$PWD`), which fail in Windows cmd. The steps are now shell-neutral (the .env copy in
+    words, one command per line) and the Docker volume flag is given per shell
+    (`%cd%` for cmd, verified from a batch file; `${PWD}` for PowerShell; `$PWD` for bash).
+    USAGE.md says the same.
 
 ---
 
