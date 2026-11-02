@@ -94,9 +94,15 @@ confirms the requirement list (reject one, change a strictness or a type) and wr
 pursuit brief: win themes, the bidder's capabilities and constraints, what the client
 said outside the RFP. The brief becomes citable evidence (`H1`, `H2`...), so the
 summary shows which claims rest on the RFP and which on the team, and the reviewer,
-the decisions and the brief are rendered as the summary's review history. See
-[docs/USAGE.md](docs/USAGE.md) for the two commands and `--unattended` for the
-one-shot run; the UI gets the checkpoint in a later step.
+the decisions and the brief are rendered as the summary's review history. After the
+draft, the lead reviews in prose: `revise` applies one instruction to the requirements,
+the problem statement, the solution or the risks, checked by the same rules as the
+stage that produced it (no unknown IDs, verbatim quotes, no mandatory requirement
+dropped from the solution), and keeps every version with a diff and its cost. What
+depends on a change is marked stale and regenerated only on request; `sign-off` is
+refused until nothing is stale, then freezes the run. See
+[docs/USAGE.md](docs/USAGE.md) for the commands and `--unattended` for the one-shot
+run; the UI gets the checkpoint and refinement in later steps.
 
 ## Why you can trust a claim
 
