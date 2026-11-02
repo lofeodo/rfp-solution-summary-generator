@@ -131,12 +131,25 @@ def run(
             help="Requirements from one whole-document call (ablation); default: Settings",
         ),
     ] = None,
+    vlm: Annotated[
+        bool | None,
+        typer.Option(
+            "--vlm/--no-vlm",
+            help="Vision-model transcription of escalated pages (ST2 ablation); default: Settings",
+        ),
+    ] = None,
+    vlm_scope: Annotated[
+        str | None,
+        typer.Option("--vlm-scope", help="judged or flagged (ST2 ablation); default: Settings"),
+    ] = None,
 ) -> None:
     """Run the pipeline (paid) into runs/evals/<label>/<rfp>/<k>/."""
     from rfp_agent.config import DATA_DIR
     from rfp_agent.graph import PipelineError, run_pipeline
     from rfp_agent.llm import MissingApiKeyError
 
+    if vlm_scope not in (None, "judged", "flagged"):
+        raise typer.BadParameter("must be 'judged' or 'flagged'", param_hint="--vlm-scope")
     for name in _rfps(rfp, all_):
         base = EVAL_RUNS / label / name
         base.mkdir(parents=True, exist_ok=True)
@@ -163,6 +176,8 @@ def run(
                     run_id=str(k),
                     full_text_problem=full_text_problem,
                     single_call_extraction=single_call_extraction,
+                    vlm=vlm,
+                    vlm_scope=vlm_scope,
                 )
             except MissingApiKeyError as exc:
                 console.print(f"[red]{exc}[/red]")

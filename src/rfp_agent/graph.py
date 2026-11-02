@@ -24,7 +24,7 @@ either passes through (unattended) or records a ``waiting`` stage and routes to 
 so the run stops with every read-stage file on disk and the worker free. ``resume_pipeline``
 reloads those files into the state (``load_state``), applies the reviewer's record
 (``apply_checkpoint``), continues the same run log and invokes the graph from
-``solution``. No checkpointer: the run directory already is one (D43).
+``solution``. No checkpointer: the run directory already is one (D44).
 """
 
 from __future__ import annotations
@@ -65,7 +65,8 @@ from rfp_agent.observability import (
     shutdown_langfuse,
 )
 from rfp_agent.parsing import parse_pdf
-from rfp_agent.parsing.quality import run_quality_pass
+from rfp_agent.parsing.quality import record_only_hook, run_quality_pass
+from rfp_agent.parsing.vlm import get_vlm_model, make_vlm_hook
 from rfp_agent.render import assemble, write_summary
 from rfp_agent.schemas import (
     Artefact,
@@ -82,6 +83,7 @@ from rfp_agent.schemas import (
     StageRecord,
     StageStatus,
     StrictModel,
+    VlmScope,
 )
 from rfp_agent.splitting import split_document
 
@@ -348,6 +350,7 @@ def build_pipeline(
     start_stage: str = PARSE,
     end_stage: str = ASSEMBLE,
     pause_at_checkpoint: bool = False,
+    vlm_model: BaseChatModel | None = None,
 ):
     """Compile the pipeline graph with its runtime objects bound.
 
@@ -357,6 +360,9 @@ def build_pipeline(
     for a resumed run whose earlier state comes from ``load_state``; ``end_stage`` (one
     of ``END_STAGES``) stops after that stage, so a regeneration (ST12b) runs one stage.
     ``pause_at_checkpoint`` makes the checkpoint node stop the run (ST12).
+    With ``settings.vlm`` the vision model is built here (or taken from ``vlm_model``),
+    so a missing provider key fails before the run starts, like the generator's; only
+    when the parse-quality stage is part of the graph (ST2).
     """
     if start_stage not in START_STAGES:
         raise ValueError(f"start_stage must be one of {START_STAGES}, not {start_stage!r}")
@@ -370,6 +376,9 @@ def build_pipeline(
 
     def included(name: str) -> bool:
         return first <= _ORDER[name] <= last
+
+    if settings.vlm and vlm_model is None and included(PARSE_QUALITY):
+        vlm_model = get_vlm_model(settings)
 
     def title_of(state: PipelineState) -> str:
         return state["parsed"].title or Path(state["pdf_path"]).name
@@ -449,8 +458,27 @@ def build_pipeline(
         return {"parsed": parsed.model_copy(update={"source_path": state["pdf_path"]})}
 
     def parse_quality(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
+        hook = record_only_hook
+        scope: VlmScope = "judged"
+        if settings.vlm and vlm_model is not None:
+            hook = make_vlm_hook(
+                state["pdf_path"],
+                title=title_of(state),
+                page_count=state["parsed"].page_count,
+                model=vlm_model,
+                settings=settings,
+                recorder=recorder,
+                config=config,
+            )
+            scope = settings.vlm_scope
         parsed, report = run_quality_pass(
-            state["parsed"], model=model, settings=settings, recorder=recorder, config=config
+            state["parsed"],
+            model=model,
+            settings=settings,
+            recorder=recorder,
+            config=config,
+            hook=hook,
+            scope=scope,
         )
         return {"parsed": parsed, "quality_report": report}
 
@@ -598,6 +626,8 @@ def apply_overrides(
     full_text_problem: bool | None = None,
     single_call_extraction: bool | None = None,
     max_iterations: int | None = None,
+    vlm: bool | None = None,
+    vlm_scope: VlmScope | None = None,
 ) -> Settings:
     """A copy of ``settings`` with the CLI's per-run overrides applied."""
     updates: dict[str, Any] = {}
@@ -609,6 +639,10 @@ def apply_overrides(
         updates["single_call_extraction"] = single_call_extraction
     if max_iterations is not None:
         updates["solution_max_iterations"] = max_iterations
+    if vlm is not None:
+        updates["vlm"] = vlm
+    if vlm_scope is not None:
+        updates["vlm_scope"] = vlm_scope
     return settings.model_copy(update=updates) if updates else settings
 
 
@@ -623,6 +657,9 @@ def run_pipeline(
     full_text_problem: bool | None = None,
     single_call_extraction: bool | None = None,
     max_iterations: int | None = None,
+    vlm: bool | None = None,
+    vlm_scope: VlmScope | None = None,
+    vlm_model: BaseChatModel | None = None,
     on_event: EventCallback | None = None,
     pause_at_checkpoint: bool = False,
 ) -> PipelineResult:
@@ -642,6 +679,8 @@ def run_pipeline(
         full_text_problem=full_text_problem,
         single_call_extraction=single_call_extraction,
         max_iterations=max_iterations,
+        vlm=vlm,
+        vlm_scope=vlm_scope,
     )
     # Forward slashes whatever the OS, so run logs and samples read the same everywhere.
     pdf_path = Path(pdf).as_posix()
@@ -658,6 +697,7 @@ def run_pipeline(
         on_event=on_event,
         start_stage=PARSE,
         pause_at_checkpoint=pause_at_checkpoint,
+        vlm_model=vlm_model,
     )
 
 
@@ -758,6 +798,7 @@ def _invoke(
     start_stage: str,
     pause_at_checkpoint: bool,
     end_stage: str = ASSEMBLE,
+    vlm_model: BaseChatModel | None = None,
 ) -> PipelineResult:
     """Build the graph from ``start_stage`` to ``end_stage``, run it on ``state`` under
     the recorder and the optional Langfuse handler, and wrap the outcome."""
@@ -777,6 +818,7 @@ def _invoke(
         start_stage=start_stage,
         end_stage=end_stage,
         pause_at_checkpoint=pause_at_checkpoint,
+        vlm_model=vlm_model,
     )
     try:
         with recorder.activate():

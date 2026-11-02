@@ -31,7 +31,7 @@ import re
 from collections.abc import Iterable
 from datetime import datetime
 from enum import StrEnum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -135,6 +135,7 @@ class FlagReason(StrEnum):
     LARGE_IMAGE_BLOCK = "large_image_block"
     BROKEN_TABLE = "broken_table"
     FRAGMENTED_LINES = "fragmented_lines"
+    GARBLED_TEXT = "garbled_text"  # encoding failures: (cid:NN), U+FFFD, symbol soup (ST2)
     OTHER = "other"
 
 
@@ -268,13 +269,44 @@ class PageJudgement(StrictModel):
         return not self.text_usable or self.content_missing
 
 
+class VlmTranscription(StrictModel):
+    """A vision model's transcription of one rendered page (ST2 LLM output contract)."""
+
+    markdown: str = Field(
+        description="The page's content as GitHub markdown, in reading order, tables as pipe tables"
+    )
+    notes: str = Field(
+        default="",
+        description="What could not be read or was left out (empty when nothing)",
+    )
+
+
+class TranscriptionRecord(StrictModel):
+    """One page the VLM re-rendered (ST2): the library parser's markdown next to the
+    transcription that replaced it, so the two can be compared."""
+
+    page: int = Field(ge=1)
+    model: str = Field(description="provider:model_id of the vision model")
+    library_markdown: str
+    vlm_markdown: str
+    library_words: int = Field(ge=0)
+    vlm_words: int = Field(ge=0)
+    notes: str = ""
+
+
+VlmScope = Literal["judged", "flagged"]
+
+
 class ParseQualityReport(StrictModel):
     """What the parse-quality pass did (S4): one judgement per judged page and one
-    escalation per flagged page. Pages whose judge call failed have no judgement."""
+    escalation per flagged page. Pages whose judge call failed have no judgement.
+    ST2 adds the VLM scope the pass ran with and one record per transcribed page."""
 
     judged_pages: list[int] = Field(default_factory=list)
     judgements: dict[int, PageJudgement] = Field(default_factory=dict)
     escalations: list[Escalation] = Field(default_factory=list)
+    scope: VlmScope = "judged"
+    transcriptions: list[TranscriptionRecord] = Field(default_factory=list)
 
 
 # --------------------------------------------------------------------------------------

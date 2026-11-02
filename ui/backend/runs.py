@@ -41,7 +41,8 @@ from rfp_agent.graph import (
     run_pipeline,
 )
 from rfp_agent.llm import get_chat_model
-from rfp_agent.schemas import Artefact, CheckpointRecord, RunTotals, StageStatus
+from rfp_agent.parsing.vlm import get_vlm_model
+from rfp_agent.schemas import Artefact, CheckpointRecord, RunTotals, StageStatus, VlmScope
 
 from .models import RESTING, RunState, StateChange
 from .store import DISPLAY_ORDER, RunStore, stages_from_log, state_from_log
@@ -238,19 +239,24 @@ class RunRegistry:
         full_text_problem: bool | None = None,
         single_call_extraction: bool | None = None,
         max_iterations: int | None = None,
+        vlm: bool | None = None,
+        vlm_scope: VlmScope | None = None,
         unattended: bool = False,
     ) -> RunEntry:
         """Queue a new run. It pauses at the checkpoint unless ``unattended``. Builds the
-        chat model first, so a missing provider key raises ``MissingApiKeyError`` here,
-        before anything is queued."""
+        chat model (and the vision model when the VLM is on) first, so a missing provider
+        key raises ``MissingApiKeyError`` here, before anything is queued."""
         settings = apply_overrides(
             self.settings,
             model=model_spec,
             full_text_problem=full_text_problem,
             single_call_extraction=single_call_extraction,
             max_iterations=max_iterations,
+            vlm=vlm,
+            vlm_scope=vlm_scope,
         )
         chat = get_chat_model(settings=settings)
+        vision = get_vlm_model(settings) if settings.vlm else None
         entry = RunEntry(
             run_id=run_id,
             source_name=source_name,
@@ -269,6 +275,7 @@ class RunRegistry:
                 entry.pdf_path,
                 settings=settings,
                 model=chat,
+                vlm_model=vision,
                 runs_dir=self.store.runs_dir,
                 run_id=entry.run_id,
                 on_event=entry.on_event,

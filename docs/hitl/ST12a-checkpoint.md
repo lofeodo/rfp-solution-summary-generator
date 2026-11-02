@@ -60,8 +60,8 @@
      changed, origin reviewed, unknown ID refused); brief chunks reach the prompts and
      the allowed IDs, an `H` citation passes the solution validator and the assembler;
      renderer output for brief citations and the history; CLI `checkpoint` round trip.
-  9. **Docs.** D42 (the design and its guards), D43 (pause via the run directory),
-     D44 (brief as citable chunks); `ASSUMPTIONS.md` "Human in the loop";
+  9. **Docs.** D43 (the design and its guards), D44 (pause via the run directory),
+     D45 (brief as citable chunks); `ASSUMPTIONS.md` "Human in the loop";
      `PROMPTS.md` two lines; README "Checkpoint and refine"; `TIMELOG.md`.
 - **What was done:** (2026-11-02, branch `st12a-checkpoint` → `hitl`)
   - `schemas.py`: `BRIEF_CHUNK_ID_RE`, `EVIDENCE_ID_RE`; enums `EvidenceSource`,
@@ -98,7 +98,7 @@
     requirements, 9 components, 12 risks, coverage 75/75, 0 retries; the summary cites
     the brief 14 times (`(Pursuit brief [H2])`), the review history lists the reviewer,
     the note, the rejection and the two edits. Whole run $0.075, 246 s wall.
-  - Docs: D42 to D44, `ASSUMPTIONS.md` "Human in the loop", `PROMPTS.md` design notes
+  - Docs: D43 to D45, `ASSUMPTIONS.md` "Human in the loop", `PROMPTS.md` design notes
     and changelog row, `USAGE.md` CLI section, README checkpoint paragraph, `TIMELOG.md`.
 - **Deviations from plan:** the brief lives inside `CheckpointRecord` rather than as
   a separate `brief_chunks` field of `ReviewHistory`, so one file (`checkpoint.json`)
@@ -110,4 +110,4 @@
   because the backend always runs unattended. Rendered brief chunks keep their markdown
   heading marks (`# Win themes ...`); ST12e's brief form can drop them. The eval harness
   and the samples stay unattended by construction; no harness flag exposes the brief.
-- **Decisions:** D42, D43, D44
+- **Decisions:** D43, D44, D45

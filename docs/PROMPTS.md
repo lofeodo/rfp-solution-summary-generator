@@ -78,7 +78,30 @@ sees the image, so it reasons from captions and lead-in sentences ("the followin
 tables") instead of guessing. No citations: it makes no claims about the RFP's content.
 Known weaknesses: cannot see the image, so a decorative large image next to a sentence
 that sounds like a lead-in could be escalated; blank fill-in forms (Missouri affidavits)
-are escalated although transcribing them adds little.
+are escalated although transcribing them adds little. ST2 added one line for the
+`garbled_text` flag (encoding failures), which no public RFP triggers.
+
+### prompts/parse_vlm.md
+Purpose: transcribe one page the parse-quality pass escalated from its rendered image,
+so the transcription can replace the library parser's markdown (ST2).
+Inputs it receives: `{{title}}`, `{{page_number}}`, `{{page_count}}`, `{{reason}}` (the
+judge's one-sentence verdict, or the flagged-scope note), `{{library_markdown}}` (the
+page text the library produced, or "(empty)"). The page image travels in the same
+message as an `image_url` block ahead of the text.
+Output contract (schema): `VlmTranscription` in `schemas.py` (`markdown`, `notes`). Code
+replaces the page's markdown, recounts words, rebuilds that page's tables, clears its
+flags and keeps the library text beside the transcription in a `TranscriptionRecord`.
+Why it is written this way: the splitter and the extractors read the page as markdown
+and quote it verbatim, so the prompt asks for reading order, exact heading wording (the
+splitter locates PDF outline entries by their text), pipe tables with one header row and
+columns in the image's order, and spanning values repeated rather than merged, which
+is what the gold quotes look like ("Quadrant | Cashiering | Replace | ..."). The library
+text is passed as a labelled reference because it is usually right about spelling and
+numbers in the clean parts of a page; the image wins on any conflict. `[illegible]`
+instead of guessing keeps the quote-verification contract honest.
+Known weaknesses: a repeated header row inside a printed table comes back as a data row
+(Federal Way p5); multi-line bullet lists inside a cell are joined with semicolons, so a
+gold quote that spans two cells may not match by containment.
 
 ### prompts/problem_chunk.md
 Purpose: stage one of the problem statement (S6): what one chunk says about who the
@@ -192,7 +215,7 @@ component exceed the five-sentence guide so the two rules do not fight. ST12 add
 phasing, emphasis) and must be cited (`H2`) wherever a component rests on it, so a
 reviewer can tell the team's input from the RFP's; it never waives a mandatory
 requirement, and a conflict becomes an assumption citing both, because the compliance
-matrix outranks the win strategy (D44).
+matrix outranks the win strategy (D45).
 Known weaknesses: proposal-process obligations that S5 typed `timeline` or
 `budget_pricing` rather than `submission` are in scope, so the revision round makes the
 model add a commercial or submission-flavoured component to cite them (Missouri R007,
@@ -226,7 +249,7 @@ tone rule is carried over with "the findings" added to the banned phrases; instr
 come first for the prefix cache. ST12 added the "Pursuit team guidance" block and rule:
 a risk that rests on something the team set or learned (a constraint, an informal
 client statement, a design choice) cites its `H` ID, and a risk the guidance creates has
-`source` `solution`, so commercial and team risks are traceable to the brief (D44).
+`source` `solution`, so commercial and team risks are traceable to the brief (D45).
 Known weaknesses: the count runs to the top of the range or one over (F12); severity
 clusters at high and medium (no `low` severity and one `low` likelihood in 50 risks on
 the tuned prompt), so the scales separate less than they could; `source` can flip
@@ -235,7 +258,7 @@ S12's judge should sample.
 
 ### prompts/revise_requirements.md, revise_problem.md, revise_solution.md, revise_risk.md (ST12b)
 Purpose: apply one reviewer instruction to one artefact after (or, for requirements and
-the problem statement, before) the checkpoint (D45).
+the problem statement, before) the checkpoint (D46).
 Inputs it receives: all four get `{{title}}` and `{{instruction}}` near the top, then the
 current artefact, then the context the producing stage's prompt showed:
 `revise_requirements` the current list (`ID [strictness, type] text — "quote" (chunks)`)
@@ -255,7 +278,7 @@ of any coverage regression.
 Why it is written this way: "only what the instruction asks; everything else exactly as
 it is now" is the first rule of each, because the diff is the audit trail and an
 unasked rewording is noise in it; requirements return a patch because the list is too
-long to return whole (D45, F16) and the patch explains how to merge and split with
+long to return whole (D46, F16) and the patch explains how to merge and split with
 edit, add and remove; the quote rule says code checks every quote, and an empty patch is
 named as the right answer when the RFP does not support the instruction, so the model is
 not pushed to invent a requirement; the solution prompt states that code refuses a
@@ -387,8 +410,10 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
-| 2026-11-02 | revise_requirements, revise_problem, revise_solution, revise_risk | Created (ST12b) | First version; instruction-driven revision of one artefact under the producing stage's validators (D45); first live results in `docs/hitl/ST12b-revise.md` |
-| 2026-11-02 | solution, risk | "Pursuit team guidance" input block (`{{brief}}`, `H1: text` lines or "None provided.") and a rule: follow it for design choices, cite `H` IDs for anything that rests on it, never waive a mandatory requirement (solution); cite `H` IDs for risks that rest on it, `source` `solution` for risks it creates (risk) | ST12 checkpoint: the brief written by the pursuit lead must reach the drafter and stay traceable (D44); unattended runs render "None provided." so their output is unchanged |
+| 2026-11-02 | parse_vlm | Created (ST2) | First version; live Federal Way p5 returned the full ERP environment table (18 rows, every gold row verbatim), Missouri p19/p20 forms at 420 and 453 words with their exhibit headings |
+| 2026-11-02 | parse_quality | One line describing the `garbled_text` flag and its false alarm | ST2 added the flag for undecodable fonts; the judge must know what it means |
+| 2026-11-02 | revise_requirements, revise_problem, revise_solution, revise_risk | Created (ST12b) | First version; instruction-driven revision of one artefact under the producing stage's validators (D46); first live results in `docs/hitl/ST12b-revise.md` |
+| 2026-11-02 | solution, risk | "Pursuit team guidance" input block (`{{brief}}`, `H1: text` lines or "None provided.") and a rule: follow it for design choices, cite `H` IDs for anything that rests on it, never waive a mandatory requirement (solution); cite `H` IDs for risks that rest on it, `source` `solution` for risks it creates (risk) | ST12 checkpoint: the brief written by the pursuit lead must reach the drafter and stay traceable (D45); unattended runs render "None provided." so their output is unchanged |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |

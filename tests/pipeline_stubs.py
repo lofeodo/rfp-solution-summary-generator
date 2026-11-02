@@ -141,8 +141,8 @@ class Stubs:
         if self.barrier is not None and stage in (REQUIREMENTS, PROBLEM):
             self.barrier.wait()  # both branches must be inside at once
 
-    def run_quality_pass(self, parsed, *, model, settings, recorder, config):
-        self._enter(PARSE_QUALITY, model=model, settings=settings)
+    def run_quality_pass(self, parsed, *, model, settings, recorder, config, hook, scope):
+        self._enter(PARSE_QUALITY, model=model, settings=settings, hook=hook, scope=scope)
         recorder.record(metric("parse_quality"))
         return parsed.model_copy(update={"flags": []}), ParseQualityReport(judged_pages=[5])
 

@@ -47,6 +47,12 @@ def test_defaults():
     assert s.full_text_problem is False
     assert s.single_call_extraction is False
     assert s.solution_max_iterations == 3
+    assert (s.vlm, s.vlm_model, s.vlm_scope, s.vlm_dpi) == (
+        False,
+        "anthropic:claude-sonnet-5-5",
+        "judged",
+        140,
+    )
     assert s.generator == ("deepseek", "deepseek-flash")
     assert s.judge == ("anthropic", "claude-sonnet-5-5")
     assert s.langfuse_enabled is False
@@ -58,6 +64,8 @@ def test_env_overrides(monkeypatch):
     monkeypatch.setenv("RFP_TEMPERATURE", "0.3")
     monkeypatch.setenv("RFP_FULL_TEXT_PROBLEM", "true")
     monkeypatch.setenv("RFP_MAX_OUTPUT_TOKENS", "4000")
+    monkeypatch.setenv("RFP_VLM", "true")
+    monkeypatch.setenv("RFP_VLM_SCOPE", "flagged")
     monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-test")
     monkeypatch.setenv("LANGFUSE_PUBLIC_KEY", "pk")
     monkeypatch.setenv("LANGFUSE_SECRET_KEY", "sk")
@@ -66,6 +74,7 @@ def test_env_overrides(monkeypatch):
     assert s.temperature == 0.3
     assert s.full_text_problem is True
     assert s.max_output_tokens == 4000
+    assert (s.vlm, s.vlm_scope) == (True, "flagged")
     assert s.deepseek_api_key == "sk-test"
     assert s.langfuse_enabled is True
 

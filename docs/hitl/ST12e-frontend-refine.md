@@ -78,7 +78,7 @@
     items, value display, stage mapping, sign-off blockers, history and cost, refine
     note, brief index). 36 Vitest tests, typecheck and build clean; pytest unchanged
     (no Python touched).
-  - Docs: D49, README paragraph, USAGE UI section, TIMELOG, this file and the index.
+  - Docs: D50, README paragraph, USAGE UI section, TIMELOG, this file and the index.
   - Live (the ST12d Missouri run `20261102-200113-0557af`, copied into the worktree and
     afterwards to the main checkout's `runs/st12e/`, gitignored), Playwright on the built
     UI: an H2 chip opened the constraints paragraph with "written by Dana Reviewer";
@@ -105,6 +105,7 @@
     the live run); it predates ST12e and could show the drafting wall instead.
   - The Review tab and the panels were checked on a run with a checkpoint; an unattended
     run shows "unattended: no checkpoint" in the history (by code, not live).
-  - `hitl` → `main`: decision numbers clash (main has D42 = ST2) and `UploadForm.tsx`
-    needs both checkboxes kept (ST12d's note).
-- **Decisions:** D49
+  - ~~`hitl` → `main`: decision numbers clash and `UploadForm.tsx` needs both
+    checkboxes~~ resolved by merging `main` into `hitl`: ST12's decisions became
+    D43–D50 (ST2 keeps D42), and both checkboxes are kept.
+- **Decisions:** D50

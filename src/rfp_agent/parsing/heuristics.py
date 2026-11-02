@@ -27,8 +27,19 @@ FRAGMENTED_FRACTION = 0.5
 # MERGED_CELL_MIN_BR contain <br>, is a multi-column table whose cells were merged.
 MERGED_TABLE_MIN_ROWS = 3
 MERGED_CELL_MIN_BR = 2
+# Garbled text (ST2): a font whose glyphs have no Unicode mapping comes out as
+# ``(cid:NN)`` tokens or U+FFFD, and a wrong encoding as symbol soup. Any ``(cid:`` or
+# replacement character flags the page; otherwise the share of characters that are
+# neither word characters, whitespace nor ordinary punctuation must reach
+# GARBLED_SYMBOL_FRACTION over at least GARBLED_MIN_CHARS characters. The four public
+# RFPs have no ``(cid:`` or U+FFFD and a top symbol share of 0.004, so 0.30 never
+# fires on them; it is there for the PDFs this repo has not seen.
+GARBLED_SYMBOL_FRACTION = 0.30
+GARBLED_MIN_CHARS = 40
 
 _TAG = re.compile(r"<[^>]+>")
+_CID = re.compile(r"\(cid:\d+\)")
+_ORDINARY = re.compile(r"[\w\s.,;:!?()\[\]{}<>/\\\-_*#|\"'%$&+=@~`^•–—…©®™§°]")
 
 
 def count_words(markdown: str) -> int:
@@ -65,6 +76,25 @@ def broken_table_reason(table: str) -> str | None:
     merged = sum(1 for r in rows if "<br>" in r)
     if widths == {1} and len(rows) >= MERGED_TABLE_MIN_ROWS and merged >= MERGED_CELL_MIN_BR:
         return f"one-column table of {len(rows)} rows with {merged} merged cells"
+    return None
+
+
+def garbled_text_reason(markdown: str) -> str | None:
+    """Why the page text looks like an encoding failure, or None if it looks fine."""
+    cids = len(_CID.findall(markdown))
+    replacements = markdown.count("�")
+    if cids or replacements:
+        parts = [f"{cids} (cid:NN) glyphs"] * bool(cids) + [
+            f"{replacements} replacement characters"
+        ] * bool(replacements)
+        return " and ".join(parts)
+    text = _TAG.sub(" ", markdown)
+    if len(text) < GARBLED_MIN_CHARS:
+        return None
+    odd = sum(1 for c in text if not _ORDINARY.match(c))
+    share = odd / len(text)
+    if share >= GARBLED_SYMBOL_FRACTION:
+        return f"{share:.0%} of characters are symbols"
     return None
 
 
@@ -115,4 +145,7 @@ def flag_page(page: int, markdown: str, image_fractions: Iterable[float]) -> lis
                 f"{FRAGMENTED_SHORT_WORDS} words",
             )
         )
+
+    if garbled := garbled_text_reason(markdown):
+        flags.append(PageFlag(page=page, reason=FlagReason.GARBLED_TEXT, detail=garbled))
     return flags

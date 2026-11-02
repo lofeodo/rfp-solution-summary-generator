@@ -134,6 +134,7 @@ class RunStatus(BaseModel):
 class Health(BaseModel):
     status: Literal["ok"] = "ok"
     model: str
+    vlm_model: str
     runs_dir: str
 
 

@@ -25,7 +25,7 @@ prose, and sign off a named version. One mode, two human touchpoints, one loop:
 Guards, in priority order: non-compliance (a missed or wrong mandatory requirement
 propagating into the draft), ungrounded or over-promising claims, generic solutions,
 silent regressions from edits, no audit trail, cost blindness. The full reasoning is in
-`docs/DECISIONS.md` D42.
+`docs/DECISIONS.md` D43.
 
 Pause and resume go through the run directory: every stage already writes its JSON, so a
 paused run is reloaded from those files and the graph is invoked from `solution`. No
@@ -50,9 +50,9 @@ flowchart LR
 ```
 
 **Progress (2026-11-02):** ST12a to ST12e done: the whole loop (checkpoint, draft,
-refine, regenerate, sign-off) runs from the CLI, the API and the UI. Next: the PR
-`hitl` → `main` (the author's call; renumber `hitl`'s D42–D49 after `main`'s D42 and
-keep both upload checkboxes).
+refine, regenerate, sign-off) runs from the CLI, the API and the UI. `main` (with ST2,
+whose decision is D42) is merged into `hitl`, so ST12's decisions are D43–D50. Next:
+the PR `hitl` → `main` (the author's call).
 
 | Step | Depends on | Can run in parallel with | Main files touched |
 | --- | --- | --- | --- |
