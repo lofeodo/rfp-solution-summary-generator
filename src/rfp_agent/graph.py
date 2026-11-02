@@ -45,6 +45,7 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel
 
+from rfp_agent import versions
 from rfp_agent.agents.problem import ProblemResult, build_problem_statement
 from rfp_agent.agents.requirements import RequirementsReport, extract_requirements
 from rfp_agent.agents.risk import RiskResult, build_risks
@@ -54,7 +55,6 @@ from rfp_agent.checkpoint import (
     CONFIRMED_REQUIREMENTS_FILENAME,
     apply_checkpoint,
 )
-from rfp_agent import versions
 from rfp_agent.config import RUNS_DIR, Settings, get_settings
 from rfp_agent.llm import get_chat_model
 from rfp_agent.observability import (

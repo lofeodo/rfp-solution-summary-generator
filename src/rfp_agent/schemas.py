@@ -709,9 +709,7 @@ class RequirementEdit(StrictModel):
     id: str = Field(pattern=REQUIREMENT_ID_RE, description="The requirement to change")
     text: str | None = Field(default=None, description="New statement, if it changes")
     type: RequirementType | None = Field(default=None, description="New type, if it changes")
-    strictness: Strictness | None = Field(
-        default=None, description="New strictness, if it changes"
-    )
+    strictness: Strictness | None = Field(default=None, description="New strictness, if it changes")
     quote: str | None = Field(
         default=None,
         description="New verbatim quote, copied character for character from the chunk "
@@ -729,9 +727,7 @@ class RequirementsPatch(StrictModel):
     additions: list[CitedRequirement] = Field(
         default_factory=list, description="New requirements, each quoting a chunk shown"
     )
-    removals: list[str] = Field(
-        default_factory=list, description="IDs of requirements to remove"
-    )
+    removals: list[str] = Field(default_factory=list, description="IDs of requirements to remove")
 
 
 # Whole-artefact revision contracts: the draft contracts plus an optional stable ID. An
@@ -755,8 +751,7 @@ class RiskRevision(RiskDraft):
     id: str | None = Field(
         default=None,
         pattern=RISK_ID_RE,
-        description="The current risk's ID when this is a kept or changed one; omit for a "
-        "new risk",
+        description="The current risk's ID when this is a kept or changed one; omit for a new risk",
     )
 
 

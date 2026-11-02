@@ -26,8 +26,8 @@ One structured call, node ``risk_assess``; no revision loop.
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING
+from collections.abc import Callable, Iterable, Sequence
+from typing import TYPE_CHECKING, Any
 
 from langchain_core.messages import HumanMessage
 from pydantic import Field, create_model, model_validator
@@ -251,18 +251,26 @@ def render_prompt(
 
 
 def risk_schema(
-    requirement_ids: Iterable[str], chunk_ids: Iterable[str], must_cite: Iterable[str] = ()
+    requirement_ids: Iterable[str],
+    chunk_ids: Iterable[str],
+    must_cite: Iterable[str] = (),
+    *,
+    base: type[RiskAssessmentDraft] = RiskAssessmentDraft,
+    extra: Callable[[Any], list[str]] | None = None,
 ) -> type[RiskAssessmentDraft]:
     """A ``RiskAssessmentDraft`` subclass for one call whose validator rejects a count
     outside ``MIN_RISKS..MAX_RISKS``, any requirement or chunk ID outside the inputs,
     and a draft in which an ID from ``must_cite`` is cited by no risk. Named
-    ``RiskAssessmentDraft`` so the tool name is unchanged."""
+    ``RiskAssessmentDraft`` so the tool name is unchanged.
+
+    A revision (ST12b) passes its own ``base`` (risks with an optional ``id``) and
+    ``extra`` checks, whose problems are reported with these."""
     allowed_reqs = list(requirement_ids)
     allowed_chunks = list(chunk_ids)
     required = list(must_cite)
 
     def check(self: RiskAssessmentDraft) -> RiskAssessmentDraft:
-        problems: list[str] = []
+        problems: list[str] = list(extra(self)) if extra is not None else []
         n = len(self.risks)
         if n < MIN_RISKS:
             problems.append(
@@ -301,7 +309,7 @@ def risk_schema(
 
     return create_model(
         "RiskAssessmentDraft",
-        __base__=RiskAssessmentDraft,
+        __base__=base,
         __module__=__name__,
         __validators__={"check_risks": model_validator(mode="after")(check)},
     )

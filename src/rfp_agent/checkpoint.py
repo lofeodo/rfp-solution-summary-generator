@@ -84,9 +84,7 @@ def strip_references(requirements: RequirementsOutput, removed: set[str]) -> Req
         if r.id not in removed
     ]
     ambiguities = [
-        a.model_copy(
-            update={"requirement_ids": [i for i in a.requirement_ids if i not in removed]}
-        )
+        a.model_copy(update={"requirement_ids": [i for i in a.requirement_ids if i not in removed]})
         if removed & set(a.requirement_ids)
         else a
         for a in requirements.ambiguities

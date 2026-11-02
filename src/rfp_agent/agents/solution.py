@@ -23,8 +23,8 @@ Component IDs ``C01…`` are assigned by code in reply order.
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING, Literal, TypedDict
+from collections.abc import Callable, Iterable, Sequence
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph
@@ -229,16 +229,23 @@ def render_prompt(
 
 
 def solution_schema(
-    requirement_ids: Iterable[str], chunk_ids: Iterable[str]
+    requirement_ids: Iterable[str],
+    chunk_ids: Iterable[str],
+    *,
+    base: type[SolutionDraft] = SolutionDraft,
+    extra: Callable[[Any], list[str]] | None = None,
 ) -> type[SolutionDraft]:
     """A ``SolutionDraft`` subclass for one call whose validator rejects an empty
     component list, a component citing no requirement, and any requirement or chunk ID
-    outside the inputs. Named ``SolutionDraft`` so the tool name is unchanged."""
+    outside the inputs. Named ``SolutionDraft`` so the tool name is unchanged.
+
+    A revision (ST12b) passes its own ``base`` (components with an optional ``id``) and
+    ``extra`` checks, whose problems are reported with these."""
     allowed_reqs = list(requirement_ids)
     allowed_chunks = list(chunk_ids)
 
     def check(self: SolutionDraft) -> SolutionDraft:
-        problems: list[str] = []
+        problems: list[str] = list(extra(self)) if extra is not None else []
         if not self.components:
             problems.append("components is empty; return at least four components")
         for i, c in enumerate(self.components):
@@ -275,7 +282,7 @@ def solution_schema(
 
     return create_model(
         "SolutionDraft",
-        __base__=SolutionDraft,
+        __base__=base,
         __module__=__name__,
         __validators__={"check_citations": model_validator(mode="after")(check)},
     )
