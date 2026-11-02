@@ -1,10 +1,21 @@
 import { Link } from "react-router-dom";
-import type { RunState } from "../api/types";
-import { PHASES, lifecycle, phaseIndex } from "../lib/lifecycle";
+import type { ReviewState, RunState } from "../api/types";
+import { PHASES, lifecycle, phaseIndex, refineNote } from "../lib/lifecycle";
 
 // Where the run stands in the human loop, and what happens next (ST12d).
-export default function Lifecycle({ runId, state, tab }: { runId: string; state: RunState; tab: string }) {
+export default function Lifecycle({
+  runId,
+  state,
+  review,
+  tab,
+}: {
+  runId: string;
+  state: RunState;
+  review?: ReviewState | null;
+  tab: string;
+}) {
   const lc = lifecycle(state);
+  const note = refineNote(state, review);
   const at = phaseIndex(lc.phase);
   const yourTurn = state === "awaiting_checkpoint";
   return (
@@ -31,6 +42,12 @@ export default function Lifecycle({ runId, state, tab }: { runId: string; state:
         {yourTurn && tab !== "checkpoint" && (
           <Link to={`/runs/${runId}/checkpoint`} className="btn btn-accent py-0.5">
             Open the checkpoint →
+          </Link>
+        )}
+        {note && <span className={review?.stale.length ? "text-accent" : "font-semibold"}>{note}</span>}
+        {note && tab !== "review" && (
+          <Link to={`/runs/${runId}/review`} className="btn py-0.5">
+            {review?.stale.length ? "Open the review →" : "Sign off →"}
           </Link>
         )}
       </p>

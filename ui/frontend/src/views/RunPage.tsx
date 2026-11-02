@@ -20,6 +20,9 @@ import ProblemView from "./ProblemView";
 import ParseView from "./ParseView";
 import MetricsView from "./MetricsView";
 import CheckpointView from "./CheckpointView";
+import ReviewView from "./ReviewView";
+import Refinable from "../components/Refinable";
+import { ReviewContext, type ReviewCtx, useReviewer, useRevisionLog } from "../hooks/useReview";
 
 const TABS = [
   { id: "checkpoint", label: "Checkpoint" },
@@ -27,6 +30,7 @@ const TABS = [
   { id: "requirements", label: "Requirements" },
   { id: "risks", label: "Risks" },
   { id: "problem", label: "Problem" },
+  { id: "review", label: "Review" },
   { id: "parse", label: "Parse & chunks" },
   { id: "metrics", label: "Metrics" },
 ] as const;
@@ -42,6 +46,13 @@ export default function RunPage() {
 
   const open = useCallback((target: string) => setStack((s) => (s[s.length - 1] === target ? s : [...s, target])), []);
   const ctx: SourceCtx = useMemo(() => ({ runId: id, index: data.index, open }), [id, data.index, open]);
+  const log = useRevisionLog(id, status);
+  const [reviewer, setReviewer] = useReviewer();
+  // Sample runs are read-only: no review controls at all.
+  const reviewCtx: ReviewCtx | null = useMemo(
+    () => (status && !status.sample ? { runId: id, status, refresh, log, reviewer, setReviewer } : null),
+    [id, status, refresh, log, reviewer, setReviewer],
+  );
 
   if (error)
     return (
@@ -62,6 +73,7 @@ export default function RunPage() {
 
   return (
     <SourceContext.Provider value={ctx}>
+      <ReviewContext.Provider value={reviewCtx}>
       <main className="mx-auto max-w-screen-2xl px-4 pb-24 pt-4 md:px-10">
         <Masthead compact />
 
@@ -114,7 +126,7 @@ export default function RunPage() {
 
         {status && !status.sample && (
           <div className="mb-8">
-            <Lifecycle runId={id} state={status.status} tab={tab} />
+            <Lifecycle runId={id} state={status.status} review={status.review} tab={tab} />
           </div>
         )}
 
@@ -161,10 +173,13 @@ export default function RunPage() {
             </nav>
             <ErrorBoundary resetKey={tab}>
             {tab === "checkpoint" && <CheckpointView runId={id} data={data} status={status} refresh={refresh} />}
-            {tab === "solution" && <SolutionView data={data} />}
-            {tab === "requirements" && <RequirementsView data={data} />}
-            {tab === "risks" && <RisksView data={data} />}
-            {tab === "problem" && <ProblemView data={data} />}
+            {tab === "solution" && <Refinable artefact="solution" data={data}>{(d) => <SolutionView data={d} />}</Refinable>}
+            {tab === "requirements" && (
+              <Refinable artefact="requirements" data={data}>{(d) => <RequirementsView data={d} />}</Refinable>
+            )}
+            {tab === "risks" && <Refinable artefact="risks" data={data}>{(d) => <RisksView data={d} />}</Refinable>}
+            {tab === "problem" && <Refinable artefact="problem" data={data}>{(d) => <ProblemView data={d} />}</Refinable>}
+            {tab === "review" && <ReviewView drafted={data.has("solution")} />}
             {tab === "parse" && <ParseView data={data} />}
             {tab === "metrics" && <MetricsView status={status} stages={stages} />}
             </ErrorBoundary>
@@ -177,6 +192,7 @@ export default function RunPage() {
         </div>
       </main>
       <SourcePanel stack={stack} onBack={() => setStack((s) => s.slice(0, -1))} onClose={() => setStack([])} />
+      </ReviewContext.Provider>
     </SourceContext.Provider>
   );
 }
