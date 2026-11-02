@@ -57,15 +57,17 @@ Return empty lists when nothing duplicates and nothing conflicts.
 
 ## Examples
 
-- Same obligation: "The vendor should provide a user manual" and "The contractor must
-  deliver a user manual in PDF before go-live": one group, with the second item as
-  representative.
-- Different obligations: "provide documentation" and "provide a user manual in PDF": a
-  general duty and a specific one that only partly overlaps; keep both.
+- Same obligation: "Proposals must be uploaded to the Dropbox folder by 2:00 p.m. on
+  15 March" and "The proposal is due via Dropbox on 15 March at 2:00 p.m.": one group,
+  same deadline, same channel.
+- Different obligations, keep apart: "provide documentation" and "provide a user
+  manual in PDF" (a general duty and a specific one that only partly overlaps);
+  "train administrators" and "train end users" (different parties).
 - Not a conflict: "the database shall be Oracle" and "SQL Server may be used with
-  written approval": an option, not a contradiction.
-- A conflict: "proposals are due 15 March" and "proposals are due 22 March" for the
-  same submission.
+  written approval" (an option, not a contradiction).
+- When unsure whether two items are the same obligation, leave them apart: an
+  unmerged duplicate costs a reader a second glance, a wrong merge loses a
+  requirement.
 
 ## Tone
 
@@ -86,5 +88,8 @@ Each line is `ID [strictness, type] text — "quote" (chunk IDs)`.
 Before answering, confirm that:
 - no ID appears twice anywhere in the answer, across representatives and members;
 - no group has a single member, and no representative is in its own `member_ids`;
-- no conflicting pair shares a group;
+- no group joins items with a different number, date, amount, party or deliverable,
+  or a general duty with a specific one;
+- every conflict is a contradiction, not an option the RFP offers or a stricter
+  version of the same standard, and no conflicting pair shares a group;
 - every ID in the answer appears in the list above.
