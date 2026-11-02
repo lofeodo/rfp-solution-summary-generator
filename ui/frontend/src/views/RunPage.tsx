@@ -7,6 +7,8 @@ import SourcePanel from "../components/SourcePanel";
 import StageTimeline from "../components/StageTimeline";
 import { SourceContext, type SourceCtx } from "../components/source";
 import { StateBadge } from "../components/ui";
+import Lifecycle from "../components/Lifecycle";
+import { isResting } from "../api/types";
 import { useRun } from "../hooks/useRun";
 import { useRunData } from "../hooks/useRunData";
 import { secs, usd, when } from "../lib/format";
@@ -17,8 +19,10 @@ import RisksView from "./RisksView";
 import ProblemView from "./ProblemView";
 import ParseView from "./ParseView";
 import MetricsView from "./MetricsView";
+import CheckpointView from "./CheckpointView";
 
 const TABS = [
+  { id: "checkpoint", label: "Checkpoint" },
   { id: "solution", label: "Solution" },
   { id: "requirements", label: "Requirements" },
   { id: "risks", label: "Risks" },
@@ -28,8 +32,11 @@ const TABS = [
 ] as const;
 
 export default function RunPage() {
-  const { id = "", tab = "solution" } = useParams();
-  const { status, stages, error } = useRun(id);
+  const params = useParams();
+  const id = params.id ?? "";
+  const { status, stages, error, refresh } = useRun(id);
+  // With no tab in the URL, a run waiting for its reviewer opens on the checkpoint.
+  const tab = params.tab ?? (status?.status === "awaiting_checkpoint" ? "checkpoint" : "solution");
   const data = useRunData(id, status);
   const [stack, setStack] = useState<string[]>([]);
 
@@ -45,7 +52,7 @@ export default function RunPage() {
       </main>
     );
 
-  const live = status?.status === "running" || status?.status === "queued";
+  const live = status !== null && !isResting(status.status);
   const title = data.parsed?.title || status?.source_name.replace(/\.pdf$/i, "") || id;
   const done = status?.artifacts.includes("summary") ?? false;
   const counts: Record<string, number | undefined> = {
@@ -105,6 +112,12 @@ export default function RunPage() {
           </div>
         </header>
 
+        {status && !status.sample && (
+          <div className="mb-8">
+            <Lifecycle runId={id} state={status.status} tab={tab} />
+          </div>
+        )}
+
         <div className="grid grid-cols-12 lg:gap-x-10 gap-y-10">
           <aside className="col-span-12 lg:col-span-3">
             <div className="hidden lg:sticky lg:top-6 lg:block">
@@ -147,6 +160,7 @@ export default function RunPage() {
               ))}
             </nav>
             <ErrorBoundary resetKey={tab}>
+            {tab === "checkpoint" && <CheckpointView runId={id} data={data} status={status} refresh={refresh} />}
             {tab === "solution" && <SolutionView data={data} />}
             {tab === "requirements" && <RequirementsView data={data} />}
             {tab === "risks" && <RisksView data={data} />}
