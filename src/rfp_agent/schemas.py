@@ -116,6 +116,7 @@ class FlagReason(StrEnum):
     LARGE_IMAGE_BLOCK = "large_image_block"
     BROKEN_TABLE = "broken_table"
     FRAGMENTED_LINES = "fragmented_lines"
+    GARBLED_TEXT = "garbled_text"  # encoding failures: (cid:NN), U+FFFD, symbol soup (ST2)
     OTHER = "other"
 
 

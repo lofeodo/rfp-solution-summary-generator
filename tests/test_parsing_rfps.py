@@ -79,6 +79,13 @@ def test_missouri_flags_images_and_references(parsed):
     assert doc.title == "TR202504 RFP Using AI /ML to Write Legal Land Descriptions"
 
 
+@pytest.mark.parametrize("name", RFPS)
+def test_no_garbled_text_in_the_public_rfps(parsed, name):
+    # The ST2 heuristic exists for PDFs with undecodable fonts; none of the four has
+    # one, so it must stay silent here (its zero-false-positive gate).
+    assert not any(FlagReason.GARBLED_TEXT in r for r in _flags(parsed[name]).values())
+
+
 def test_nyesd_references_and_no_flags(parsed):
     doc = parsed["NYESD"]
     assert doc.flags == []

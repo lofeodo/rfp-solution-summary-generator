@@ -8,6 +8,7 @@ from rfp_agent.parsing.heuristics import (
     broken_table_reason,
     count_words,
     flag_page,
+    garbled_text_reason,
     table_blocks,
 )
 from rfp_agent.parsing.normalize import (
@@ -161,6 +162,29 @@ def test_flag_page_broken_table():
     table = "|**Cost**|\n|---|\n|**Expenses**<br>**Amount**|\n|Salaries|\n|F&A<br>Cost|"
     text = table + "\n\n" + "word " * 60
     assert [f.reason for f in flag_page(12, text, [])] == [FlagReason.BROKEN_TABLE]
+
+
+def test_garbled_text_cid_glyphs_and_replacement_characters():
+    assert garbled_text_reason("The (cid:3)vendor(cid:12) shall " + "word " * 20) == (
+        "2 (cid:NN) glyphs"
+    )
+    assert garbled_text_reason("Se�ction 3 " + "word " * 20) == "1 replacement characters"
+    assert garbled_text_reason("a (cid:1) b�") == "1 (cid:NN) glyphs and 1 replacement characters"
+
+
+def test_garbled_text_symbol_soup_needs_enough_characters():
+    soup = "≈∫√∑≠≤≥±×÷" * 5  # 50 characters, every one of them a math symbol
+    assert garbled_text_reason(soup) == "100% of characters are symbols"
+    assert garbled_text_reason(soup[:30]) is None  # under GARBLED_MIN_CHARS
+    # ordinary prose with bullets, dashes, curly quotes and a few symbols is fine
+    prose = "• The vendor’s “best practices” – 50% uptime, $1,000 fee (see §3).\n" * 3
+    assert garbled_text_reason(prose) is None
+    # 150 symbols against 250 characters (50 words) of prose: 37%, over the 30% threshold
+    flags = flag_page(7, soup * 3 + "\n\n" + "word " * 50, [])
+    assert [f.reason for f in flags] == [FlagReason.GARBLED_TEXT]
+    assert flags[0].detail == "37% of characters are symbols"
+    # 50 against 300: 14%, under it
+    assert flag_page(7, soup + "\n\n" + "word " * 60, []) == []
 
 
 # --------------------------------------------------------------------------------------
