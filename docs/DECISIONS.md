@@ -1063,6 +1063,43 @@ a requirement realigns solution and risks so the strict assembler passes, regene
 one stage leaves the other untouched, a failed revision leaves files and stages as they
 were, sign-off refused while stale and then final).
 
+### D47. The backend runs every human-loop step as a job on the one worker; state is read from the run directory
+Context: the UI must drive the checkpoint, revisions, regenerations and sign-off that
+ST12a and ST12b built for the CLI, show where a run stands, and survive a restart (a
+paused run can wait for days).
+Options: one state field with a single `finished`, or new states per touchpoint; a
+second worker (or a thread per request) for refinement jobs; a job table persisted
+apart from the run directory; sign-off queued like the rest or run in the request.
+Choice: eight states, `queued → running → awaiting_checkpoint → drafting → finished ⇄
+refining → signed_off`, and `failed`. `finished` stays the resting state of a drafted
+run open to refinement, so unattended runs and the S15 frontend read as before. Uploads
+pause at the checkpoint unless `unattended=true` (the CLI's default since ST12a; the
+samples and the eval harness stay unattended). Every LLM job (new run, drafting,
+revision, regeneration) goes through the existing single worker, and its state is set
+when it is queued, so a run reads busy at once and refuses a second job with 409 while
+the first waits its turn. Sign-off calls no model (one re-assembly) and runs in the
+request. A failed revision or regeneration returns the run to where it rested, with the
+error, never to `failed`; on disk, a run that has assembled once reads `finished`
+whatever failed later. The run's state is derived from its files (`run_log.json`'s
+waiting checkpoint record, `current.json`'s sign-off, a finished `assemble` record), so
+no job table exists: after a restart the backend adopts a run on its first request. The
+backend computes `review.allowed` (what the run takes now) and the frontend shows only
+that, so the state rules live in one place. SSE gains `event: state`; a stream closes
+when the run rests and the client subscribes again after each action.
+Why: one worker keeps provider rate limits and spend predictable (D42's cost-blindness
+guard), at the price of a revision waiting behind another run's pipeline (rare with one
+reviewer). Setting the state at queue time closes the window where two clicks would
+queue two jobs on one run. Deriving state from files keeps D43's "the run directory is
+the state store" and makes restart recovery free. A failed revision is not a failed run
+because the artefact is unchanged (D46); showing the run as failed would hide a usable
+draft.
+Evidence: `tests/test_ui_backend.py` (default pause; checkpoint with a brief and
+decisions drafts the rest; 400/403/409/422 refusals, including a second checkpoint while
+the first is queued; revise, versions, stale, regenerate, sign-off and the frozen run;
+failed revise and failed regenerate leave the run `finished`, also when read back by a
+fresh app; a paused and revised run confirmed from a fresh app); the live Missouri loop
+in `docs/hitl/ST12c-backend.md`.
+
 ---
 
 ---

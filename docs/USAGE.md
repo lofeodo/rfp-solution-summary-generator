@@ -166,8 +166,11 @@ Frontend checks: `npm run typecheck`, `npm test` (Vitest) and `npm run build` in
 ### Backend API
 
 `python -m ui.backend --port 8000` serves a FastAPI app over the same pipeline. It
-uploads a PDF, runs it on one worker thread (later uploads wait as `queued`), and
-streams every stage event over SSE. It also serves each intermediate output, the
+uploads a PDF, runs it on one worker thread (later jobs wait their turn), and streams
+every stage and state event over SSE. Like the CLI, an upload pauses at the checkpoint
+(`awaiting_checkpoint`) unless the form sets `unattended=true`; the checkpoint,
+revisions, regenerations and sign-off are JSON `POST`s on the run, and the run's
+`review.allowed` says which of them it takes now. It also serves each intermediate output, the
 rendered markdown, downloads, the source PDF and a chunk lookup for source reveal. The
 four committed samples are listed as runs (`missouri`, `nyesd`, `colfax`,
 `federal_way`), so the UI works without an API key. The full API contract is in
@@ -176,15 +179,26 @@ four committed samples are listed as runs (`missouri`, `nyesd`, `colfax`,
 ```bash
 python -m ui.backend --port 8000
 curl -F file=@data/rfps/federal_way.pdf http://127.0.0.1:8000/api/runs   # -> {"run_id": ...}
-curl -N http://127.0.0.1:8000/api/runs/<run_id>/events                    # live stage events
+curl -N http://127.0.0.1:8000/api/runs/<run_id>/events                    # live events, ends at the checkpoint
+curl -H 'Content-Type: application/json' http://127.0.0.1:8000/api/runs/<run_id>/checkpoint \
+  -d '{"reviewer": "Dana", "brief": "We prefer Azure.\n\nTeam of four.",
+       "decisions": [{"requirement_id": "R012", "action": "reject"}]}'      # 202, drafting
+curl -H 'Content-Type: application/json' http://127.0.0.1:8000/api/runs/<run_id>/revise \
+  -d '{"reviewer": "Dana", "artefact": "solution", "instruction": "Add a training component."}'
+curl -H 'Content-Type: application/json' http://127.0.0.1:8000/api/runs/<run_id>/regenerate \
+  -d '{"reviewer": "Dana", "stage": "risk"}'                                # clears the stale risks
+curl -H 'Content-Type: application/json' http://127.0.0.1:8000/api/runs/<run_id>/sign-off \
+  -d '{"reviewer": "Dana"}'
+curl http://127.0.0.1:8000/api/runs/<run_id>/revisions                   # the review trail
 curl http://127.0.0.1:8000/api/runs/missouri/chunks/S1.1                  # a cited chunk
 ```
 
 The upload form takes the CLI's options as fields: `model`, `full_text_problem`,
-`single_call_extraction` and `max_iterations`. A missing provider key returns 503
-before anything is written. When `ui/frontend/dist` exists, the same process serves the
-built frontend. `--reload` is for development only, because a reload loses a run that
-is in flight.
+`single_call_extraction`, `max_iterations` and `unattended`. A missing provider key
+returns 503 before anything is written or queued. A paused, refined or signed-off run
+is read from its directory, so it survives a backend restart. When `ui/frontend/dist`
+exists, the same process serves the built frontend. `--reload` is for development only,
+because a reload loses a job that is in flight.
 
 ## Docker
 
