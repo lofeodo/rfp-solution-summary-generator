@@ -4,12 +4,15 @@ import type {
   CheckpointBody,
   Chunk,
   Health,
+  Artefact,
   JobAccepted,
+  RegenerateBody,
   ReviseBody,
   RevisionLog,
   RunCreated,
   RunListItem,
   RunStatus,
+  SignOffBody,
 } from "./types";
 
 const API = "/api";
@@ -63,6 +66,11 @@ export const api = {
   revisions: (id: string) => getJson<RevisionLog>(`/runs/${enc(id)}/revisions`),
   checkpoint: (id: string, body: CheckpointBody) => postJson<JobAccepted>(`/runs/${enc(id)}/checkpoint`, body),
   revise: (id: string, body: ReviseBody) => postJson<JobAccepted>(`/runs/${enc(id)}/revise`, body),
+  regenerate: (id: string, body: RegenerateBody) => postJson<JobAccepted>(`/runs/${enc(id)}/regenerate`, body),
+  signOff: (id: string, body: SignOffBody) => postJson<RunStatus>(`/runs/${enc(id)}/sign-off`, body),
+  // One stored version of an artefact: the whole stage result, the same shape as its live artifact.
+  version: <A extends Artefact>(id: string, artefact: A, n: number) =>
+    getJson<ArtifactMap[VersionFile[A]]>(`/runs/${enc(id)}/versions/${artefact}/${n}`),
 
   async createRun(file: File, opts: RunOptions): Promise<RunCreated> {
     const form = new FormData();
@@ -84,6 +92,15 @@ export const api = {
   downloadUrl: (id: string, file: "summary.json" | "summary.md") =>
     `${API}/runs/${enc(id)}/download/${file}`,
 };
+
+// The live artifact each revisable artefact is stored as.
+export const VERSION_FILE = {
+  requirements: "requirements_confirmed",
+  problem: "problem",
+  solution: "solution",
+  risks: "risks",
+} as const satisfies Record<Artefact, ArtifactName>;
+type VersionFile = typeof VERSION_FILE;
 
 export interface RunOptions {
   model: string;

@@ -1,4 +1,4 @@
-import type { RunState } from "../api/types";
+import type { ReviewState, RunState } from "../api/types";
 
 // The human loop as five phases (ST12): the machine reads, the reviewer checks, the machine
 // drafts, both refine, the reviewer signs off.
@@ -51,6 +51,16 @@ export function lifecycle(state: RunState): Lifecycle {
     case "failed":
       return { phase: null, busy: false, next: "A pipeline stage failed; see the error above." };
   }
+}
+
+// While a draft is under review: what stands between it and the sign-off (ST12e).
+// `null` outside the refine phase, or when nothing is left to say.
+export function refineNote(state: RunState, review: ReviewState | null | undefined): string | null {
+  if (state !== "finished" || !review) return null;
+  if (review.stale.length > 0)
+    return `Stale: ${review.stale.join(", ")}. Regenerate or revise ${review.stale.length > 1 ? "them" : "it"} before signing off.`;
+  if (review.allowed.sign_off) return "Ready to sign off.";
+  return null;
 }
 
 export function phaseIndex(phase: PhaseId | null): number {

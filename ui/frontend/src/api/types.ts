@@ -375,7 +375,7 @@ export interface VersionState {
 export interface Allowed {
   checkpoint: boolean;
   revise: Artefact[];
-  regenerate: ("solution" | "risk")[];
+  regenerate: RegenerateStage[];
   sign_off: boolean;
 }
 
@@ -441,6 +441,18 @@ export interface ReviseBody {
   reviewer: string;
   artefact: Artefact;
   instruction: string;
+}
+
+export type RegenerateStage = "solution" | "risk";
+
+export interface RegenerateBody {
+  reviewer: string;
+  stage: RegenerateStage;
+}
+
+export interface SignOffBody {
+  reviewer: string;
+  note: string | null;
 }
 
 export interface ArtifactMap {
