@@ -115,8 +115,8 @@ flowchart TD
 
 **Progress (2026-11-02):** every core step, S0 to S16, is done (green) and `core` is
 merged into `main` (PR #21). Stretch goals (section 3) branch off `main`; ST2 (VLM
-transcription) is in progress on `st2-vlm-transcription` and has its own graph in its
-entry. Update the two `class` lines in a diagram whenever a step is marked `done`.
+transcription) is done (PR #25) and has its own graph in its entry; ST1 and ST3 to ST11
+are open. Update the two `class` lines in a diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
 | ------------------------------------ | ---------- | ------------------------ | ---------------------------------------------------- |
@@ -2431,7 +2431,7 @@ Priority order. Each gets the same entry structure when started.
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
 
 ### ST2. VLM transcription of poorly rendered pages
-- **Status:** in progress
+- **Status:** done (PR #25 into `main`)
 - **Goal:** make the S4 escalation hook real. Pages the parse-quality judge confirms bad
   (text unusable: broken tables and garbled layout; or content missing: image-only
   tables and forms) are rendered to an image and transcribed to markdown by a vision
@@ -2460,8 +2460,8 @@ Priority order. Each gets the same entry structure when started.
       T9 --> T10
       classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
       classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-      class T1,T2,T3,T4,T5,T6,T7,T8,T9 done
-      class T10 ready
+      class T1,T2,T3,T4,T5,T6,T7,T8,T9,T10 done
+      %% nothing ready: ST2 is complete
   ```
 
   | Unit | Depends on | Main files touched |
