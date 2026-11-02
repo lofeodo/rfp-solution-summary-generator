@@ -121,6 +121,12 @@ each, DeepSeek as the generator and Claude as the judge
 Mandatory requirements covered by the solution: 100% cited, 70 to 100% confirmed by
 the judge. The judge agrees with 34 of 40 hand-checked verdicts.
 
+The prompts were later rewritten into one documented structure (ST12, see
+[`prompts/README.md`](prompts/README.md)); the rerun with the new prompts is under
+[`evals/results/prompt_structure/`](evals/results/prompt_structure/summary.md) with
+`diff_*.md` files against this baseline, and the judge agreement after the rewrite is
+35 of 40.
+
 ```mermaid
 flowchart LR
     G[Reference labels<br/><small>drafted by Claude,<br/>corrected by hand</small>] --> S

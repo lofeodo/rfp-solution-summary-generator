@@ -13,6 +13,8 @@ columns are code-only, shown as `–`), plus a `diff_*.md` against the baseline:
 | `ablation_full_text/` | `--full-text-problem`: one synthesis call over the whole text instead of per-chunk summaries | problem, grounding, cost; `pairwise_<rfp>_problem.json` against baseline run 1 | D39 |
 | `ablation_single_call/` | `--single-call-extraction` with `RFP_MAX_OUTPUT_TOKENS=16000` (F16) | match, precision, cost | D39 |
 | `fix_solution_naming/` | `prompts/solution.md` "name what you cite" rule | solution | D40 |
+| `prompt_structure/` | ST12: every prompt rewritten into the shared structure (`prompts/README.md`); two fresh runs per RFP, scored in full with the new judge prompts; `diff_*.md` against the baseline | all | D42 |
+| `baseline_rejudged/` | ST12: the baseline run directories rescored with the new judge prompts only, plus `agree` against the baseline's 40 hand labels, so the judge change is read apart from the generator change | all | D42 |
 
 | File | What it is |
 |---|---|
