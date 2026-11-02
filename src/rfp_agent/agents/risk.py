@@ -41,10 +41,12 @@ from rfp_agent.agents.solution import (
     format_requirements,
 )
 from rfp_agent.agents.solution import allowed_chunk_ids as _solution_chunk_ids
+from rfp_agent.brief import brief_chunk_ids, format_brief
 from rfp_agent.config import Settings, get_settings
 from rfp_agent.llm import Prompt, get_chat_model, load_prompt, structured_call
 from rfp_agent.observability import current_recorder
 from rfp_agent.schemas import (
+    Brief,
     Likelihood,
     PageFlag,
     ProblemStatement,
@@ -201,15 +203,20 @@ def format_findings(findings: Findings, requirements: Iterable[Requirement]) -> 
 
 
 def allowed_chunk_ids(
-    requirements: RequirementsOutput, problem: ProblemStatement, solution: Solution
+    requirements: RequirementsOutput,
+    problem: ProblemStatement,
+    solution: Solution,
+    brief: Brief | None = None,
 ) -> list[str]:
-    """S7's union plus every chunk ID labelled in the solution's claims and assumptions."""
+    """S7's union plus every chunk ID labelled in the solution's claims and assumptions,
+    plus the pursuit-brief chunks (``H1``...) when there is a brief."""
     seen = dict.fromkeys(_solution_chunk_ids(requirements, problem))
     for c in solution.components:
         for cl in c.claims:
             seen.update(dict.fromkeys(cl.chunk_ids))
     for a in solution.assumptions:
         seen.update(dict.fromkeys(a.chunk_ids))
+    seen.update(dict.fromkeys(brief_chunk_ids(brief)))
     return list(seen)
 
 
@@ -220,6 +227,7 @@ def render_prompt(
     findings: Findings,
     *,
     title: str,
+    brief: Brief | None = None,
     prompt: Prompt | None = None,
 ) -> str:
     prompt = prompt or load_prompt(PROMPT)
@@ -233,6 +241,7 @@ def render_prompt(
         ),
         ambiguities=format_ambiguities(requirements.ambiguities),
         gaps=format_gaps(requirements.gaps),
+        brief=format_brief(brief),
     )
 
 
@@ -345,12 +354,15 @@ def build_risks(
     settings: Settings | None = None,
     recorder: RunRecorder | None = None,
     config: RunnableConfig | None = None,
+    brief: Brief | None = None,
 ) -> RiskResult:
     """Assess the risks in one validated call.
 
     ``referenced_documents`` and ``flags`` come from the parsed document (after the S4
-    quality pass when the caller ran it). Raises ``StructuredOutputError`` when no draft
-    passes validation within the retry budget; nothing is dropped silently.
+    quality pass when the caller ran it). ``brief`` is the pursuit team's guidance from
+    the checkpoint (ST12), shown and citable like RFP chunks. Raises
+    ``StructuredOutputError`` when no draft passes validation within the retry budget;
+    nothing is dropped silently.
     """
     settings = settings or get_settings()
     recorder = recorder or current_recorder()
@@ -369,10 +381,10 @@ def build_risks(
             NODE,
             [i for i in findings.uncovered_requirement_ids if i not in known],
         )
-    text = render_prompt(requirements, problem, solution, findings, title=title)
+    text = render_prompt(requirements, problem, solution, findings, title=title, brief=brief)
     schema = risk_schema(
         requirements.requirement_ids(),
-        allowed_chunk_ids(requirements, problem, solution),
+        allowed_chunk_ids(requirements, problem, solution, brief),
         must_cite,
     )
     result = structured_call(

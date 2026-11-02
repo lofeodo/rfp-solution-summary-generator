@@ -164,12 +164,15 @@ they satisfy, and the assumptions the design rests on (D32).
 Inputs it receives: `{{title}}`, `{{problem}}` (the four claim lists, each claim with
 its chunk IDs and an `(inference)` mark), `{{requirements}}` (mandatory, desired and
 optional blocks, one line per item `ID [strictness, type] text (chunk IDs)`, then the
-submission items under "context, do not address"), `{{ambiguities}}`, `{{gaps}}`. No
-RFP text and no quotes.
+submission items under "context, do not address"), `{{ambiguities}}`, `{{gaps}}`,
+`{{brief}}` (ST12: the pursuit team's guidance as `H1: text` lines, one per paragraph
+of the brief written at the checkpoint, or "None provided."). No RFP text and no
+quotes.
 Output contract (schema): `SolutionDraft`; a per-call subclass rejects empty components,
-a component with no requirement IDs, and unknown requirement or chunk IDs. Code assigns
-`C01…`, computes coverage, and feeds the uncovered mandatory IDs back in a revision
-round (same conversation) while any remain, up to the round cap.
+a component with no requirement IDs, and unknown requirement or chunk IDs; the brief's
+`H` IDs are among the known chunk IDs when a brief exists. Code assigns `C01…`,
+computes coverage, and feeds the uncovered mandatory IDs back in a revision round
+(same conversation) while any remain, up to the round cap.
 Why it is written this way: the coverage rule is explicit and says that code computes
 it and that misses become risks, so the model has a reason to cite completely rather
 than describe elegantly; legal, insurance and reporting obligations are named as things
@@ -184,7 +187,12 @@ so the provider prefix cache serves repeated rounds. S13 added "name what you ci
 a description must mention each cited obligation and what meets it, because the S12
 coverage judge found bulk-cited legal and contractual clauses that no component
 described (NYESD judged coverage 78% against 100% cited); the rule lets a compliance
-component exceed the five-sentence guide so the two rules do not fight.
+component exceed the five-sentence guide so the two rules do not fight. ST12 added the
+"Pursuit team guidance" block and rule: the guidance steers design choices (stack,
+phasing, emphasis) and must be cited (`H2`) wherever a component rests on it, so a
+reviewer can tell the team's input from the RFP's; it never waives a mandatory
+requirement, and a conflict becomes an assumption citing both, because the compliance
+matrix outranks the win strategy (D44).
 Known weaknesses: proposal-process obligations that S5 typed `timeline` or
 `budget_pricing` rather than `submission` are in scope, so the revision round makes the
 model add a commercial or submission-flavoured component to cite them (Missouri R007,
@@ -200,7 +208,8 @@ documents not in the PDF, pages whose text could not be parsed, the budget-requi
 count), `{{solution}}` (summary, components as `ID Title (requirement IDs)` with their
 description and claims, assumptions, the coverage line), `{{problem}}`,
 `{{requirements}}` (as S7, but the submission block is headed "how and when the proposal
-is delivered", not "do not address"), `{{ambiguities}}`, `{{gaps}}`. No RFP text.
+is delivered", not "do not address"), `{{ambiguities}}`, `{{gaps}}`, `{{brief}}` (ST12,
+as in the solution prompt). No RFP text.
 Output contract (schema): `RiskAssessmentDraft`; a per-call subclass rejects fewer than
 3 or more than 15 risks, unknown requirement or chunk IDs, and a draft in which an
 uncovered mandatory requirement is cited by no risk. Code sorts by severity then
@@ -214,7 +223,10 @@ contrast stops requirement restatements; `chunk_ids` may be empty for a flagged 
 a missing document because those have no chunk; mitigation is asked to be an action (a
 question before the deadline, a stated assumption, a contingency), not "monitor"; the F6
 tone rule is carried over with "the findings" added to the banned phrases; instructions
-come first for the prefix cache.
+come first for the prefix cache. ST12 added the "Pursuit team guidance" block and rule:
+a risk that rests on something the team set or learned (a constraint, an informal
+client statement, a design choice) cites its `H` ID, and a risk the guidance creates has
+`source` `solution`, so commercial and team risks are traceable to the brief (D44).
 Known weaknesses: the count runs to the top of the range or one over (F12); severity
 clusters at high and medium (no `low` severity and one `low` likelihood in 50 risks on
 the tuned prompt), so the scales separate less than they could; `source` can flip
@@ -341,6 +353,7 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-11-02 | solution, risk | "Pursuit team guidance" input block (`{{brief}}`, `H1: text` lines or "None provided.") and a rule: follow it for design choices, cite `H` IDs for anything that rests on it, never waive a mandatory requirement (solution); cite `H` IDs for risks that rest on it, `source` `solution` for risks it creates (risk) | ST12 checkpoint: the brief written by the pursuit lead must reach the drafter and stay traceable (D44); unattended runs render "None provided." so their output is unchanged |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |

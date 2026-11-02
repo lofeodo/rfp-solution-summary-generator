@@ -903,6 +903,92 @@ sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
 data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
 host (50 calls, $0.050, 85 s) as the non-root user.
 
+### D42. Human in the loop as a pursuit lead would use it: one checkpoint before drafting, one sign-off after, instruction-driven refinement between
+Context: the author asked for a human-in-the-loop design for a financial-services
+deployment, chosen from the chair of an RFP pursuit lead rather than from the shape of
+the pipeline. A pursuit runs: read the RFP, sign the compliance matrix, storyboard the
+win strategy with SMEs, draft, review in rounds (pink, red, gold team), sign off.
+Options: (a) fully automatic run with edit requests afterwards; (b) a gate after every
+stage, each with its own approval; (c) one checkpoint after the read stages where the
+lead confirms the requirements and briefs the drafter, then an unattended draft, then
+instruction-driven refinement, then a named sign-off.
+Choice: (c), as stretch goal ST12 on the `hitl` branch. ST12a builds the checkpoint;
+ST12b the refinement loop; ST12c to e the backend and the UI.
+Why: only two human inputs change what gets built: the confirmed requirement list and
+the brief. The requirement list is the compliance matrix, and a missed mandatory
+requirement is a non-compliant bid, so nothing is drafted before a named reviewer
+confirms it. The brief carries what the RFP never contains (win themes, credentials,
+alliances, constraints, what the client said informally), written at the moment the
+lead has just read the requirements and knows what to steer. Everything after that is
+review rounds in prose, which is how red-team reviews happen; nobody approves section 3
+before section 4 exists. (a) wastes the most expensive stage on unconfirmed
+requirements and makes the coverage number meaningless; (b) is friction without extra
+protection. The guards, in priority order: non-compliance, ungrounded or over-promising
+claims, generic solutions, silent regressions from edits, no audit trail, cost
+blindness. Unattended runs (`--unattended`, the eval harness, CI) keep today's
+behaviour exactly, so the evals stay comparable with the S13 baseline.
+Evidence: ST12a: the unattended run records no checkpoint and its run log holds the
+same eight stages as before; the paused run stops with every read-stage file on disk
+and a `waiting` record; the resumed run drafts on the same log with the time waited
+recorded as the checkpoint's latency (`tests/test_graph_checkpoint.py`).
+
+### D43. Pause and resume through the run directory, not a LangGraph checkpointer (D1 extended)
+Context: a checkpoint needs the run to stop with its state kept, possibly for days, and
+to continue later, possibly after the backend restarted; the backend runs one pipeline
+at a time on a single worker thread (D35).
+Options: LangGraph `interrupt()` with `MemorySaver`; `interrupt()` with a SQLite
+checkpointer; reload the stage JSON the run directory already holds and invoke the
+graph from a later start node.
+Choice: the run directory. The `checkpoint` node records a `waiting` stage and routes
+to `END`; `load_state` reads the stage files back into the typed state; `build_pipeline`
+takes a `start_stage` and holds only the nodes from there on; `resume_pipeline`
+continues the same run log (`RunRecorder.from_log`), closes the waiting record with the
+time waited, and invokes from `solution`. The log of a paused run has no `finished_at`.
+Why: every stage already writes its JSON as it finishes (D34), so a checkpointer would
+store a second copy of the same state and D1's reason for not having one still holds.
+`MemorySaver` dies with the process, and a review can sit for days. A SQLite
+checkpointer couples the pipeline to a store whose only job is this pause, and
+`interrupt()` would hold the single worker thread (or need one per run) while a human
+thinks; ending the first invoke frees it. The same mechanism gives the CLI a resume and,
+in ST12b, regeneration from any stage.
+Evidence: `load_state` round-trips every stage file of a finished run to equal models;
+a graph built from `solution` holds exactly `solution`, `risk`, `assemble`; a second
+resume of the same run is refused as "not waiting"; a bad record is refused before any
+file is written (`tests/test_graph_checkpoint.py`).
+
+### D44. The pursuit brief is citable evidence; row actions are deterministic; the reviewer is a name
+Context: the brief tells the drafter things the RFP does not, and the traceability rule
+(every factual claim cites an ID that code checks) must survive human input. At the
+checkpoint the reviewer also acts on individual requirements. There is no
+authentication in this project (ASSUMPTIONS, UI).
+Options: inject the brief as plain instruction text and label claims from it as
+inferences; or split it into chunks with their own IDs and let the agents cite them.
+For row actions: edit text by hand; or deterministic actions plus model-applied edits.
+For identity: none, a timestamp only; or a required free-text name.
+Choice: the brief is split by paragraph into chunks `H1`, `H2`... (headings attach to
+the paragraph that follows), appended to the IDs the solution and risk validators
+accept, shown in a "Pursuit team guidance" block of both prompts, and added to the
+summary's chunk index with `source = brief` and no pages, so the renderer cites
+`(Pursuit brief [H2])`. Row actions at the checkpoint are accept, reject, change
+strictness, change type: deterministic, no LLM, validated by `apply_checkpoint`
+(unknown or duplicate IDs refused; a rejection also strips the ID from `conflicts_with`
+and ambiguity references so nothing dangles; an edit sets `origin = reviewed`).
+Anything that produces new text waits for ST12b and goes through the model with the
+extractor's validators. The extractor's `requirements.json` is kept untouched next to
+`requirements_confirmed.json`. The reviewer is a required name in the record and in the
+summary header; a real deployment would take it from SSO.
+Why: a red-team reviewer's first question about any claim is "where did we say that?".
+With `H` chunks the answer is in the citation, and the rule that code checks every ID
+needs no exception for humans. Hand-editing JSON is not how a pursuit lead works, and a
+deterministic reject or strictness change needs no model call. Keeping the extractor's
+output beside the confirmed list keeps the evals honest and makes the edit count per
+run a quality signal for the extractor.
+Evidence: a draft citing `H1` passes the solution validator only when a brief is
+present; the assembler raises `CitationError` on `H1` without the brief and resolves
+it with one; the rendered summary shows the brief citation and a "Review history"
+section with reviewer, time waited, rejected and edited IDs and the brief
+(`tests/test_checkpoint.py`).
+
 ---
 
 ---

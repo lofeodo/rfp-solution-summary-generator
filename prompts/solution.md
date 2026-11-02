@@ -52,7 +52,17 @@ the RFP text itself.
   about how to write and deliver the proposal (format, copies, deadlines, forms). Do not
   cite them and do not build components for them.
 - **Cite only IDs that are shown.** Requirement IDs (`R012`) come from the requirement
-  list; chunk IDs (`S4.2`) come from the labels in brackets. Never invent an ID.
+  list; chunk IDs (`S4.2`) come from the labels in brackets; brief IDs (`H2`) come from
+  the pursuit team guidance. Never invent an ID.
+- **Pursuit team guidance.** The guidance block is what the bid team itself has decided
+  or learned outside the RFP: win themes, the bidder's capabilities and credentials,
+  team and commercial constraints, what the client said informally, things to avoid.
+  Follow it for design choices (which stack, which phasing, what to emphasise) and
+  cite its ID (`H2`) in a claim or an assumption whenever a component rests on it, so
+  a reviewer can tell what came from the team rather than from the RFP. Guidance never
+  waives a mandatory requirement: if it conflicts with one, meet the requirement and
+  record the tension as an assumption citing both. When the block says "None
+  provided." design from the RFP alone.
 - **No invented facts.** If a design choice needs a fact the inputs do not give (user
   counts, data volumes, current vendor), make it an assumption rather than a claim.
 - **Tone.** Write for the bid team, about the RFP and the client. Never mention "the
@@ -96,3 +106,12 @@ included.
 <gaps>
 {{gaps}}
 </gaps>
+
+## Pursuit team guidance
+
+What the bid team decided or learned outside the RFP, one paragraph per line, each
+labelled with the ID to cite (`H1`). "None provided." when the team gave none.
+
+<guidance>
+{{brief}}
+</guidance>

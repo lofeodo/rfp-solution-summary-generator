@@ -45,6 +45,10 @@ AMBIGUITY_ID_RE = r"^A\d{2,}$"
 GAP_ID_RE = r"^G\d{2,}$"
 COMPONENT_ID_RE = r"^C\d{2,}$"
 RISK_ID_RE = r"^K\d{2,}$"
+# Pursuit-brief chunks (ST12): human-supplied evidence, cited like RFP chunks.
+BRIEF_CHUNK_ID_RE = r"^H\d+$"
+# Anything a claim may cite: a split chunk of the RFP or a chunk of the brief.
+EVIDENCE_ID_RE = r"^(S\d+\.\d+|H\d+)$"
 
 _CHUNK_ID = re.compile(CHUNK_ID_RE)
 
@@ -103,6 +107,21 @@ class Likelihood(StrEnum):
 class ClaimKind(StrEnum):
     FACT = "fact"  # stated in the cited chunks
     INFERENCE = "inference"  # derived from the cited chunks, not stated
+
+
+class EvidenceSource(StrEnum):
+    RFP = "rfp"  # a chunk of the RFP text
+    BRIEF = "brief"  # a chunk of the pursuit brief a human wrote at the checkpoint (ST12)
+
+
+class RequirementOrigin(StrEnum):
+    GENERATED = "generated"  # as the extractor produced it
+    REVIEWED = "reviewed"  # strictness or type changed by a human at the checkpoint
+
+
+class DecisionAction(StrEnum):
+    ACCEPT = "accept"
+    REJECT = "reject"
 
 
 class SectionKind(StrEnum):
@@ -331,6 +350,10 @@ class Requirement(StrictModel):
     )
     conflicts_with: list[str] = Field(
         default_factory=list, description="Requirement IDs this one contradicts"
+    )
+    origin: RequirementOrigin = Field(
+        default=RequirementOrigin.GENERATED,
+        description="Who last changed this requirement: the extractor or a reviewer (ST12)",
     )
 
 
@@ -591,17 +614,84 @@ class RiskAssessmentDraft(StrictModel):
 
 
 # --------------------------------------------------------------------------------------
+# Human in the loop (ST12): the pursuit brief and the checkpoint
+# --------------------------------------------------------------------------------------
+
+
+class BriefChunk(StrictModel):
+    """One paragraph of the pursuit brief, citable as ``H3`` like an RFP chunk."""
+
+    id: str = Field(pattern=BRIEF_CHUNK_ID_RE)
+    text: str = Field(min_length=1)
+
+
+class Brief(StrictModel):
+    """What the pursuit team tells the drafter that the RFP does not: win themes, the
+    bidder's capabilities and constraints, client context, things to avoid."""
+
+    text: str = Field(description="The brief as written")
+    chunks: list[BriefChunk] = Field(min_length=1)
+
+    def chunk_ids(self) -> list[str]:
+        return [c.id for c in self.chunks]
+
+
+class RequirementDecision(StrictModel):
+    """A reviewer's decision on one extracted requirement at the checkpoint. Deterministic
+    row actions only; anything that produces new text goes through the model (ST12b)."""
+
+    requirement_id: str = Field(pattern=REQUIREMENT_ID_RE)
+    action: DecisionAction = DecisionAction.ACCEPT
+    strictness: Strictness | None = Field(default=None, description="New strictness, if changed")
+    type: RequirementType | None = Field(default=None, description="New type, if changed")
+    note: str | None = None
+
+
+class CheckpointRecord(StrictModel):
+    """The checkpoint as confirmed: who, when, how long the run waited, what changed,
+    and the brief. Written to ``checkpoint.json`` and carried into the summary."""
+
+    reviewer: str = Field(min_length=1)
+    confirmed_at: datetime
+    waited_s: float = Field(
+        ge=0, default=0.0, description="Wall time between the pause and the confirmation"
+    )
+    decisions: list[RequirementDecision] = Field(default_factory=list)
+    brief: Brief | None = None
+    note: str | None = None
+
+    def rejected_ids(self) -> list[str]:
+        return [d.requirement_id for d in self.decisions if d.action is DecisionAction.REJECT]
+
+    def edited_ids(self) -> list[str]:
+        return [
+            d.requirement_id
+            for d in self.decisions
+            if d.action is DecisionAction.ACCEPT
+            and (d.strictness is not None or d.type is not None)
+        ]
+
+
+class ReviewHistory(StrictModel):
+    """Every human touchpoint of a run, rendered into the summary (ST12)."""
+
+    checkpoint: CheckpointRecord | None = None
+
+
+# --------------------------------------------------------------------------------------
 # Final assembly (S9)
 # --------------------------------------------------------------------------------------
 
 
 class ChunkRef(StrictModel):
-    """Enough of a chunk to render a citation as 'section title, page'."""
+    """Enough of a chunk to render a citation as 'section title, page'. A brief chunk
+    (``source = brief``) has no pages."""
 
-    id: str = Field(pattern=CHUNK_ID_RE)
+    id: str = Field(pattern=EVIDENCE_ID_RE)
     section_title: str
-    page_start: int = Field(ge=1)
-    page_end: int = Field(ge=1)
+    page_start: int | None = Field(default=None, ge=1)
+    page_end: int | None = Field(default=None, ge=1)
+    source: EvidenceSource = EvidenceSource.RFP
 
 
 class SolutionSummary(StrictModel):
@@ -619,6 +709,9 @@ class SolutionSummary(StrictModel):
     risks: RiskAssessment
     referenced_documents: list[ReferencedDocument] = Field(default_factory=list)
     flags: list[PageFlag] = Field(default_factory=list)
+    review: ReviewHistory | None = Field(
+        default=None, description="Human touchpoints of the run; None for an unattended run"
+    )
 
 
 # --------------------------------------------------------------------------------------
@@ -662,6 +755,7 @@ class StageStatus(StrEnum):
     STARTED = "started"
     FINISHED = "finished"
     FAILED = "failed"
+    WAITING = "waiting"  # the checkpoint stage while the run waits for a human (ST12)
 
 
 class StageRecord(StrictModel):

@@ -30,32 +30,66 @@ sample browsing still work.
 python -m rfp_agent run inputs/rfp_brief.pdf
 ```
 
-runs the graph: parse, judge the flagged pages, split, then requirements extraction and
-the problem statement in parallel, then the solution, the risks, and the assembled
-summary. The CLI prints one line per stage as it starts and finishes (wall time, LLM
-calls, cost), then a per-stage table, a per-node table and the run totals.
+reads the RFP and stops at the checkpoint: parse, judge the flagged pages, split, then
+requirements extraction and the problem statement in parallel. The CLI prints one line
+per stage as it starts and finishes (wall time, LLM calls, cost), then a per-stage
+table, a per-node table, the run totals, and the command that continues the run.
+Review `requirements.json` (and `problem.json`) in the run directory, write the pursuit
+brief, then
 
-| Flag | Effect |
-|---|---|
-| `--full-text-problem` | ablation: problem statement from one full-text call (`RFP_FULL_TEXT_PROBLEM`) |
-| `--single-call-extraction` | ablation: one extraction call over the whole document (`RFP_SINGLE_CALL_EXTRACTION`) |
-| `--max-iterations N` | solution rounds for this run (`RFP_SOLUTION_MAX_ITERATIONS`) |
-| `--model provider:id` | generator for this run (`RFP_MODEL`) |
-| `--runs-dir DIR`, `--run-id ID` | where the run directory goes (default `runs/<timestamp-hex>/`) |
-| `-v` | log every failed structured-output attempt and its feedback |
+```bash
+python -m rfp_agent checkpoint <run_id> --reviewer "Dana" --brief brief.md \
+    --reject R017 --strictness R042=desired --type R058=technical
+```
+
+confirms the requirements and drafts the rest on the same run: the solution, the
+risks and the assembled summary. `--reject` drops a requirement (and every reference
+to it), `--strictness` and `--type` change one requirement each; all three repeat.
+The brief is a text or markdown file; each paragraph becomes a chunk `H1`, `H2`...
+that the solution and the risks cite like an RFP chunk, so the summary shows which
+claims rest on the team's input. The reviewer's name, the decisions, the brief and the
+time the run waited are recorded in `checkpoint.json` and rendered as "Review history"
+in `summary.md`; the extractor's `requirements.json` is kept untouched next to
+`requirements_confirmed.json`. See [DECISIONS.md](DECISIONS.md) D42 to D44 for why
+the checkpoint sits where it does.
+
+```bash
+python -m rfp_agent run inputs/rfp_brief.pdf --unattended
+```
+
+does everything in one go with no checkpoint and no brief: the behaviour before ST12,
+and what the eval harness and the committed samples use.
+
+| Flag | Command | Effect |
+|---|---|---|
+| `--unattended` | run | no checkpoint: draft right after the read stages |
+| `--full-text-problem` | run | ablation: problem statement from one full-text call (`RFP_FULL_TEXT_PROBLEM`) |
+| `--single-call-extraction` | run | ablation: one extraction call over the whole document (`RFP_SINGLE_CALL_EXTRACTION`) |
+| `--reviewer NAME` | checkpoint | who confirms (required, recorded) |
+| `--brief FILE` | checkpoint | the pursuit brief, one citable chunk per paragraph |
+| `--reject ID`, `--strictness ID=LEVEL`, `--type ID=TYPE`, `--note TEXT` | checkpoint | the decisions; repeatable |
+| `--max-iterations N` | both | solution rounds for this run (`RFP_SOLUTION_MAX_ITERATIONS`) |
+| `--model provider:id` | both | generator for this run (`RFP_MODEL`) |
+| `--runs-dir DIR`, `--run-id ID` | both | where the run directory is (default `runs/<timestamp-hex>/`) |
+| `-v` | both | log every failed structured-output attempt and its feedback |
 
 Outputs go to `runs/<run_id>/`: `summary.json` (the source of truth), `summary.md`
 (rendered from the JSON by code), `run_log.json` (per-call tokens, latency and cost,
-per-stage wall time) and every intermediate (`parsed.json`, `quality.json`,
-`split.json`, `requirements.json` and its report, `problem.json`, `solution.json`,
-`risks.json`), each written as its stage finishes so a failed run keeps what it had.
-Committed samples for the four RFPs live under `runs/samples/<rfp>/`.
+per-stage wall time, including how long the run waited at the checkpoint) and every
+intermediate (`parsed.json`, `quality.json`, `split.json`, `requirements.json` and its
+report, `problem.json`, `checkpoint.json`, `requirements_confirmed.json`,
+`solution.json`, `risks.json`), each written as its stage finishes so a failed or
+paused run keeps what it had. Committed samples for the four RFPs live under
+`runs/samples/<rfp>/`.
 
-Exit codes: 0 on success, 1 when a stage fails (the run log and the intermediates
-written so far are kept, and the failing stage is named), 2 when the provider key is
-missing. The graph is importable too: `rfp_agent.graph.run_pipeline(pdf, on_event=...)`
-calls back with a `StageEvent` (`started`, `finished`, `failed`, wall time, the stage's
-calls and cost) from each node, which is what the UI backend streams. Per-agent debug
+Exit codes: 0 on success or on a pause at the checkpoint, 1 when a stage fails (the
+run log and the intermediates written so far are kept, and the failing stage is
+named), 2 when the provider key is missing, the checkpoint arguments are malformed, a
+decision names an unknown requirement, or the run is not waiting. The graph is
+importable too: `rfp_agent.graph.run_pipeline(pdf, pause_at_checkpoint=True,
+on_event=...)` and `resume_pipeline(run_dir, record, on_event=...)` call back with a
+`StageEvent` (`started`, `finished`, `failed`, `waiting`, wall time, the stage's calls
+and cost) from each node, which is what the UI backend streams. Per-agent debug
 commands with JSON reuse of upstream outputs live in `python -m rfp_agent.agents`
 (see `PIPELINE.md` for one per stage).
 

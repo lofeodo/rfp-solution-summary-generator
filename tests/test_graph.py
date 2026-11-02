@@ -308,6 +308,7 @@ def test_cli_run_prints_stages_and_paths(tmp_path, monkeypatch, chunk_id):
             "--single-call-extraction",
             "--max-iterations",
             "1",
+            "--unattended",
         ],
     )
     assert result.exit_code == 0, result.output
@@ -324,7 +325,7 @@ def test_cli_run_reports_failed_stage_with_exit_1(tmp_path, monkeypatch, chunk_i
     Stubs(chunk_id, fail_at=RISK).install(monkeypatch)
     monkeypatch.setattr(graph_mod, "get_chat_model", lambda **kw: ScriptedChatModel())
     monkeypatch.setattr(graph_mod, "get_settings", lambda: SETTINGS)
-    result = CliRunner().invoke(app, ["run", str(PDF), "--runs-dir", str(tmp_path)])
+    result = CliRunner().invoke(app, ["run", str(PDF), "--runs-dir", str(tmp_path), "--unattended"])
     assert result.exit_code == 1
     assert "failed" in result.output and "risk" in result.output
     assert "risk boom" in result.output

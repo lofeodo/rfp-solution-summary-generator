@@ -160,10 +160,24 @@ class Stubs:
         return self.fx["problem"]
 
     def build_solution(
-        self, requirements, problem, *, title, model, settings, recorder, config, max_iterations
+        self,
+        requirements,
+        problem,
+        *,
+        title,
+        model,
+        settings,
+        recorder,
+        config,
+        max_iterations,
+        brief=None,
     ):
         self._enter(
-            SOLUTION, requirements=requirements, problem=problem, max_iterations=max_iterations
+            SOLUTION,
+            requirements=requirements,
+            problem=problem,
+            max_iterations=max_iterations,
+            brief=brief,
         )
         recorder.record(metric("solution_generate"))
         return self.fx["solution"]
@@ -181,8 +195,9 @@ class Stubs:
         settings,
         recorder,
         config,
+        brief=None,
     ):
-        self._enter(RISK, solution=solution, flags=list(flags), title=title)
+        self._enter(RISK, solution=solution, flags=list(flags), title=title, brief=brief)
         recorder.record(metric("risk_assess"))
         return self.fx["risks"]
 

@@ -142,6 +142,21 @@ class RunRecorder:
         settings = settings or get_settings()
         return cls(source_path, settings.model, settings.temperature, **kwargs)
 
+    @classmethod
+    def from_log(cls, log: RunLog, *, runs_dir: Path = RUNS_DIR) -> RunRecorder:
+        """Continue a paused run's log (ST12): the nodes and stages already recorded are
+        kept, ``finished_at`` is cleared so ``finish`` stamps the resumed run's end."""
+        recorder = cls.__new__(cls)
+        recorder.log = log.model_copy(deep=True, update={"finished_at": None})
+        recorder.run_dir = runs_dir / log.run_id
+        return recorder
+
+    def pause(self) -> Path:
+        """Mark the run as paused rather than finished (ST12): clear ``finished_at`` and
+        rewrite the log. Called after ``activate`` has written a finished log."""
+        self.log.finished_at = None
+        return self.write()
+
     @property
     def run_id(self) -> str:
         return self.log.run_id

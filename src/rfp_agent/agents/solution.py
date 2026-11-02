@@ -30,11 +30,13 @@ from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph
 from pydantic import create_model, model_validator
 
+from rfp_agent.brief import brief_chunk_ids, format_brief
 from rfp_agent.config import Settings, get_settings
 from rfp_agent.llm import Prompt, get_chat_model, load_prompt, structured_call
 from rfp_agent.observability import current_recorder
 from rfp_agent.schemas import (
     Ambiguity,
+    Brief,
     Claim,
     ComponentDraft,
     Coverage,
@@ -185,13 +187,17 @@ def format_gaps(gaps: Iterable[Gap]) -> str:
     return "\n".join(lines) or NONE
 
 
-def allowed_chunk_ids(requirements: RequirementsOutput, problem: ProblemStatement) -> list[str]:
-    """Every chunk ID the model can see a label for, in first-seen order."""
+def allowed_chunk_ids(
+    requirements: RequirementsOutput, problem: ProblemStatement, brief: Brief | None = None
+) -> list[str]:
+    """Every chunk ID the model can see a label for, in first-seen order: RFP chunks
+    cited by the inputs, then the pursuit-brief chunks (``H1``...) when there is a brief."""
     seen: dict[str, None] = {}
     sources: list[Sequence[str]] = [c.chunk_ids for c in problem.claims()]
     sources += [r.chunk_ids for r in requirements.requirements]
     sources += [a.chunk_ids for a in requirements.ambiguities]
     sources += [g.chunk_ids for g in requirements.gaps]
+    sources.append(brief_chunk_ids(brief))
     for ids in sources:
         for i in ids:
             seen.setdefault(i, None)
@@ -203,6 +209,7 @@ def render_prompt(
     problem: ProblemStatement,
     *,
     title: str,
+    brief: Brief | None = None,
     prompt: Prompt | None = None,
 ) -> str:
     prompt = prompt or load_prompt(PROMPT)
@@ -212,6 +219,7 @@ def render_prompt(
         requirements=format_requirements(requirements.requirements),
         ambiguities=format_ambiguities(requirements.ambiguities),
         gaps=format_gaps(requirements.gaps),
+        brief=format_brief(brief),
     )
 
 
@@ -421,12 +429,15 @@ def build_solution(
     recorder: RunRecorder | None = None,
     config: RunnableConfig | None = None,
     max_iterations: int | None = None,
+    brief: Brief | None = None,
 ) -> SolutionResult:
     """Generate the solution and revise it while mandatory requirements are uncovered.
 
     ``max_iterations`` overrides ``Settings.solution_max_iterations`` (rounds, including
-    the first). Raises ``StructuredOutputError`` when a round cannot be validated within
-    the retry budget; nothing is dropped silently.
+    the first). ``brief`` is the pursuit team's guidance from the checkpoint (ST12): its
+    chunks are shown to the model and may be cited like RFP chunks. Raises
+    ``StructuredOutputError`` when a round cannot be validated within the retry budget;
+    nothing is dropped silently.
     """
     settings = settings or get_settings()
     recorder = recorder or current_recorder()
@@ -436,9 +447,9 @@ def build_solution(
         max_iterations = settings.solution_max_iterations
     title = title or "untitled RFP"
 
-    text = render_prompt(requirements, problem, title=title)
+    text = render_prompt(requirements, problem, title=title, brief=brief)
     schema = solution_schema(
-        requirements.requirement_ids(), allowed_chunk_ids(requirements, problem)
+        requirements.requirement_ids(), allowed_chunk_ids(requirements, problem, brief)
     )
     graph = build_graph(
         model=model,
