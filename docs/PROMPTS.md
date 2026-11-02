@@ -78,7 +78,30 @@ sees the image, so it reasons from captions and lead-in sentences ("the followin
 tables") instead of guessing. No citations: it makes no claims about the RFP's content.
 Known weaknesses: cannot see the image, so a decorative large image next to a sentence
 that sounds like a lead-in could be escalated; blank fill-in forms (Missouri affidavits)
-are escalated although transcribing them adds little.
+are escalated although transcribing them adds little. ST2 added one line for the
+`garbled_text` flag (encoding failures), which no public RFP triggers.
+
+### prompts/parse_vlm.md
+Purpose: transcribe one page the parse-quality pass escalated from its rendered image,
+so the transcription can replace the library parser's markdown (ST2).
+Inputs it receives: `{{title}}`, `{{page_number}}`, `{{page_count}}`, `{{reason}}` (the
+judge's one-sentence verdict, or the flagged-scope note), `{{library_markdown}}` (the
+page text the library produced, or "(empty)"). The page image travels in the same
+message as an `image_url` block ahead of the text.
+Output contract (schema): `VlmTranscription` in `schemas.py` (`markdown`, `notes`). Code
+replaces the page's markdown, recounts words, rebuilds that page's tables, clears its
+flags and keeps the library text beside the transcription in a `TranscriptionRecord`.
+Why it is written this way: the splitter and the extractors read the page as markdown
+and quote it verbatim, so the prompt asks for reading order, exact heading wording (the
+splitter locates PDF outline entries by their text), pipe tables with one header row and
+columns in the image's order, and spanning values repeated rather than merged, which
+is what the gold quotes look like ("Quadrant | Cashiering | Replace | ..."). The library
+text is passed as a labelled reference because it is usually right about spelling and
+numbers in the clean parts of a page; the image wins on any conflict. `[illegible]`
+instead of guessing keeps the quote-verification contract honest.
+Known weaknesses: a repeated header row inside a printed table comes back as a data row
+(Federal Way p5); multi-line bullet lists inside a cell are joined with semicolons, so a
+gold quote that spans two cells may not match by containment.
 
 ### prompts/problem_chunk.md
 Purpose: stage one of the problem statement (S6): what one chunk says about who the
@@ -341,6 +364,8 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-11-02 | parse_vlm | Created (ST2) | First version; live Federal Way p5 returned the full ERP environment table (18 rows, every gold row verbatim), Missouri p19/p20 forms at 420 and 453 words with their exhibit headings |
+| 2026-11-02 | parse_quality | One line describing the `garbled_text` flag and its false alarm | ST2 added the flag for undecodable fonts; the judge must know what it means |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |

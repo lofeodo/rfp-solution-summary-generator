@@ -113,10 +113,10 @@ flowchart TD
     %% nothing ready: core is complete (stretch steps get their own graph when started)
 ```
 
-**Progress (2026-10-31):** every core step, S0 to S16, is done (green). The PR from
-`core` into `main` is open and waits for the author. Stretch goals (section 3) start
-from `main` once it is merged; ST1 is first in the priority order. Update the two
-`class` lines in the diagram whenever a step is marked `done`.
+**Progress (2026-11-02):** every core step, S0 to S16, is done (green) and `core` is
+merged into `main` (PR #21). Stretch goals (section 3) branch off `main`; ST2 (VLM
+transcription) is done (PR #25) and has its own graph in its entry; ST1 and ST3 to ST11
+are open. Update the two `class` lines in a diagram whenever a step is marked `done`.
 
 | Step                                 | Depends on | Can run in parallel with | Main files touched                                   |
 | ------------------------------------ | ---------- | ------------------------ | ---------------------------------------------------- |
@@ -2429,6 +2429,219 @@ Priority order. Each gets the same entry structure when started.
 | ST9 | Observability dashboard in the UI beyond live progress | S15 | |
 | ST10 | Cloud deployment | S16 | Only with all core and evals done |
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
+
+### ST2. VLM transcription of poorly rendered pages
+- **Status:** done (PR #25 into `main`)
+- **Goal:** make the S4 escalation hook real. Pages the parse-quality judge confirms bad
+  (text unusable: broken tables and garbled layout; or content missing: image-only
+  tables and forms) are rendered to an image and transcribed to markdown by a vision
+  model (VLM); the transcription replaces the library parser's markdown for that page
+  before splitting, so its content reaches the extractors and can be cited. The
+  library and VLM markdown are kept side by side in `quality.json` and the UI so the
+  two parsers can be compared. Off by default; `--vlm`, `RFP_VLM=true` or the run-UI
+  checkbox turn it on. Measurable on Federal Way page 5 (ERP environment table as an
+  image: gold GR053 to GR060 and GC12 are unreachable without it).
+- **Depends on:** S4, S12 (both done)
+- **Parallel with:** other stretch goals that do not touch `parsing/quality.py`,
+  `graph.py`, the run form or `schemas.py`'s parsing section.
+
+  ```mermaid
+  flowchart LR
+      T1[T1 Plan] --> T2[T2 Schemas + settings]
+      T2 --> T3[T3 VLM module + prompt]
+      T3 --> T4[T4 Quality-pass wiring]
+      T4 --> T5[T5 Graph, CLI, harness]
+      T5 --> T6[T6 UI backend]
+      T6 --> T7[T7 UI frontend]
+      T4 --> T8[T8 Tests + live checks]
+      T5 --> T9[T9 Ablations]
+      T7 --> T10[T10 Docs + PR]
+      T8 --> T10
+      T9 --> T10
+      classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
+      classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
+      class T1,T2,T3,T4,T5,T6,T7,T8,T9,T10 done
+      %% nothing ready: ST2 is complete
+  ```
+
+  | Unit | Depends on | Main files touched |
+  | --- | --- | --- |
+  | T1 Plan | — | `docs/ROADMAP.md` |
+  | T2 Schemas + settings | T1 | `schemas.py`, `config.py`, `.env.example` |
+  | T3 VLM module + prompt | T2 | `parsing/vlm.py`, `prompts/parse_vlm.md` |
+  | T4 Quality-pass wiring | T3 | `parsing/quality.py`, `parsing/heuristics.py`, `parsing/__main__.py` |
+  | T5 Graph, CLI, harness | T4 | `graph.py`, `cli.py`, `evals/harness/__main__.py` |
+  | T6 UI backend | T5 | `ui/backend/` |
+  | T7 UI frontend | T6 | `ui/frontend/src/` |
+  | T8 Tests + live checks | T4 | `tests/` |
+  | T9 Ablations | T5 | `evals/results/ablation_vlm*/` |
+  | T10 Docs + PR | T7, T8, T9 | `docs/`, `README.md` |
+
+- **Detailed plan:** (approved 2026-11-02)
+  - **Author decisions, asked in one batch:** the judge gates the VLM by default
+    (`RFP_VLM_SCOPE=judged`); a `flagged` scope sends every heuristically flagged page
+    without a judge call so the ablation can compare the two policies. The VLM is
+    `anthropic:claude-sonnet-5-5` (`RFP_VLM_MODEL`), the same model as the eval judge,
+    because the default generator (DeepSeek) does not take images. The VLM is off by
+    default (`RFP_VLM=false`) and switched on by `--vlm`, the env var, or a checkbox on
+    the run form. The PR into `main` is merged by the agent when CI is green.
+  - **Assumptions made without asking:** the whole page is rendered (no image crops;
+    `ImageBlock` has no bbox and one path then covers broken tables and image tables);
+    the library markdown is passed to the VLM as a labelled, possibly damaged reference
+    with the image as the source of truth; a fifth heuristic `garbled_text` (encoding
+    failures: `(cid:NN)`, U+FFFD, high symbol ratio) is added only if it fires on zero
+    pages of the four public RFPs; ablation scoring uses the match and problem tiers
+    only, since the VLM can move recall and the checklist and nothing else.
+  - **Schemas (shared file, Parsing section):** `VlmTranscription` (LLM output:
+    `markdown`, `notes`), `TranscriptionRecord` (`page`, `model`, `library_markdown`,
+    `vlm_markdown`, `library_words`, `vlm_words`, `notes`), `ParseQualityReport` gains
+    `transcriptions` and `scope`. `Escalation` unchanged; its action reads
+    "transcribed by VLM (<n> words, <model>)" or "VLM failed: <reason>; flags kept".
+  - **Settings:** `vlm`, `vlm_model`, `vlm_scope`, `vlm_dpi` (140: a letter page renders
+    at 1190 x 1540 px, under Anthropic's 1568 px long-edge guidance). The VLM model is
+    built with `max_tokens=8000` so it does not depend on `RFP_MAX_OUTPUT_TOKENS`.
+  - **`parsing/vlm.py`:** `render_page_png` (pymupdf pixmap), `transcribe_page` (one
+    `HumanMessage` with an `image_url` data-URL block, accepted by both the Anthropic
+    and the OpenAI-compatible adapters, then the rendered `prompts/parse_vlm.md`;
+    `structured_call(node="parse_quality_vlm")`, which the stage prefix keeps inside
+    `parse_quality` for metrics and the UI timeline), `make_vlm_hook` (closure over the
+    PDF path, model, settings, recorder and config; a failed call or render returns a
+    failed outcome so the flags stay).
+  - **`parsing/quality.py`:** `EscalationHook` returns an `EscalationOutcome(action,
+    markdown | None, notes, model)`; `record_only_hook` returns no markdown, so the
+    core path is unchanged. `run_quality_pass(..., scope=)`: `flagged` skips the judge
+    and treats every flagged page as confirmed (trigger `code`); an outcome with markdown
+    replaces the page's markdown and word count, drops the page's flags (the page is now
+    parsed; no "transcribed" flag, which would reach the risk agent's unparsed-pages
+    list), rebuilds that page's `tables` entries, and appends a `TranscriptionRecord`.
+    Debug CLI gains `--vlm` and `--vlm-scope`.
+  - **Graph, CLI, harness, UI:** the `parse_quality` node builds the hook when
+    `settings.vlm`; `run_pipeline` and `apply_overrides` take `vlm` and `vlm_scope`;
+    `cli.py run --vlm --vlm-scope`; harness `run --vlm --vlm-scope`; backend form fields
+    `vlm` and `vlm_scope` (the VLM model is built in `submit` so a missing Anthropic key
+    is a 503 before queueing) and `vlm_model` on `/api/health`; frontend checkbox with a
+    scope select under it, `ParseView` shows transcribed pages with a side-by-side of
+    library and VLM markdown.
+  - **Prompt `parse_vlm.md`:** transcribe in reading order as GitHub markdown; tables as
+    pipe tables with one header row, columns in the image's order, no merged cells
+    (repeat spanning values); headings verbatim (the splitter locates outline entries by
+    their text; Missouri p19 and p20 carry two); `[illegible]` for unreadable text; no
+    summarising; the extracted text is a reference, the image wins.
+  - **Tests:** `tests/test_vlm.py` (render on Federal Way p5, message shape, metrics
+    node, hook success and failure paths), `test_quality.py` (markdown replacement,
+    flags cleared, tables rebuilt, record appended, failed outcome keeps flags, flagged
+    scope skips the judge, old `quality.json` still loads), graph, backend and harness
+    option plumbing, `tests/test_vlm_live.py` (`llm`: Federal Way p5 names Eden and
+    Quadrant; Missouri section count unchanged with the VLM on).
+  - **Ablations:** `ablation_vlm` (judged, all four RFPs, two runs) and
+    `ablation_vlm_flagged` (Federal Way and Missouri, the only RFPs with flags); score
+    `--only match,problem`; diff against `baseline`. Expected: Federal Way recall from
+    about 80% toward the reachable 93 to 96%, GC12 covered, GR053 to GR057 reachable
+    (single-row quotes), GR058 to GR060 maybe not (multi-row quotes); Colfax and NYESD
+    unchanged (no flags). Known risk of the flagged scope: Federal Way p2 is a contents
+    page whose dot leaders `is_toc_page` relies on.
+  - **Docs:** DECISIONS D42 (trigger policy, model, whole page, replace not append),
+    PROMPTS block and changelog, TIMELOG, README results and flag, USAGE, PIPELINE,
+    `.env.example`, results README label rows, gold README page-5 section.
+- **What was done:** (branch `st2-vlm-transcription`, PR into `main`)
+  - `schemas.py` (shared file, Parsing section): `VlmTranscription` (LLM output:
+    `markdown`, `notes`), `TranscriptionRecord` (page, model, library and VLM markdown
+    and word counts, notes), `VlmScope` literal, `ParseQualityReport.scope` and
+    `.transcriptions` (both defaulted, so older `quality.json` files still load),
+    `FlagReason.GARBLED_TEXT`. `Escalation` unchanged.
+  - `config.py`: `vlm` (off), `vlm_model` (`anthropic:claude-sonnet-5-5`), `vlm_scope`
+    (`judged`), `vlm_dpi` (140); `.env.example` documents them.
+  - `parsing/vlm.py` (new): `render_page_png` (pymupdf pixmap; a bad page or path raises
+    `PageRenderError`), `get_vlm_model` (`get_chat_model(settings.vlm_model,
+    max_tokens=8000)`), `build_message` (one `HumanMessage`: `image_url` data-URL block,
+    then the text), `transcribe_page` (`structured_call`, node `parse_quality_vlm`,
+    prompt `prompts/parse_vlm.md`), `make_vlm_hook` (closure over PDF path, title, page
+    count, model, settings, recorder, config; render or model failure and an empty
+    transcription return an outcome without markdown, so the flags stay).
+  - `parsing/quality.py`: `EscalationOutcome(action, markdown, notes, model)` replaces
+    the hook's string return; `record_only_hook` returns no markdown. `escalate` returns
+    the outcome as a third value and clears the kept flags when markdown came back.
+    `run_quality_pass(..., scope=)`: `flagged` skips the judge and uses
+    `flagged_scope_judgement` (bad, every flag confirmed, trigger `code`, no model
+    built); a markdown outcome replaces the page (`Page` with recounted words), rebuilds
+    that page's `tables` from `table_blocks`, and appends a `TranscriptionRecord`. The
+    input document is still never mutated. Debug CLI: `--vlm`, `--vlm-scope`, a
+    transcriptions table and the pass's scope in the totals line.
+  - `parsing/heuristics.py`: `garbled_text_reason` (any `(cid:NN)` or U+FFFD; else the
+    share of non-ordinary characters at or above 0.30 over at least 40 characters) and
+    the flag in `flag_page`; `prompts/parse_quality.md` gained one line for it. On the
+    four public RFPs: zero `(cid:`, zero U+FFFD, top symbol share 0.004 (Colfax p19), so
+    it never fires there; `tests/test_parsing_rfps.py` asserts that.
+  - `graph.py`: `build_pipeline(vlm_model=)` builds the vision model when
+    `settings.vlm` (a missing Anthropic key fails before the run, like the generator);
+    the `parse_quality` node passes `make_vlm_hook(state["pdf_path"], ...)` and
+    `scope=settings.vlm_scope`, else `record_only_hook` and `judged`. `apply_overrides`
+    and `run_pipeline` take `vlm`, `vlm_scope`, `vlm_model`. `cli.py run --vlm
+    --vlm-scope`; `evals/harness run --vlm/--no-vlm --vlm-scope`.
+  - UI backend: form fields `vlm` and `vlm_scope` (a `Literal`, so an unknown scope is a
+    422), stored in `upload.json`; `RunRegistry.submit` builds the vision model when on,
+    so a missing key is a 503 before queueing; `/api/health` carries `vlm_model`.
+    Frontend: `RunOptions.vlm` and `vlmScope`, the `vlm` checkbox with the model name
+    from health and a `vlm_scope` select under it, `ParseView` lists each re-rendered
+    page (words before and after, model, notes) with a "compare" toggle showing the
+    library and VLM markdown side by side; `escalationLabel` helper with a unit test.
+  - Tests (no paid calls): `tests/test_vlm.py` (render at 140 dpi is 1190 x 1540 px,
+    bad page and path, message shape, prompt content and `parse_quality_vlm` metrics,
+    hook success and the three failure paths, model factory keeps its own token cap);
+    `test_quality.py` (outcome hook, markdown replacement with flags cleared and tables
+    rebuilt, failed outcome keeps flags, flagged scope skips the judge and builds no
+    model, old report JSON loads); `test_graph.py`, `test_ui_backend.py`,
+    `test_harness.py`, `test_config.py`, `test_parsing_units.py`, `test_parsing_rfps.py`
+    extended; `pipeline_stubs.py` stub takes `hook` and `scope`. Full suite: 415 passed.
+    Frontend: typecheck, 11 Vitest tests, build.
+  - Live checks (`tests/test_vlm_live.py`, `llm` marker): Federal Way p5 came back as
+    the full ERP environment table, 18 rows, every gold row verbatim ("Quadrant |
+    Cashiering | Replace | Yes or Part of ERP Suite"), 129 to 285 words, $0.017, 6 s,
+    no retries. Missouri with the judge and the VLM: p19 and p20 transcribed (19 to 420
+    and 453 words), p12 cleared; the split kept every section. The first Missouri run
+    gained a section ("APPLICANT AFFIDAVIT FOR SOLE-PROPRIETORSHIP OR PARTNERSHIP"):
+    the transcription of p20 carries the outline heading the library text never had,
+    so the splitter could locate the entry. The test asserts no section is lost.
+  - Ablations (`evals/results/ablation_vlm/`, `ablation_vlm_flagged/`, scored on match,
+    problem and cost; `diff_requirements.md` against `baseline`):
+
+    | RFP | baseline recall (n=3) | `--vlm` judged (n=2) | `--vlm` flagged (n=2) | VLM calls, cost per run (judged / flagged) |
+    |---|---|---|---|---|
+    | Federal Way | 81% ± 1 (code only 67%) | 95% ± 1 (84%); all 8 page-5 items matched, GC12 covered | 94% ± 3 (76%) | 1, $0.017 / 3, $0.043 |
+    | Missouri | 91% ± 3 | 92% ± 8 | 93% ± 4 | 2, $0.035 / 3, $0.044 |
+    | Colfax | 99% ± 1 | 100% ± 0 | not run (no flags) | 0 / 0 |
+    | NYESD | 99% ± 1 | 99% ± 1 | not run (no flags) | 0 / 0 |
+
+    Federal Way checklist 8 to 9 → 10 to 11 of 12 (judged), 8 to 12 (flagged). The
+    judged scope stays the default (D42): same recall as flagged at a third of the VLM
+    cost and less spread, and the pages the judge clears (Federal Way p2 contents, p14
+    pricing form; Missouri p12 cost table) came back no better, p14 worse, when
+    re-rendered. Total spend: 12 pipeline runs $1.10, scoring $0.42, live checks $0.10.
+  - Docs: D42; PROMPTS block for `parse_vlm` and two changelog rows; PIPELINE
+    parse-quality section and `RFP_VLM*` rows; USAGE CLI flags, UI checkbox, eval
+    commands; README Parse-tab row, step 1 and a results note; `.env.example`; results
+    README label rows, reproduce commands and the reachable-recall wording; gold README
+    page-5 section; TIMELOG.
+- **Deviations from plan:**
+  - The quality-pass wiring and the VLM module landed in one commit, not two.
+  - `escalate` returns a third value (the outcome) instead of the quality pass
+    re-deriving it; the two S4 hook tests were updated to the outcome type.
+  - The Missouri live check asserts a superset of sections, not equality, after the
+    first run showed the VLM recovering an outline heading.
+- **Open issues:**
+  - A repeated header row printed inside a table (Federal Way p5) is transcribed as a
+    data row; bullet lists inside a cell are joined with semicolons, so GR058 to GR060
+    (multi-row gold quotes) still depend on the judge tier.
+  - `flagged` scope sends contents pages (Federal Way p2) and cleared forms (Missouri
+    p12) to the VLM; the ablation shows it is not worth it (same recall, three times the
+    VLM cost, more spread), so it stays a comparison setting.
+  - One Missouri `flagged` run skipped chunk S75.1 (a transcribed affidavit page):
+    DeepSeek returned no structured output in three attempts and the extractor's
+    existing skip path dropped the chunk. Blank forms transcribed as `Label: ____`
+    lines are poor extraction input; a follow-up could mark transcribed form pages
+    (`page_kind=form`) as narrative so the extractor never sees them.
+  - The transcription is not cached: a rerun of the same PDF pays the VLM again
+    (about $0.02 a page). A content-hash cache under `runs/` would remove that.
 
 ---
 

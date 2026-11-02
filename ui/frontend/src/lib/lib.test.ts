@@ -4,7 +4,7 @@ import { fromList, reduceStage, stageRows, stagesDone } from "./stages";
 import { highlightQuote, plainText } from "./highlight";
 import { EMPTY_FILTER, filterRequirements, toggle } from "./requirements";
 import { sortRisks } from "./risks";
-import { cleanTitle, pages, prettySource, secs, tokens, usd } from "./format";
+import { cleanTitle, escalationLabel, pages, prettySource, secs, tokens, usd } from "./format";
 import { buildIndex, idKind } from "./ids";
 import split from "../../../../runs/samples/missouri/split.json";
 import summary from "../../../../runs/samples/missouri/summary.json";
@@ -125,6 +125,10 @@ describe("format and ids", () => {
     expect(pages(5, 6)).toBe("pp. 5–6");
     expect(cleanTitle("**(B) Background**")).toBe("(B) Background");
     expect(prettySource("federal_way.pdf")).toBe("federal way");
+    expect(escalationLabel("cleared by judge: a cover page.")).toBe("cleared by judge");
+    expect(escalationLabel("transcribed by VLM (310 words, anthropic:x)")).toBe("transcribed by VLM");
+    expect(escalationLabel("VLM failed: boom; flags kept")).toBe("VLM failed");
+    expect(escalationLabel("would escalate to VLM: reason")).toBe("would escalate to VLM");
   });
   it("classifies IDs and indexes the summary", () => {
     expect(["S3.2", "R001", "C01", "K12", "A01", "G03", "X1"].map(idKind)).toEqual([

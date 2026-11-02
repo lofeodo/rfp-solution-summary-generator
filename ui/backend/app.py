@@ -14,7 +14,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -116,7 +116,9 @@ def create_app(
 
     @api.get("/health")
     def health() -> Health:
-        return Health(model=settings.model, runs_dir=str(store.runs_dir))
+        return Health(
+            model=settings.model, vlm_model=settings.vlm_model, runs_dir=str(store.runs_dir)
+        )
 
     @api.post("/runs", status_code=202)
     def create_run(
@@ -125,6 +127,8 @@ def create_app(
         full_text_problem: Annotated[bool | None, Form()] = None,
         single_call_extraction: Annotated[bool | None, Form()] = None,
         max_iterations: Annotated[int | None, Form(ge=1, le=10)] = None,
+        vlm: Annotated[bool | None, Form()] = None,
+        vlm_scope: Annotated[Literal["judged", "flagged"] | None, Form()] = None,
     ) -> RunCreated:
         source_name = Path(file.filename or "").name or "upload.pdf"
         run_id = new_run_id()
@@ -150,6 +154,8 @@ def create_app(
                     "full_text_problem": full_text_problem,
                     "single_call_extraction": single_call_extraction,
                     "max_iterations": max_iterations,
+                    "vlm": vlm,
+                    "vlm_scope": vlm_scope,
                 },
             }
             (run_dir / UPLOAD_META).write_text(json.dumps(meta, indent=2), encoding="utf-8")
@@ -162,6 +168,8 @@ def create_app(
                     full_text_problem=full_text_problem,
                     single_call_extraction=single_call_extraction,
                     max_iterations=max_iterations,
+                    vlm=vlm,
+                    vlm_scope=vlm_scope,
                 )
             except MissingApiKeyError as exc:
                 raise HTTPException(503, str(exc)) from exc

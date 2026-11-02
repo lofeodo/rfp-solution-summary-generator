@@ -33,6 +33,7 @@ from rfp_agent.graph import (
     stage_totals,
 )
 from rfp_agent.llm import MissingApiKeyError
+from rfp_agent.parsing.quality import record_only_hook
 from rfp_agent.schemas import (
     RunLog,
     StageRecord,
@@ -147,6 +148,36 @@ def test_ablation_flags_and_model_override_reach_the_stages(tmp_path, monkeypatc
     assert stubs.calls[PARSE_QUALITY]["settings"].model == "deepseek:other"
     assert result.run_log.model == "deepseek:other"
     assert result.summary.model == "deepseek:other"
+    # VLM off: the record-only hook and the judged scope reach the quality pass
+    assert stubs.calls[PARSE_QUALITY]["hook"] is record_only_hook
+    assert stubs.calls[PARSE_QUALITY]["scope"] == "judged"
+
+
+def test_vlm_option_builds_the_hook_with_the_injected_vision_model(tmp_path, monkeypatch, chunk_id):
+    stubs = Stubs(chunk_id).install(monkeypatch)
+    vision = ScriptedChatModel()
+    run_pipeline(
+        PDF,
+        settings=SETTINGS,
+        model=ScriptedChatModel(),
+        runs_dir=tmp_path,
+        vlm=True,
+        vlm_scope="flagged",
+        vlm_model=vision,
+    )
+    call = stubs.calls[PARSE_QUALITY]
+    assert call["settings"].vlm is True
+    assert call["scope"] == "flagged"
+    assert call["hook"] is not record_only_hook
+    assert vision.calls == []  # the stub never invoked the hook
+
+
+def test_vlm_option_without_the_provider_key_fails_before_the_run(tmp_path, monkeypatch, chunk_id):
+    Stubs(chunk_id).install(monkeypatch)
+    settings = SETTINGS.model_copy(update={"vlm": True, "anthropic_api_key": None})
+    with pytest.raises(MissingApiKeyError, match="ANTHROPIC_API_KEY"):
+        run_pipeline(PDF, settings=settings, model=ScriptedChatModel(), runs_dir=tmp_path)
+    assert not any(tmp_path.iterdir())
 
 
 def test_defaults_come_from_settings(tmp_path, monkeypatch, chunk_id):
@@ -257,6 +288,9 @@ def test_apply_overrides_copies_only_when_needed():
     assert (s.model, s.full_text_problem, s.solution_max_iterations) == ("anthropic:x", True, 5)
     assert s.single_call_extraction is SETTINGS.single_call_extraction
     assert SETTINGS.model != "anthropic:x"
+    v = apply_overrides(SETTINGS, vlm=True, vlm_scope="flagged")
+    assert (v.vlm, v.vlm_scope) == (True, "flagged")
+    assert (SETTINGS.vlm, SETTINGS.vlm_scope) == (False, "judged")
 
 
 def test_run_log_round_trips_stage_records():

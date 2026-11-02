@@ -49,13 +49,31 @@ flagged page to the generator model once (prompt `prompts/parse_quality.md`), wh
 whether the text is usable and whether content is missing (for example a table that is
 only an image). Code then clears false alarms, keeps confirmed flags, and records an
 escalation per page in the run log, noting whether a heuristic (`code`) or the judge
-(`model`) found the problem. Confirmed-bad pages go to a VLM hook that, in core, only
-records "would escalate to VLM". A judge failure keeps the page's flags. On the four RFPs
+(`model`) found the problem. A judge failure keeps the page's flags. On the four RFPs
 it clears 9 of 12 flagged pages and escalates Missouri p19 and p20 and Federal Way p5,
 for about half a cent in total. To see the verdicts (paid, needs `DEEPSEEK_API_KEY`):
 
 ```bash
 python -m rfp_agent.parsing data/rfps/federal_way.pdf --judge --out federal_way.json
+```
+
+**Vision-model transcription (ST2, off by default).** With `--vlm` (or `RFP_VLM=true`,
+or the checkbox on the run form) each escalated page is rendered to a PNG at
+`RFP_VLM_DPI` (140: 1190 x 1540 px for a letter page) and sent, with the library text as
+a reference, to `RFP_VLM_MODEL` (`anthropic:claude-sonnet-5-5`; prompt
+`prompts/parse_vlm.md`, node `parse_quality_vlm`). The transcription replaces the page's
+markdown before splitting, so an image-only table (Federal Way p5) reaches the
+extractors and can be quoted; the page's flags are cleared and `quality.json` keeps the
+library and VLM markdown side by side in `transcriptions` (the Parse tab shows them).
+`RFP_VLM_SCOPE=judged` (default) lets the judge gate the VLM; `flagged` sends every
+heuristically flagged page without a judge call. A failed render or model call keeps the
+flags and the library text. Without the VLM, confirmed-bad pages only record "would
+escalate to VLM". A fifth heuristic, `garbled_text` (`(cid:NN)` glyphs, replacement
+characters, symbol soup), exists for PDFs with undecodable fonts; none of the four public
+RFPs triggers it.
+
+```bash
+python -m rfp_agent.parsing data/rfps/federal_way.pdf --judge --vlm --out federal_way.json
 ```
 
 ## Splitting
@@ -214,6 +232,10 @@ All settings live in `.env` (see `.env.example`); `RFP_*` variables override def
 | `RFP_FULL_TEXT_PROBLEM` | `false` | problem statement from one full-text call instead of per-chunk summaries (ablation) |
 | `RFP_SINGLE_CALL_EXTRACTION` | `false` | requirements from one call over the whole document instead of per chunk plus dedupe (ablation) |
 | `RFP_SOLUTION_MAX_ITERATIONS` | `3` | solution rounds: one generation plus revisions while mandatory requirements are uncovered; `1` disables revision |
+| `RFP_VLM` | `false` | re-render pages the parse-quality pass escalates with a vision model and use its transcription (ST2) |
+| `RFP_VLM_MODEL` | `anthropic:claude-sonnet-5-5` | the vision model; must accept image input |
+| `RFP_VLM_SCOPE` | `judged` | `judged`: the judge gates the VLM; `flagged`: every heuristically flagged page, no judge call |
+| `RFP_VLM_DPI` | `140` | page render resolution (140 keeps a letter page under 1568 px on its long edge) |
 
 Keys: `DEEPSEEK_API_KEY` for the generator (or the key of whichever provider
 `RFP_MODEL` names), `ANTHROPIC_API_KEY` for the eval judge and the gold-label scripts.

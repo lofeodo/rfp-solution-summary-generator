@@ -17,7 +17,7 @@ from rich.console import Console
 from rich.table import Table
 
 from rfp_agent.observability import per_node_totals
-from rfp_agent.schemas import RunLog, StageStatus
+from rfp_agent.schemas import RunLog, StageStatus, VlmScope
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 console = Console(stderr=True)
@@ -70,6 +70,15 @@ def print_stages(log: RunLog) -> None:
     console.print(table)
 
 
+def _vlm_scope(value: str | None) -> VlmScope | None:
+    """Validate ``--vlm-scope``; ``None`` keeps the settings default."""
+    if value is None:
+        return None
+    if value not in ("judged", "flagged"):
+        raise typer.BadParameter("must be 'judged' or 'flagged'", param_hint="--vlm-scope")
+    return value  # type: ignore[return-value]
+
+
 def print_totals(log: RunLog) -> None:
     t = log.totals()
     wall = (log.finished_at - log.started_at).total_seconds() if log.finished_at else 0.0
@@ -108,6 +117,22 @@ def run(
     model: Annotated[
         str | None, typer.Option("--model", help="Generator, <provider>:<model_id> (RFP_MODEL)")
     ] = None,
+    vlm: Annotated[
+        bool,
+        typer.Option(
+            "--vlm",
+            help="Re-render pages the parse-quality pass escalates with the vision model "
+            "RFP_VLM_MODEL and use the transcription instead of the library text (RFP_VLM)",
+        ),
+    ] = False,
+    vlm_scope: Annotated[
+        str | None,
+        typer.Option(
+            "--vlm-scope",
+            help="judged: the judge gates the VLM; flagged: every heuristically flagged page "
+            "goes to the VLM without a judge call (RFP_VLM_SCOPE)",
+        ),
+    ] = None,
     runs_dir: Annotated[
         Path | None, typer.Option("--runs-dir", help="Parent of the run directory (default runs/)")
     ] = None,
@@ -141,6 +166,8 @@ def run(
             full_text_problem=full_text_problem or None,
             single_call_extraction=single_call_extraction or None,
             max_iterations=max_iterations,
+            vlm=vlm or None,
+            vlm_scope=_vlm_scope(vlm_scope),
             on_event=on_event,
         )
     except MissingApiKeyError as exc:

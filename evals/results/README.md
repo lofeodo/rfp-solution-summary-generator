@@ -13,6 +13,8 @@ columns are code-only, shown as `–`), plus a `diff_*.md` against the baseline:
 | `ablation_full_text/` | `--full-text-problem`: one synthesis call over the whole text instead of per-chunk summaries | problem, grounding, cost; `pairwise_<rfp>_problem.json` against baseline run 1 | D39 |
 | `ablation_single_call/` | `--single-call-extraction` with `RFP_MAX_OUTPUT_TOKENS=16000` (F16) | match, precision, cost | D39 |
 | `fix_solution_naming/` | `prompts/solution.md` "name what you cite" rule | solution | D40 |
+| `ablation_vlm/` | `--vlm` (ST2): pages the judge confirms bad are re-rendered by `anthropic:claude-sonnet-5-5` and the transcription replaces the library text; all four RFPs, two runs | match, problem, cost; `diff_requirements.md` against baseline | D42 |
+| `ablation_vlm_flagged/` | `--vlm --vlm-scope flagged` (ST2): every heuristically flagged page goes to the VLM, no judge call; Federal Way and Missouri only (the other two have no flags) | match, problem, cost | D42 |
 
 | File | What it is |
 |---|---|
@@ -47,6 +49,10 @@ already have a score file unless `--force`, so an interrupted scoring run resume
 python -m evals.harness score --label baseline --only match          # one judge, ~$0.40
 python -m evals.harness run --label ablation_full_text --all --runs 2 --full-text-problem
 python -m evals.harness score --label ablation_full_text --only problem,grounding,cost
+python -m evals.harness run --label ablation_vlm --all --runs 2 --vlm                     # ST2, ~$0.72 + $0.28 judge
+python -m evals.harness run --label ablation_vlm_flagged --rfp federal_way --runs 2 --vlm --vlm-scope flagged
+python -m evals.harness score --label ablation_vlm --only match,problem,cost
+python -m evals.harness diff baseline ablation_vlm --what requirements
 python -m evals.harness diff baseline ablation_full_text --what problem -o diff_problem.md
 ```
 
@@ -76,9 +82,11 @@ with `unsupported.problem` or `rubric.specificity` for the dict columns.
 - *recall (code only)*: the code tier alone, a lower bound. The judge tier accepts some
   candidates that omit the gold item's key value (a date, a named standard; F14), so
   true recall lies between the two columns.
-- *recall (reachable)*: the same over gold items whose quote is in the parsed text.
-  Federal Way's eight page-5 items (an image-only table) are unreachable without a VLM
-  (ST2); they stay in plain recall so the parsing gap shows.
+- *recall (reachable)*: the same over gold items whose quote is in the library parser's
+  text. Federal Way's eight page-5 items (an image-only table) are unreachable without
+  the vision-model option (`--vlm`, ST2); they stay in plain recall so the parsing gap
+  shows. With `--vlm` all eight are matched (`ablation_vlm/`), so plain recall meets
+  reachable recall there; the reachable column keeps its library-parser definition.
 - *precision*: share of extracted items the judge finds both supported by their cited
   chunk and a real requirement (an obligation, constraint, deadline, limit or
   deliverable). Every extracted quote is already verified against its chunk by code
