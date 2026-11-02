@@ -329,9 +329,12 @@ def test_cli_checkpoint_rejects_bad_arguments_and_states(tmp_path, monkeypatch, 
     assert runner.invoke(app, ["run", str(PDF), *runs, "--run-id", "c2"]).exit_code == 0
 
     def plain(output: str) -> str:
-        # Typer draws usage errors in a box and wraps them at 80 columns; strip the
-        # box and the wrapping so a message can be matched as one line.
-        return " ".join(re.sub(r"[│┌┐└┘─]", " ", output).split())
+        # Typer draws usage errors in a box (colour and rounded corners on a CI
+        # terminal) and wraps them at 80 columns; strip the escape codes, the
+        # box-drawing characters and the wrapping so a message matches as one line.
+        text = re.sub(r"\x1b\[[0-9;]*m", "", output)
+        text = re.sub(r"[─-╿]", " ", text)
+        return " ".join(text.split())
 
     bad_level = runner.invoke(
         app, ["checkpoint", "c2", *runs, "--reviewer", "Dana", "--strictness", "R002=huge"]
