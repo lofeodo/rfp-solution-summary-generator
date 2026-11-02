@@ -46,13 +46,14 @@ flowchart LR
     C --> E[ST12e Frontend refine and sign-off]
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class A,B done
-    class C ready
+    class A,B,C done
+    class D,E ready
 ```
 
-**Progress (2026-11-02):** ST12a done (PR #24 into `hitl`), ST12b done (revise,
-regenerate, sign-off and versioning from the CLI). ST12c is ready; ST12d and ST12e
-follow it and are parallel except for `RunPage.tsx`.
+**Progress (2026-11-02):** ST12a, ST12b and ST12c done (the backend API drives the
+checkpoint, revisions, regenerations and sign-off). ST12d and ST12e are ready and
+parallel except for `RunPage.tsx`; until ST12d lands, a UI upload stops at the
+checkpoint with nothing to click.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
 | --- | --- | --- | --- |
@@ -68,6 +69,6 @@ follow it and are parallel except for `RunPage.tsx`.
 | --- | --- | --- | --- |
 | ST12a Checkpoint in the pipeline | done | [ST12a-checkpoint.md](ST12a-checkpoint.md) | The pipeline pauses after requirements and problem extraction, takes a named reviewer's decisions and a pursuit brief that becomes citable evidence (H1, H2...), and resumes drafting from the run directory; unattended runs are unchanged. |
 | ST12b Revise primitive and versioning | done | [ST12b-revise.md](ST12b-revise.md) | A reviewer's instruction revises any artefact under its stage's own checks (requirements as a quote-verified patch, the rest whole with stable IDs and no coverage loss), every change is versioned with a code-computed diff and cost, dependants go stale until regenerated, and sign-off freezes the run; live loop on Missouri cost $0.11. |
-| ST12c Backend | in progress | [ST12c-backend.md](ST12c-backend.md) | (todo) Backend run states, restart recovery, endpoints and events for the checkpoint, revisions and sign-off. |
+| ST12c Backend | done | [ST12c-backend.md](ST12c-backend.md) | The backend drives the whole human loop over HTTP: uploads pause at the checkpoint, the checkpoint, revisions, regenerations and sign-off are endpoints queued on the one worker, the run's state and allowed actions are derived from its files so paused and signed-off runs survive a restart, and SSE reports every state change; live Missouri loop through the API with a restart cost $0.12. |
 | ST12d Frontend checkpoint | todo | [ST12d-frontend-checkpoint.md](ST12d-frontend-checkpoint.md) | (todo) Checkpoint page in the UI: requirement row actions, instruction box, brief form, confirm with a reviewer name. |
 | ST12e Frontend refine and sign-off | todo | [ST12e-frontend-refine.md](ST12e-frontend-refine.md) | (todo) Suggest-edits panel, diff view, versions, stale banners with regenerate, sign-off and review history in the UI. |
