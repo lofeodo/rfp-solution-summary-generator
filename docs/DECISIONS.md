@@ -1175,24 +1175,26 @@ Before/after: 0 of 1 Missouri runs finished at the default cap; 8 of 8 at 16k, n
 ---
 
 ### F17. Grounding judge runs away inside a `reason` string
-Where:     ST12 scoring, `judge_grounding` on NYESD: one batch in the rejudged
-           baseline (NYESD run 3) and one in the fresh-run label (NYESD run 1).
+Where:     ST12 scoring, `judge_grounding`: NYESD run 3 of the rejudged baseline, NYESD
+           run 1 of the first `prompt_structure` pass, and Federal Way run 1 of the
+           final `prompt_structure` pass (the same batch on the first pass and the
+           retry).
 Observed:  `output truncated by the token cap; not retrying` at the full 32,000-token
-           cap (F13's cap), 137 s per call, $0.33 each. The logged completion is
+           cap (F13's cap), about 138 s per call, $0.33 each. The logged completion is
            well-formed JSON up to one `reason` field that degenerates into a repeated
-           token ("ESD. ESD. ESD." or "'.'.'.'") until the cap. A third NYESD batch
-           returned a list two entries short.
+           token ("ESD. ESD. ESD.", "'.'.'.'", "mixed.mixed.mixed") until the cap.
 Cause:     a sampling loop in the judge model inside a free-text field, not thinking
-           volume as in F13: the input was 5k to 12k tokens and the JSON was already
-           sixty verdicts in. The ST12 `judge_grounding` prompt is longer than the
-           S12 one (Context, Examples, Tone, Final checks); 0 of 72 baseline batches
-           looped and 2 of about 80 did under the new prompt, so the prompt may raise
-           the odds, but two events do not separate that from chance.
-Fix:       the failed runs were rescored with `score --only grounding --rfp NYESD`,
-           which ran clean on all NYESD runs of both labels; the harness's failure
-           count still shows the first pass (it is summed over passes, see
-           `evals/results/README.md`). Recorded as an open issue on ST12: a one-shot
-           retry on truncation in `Judge.call`, or a shorter `reason` cap, would
-           remove the manual step.
-Before/after: 2 truncated batches in the two first passes; 0 after one retry pass each
-           ($1.98 and about $1.3 of judge spend).
+           volume as in F13: the inputs were 5k to 14k tokens. The ST12
+           `judge_grounding` prompt is longer than the S12 one (Context, Examples,
+           Tone, Final checks). No batch looped in the 12 baseline runs scored with
+           the S12 prompt; four did in about 30 runs' worth of batches under the ST12
+           prompt, one of them twice on the same input. That is likely, not proven,
+           to be the prompt.
+Fix:       NYESD was rescored with `score --only grounding --rfp NYESD` and ran clean
+           on both labels. The Federal Way run 1 batch failed again on retry and is
+           left unscored: its items are absent from that run's grounding counts and
+           the cost table shows the judge failure. Open issue on ST12: a one-shot
+           retry at a different temperature in `Judge.call`, or a hard reason cap
+           ("at most 20 words, then stop") tested against the 40 hand labels.
+Before/after: 4 truncated batches in the ST12 passes; 3 recovered by one retry pass,
+           1 not.

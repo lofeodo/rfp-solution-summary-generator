@@ -396,12 +396,49 @@ Known weaknesses: one live comparison so far (Missouri, hierarchical won both or
 the two answers' reasons cited different strengths, so ties will be common on close
 pairs.
 
+### ST12 comparison
+
+Two result sets separate the judge change from the generator change.
+
+- **Judge prompts alone** (`evals/results/baseline_rejudged/`, the 12 baseline runs
+  rescored): agreement with the 40 hand labels 35 of 40 against 34 of 40. The new
+  judges are slightly stricter: precision 1 to 4 points lower, rubric feasibility
+  and consistency 0.3 to 1.0 lower on Colfax and Federal Way, grounding unsupported
+  counts within the run-to-run spread. Recall and judged coverage within 2 points.
+- **All prompts** (`evals/results/prompt_structure/`, two fresh runs per RFP, scored
+  with the new judges), against the baseline:
+
+| RFP | Recall | Precision | Judged coverage | Checklist covered | Requirements | Pipeline $ |
+|---|---|---|---|---|---|---|
+| Colfax | 99% → 96% | 97% → 91% | 96% → 98% | 9.0 → 9.5 | 120 → 129 | 0.056 → 0.059 |
+| Federal Way | 81% → 81% | 99% → 97% | 100% → 98% | 8.3 → 9.0 | 100 → 119 | 0.047 → 0.050 |
+| Missouri | 91% → 96% | 96% → 96% | 97% → 98% | 10.3 → 9.0 | 122 → 131 | 0.078 → 0.079 |
+| NYESD | 99% → 99% | 97% → 94% | 78% → 91% | 10.3 → 9.0 | 226 → 226 | 0.101 → 0.107 |
+
+Reading: recall is up on Missouri and flat elsewhere within the spread except a
+3-point Colfax dip; the extractor returns more items on three RFPs, which with the
+stricter judge explains most of the precision drop (Colfax is the outlier, 91% on both
+runs). NYESD judged coverage rose from 78% to 91%, which the S13 "name what you cite"
+fix had already moved (94% in `fix_solution_naming`), so that gain is not ST12's. The
+problem-statement checklist moved by about one fact either way on each RFP, within the
+baseline's own spread (sd up to 1.7). Pipeline cost rose by up to 6% from the longer
+instruction prefix. Grounding on Federal Way run 1 is missing one batch (F17).
+
+Verdict: the structure is neutral to slightly positive on what the evals measure, and
+the reliability signals improved (no dedupe fallback, fewer correction turns, judge
+agreement up one). Two content regressions the first pass exposed (dedupe examples,
+extractor recall framing) were fixed and are in the changelog.
+
 ## Changelog
 
 One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
+| 2026-11-02 | requirements_dedupe | Examples no longer group a general duty with a specific one; "when unsure, leave apart"; Final checks for mixed values and false conflicts | First ST12 pass: fallback in 2 of 8 runs (baseline 0 of 12), NYESD fuzzy merges 52 and 131 (baseline 27 to 41), Missouri conflicts 4 and 9 (baseline 2). Final pass: 0 fallbacks, correction turns 2 of 8 (baseline 6 of 12) |
+| 2026-11-02 | requirements_extract | Context says surplus is cheap and a miss is lost; Final checks ask that every imposing sentence has an item | First ST12 pass: NYESD 226 to 210 extracted, recall 99% to 93% (scope statement, fax/email rule and MWBE plan missed). Final pass: NYESD 226 extracted, recall 99% |
+| 2026-11-02 | judge_requirements | The three questions are answered separately; a changed modal verb is strictness, not a support failure | First ST12 wording: hand-label agreement 32 of 40 (precision 8 of 12). After: 35 of 40 (precision 11 of 12); baseline 34 of 40 |
+| 2026-11-02 | all 16 | Rewritten into the ST12 structure: Role (Big Four persona), Task, Context, Output, Rules, Examples, Tone, input blocks, Final checks; rule content kept | See "ST12 comparison" below |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |

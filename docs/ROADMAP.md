@@ -2429,10 +2429,10 @@ Priority order. Each gets the same entry structure when started.
 | ST9 | Observability dashboard in the UI beyond live progress | S15 | |
 | ST10 | Cloud deployment | S16 | Only with all core and evals done |
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
-| ST12 | One prompt structure: every prompt in `prompts/` rewritten into one documented section order (role, task, context, output, rules, examples, tone, input blocks, final checks), full eval rerun against the baseline | S13 | In progress 2026-11-02 on branch `prompt-structure` |
+| ST12 | One prompt structure: every prompt in `prompts/` rewritten into one documented section order (role, task, context, output, rules, examples, tone, input blocks, final checks), full eval rerun against the baseline | S13 | Done 2026-11-02 on branch `prompt-structure`; PR into `main` waits for the author |
 
 ### ST12. One prompt structure
-- **Status:** in progress
+- **Status:** done (PR into `main` open, waiting for the author)
 - **Goal:** every prompt in `prompts/` follows one documented structure grounded in
   prompt-engineering practice: a specific persona, the task in one or two sentences,
   the context the model works in (what it sees, what code does with the answer), the
@@ -2479,9 +2479,47 @@ Priority order. Each gets the same entry structure when started.
      the baseline run directories are rescored with the new judge prompts under label
      `baseline_rejudged` and checked against the 40 hand labels with `agree`. Both
      result sets are committed under `evals/results/` and listed in its README.
-- **What was done:** (filled as the work proceeds)
+- **What was done:**
+  - **Structure.** `prompts/README.md` documents the nine sections, their purpose,
+    the personas per family, the shared rule names and the conventions;
+    `docs/PROMPTS.md` gains "Structure and principles (ST12)" (the principle behind
+    each section and a per-prompt table of what moved) and an "ST12 comparison".
+  - **Prompts.** All 16 rewritten, one commit per family. Rule content tuned by
+    earlier evals (D31 scope, F6, F8 to F10, F12, F14) kept word for word; the
+    `{{unit}}`, `{{mode_rules}}` and `{{evidence_kind}}` splices, the literal lines
+    and tags the tests read, and the judge recognition phrases kept.
+  - **Test.** `tests/test_prompt_structure.py` (73 checks): heading order, required
+    sections non-empty, bold-named rules, one-paragraph Role and Task, placeholders
+    only in input blocks (plus the three spliced ones), LF endings, each judge phrase
+    in its Task and in no other judge prompt, the risk scales and requirement scope
+    identical across the prompts that share them, the README lists every prompt.
+  - **Evals.** `evals/results/baseline_rejudged/` (baseline outputs, new judges;
+    agreement 35 of 40 against 34 of 40) and `evals/results/prompt_structure/` (two
+    fresh runs per RFP with the final prompts, scored in full), each with
+    `diff_requirements.md`, `diff_problem.md`, `diff_solution.md` against the
+    baseline. Numbers in `docs/PROMPTS.md` (ST12 comparison).
+  - **Docs.** D42, F17, `evals/results/README.md` label table, README results
+    pointer, timelog.
 - **Deviations from plan:**
+  - The first eval pass found three content regressions introduced by the rewrite,
+    each fixed with its own commit and changelog line: `judge_requirements`
+    (agreement fell to 32 of 40), `requirements_extract` (NYESD recall 93%) and
+    `requirements_dedupe` (fallback in 2 of 8 runs). The `prompt_structure` label
+    was then deleted and regenerated with the final prompts, so it holds no mixed
+    prompt versions; the first-pass numbers live in the changelog.
+  - The rejudged baseline's precision section was rescored after the
+    `judge_requirements` fix; its other sections use the first ST12 judge wording,
+    which differs only in that prompt.
 - **Open issues:**
+  - F17: the grounding judge loops inside a `reason` string on some batches under
+    the ST12 prompt (4 events, 1 not recovered: Federal Way run 1 of
+    `prompt_structure` is missing one grounding batch). Candidate fixes: a one-shot
+    retry at another temperature in `Judge.call`, or a hard reason cap, checked
+    against the hand labels.
+  - Colfax precision 91% on both fresh runs (baseline 97%); the judge-only effect
+    explains 2 points of it. Worth a look at which Colfax items the judge rejects.
+  - Two fresh runs per RFP; differences under about 3 points are inside the
+    run-to-run spread.
 
 ---
 
