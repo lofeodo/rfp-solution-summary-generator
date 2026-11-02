@@ -1,8 +1,23 @@
 // TypeScript mirrors of the backend models (ui/backend/models.py) and the artifact JSON
 // (src/rfp_agent/schemas.py plus the agent wrappers). Field names match the JSON exactly.
 
-export type RunState = "queued" | "running" | "finished" | "failed";
-export type StageStatus = "started" | "finished" | "failed";
+// queued -> running -> awaiting_checkpoint -> drafting -> finished <-> refining -> signed_off,
+// and failed from any pipeline stage (ST12c).
+export type RunState =
+  | "queued"
+  | "running"
+  | "awaiting_checkpoint"
+  | "drafting"
+  | "finished"
+  | "refining"
+  | "signed_off"
+  | "failed";
+// No job in flight: the run waits for a human, or for nothing. The SSE stream closes here.
+export const RESTING: ReadonlySet<RunState> = new Set<RunState>(["awaiting_checkpoint", "finished", "signed_off", "failed"]);
+export const isResting = (s: RunState | null | undefined): boolean => !!s && RESTING.has(s);
+
+// `waiting` is the checkpoint stage while the run waits for a human.
+export type StageStatus = "started" | "finished" | "failed" | "waiting";
 
 export interface RunTotals {
   input_tokens: number;
@@ -61,6 +76,7 @@ export interface RunStatus {
   nodes: NodeMetrics[];
   langfuse_trace_url: string | null;
   artifacts: string[];
+  review: ReviewState;
 }
 
 export interface Health {
@@ -120,6 +136,7 @@ export interface Requirement {
   quote_verified: boolean;
   merged_from: string[];
   conflicts_with: string[];
+  origin?: "generated" | "reviewed";
 }
 
 export interface Ambiguity {
@@ -305,6 +322,127 @@ export interface SplitDocument {
   sections: Section[];
 }
 
+// ---- Human in the loop (ST12) ----
+
+export type Artefact = "requirements" | "problem" | "solution" | "risks";
+
+export interface RequirementDecision {
+  requirement_id: string;
+  action: "accept" | "reject";
+  strictness?: Strictness | null;
+  type?: RequirementType | null;
+  note?: string | null;
+}
+
+export interface BriefChunk {
+  id: string;
+  text: string;
+}
+
+export interface Brief {
+  text: string;
+  chunks: BriefChunk[];
+}
+
+export interface CheckpointRecord {
+  reviewer: string;
+  confirmed_at: string;
+  waited_s: number;
+  decisions: RequirementDecision[];
+  brief: Brief | null;
+  note: string | null;
+}
+
+export interface ArtefactVersion {
+  version: number;
+  stale: boolean;
+  stale_because: string | null;
+  updated_at: string | null;
+}
+
+export interface SignOff {
+  reviewer: string;
+  signed_at: string;
+  note: string | null;
+  versions: Partial<Record<Artefact, number>>;
+}
+
+export interface VersionState {
+  artefacts: Partial<Record<Artefact, ArtefactVersion>>;
+  signed_off: SignOff | null;
+}
+
+export interface Allowed {
+  checkpoint: boolean;
+  revise: Artefact[];
+  regenerate: ("solution" | "risk")[];
+  sign_off: boolean;
+}
+
+export interface ReviewState {
+  checkpoint: CheckpointRecord | null;
+  versions: VersionState;
+  stale: Artefact[];
+  sign_off: SignOff | null;
+  revisions: number;
+  allowed: Allowed;
+}
+
+export interface FieldChange {
+  path: string;
+  before: unknown;
+  after: unknown;
+}
+
+export interface DiffSummary {
+  added: string[];
+  removed: string[];
+  changed: FieldChange[];
+}
+
+export interface RevisionRecord {
+  id: string;
+  kind: "revise" | "regenerate" | "sign_off";
+  artefact: Artefact | null;
+  reviewer: string;
+  instruction: string | null;
+  note: string | null;
+  from_version: number | null;
+  to_version: number | null;
+  made_stale: Artefact[];
+  model: string | null;
+  calls: number;
+  cost_usd: number;
+  latency_s: number;
+  diff: DiffSummary | null;
+  status: "applied" | "failed";
+  error: string | null;
+  created_at: string;
+}
+
+export interface RevisionLog {
+  revisions: RevisionRecord[];
+}
+
+export interface JobAccepted {
+  run_id: string;
+  status: RunState;
+  revision_id: string | null;
+}
+
+export interface CheckpointBody {
+  reviewer: string;
+  decisions: RequirementDecision[];
+  brief: string | null;
+  note: string | null;
+}
+
+export interface ReviseBody {
+  reviewer: string;
+  artefact: Artefact;
+  instruction: string;
+}
+
 export interface ArtifactMap {
   parsed: ParsedDocument;
   quality: ParseQualityReport;
@@ -312,6 +450,8 @@ export interface ArtifactMap {
   requirements: RequirementsOutput;
   requirements_report: RequirementsReport;
   problem: ProblemResult;
+  checkpoint: CheckpointRecord;
+  requirements_confirmed: RequirementsOutput;
   solution: SolutionResult;
   risks: RiskResult;
   summary: SolutionSummary;

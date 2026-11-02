@@ -11,6 +11,7 @@ export default function UploadForm({ defaultModel }: { defaultModel: string | nu
     fullTextProblem: false,
     singleCallExtraction: false,
     maxIterations: null,
+    unattended: false,
   });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -112,6 +113,18 @@ export default function UploadForm({ defaultModel }: { defaultModel: string | nu
             className="w-24 border-b-2 border-ink bg-transparent py-0.5 font-mono text-sm placeholder:text-muted focus:border-accent focus:outline-none"
           />
           <span className="text-muted">coverage rounds</span>
+        </label>
+        <label className="flex items-start gap-2 text-sm">
+          <input
+            type="checkbox"
+            checked={opts.unattended}
+            onChange={(e) => setOpts({ ...opts, unattended: e.target.checked })}
+            className="mt-1 accent-accent"
+          />
+          <span>
+            <span className="font-mono text-xs">unattended</span>
+            <span className="block text-muted">Run to the end without pausing at the checkpoint</span>
+          </span>
         </label>
       </fieldset>
 
