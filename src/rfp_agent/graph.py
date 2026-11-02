@@ -64,6 +64,7 @@ from rfp_agent.schemas import (
     StageRecord,
     StageStatus,
     StrictModel,
+    VlmScope,
 )
 from rfp_agent.splitting import split_document
 
@@ -421,6 +422,8 @@ def apply_overrides(
     full_text_problem: bool | None = None,
     single_call_extraction: bool | None = None,
     max_iterations: int | None = None,
+    vlm: bool | None = None,
+    vlm_scope: VlmScope | None = None,
 ) -> Settings:
     """A copy of ``settings`` with the CLI's per-run overrides applied."""
     updates: dict[str, Any] = {}
@@ -432,6 +435,10 @@ def apply_overrides(
         updates["single_call_extraction"] = single_call_extraction
     if max_iterations is not None:
         updates["solution_max_iterations"] = max_iterations
+    if vlm is not None:
+        updates["vlm"] = vlm
+    if vlm_scope is not None:
+        updates["vlm_scope"] = vlm_scope
     return settings.model_copy(update=updates) if updates else settings
 
 

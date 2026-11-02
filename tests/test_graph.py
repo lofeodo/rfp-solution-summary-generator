@@ -257,6 +257,9 @@ def test_apply_overrides_copies_only_when_needed():
     assert (s.model, s.full_text_problem, s.solution_max_iterations) == ("anthropic:x", True, 5)
     assert s.single_call_extraction is SETTINGS.single_call_extraction
     assert SETTINGS.model != "anthropic:x"
+    v = apply_overrides(SETTINGS, vlm=True, vlm_scope="flagged")
+    assert (v.vlm, v.vlm_scope) == (True, "flagged")
+    assert (SETTINGS.vlm, SETTINGS.vlm_scope) == (False, "judged")
 
 
 def test_run_log_round_trips_stage_records():
