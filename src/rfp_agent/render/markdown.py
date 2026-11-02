@@ -13,15 +13,20 @@ from collections.abc import Iterable
 from pathlib import PurePath
 
 from rfp_agent.schemas import (
+    CheckpointRecord,
     ChunkRef,
     Claim,
     ClaimKind,
     DecisionAction,
+    DiffSummary,
     Likelihood,
     Requirement,
     RequirementType,
+    RevisionRecord,
+    RevisionStatus,
     RiskSource,
     Severity,
+    SignOff,
     SolutionSummary,
     Strictness,
 )
@@ -136,7 +141,16 @@ def _header(s: SolutionSummary) -> list[str]:
         cp = s.review.checkpoint
         when = cp.confirmed_at.isoformat()
         lines.append(f"- **Checkpoint:** confirmed by {_inline(cp.reviewer)} on {when}")
+    if s.review is not None and s.review.sign_off is not None:
+        lines.append(f"- **Signed off:** {_sign_off_text(s.review.sign_off)}")
     return [f"# Solution summary: {_inline(title)}", "\n".join(lines)]
+
+
+def _sign_off_text(so: SignOff) -> str:
+    """``by Dana on <time> (requirements v2, problem v1, solution v3, risks v2)``."""
+    versions = ", ".join(f"{a.value} v{v}" for a, v in so.versions.items())
+    text = f"by {_inline(so.reviewer)} on {so.signed_at.isoformat()}"
+    return text + (f" ({versions})" if versions else "")
 
 
 def _problem(s: SolutionSummary, index: dict[str, ChunkRef]) -> list[str]:
@@ -284,13 +298,7 @@ def _flags(s: SolutionSummary) -> list[str]:
     return ["## Parse flags", _id_list(lines)]
 
 
-def _review(s: SolutionSummary) -> list[str]:
-    """The human touchpoints of the run (ST12): who confirmed the checkpoint, when, what
-    they changed, and the pursuit brief the draft was built on. Omitted for an
-    unattended run."""
-    if s.review is None or s.review.checkpoint is None:
-        return []
-    cp = s.review.checkpoint
+def _checkpoint_lines(cp: CheckpointRecord) -> list[str]:
     lines = [
         "- **Checkpoint:** confirmed by "
         + _join(
@@ -317,10 +325,67 @@ def _review(s: SolutionSummary) -> list[str]:
         note = f" ({_inline(d.note)})" if d.note else ""
         edits.append(f"  - **{d.requirement_id}:** {'; '.join(changes)}{note}")
     lines.append("- **Edited requirements:**" + ("\n" + "\n".join(edits) if edits else f" {NONE}"))
-    blocks = ["## Review history", "\n".join(lines)]
-    if cp.brief is not None:
-        brief_lines = [f"- **{c.id}** {_inline(c.text)}" for c in cp.brief.chunks]
-        blocks += ["### Pursuit brief", "\n".join(brief_lines)]
+    return lines
+
+
+def _diff_counts(diff: DiffSummary | None) -> str:
+    if diff is None:
+        return ""
+    if diff.empty:
+        return "no change"
+    parts = [
+        f"{len(diff.added)} added" if diff.added else "",
+        f"{len(diff.removed)} removed" if diff.removed else "",
+        f"{len(diff.changed)} changed" if diff.changed else "",
+    ]
+    return ", ".join(p for p in parts if p)
+
+
+def _revision_line(r: RevisionRecord) -> str:
+    what = r.kind.value.replace("_", " ") + (f" {r.artefact.value}" if r.artefact else "")
+    head = f"- **{r.id}** {what} by {_inline(r.reviewer)} on {r.created_at.isoformat()}"
+    if r.status is RevisionStatus.FAILED:
+        return f"{head}: failed ({_inline(r.error or 'no error text')})"
+    details = []
+    if r.instruction:
+        details.append(f'"{_inline(r.instruction)}"')
+    if r.from_version is not None and r.to_version is not None:
+        details.append(f"v{r.from_version} to v{r.to_version}")
+    if counts := _diff_counts(r.diff):
+        details.append(counts)
+    if r.made_stale:
+        details.append("made stale: " + ", ".join(a.value for a in r.made_stale))
+    if r.calls:
+        details.append(f"{r.calls} call{'s' if r.calls != 1 else ''}, ${r.cost_usd:.4f}")
+    if r.note:
+        details.append(_inline(r.note))
+    return head + (": " + "; ".join(details) if details else "")
+
+
+def _review(s: SolutionSummary) -> list[str]:
+    """The human touchpoints of the run (ST12): who confirmed the checkpoint, when, what
+    they changed, the pursuit brief the draft was built on, every revision since, and the
+    sign-off. Omitted for an unattended run."""
+    review = s.review
+    if review is None or (
+        review.checkpoint is None and not review.revisions and review.sign_off is None
+    ):
+        return []
+    cp = review.checkpoint
+    blocks = ["## Review history"]
+    if cp is not None:
+        blocks.append("\n".join(_checkpoint_lines(cp)))
+        if cp.brief is not None:
+            brief_lines = [f"- **{c.id}** {_inline(c.text)}" for c in cp.brief.chunks]
+            blocks += ["### Pursuit brief", "\n".join(brief_lines)]
+    if review.revisions:
+        blocks += ["### Revisions", "\n".join(_revision_line(r) for r in review.revisions)]
+    if review.sign_off is not None:
+        so = review.sign_off
+        line = f"Signed off {_sign_off_text(so)}."
+        if so.note:
+            line += f" {_inline(so.note)}"
+        blocks += ["### Sign-off", line]
     return blocks
 
 
