@@ -31,6 +31,7 @@ import re
 from collections.abc import Iterable
 from datetime import datetime
 from enum import StrEnum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -672,10 +673,178 @@ class CheckpointRecord(StrictModel):
         ]
 
 
+# --------------------------------------------------------------------------------------
+# Human in the loop (ST12b): revisions, versions and sign-off
+# --------------------------------------------------------------------------------------
+
+REVISION_ID_RE = r"^V\d{2,}$"
+
+
+class Artefact(StrEnum):
+    """An artefact a reviewer can revise. The value is the state key of the pipeline."""
+
+    REQUIREMENTS = "requirements"
+    PROBLEM = "problem"
+    SOLUTION = "solution"
+    RISKS = "risks"
+
+
+class RevisionKind(StrEnum):
+    REVISE = "revise"
+    REGENERATE = "regenerate"
+    SIGN_OFF = "sign_off"
+
+
+class RevisionStatus(StrEnum):
+    APPLIED = "applied"
+    FAILED = "failed"
+
+
+# LLM output contract for a requirements revision: a patch, applied and checked by code.
+# New requirement IDs are assigned by code; a new or changed quote must be verbatim in the
+# chunk it names.
+
+
+class RequirementEdit(StrictModel):
+    id: str = Field(pattern=REQUIREMENT_ID_RE, description="The requirement to change")
+    text: str | None = Field(default=None, description="New statement, if it changes")
+    type: RequirementType | None = Field(default=None, description="New type, if it changes")
+    strictness: Strictness | None = Field(
+        default=None, description="New strictness, if it changes"
+    )
+    quote: str | None = Field(
+        default=None,
+        description="New verbatim quote, copied character for character from the chunk "
+        "named in chunk_id; omit to keep the current quote",
+    )
+    chunk_id: str | None = Field(
+        default=None, pattern=CHUNK_ID_RE, description="The chunk the new quote is from"
+    )
+
+
+class RequirementsPatch(StrictModel):
+    edits: list[RequirementEdit] = Field(
+        default_factory=list, description="Changes to existing requirements, by ID"
+    )
+    additions: list[CitedRequirement] = Field(
+        default_factory=list, description="New requirements, each quoting a chunk shown"
+    )
+    removals: list[str] = Field(
+        default_factory=list, description="IDs of requirements to remove"
+    )
+
+
+# Whole-artefact revision contracts: the draft contracts plus an optional stable ID. An
+# item that keeps its ID is the same item revised; an item without one is new.
+
+
+class ComponentRevision(ComponentDraft):
+    id: str | None = Field(
+        default=None,
+        pattern=COMPONENT_ID_RE,
+        description="The current component's ID when this is a kept or changed one; "
+        "omit for a new component",
+    )
+
+
+class SolutionRevision(SolutionDraft):
+    components: list[ComponentRevision] = Field(default_factory=list)
+
+
+class RiskRevision(RiskDraft):
+    id: str | None = Field(
+        default=None,
+        pattern=RISK_ID_RE,
+        description="The current risk's ID when this is a kept or changed one; omit for a "
+        "new risk",
+    )
+
+
+class RiskAssessmentRevision(RiskAssessmentDraft):
+    risks: list[RiskRevision] = Field(default_factory=list)
+
+
+class ArtefactVersion(StrictModel):
+    """Where one artefact stands: its current version and whether an upstream change
+    has made it stale."""
+
+    version: int = Field(default=1, ge=1)
+    stale: bool = False
+    stale_because: str | None = None
+    updated_at: datetime | None = None
+
+
+class SignOff(StrictModel):
+    reviewer: str = Field(min_length=1)
+    signed_at: datetime
+    note: str | None = None
+    versions: dict[Artefact, int] = Field(
+        default_factory=dict, description="The version of each artefact signed off"
+    )
+
+
+def _fresh_versions() -> dict[Artefact, ArtefactVersion]:
+    return {a: ArtefactVersion() for a in Artefact}
+
+
+class VersionState(StrictModel):
+    """``current.json``: per-artefact version and stale flag, and the sign-off."""
+
+    artefacts: dict[Artefact, ArtefactVersion] = Field(default_factory=_fresh_versions)
+    signed_off: SignOff | None = None
+
+
+class FieldChange(StrictModel):
+    path: str
+    before: Any = None
+    after: Any = None
+
+
+class DiffSummary(StrictModel):
+    """Code-computed difference between two versions of an artefact: item paths added or
+    removed, and field changes with their before and after values."""
+
+    added: list[str] = Field(default_factory=list)
+    removed: list[str] = Field(default_factory=list)
+    changed: list[FieldChange] = Field(default_factory=list)
+
+    @property
+    def empty(self) -> bool:
+        return not (self.added or self.removed or self.changed)
+
+
+class RevisionRecord(StrictModel):
+    """One entry of the append-only ``revisions.json``."""
+
+    id: str = Field(pattern=REVISION_ID_RE)
+    kind: RevisionKind
+    artefact: Artefact | None = None
+    reviewer: str = Field(min_length=1)
+    instruction: str | None = None
+    note: str | None = None
+    from_version: int | None = None
+    to_version: int | None = None
+    made_stale: list[Artefact] = Field(default_factory=list)
+    model: str | None = None
+    calls: int = 0
+    cost_usd: float = 0.0
+    latency_s: float = 0.0
+    diff: DiffSummary | None = None
+    status: RevisionStatus = RevisionStatus.APPLIED
+    error: str | None = None
+    created_at: datetime
+
+
+class RevisionLog(StrictModel):
+    revisions: list[RevisionRecord] = Field(default_factory=list)
+
+
 class ReviewHistory(StrictModel):
     """Every human touchpoint of a run, rendered into the summary (ST12)."""
 
     checkpoint: CheckpointRecord | None = None
+    revisions: list[RevisionRecord] = Field(default_factory=list)
+    sign_off: SignOff | None = None
 
 
 # --------------------------------------------------------------------------------------

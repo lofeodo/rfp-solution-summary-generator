@@ -54,6 +54,7 @@ from rfp_agent.checkpoint import (
     CONFIRMED_REQUIREMENTS_FILENAME,
     apply_checkpoint,
 )
+from rfp_agent import versions
 from rfp_agent.config import RUNS_DIR, Settings, get_settings
 from rfp_agent.llm import get_chat_model
 from rfp_agent.observability import (
@@ -67,6 +68,7 @@ from rfp_agent.parsing import parse_pdf
 from rfp_agent.parsing.quality import run_quality_pass
 from rfp_agent.render import assemble, write_summary
 from rfp_agent.schemas import (
+    Artefact,
     Brief,
     CheckpointRecord,
     ParsedDocument,
@@ -123,6 +125,13 @@ _ORDER: dict[str, int] = {
     ASSEMBLE: 7,
 }
 START_STAGES: tuple[str, ...] = (PARSE, SPLIT, REQUIREMENTS, SOLUTION, RISK, ASSEMBLE)
+# A graph built with ``end_stage`` stops after it: regenerating one stage (ST12b) runs
+# that stage alone, never what follows it.
+END_STAGES: tuple[str, ...] = (SOLUTION, RISK, ASSEMBLE)
+
+# A reviewer's revision of an artefact (ST12b). Not a graph node: a stage record and the
+# LLM calls (``revise_*``) are recorded on the same run log by ``rfp_agent.refine``.
+REVISE = "revise"
 
 # LLM node names (``NodeMetrics.node``) that belong to each stage, by prefix.
 STAGE_NODE_PREFIXES: dict[str, tuple[str, ...]] = {
@@ -131,6 +140,7 @@ STAGE_NODE_PREFIXES: dict[str, tuple[str, ...]] = {
     PROBLEM: ("problem_",),
     SOLUTION: ("solution_",),
     RISK: ("risk_",),
+    REVISE: ("revise_",),
 }
 
 # Intermediate files written into the run directory: stage -> (state key, file name).
@@ -177,6 +187,7 @@ class PipelineState(TypedDict, total=False):
     requirements_report: RequirementsReport
     problem: ProblemResult
     checkpoint: CheckpointRecord  # set by resume_pipeline (ST12)
+    review: ReviewHistory  # checkpoint, revisions and sign-off, for assemble (ST12b)
     paused_at: str  # set by the checkpoint node when the run stops there
     solution: SolutionResult
     risks: RiskResult
@@ -277,12 +288,14 @@ def write_stage_files(stage: str, updates: dict[str, Any], out_dir: Path) -> dic
     return written
 
 
-def load_state(run_dir: Path) -> PipelineState:
+def load_state(run_dir: Path, *, confirmed: bool = False) -> PipelineState:
     """Read a run directory's stage files back into a ``PipelineState`` (ST12).
 
     Every file a stage wrote is loaded; missing files are skipped, so the state holds
     exactly what the run got to. ``requirements`` is the extractor's output
-    (``requirements.json``); the confirmed list, if any, is applied by the caller.
+    (``requirements.json``), unless ``confirmed`` is set and the run has a confirmed
+    list (``requirements_confirmed.json``, written at the checkpoint or by a revision
+    while the run waits): then it is that list, the one every later stage works from.
     """
     run_dir = Path(run_dir)
     state: PipelineState = {}
@@ -297,6 +310,12 @@ def load_state(run_dir: Path) -> PipelineState:
             loaded = _STATE_MODELS[key](path.read_text(encoding="utf-8"))
             state[key] = loaded  # type: ignore[literal-required]
             paths[filename] = str(path)
+    confirmed_path = run_dir / CONFIRMED_REQUIREMENTS_FILENAME
+    if confirmed and confirmed_path.is_file():
+        state["requirements"] = RequirementsOutput.model_validate_json(
+            confirmed_path.read_text(encoding="utf-8")
+        )
+        paths[confirmed_path.name] = str(confirmed_path)
     if "parsed" in state:
         state["pdf_path"] = state["parsed"].source_path
     if paths:
@@ -327,6 +346,7 @@ def build_pipeline(
     out_dir: Path | None = None,
     on_event: EventCallback | None = None,
     start_stage: str = PARSE,
+    end_stage: str = ASSEMBLE,
     pause_at_checkpoint: bool = False,
 ):
     """Compile the pipeline graph with its runtime objects bound.
@@ -334,15 +354,22 @@ def build_pipeline(
     ``out_dir`` receives each stage's JSON as it finishes (``None`` writes nothing;
     the final ``summary.json`` and ``summary.md`` are written only when it is set).
     ``start_stage`` (one of ``START_STAGES``) builds only the nodes from that stage on,
-    for a resumed run whose earlier state comes from ``load_state``.
+    for a resumed run whose earlier state comes from ``load_state``; ``end_stage`` (one
+    of ``END_STAGES``) stops after that stage, so a regeneration (ST12b) runs one stage.
     ``pause_at_checkpoint`` makes the checkpoint node stop the run (ST12).
     """
     if start_stage not in START_STAGES:
         raise ValueError(f"start_stage must be one of {START_STAGES}, not {start_stage!r}")
+    if end_stage not in END_STAGES or _ORDER[end_stage] < _ORDER[start_stage]:
+        raise ValueError(
+            f"end_stage must be one of {END_STAGES} and not before {start_stage!r}, "
+            f"not {end_stage!r}"
+        )
     first = _ORDER[start_stage]
+    last = _ORDER[end_stage]
 
     def included(name: str) -> bool:
-        return _ORDER[name] >= first
+        return first <= _ORDER[name] <= last
 
     def title_of(state: PipelineState) -> str:
         return state["parsed"].title or Path(state["pdf_path"]).name
@@ -513,7 +540,8 @@ def build_pipeline(
             risks=state["risks"].assessment,
             strict=True,
             brief=brief_of(state),
-            review=ReviewHistory(checkpoint=record) if record is not None else None,
+            review=state.get("review")
+            or (ReviewHistory(checkpoint=record) if record is not None else None),
         )
         updates: dict[str, Any] = {"summary": summary}
         if out_dir is not None:
@@ -548,13 +576,13 @@ def build_pipeline(
         if _ORDER[name] == first:
             graph.add_edge(START, name)
     for source, target in edges:
-        if included(source):
+        if included(source) and included(target):
             graph.add_edge(source, target)
     if included(REQUIREMENTS):
         graph.add_edge([REQUIREMENTS, PROBLEM], CHECKPOINT)
     if included(CHECKPOINT):
         graph.add_conditional_edges(CHECKPOINT, after_checkpoint, {END: END, SOLUTION: SOLUTION})
-    graph.add_edge(ASSEMBLE, END)
+    graph.add_edge(end_stage, END)
     return graph.compile()
 
 
@@ -651,6 +679,9 @@ def resume_pipeline(
     ``waiting`` checkpoint record with the time the run waited, and invokes the graph
     from ``solution`` on the same run log, so totals accumulate across the pause.
 
+    When the requirements were revised while the run waited (ST12b), the decisions apply
+    on top of that revised list, and the confirmed list becomes its next version.
+
     Raises ``PipelineStateError`` when the directory holds no run waiting at the
     checkpoint.
     """
@@ -662,7 +693,7 @@ def resume_pipeline(
     waiting = waiting_checkpoint(log)
     if waiting is None:
         raise PipelineStateError(f"run {log.run_id} is not waiting at the checkpoint")
-    state = load_state(run_dir)
+    state = load_state(run_dir, confirmed=True)
     for key in ("parsed", "split", "requirements", "problem"):
         if key not in state:
             raise PipelineStateError(f"run {log.run_id} has no {key} to resume from")
@@ -688,8 +719,13 @@ def resume_pipeline(
     paths = write_stage_files(
         CHECKPOINT, {"checkpoint": record, "requirements": confirmed}, run_dir
     )
+    if versions.is_versioned(run_dir, Artefact.REQUIREMENTS) and confirmed != state["requirements"]:
+        vstate = versions.load_version_state(run_dir)
+        versions.commit(run_dir, Artefact.REQUIREMENTS, confirmed, vstate)
+        versions.save_version_state(run_dir, vstate)
     state["requirements"] = confirmed
     state["checkpoint"] = record
+    state["review"] = versions.review_history(run_dir, record)
     state["output_paths"] = {**state.get("output_paths", {}), **paths}
     state.pop("paused_at", None)
     if on_event is not None:
@@ -721,9 +757,10 @@ def _invoke(
     on_event: EventCallback | None,
     start_stage: str,
     pause_at_checkpoint: bool,
+    end_stage: str = ASSEMBLE,
 ) -> PipelineResult:
-    """Build the graph from ``start_stage``, run it on ``state`` under the recorder and
-    the optional Langfuse handler, and wrap the outcome."""
+    """Build the graph from ``start_stage`` to ``end_stage``, run it on ``state`` under
+    the recorder and the optional Langfuse handler, and wrap the outcome."""
     handler = make_langfuse_handler(settings)
     config: RunnableConfig = {
         "run_name": f"rfp-run-{recorder.run_id}",
@@ -738,6 +775,7 @@ def _invoke(
         out_dir=recorder.run_dir,
         on_event=on_event,
         start_stage=start_stage,
+        end_stage=end_stage,
         pause_at_checkpoint=pause_at_checkpoint,
     )
     try:
