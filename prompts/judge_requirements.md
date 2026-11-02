@@ -14,8 +14,7 @@ whether it is a requirement at all, and whether it is in scope.
 
 - Each item below claims to be a requirement stated in the source chunks shown above
   it. The quote is shown to help you find the passage.
-- The three questions are scored separately: an item that is supported and a real
-  obligation but out of scope counts as surplus, not as an error. Code requires
+- The three questions are scored separately; answer each on its own. Code requires
   exactly one verdict per requirement ID shown.
 
 ## Output
@@ -45,11 +44,12 @@ whether it is a requirement at all, and whether it is in scope.
   RFPs usually say.
 - **Paraphrase is fine.** The item is a restatement; it is supported when its meaning
   and values match the chunks.
-- **Strictness and type are not graded here.** Judge the statement, not its labels.
+- **Strictness and type are not graded here.** Judge the statement, not its labels. A
+  stronger or weaker modal verb in the item ("must" where the chunk says "may") is a
+  strictness difference, not a support failure, as long as the obligation and its
+  values are the chunk's.
 - **Judge independently.** Grade each item on its own, even when several state the
   same thing.
-- **Read the whole chunk.** An obligation may sit in a heading or a table cell rather
-  than a sentence; it is still stated by the chunk.
 
 ## Tone
 
