@@ -23,8 +23,8 @@ export function useRunData(runId: string, status: RunStatus | null) {
   // checkpoint), else the extractor's. Never the extracted list while the confirmed one loads.
   const requirements = has("requirements_confirmed") ? confirmed : extracted;
   const index = useMemo(
-    () => buildIndex({ split, requirements, solution, risks }),
-    [split, requirements, solution, risks],
+    () => buildIndex({ split, requirements, solution, risks, checkpoint }),
+    [split, requirements, solution, risks, checkpoint],
   );
   // A view whose artifact is on disk but not fetched yet shows "Loading", not "Not yet".
   return { parsed, quality, split, requirements, extracted, report, problem, checkpoint, solution, risks, index, has };

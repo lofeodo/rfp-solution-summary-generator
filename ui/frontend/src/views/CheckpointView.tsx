@@ -2,15 +2,16 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import type { Artefact, CheckpointRecord, Requirement, RevisionRecord, RunStatus } from "../api/types";
+import { RevisionLine } from "../components/DiffView";
 import { CiteChip } from "../components/source";
-import { SectionHead, SubHead, Tag, Waiting } from "../components/ui";
+import { SectionHead, SubHead, Waiting } from "../components/ui";
 import type { RunData } from "../hooks/useRunData";
 import { BRIEF_TEMPLATE, dropUnfilledTemplate, parseBrief } from "../lib/brief";
 import { counts, decisions, prune, setRow, type CheckpointDraft, type RowDraft } from "../lib/checkpoint";
-import { secs, usd, when } from "../lib/format";
+import { secs, when } from "../lib/format";
 import { TYPE_LABELS } from "../lib/requirements";
-import { compactDiff } from "../lib/revisions";
-import { REVIEWER_KEY, checkpointKey, load, save } from "../lib/storage";
+import { checkpointKey, load, save } from "../lib/storage";
+import { useReview } from "../hooks/useReview";
 import CheckpointRows from "./CheckpointRows";
 
 const INPUT =
@@ -62,12 +63,14 @@ function CheckpointForm({ runId, data, status, refresh }: Props & { status: RunS
   const allowed = status.review.allowed;
   const busy = status.status !== "awaiting_checkpoint";
 
-  const [reviewer, setReviewer] = useState(() => load<string>(REVIEWER_KEY, ""));
+  // The reviewer's name lives on the run page, shared with the refine and sign-off forms.
+  const review = useReview();
+  const reviewer = review?.reviewer ?? "";
+  const setReviewer = review?.setReviewer ?? (() => undefined);
   const [saved, setSaved] = useState<Saved>(() => ({ draft: {}, brief: "", note: "", ...load<Partial<Saved>>(checkpointKey(runId), {}) }));
   const { draft, brief, note } = saved;
   const update = (patch: Partial<Saved>) => setSaved((prev) => ({ ...prev, ...patch }));
 
-  useEffect(() => save(REVIEWER_KEY, reviewer.trim() || null), [reviewer]);
   useEffect(() => save(checkpointKey(runId), saved), [runId, saved]);
   // A revision may remove requirements or apply a change the reviewer had drafted.
   useEffect(() => {
@@ -321,39 +324,6 @@ function InstructionBox({
       </div>
     </div>
   );
-}
-
-const LIST_ITEMS = 6;
-
-// A compact account of one revision; the full diff view is ST12e's.
-function RevisionLine({ r }: { r: RevisionRecord }) {
-  const d = r.diff ? compactDiff(r.diff) : null;
-  return (
-    <li className="hair space-y-1 py-2.5">
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="font-mono text-xs">{r.id}</span>
-        <Tag tone={r.status === "failed" ? "accent" : "ink"}>{r.status}</Tag>
-        <span className="font-mono text-[11px] text-muted">
-          {r.artefact}
-          {r.to_version ? ` v${r.from_version}→v${r.to_version}` : ""} · {r.reviewer} · {usd(r.cost_usd)} · {secs(r.latency_s)}
-        </span>
-      </div>
-      {r.instruction && <p className="text-[15px] italic">“{r.instruction}”</p>}
-      {r.error && <p className="font-mono text-[11px] text-accent">{r.error}</p>}
-      {d && r.status === "applied" && (
-        <p className="font-mono text-[11px]">
-          {d.added.length > 0 && <span className="mr-3">+ added {short(d.added)}</span>}
-          {d.removed.length > 0 && <span className="mr-3 text-accent">− removed {short(d.removed)}</span>}
-          {d.changed.length > 0 && <span className="text-muted">~ changed {short(d.changed)}</span>}
-          {d.added.length + d.removed.length + d.changed.length === 0 && <span className="text-muted">no change</span>}
-        </p>
-      )}
-    </li>
-  );
-}
-
-function short(items: string[]): string {
-  return items.length <= LIST_ITEMS ? items.join(", ") : `${items.slice(0, LIST_ITEMS).join(", ")} +${items.length - LIST_ITEMS}`;
 }
 
 // ---- confirm -------------------------------------------------------------------------

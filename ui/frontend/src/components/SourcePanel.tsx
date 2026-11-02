@@ -138,6 +138,20 @@ function Body({ id }: { id: string }) {
       if (!c) return <Missing id={id} />;
       return <Item kicker={`Chunk · ${pages(c.page_start, c.page_end)}`} title={cleanTitle(c.section_title)} chunkIds={[id]} />;
     }
+    case "brief": {
+      const h = index.brief.get(id);
+      if (!h) return <Missing id={id} />;
+      return (
+        <div>
+          <p className="kicker">Pursuit brief · human input, not the RFP</p>
+          <p className="mt-3 whitespace-pre-line border-l-4 border-accent pl-4 text-lg leading-relaxed">{h.text}</p>
+          <p className="mt-5 font-mono text-[11px] text-muted">
+            {id}, written{index.briefBy ? ` by ${index.briefBy}` : ""} at the checkpoint. Claims citing it rest on the
+            reviewer's word, not on a page of the RFP.
+          </p>
+        </div>
+      );
+    }
     default:
       return <Missing id={id} />;
   }
