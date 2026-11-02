@@ -102,7 +102,9 @@ dropped from the solution), and keeps every version with a diff and its cost. Wh
 depends on a change is marked stale and regenerated only on request; `sign-off` is
 refused until nothing is stale, then freezes the run. See
 [docs/USAGE.md](docs/USAGE.md) for the commands and `--unattended` for the one-shot
-run; the UI gets the checkpoint and refinement in later steps.
+run. The backend API takes the same checkpoint, revisions, regenerations and sign-off,
+and an upload through it pauses at the checkpoint too; the UI screens for them come in
+later steps.
 
 ## Why you can trust a claim
 
