@@ -10,7 +10,8 @@ details, the evaluation harness, and troubleshooting.
 conda create -n rfp-solution-gen python=3.12 -y
 conda activate rfp-solution-gen
 pip install -r requirements.txt          # also installs the package in editable mode (-e .)
-cp .env.example .env                     # then fill in DEEPSEEK_API_KEY (and ANTHROPIC_API_KEY for evals)
+# copy .env.example to .env (`copy` on Windows cmd, `cp` elsewhere), then fill in
+# DEEPSEEK_API_KEY (and ANTHROPIC_API_KEY for evals)
 pytest                                   # unit tests; nothing here calls a paid API
 pytest --update-golden                   # rewrite golden files after an intended render change
 pytest -m llm                            # live smoke tests against the real APIs (paid)
@@ -127,7 +128,8 @@ docker run --rm --env-file .env -v "$PWD/runs:/app/runs" rfp-agent \
     python -m rfp_agent run data/rfps/colfax.pdf --single-call-extraction
 ```
 
-On PowerShell replace `$PWD` with `${PWD}`. The container runs as a non-root user and
+The volume flag is the one shell-specific part: `$PWD` in bash, `${PWD}` in PowerShell,
+`%cd%` in Windows cmd. The container runs as a non-root user and
 writes only under `/app/runs`; mount an empty or existing `runs/` directory there.
 Settings are read from the environment, so any `RFP_*` variable in `.env` (or passed
 with `-e`) applies inside the container exactly as it does locally.

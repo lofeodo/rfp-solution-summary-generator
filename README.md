@@ -9,25 +9,34 @@ can check it with one click.
 
 ## Open the UI
 
+Run every command from the repository folder. They work the same in Windows `cmd`,
+PowerShell and bash unless a line says otherwise.
+
 **With Docker** (nothing else to install):
 
-1. `cp .env.example .env` and put your `DEEPSEEK_API_KEY` in it
+1. Make a copy of the file `.env.example`, name it `.env`, and paste your DeepSeek
+   key after `DEEPSEEK_API_KEY=`.
 2. `docker build -t rfp-agent .`
-3. `docker run --rm -p 8000:8000 --env-file .env -v "$PWD/runs:/app/runs" rfp-agent`
+3. Start it, with the line for your shell:
+   - Windows `cmd`: `docker run --rm -p 8000:8000 --env-file .env -v "%cd%/runs:/app/runs" rfp-agent`
+   - PowerShell: `docker run --rm -p 8000:8000 --env-file .env -v "${PWD}/runs:/app/runs" rfp-agent`
+   - macOS or Linux: `docker run --rm -p 8000:8000 --env-file .env -v "$PWD/runs:/app/runs" rfp-agent`
 4. Open <http://127.0.0.1:8000>
 
-**Without Docker** (Python 3.12 and Node 20+):
+**Without Docker** (Python 3.12 via conda, and Node 20+):
 
-1. `conda create -n rfp-solution-gen python=3.12 -y && conda activate rfp-solution-gen`
-2. `pip install -r requirements.txt`
-3. `cp .env.example .env` and put your `DEEPSEEK_API_KEY` in it
-4. `cd ui/frontend && npm ci && npm run build && cd ../..`
-5. `python -m ui.backend`
-6. Open <http://127.0.0.1:8000>
+1. `conda create -n rfp-solution-gen python=3.12 -y`
+2. `conda activate rfp-solution-gen`
+3. `pip install -r requirements.txt`
+4. Make a copy of the file `.env.example`, name it `.env`, and paste your DeepSeek
+   key after `DEEPSEEK_API_KEY=`.
+5. `cd ui/frontend`, then `npm ci`, then `npm run build`, then `cd ../..`
+6. `python -m ui.backend`
+7. Open <http://127.0.0.1:8000>
 
-Four public RFPs are already loaded as samples and need no key. On PowerShell write
-`${PWD}` instead of `$PWD`. More ways to run it (CLI, dev mode, API, evals) are in
-[`docs/USAGE.md`](docs/USAGE.md).
+Four public RFPs are already loaded as samples and need no key, so steps 1 and 4
+(the key) can wait until you want to run your own PDF. More ways to run it (CLI, dev
+mode, API, evals) are in [`docs/USAGE.md`](docs/USAGE.md).
 
 ## Using the UI
 
