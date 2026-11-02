@@ -2474,12 +2474,14 @@ flowchart LR
     C --> E[ST12e Frontend refine and sign-off]
     classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
     classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-    class A ready
+    class A done
+    class B ready
 ```
 
-**Progress (2026-11-02):** ST12a in progress. ST12b and ST12c follow; ST12d and ST12e
-are parallel except for `RunPage.tsx`. ST12a with ST12c and ST12d is the minimum that
-delivers the compliance guard and the brief; ST12b and ST12e add the refinement loop.
+**Progress (2026-11-02):** ST12a done (PR #24 into `hitl`). ST12b is ready; ST12c
+needs ST12b; ST12d and ST12e are parallel except for `RunPage.tsx`. ST12a with ST12c
+and ST12d is the minimum that delivers the compliance guard and the brief; ST12b and
+ST12e add the refinement loop.
 
 | Step | Depends on | Can run in parallel with | Main files touched |
 | --- | --- | --- | --- |
@@ -2490,7 +2492,7 @@ delivers the compliance guard and the brief; ST12b and ST12e add the refinement 
 | ST12e | ST12c | ST12d | `ui/frontend/src/views/*View.tsx`, `components/Revise*.tsx`, `SignOff*.tsx` |
 
 #### ST12a. Checkpoint in the pipeline
-- **Status:** in progress
+- **Status:** done
 - **Goal:** the pipeline can stop after requirements and problem extraction, take a
   checkpoint record (reviewer, per-requirement decisions, pursuit brief) and resume from
   `solution` with the brief as citable evidence; the summary carries the review
