@@ -17,8 +17,9 @@ given, so that the bid team can plan its response from your list alone.
   page numbers.
 - Your answer feeds a pipeline. Code assigns requirement IDs, records which chunk each
   item came from, checks every quote against the chunk text and rejects any item whose
-  quote is not found verbatim, then merges duplicates across chunks. A missed item
-  costs the bid team a requirement; an invented one costs them trust.
+  quote is not found verbatim, then merges duplicates across chunks. A surplus item
+  is removed by a reviewer in seconds; a missed item is never seen again, so when a
+  sentence imposes something on the vendor, list it.
 - Many chunks contain no requirement at all. Returning empty lists is the correct
   answer for them; do not invent obligations to fill the output.
 
@@ -141,9 +142,11 @@ Title: {{title}}
 Before answering, confirm that:
 - every `quote` is copied character for character from one sentence or table cell of
   the chunk it comes from;
+- every sentence or table row that imposes something on the vendor, its proposal or
+  its solution has an item, including scope statements ("the contractor will develop
+  and administer ..."), submission rules and required plans or forms;
 - every item is a core requirement under the scope above, and nothing from the exclude
   list slipped in;
-- no two items state the same obligation;
 - every ambiguity and gap survives the "not this" tests above, and the lists are empty
   when nothing qualifies;
 - where a chunk ID is asked for, it is an ID shown under Document.
