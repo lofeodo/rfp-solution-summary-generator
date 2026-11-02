@@ -55,6 +55,10 @@ export const api = {
     if (opts.fullTextProblem) form.append("full_text_problem", "true");
     if (opts.singleCallExtraction) form.append("single_call_extraction", "true");
     if (opts.maxIterations !== null) form.append("max_iterations", String(opts.maxIterations));
+    if (opts.vlm) {
+      form.append("vlm", "true");
+      form.append("vlm_scope", opts.vlmScope);
+    }
     const res = await fetch(`${API}/runs`, { method: "POST", body: form });
     if (!res.ok) throw new ApiError(res.status, await errorText(res));
     return (await res.json()) as RunCreated;
@@ -67,9 +71,15 @@ export const api = {
     `${API}/runs/${enc(id)}/download/${file}`,
 };
 
+export type VlmScope = "judged" | "flagged";
+
 export interface RunOptions {
   model: string;
   fullTextProblem: boolean;
   singleCallExtraction: boolean;
   maxIterations: number | null;
+  /** Re-render pages the parse-quality pass escalates with a vision model (ST2). */
+  vlm: boolean;
+  /** judged: the LLM judge gates the VLM; flagged: every heuristically flagged page goes. */
+  vlmScope: VlmScope;
 }

@@ -47,7 +47,7 @@ export default function Home() {
             <span className="font-mono text-sm text-accent">01</span>
             <h2 className="display text-4xl">New run</h2>
           </div>
-          <UploadForm defaultModel={health?.model ?? null} />
+          <UploadForm defaultModel={health?.model ?? null} vlmModel={health?.vlm_model ?? null} />
           <p className="mt-4 text-sm text-muted">
             About 80–110 s and $0.05–0.10 per RFP on the default model. One run at a time; later uploads queue.
           </p>

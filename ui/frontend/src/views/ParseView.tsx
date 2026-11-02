@@ -1,7 +1,39 @@
+import { useState } from "react";
 import { CiteChip } from "../components/source";
 import { SectionHead, SubHead, Tag, Waiting } from "../components/ui";
+import type { TranscriptionRecord } from "../api/types";
 import type { RunData } from "../hooks/useRunData";
-import { cleanTitle, pages } from "../lib/format";
+import { cleanTitle, escalationLabel, pages } from "../lib/format";
+
+/** One re-rendered page: word counts, then the two markdown texts side by side on demand. */
+function Transcription({ t }: { t: TranscriptionRecord }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <li className="text-[15px]">
+      <button type="button" onClick={() => setOpen(!open)} className="text-left hover:text-accent">
+        <span className="mr-2 font-mono text-xs">p{t.page}</span>
+        <Tag tone="accent">transcribed</Tag>{" "}
+        <span className="font-mono text-xs">
+          {t.library_words} → {t.vlm_words} words · {t.model}
+        </span>
+        <span className="ml-2 font-mono text-[11px] text-muted">{open ? "hide" : "compare"}</span>
+      </button>
+      {t.notes && <p className="font-mono text-[11px] text-muted">{t.notes}</p>}
+      {open && (
+        <div className="mt-2 grid gap-4 md:grid-cols-2">
+          <div>
+            <p className="kicker mb-1">Library parser</p>
+            <pre className="hair max-h-96 overflow-auto whitespace-pre-wrap p-2 font-mono text-[11px]">{t.library_markdown || "(empty)"}</pre>
+          </div>
+          <div>
+            <p className="kicker mb-1">Vision model</p>
+            <pre className="hair max-h-96 overflow-auto whitespace-pre-wrap p-2 font-mono text-[11px]">{t.vlm_markdown}</pre>
+          </div>
+        </div>
+      )}
+    </li>
+  );
+}
 
 export default function ParseView({ data }: { data: RunData }) {
   const { parsed, quality, split } = data;
@@ -65,8 +97,19 @@ export default function ParseView({ data }: { data: RunData }) {
                 </ul>
                 {quality.escalations.length > 0 && (
                   <p className="mt-3 font-mono text-[11px] text-muted">
-                    Escalations: {quality.escalations.map((e) => `p${e.page} ${e.action.split(":")[0]}`).join(" · ")}
+                    Escalations{quality.scope === "flagged" ? " (flagged scope, judge skipped)" : ""}:{" "}
+                    {quality.escalations.map((e) => `p${e.page} ${escalationLabel(e.action)}`).join(" · ")}
                   </p>
+                )}
+                {(quality.transcriptions ?? []).length > 0 && (
+                  <div className="mt-4">
+                    <p className="kicker mb-2">Re-rendered by the vision model · library parser vs VLM</p>
+                    <ul className="space-y-2">
+                      {quality.transcriptions!.map((t) => (
+                        <Transcription key={t.page} t={t} />
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             )}
