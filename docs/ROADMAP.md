@@ -2460,8 +2460,8 @@ Priority order. Each gets the same entry structure when started.
       T9 --> T10
       classDef done fill:#d4edda,stroke:#2e7d32,color:#1b5e20
       classDef ready fill:#fff3cd,stroke:#b8860b,color:#5c4400
-      class T1 done
-      class T2 ready
+      class T1,T2,T3,T4,T5,T6,T7,T8,T9 done
+      class T10 ready
   ```
 
   | Unit | Depends on | Main files touched |
@@ -2543,9 +2543,105 @@ Priority order. Each gets the same entry structure when started.
   - **Docs:** DECISIONS D42 (trigger policy, model, whole page, replace not append),
     PROMPTS block and changelog, TIMELOG, README results and flag, USAGE, PIPELINE,
     `.env.example`, results README label rows, gold README page-5 section.
-- **What was done:**
+- **What was done:** (branch `st2-vlm-transcription`, PR into `main`)
+  - `schemas.py` (shared file, Parsing section): `VlmTranscription` (LLM output:
+    `markdown`, `notes`), `TranscriptionRecord` (page, model, library and VLM markdown
+    and word counts, notes), `VlmScope` literal, `ParseQualityReport.scope` and
+    `.transcriptions` (both defaulted, so older `quality.json` files still load),
+    `FlagReason.GARBLED_TEXT`. `Escalation` unchanged.
+  - `config.py`: `vlm` (off), `vlm_model` (`anthropic:claude-sonnet-5-5`), `vlm_scope`
+    (`judged`), `vlm_dpi` (140); `.env.example` documents them.
+  - `parsing/vlm.py` (new): `render_page_png` (pymupdf pixmap; a bad page or path raises
+    `PageRenderError`), `get_vlm_model` (`get_chat_model(settings.vlm_model,
+    max_tokens=8000)`), `build_message` (one `HumanMessage`: `image_url` data-URL block,
+    then the text), `transcribe_page` (`structured_call`, node `parse_quality_vlm`,
+    prompt `prompts/parse_vlm.md`), `make_vlm_hook` (closure over PDF path, title, page
+    count, model, settings, recorder, config; render or model failure and an empty
+    transcription return an outcome without markdown, so the flags stay).
+  - `parsing/quality.py`: `EscalationOutcome(action, markdown, notes, model)` replaces
+    the hook's string return; `record_only_hook` returns no markdown. `escalate` returns
+    the outcome as a third value and clears the kept flags when markdown came back.
+    `run_quality_pass(..., scope=)`: `flagged` skips the judge and uses
+    `flagged_scope_judgement` (bad, every flag confirmed, trigger `code`, no model
+    built); a markdown outcome replaces the page (`Page` with recounted words), rebuilds
+    that page's `tables` from `table_blocks`, and appends a `TranscriptionRecord`. The
+    input document is still never mutated. Debug CLI: `--vlm`, `--vlm-scope`, a
+    transcriptions table and the pass's scope in the totals line.
+  - `parsing/heuristics.py`: `garbled_text_reason` (any `(cid:NN)` or U+FFFD; else the
+    share of non-ordinary characters at or above 0.30 over at least 40 characters) and
+    the flag in `flag_page`; `prompts/parse_quality.md` gained one line for it. On the
+    four public RFPs: zero `(cid:`, zero U+FFFD, top symbol share 0.004 (Colfax p19), so
+    it never fires there; `tests/test_parsing_rfps.py` asserts that.
+  - `graph.py`: `build_pipeline(vlm_model=)` builds the vision model when
+    `settings.vlm` (a missing Anthropic key fails before the run, like the generator);
+    the `parse_quality` node passes `make_vlm_hook(state["pdf_path"], ...)` and
+    `scope=settings.vlm_scope`, else `record_only_hook` and `judged`. `apply_overrides`
+    and `run_pipeline` take `vlm`, `vlm_scope`, `vlm_model`. `cli.py run --vlm
+    --vlm-scope`; `evals/harness run --vlm/--no-vlm --vlm-scope`.
+  - UI backend: form fields `vlm` and `vlm_scope` (a `Literal`, so an unknown scope is a
+    422), stored in `upload.json`; `RunRegistry.submit` builds the vision model when on,
+    so a missing key is a 503 before queueing; `/api/health` carries `vlm_model`.
+    Frontend: `RunOptions.vlm` and `vlmScope`, the `vlm` checkbox with the model name
+    from health and a `vlm_scope` select under it, `ParseView` lists each re-rendered
+    page (words before and after, model, notes) with a "compare" toggle showing the
+    library and VLM markdown side by side; `escalationLabel` helper with a unit test.
+  - Tests (no paid calls): `tests/test_vlm.py` (render at 140 dpi is 1190 x 1540 px,
+    bad page and path, message shape, prompt content and `parse_quality_vlm` metrics,
+    hook success and the three failure paths, model factory keeps its own token cap);
+    `test_quality.py` (outcome hook, markdown replacement with flags cleared and tables
+    rebuilt, failed outcome keeps flags, flagged scope skips the judge and builds no
+    model, old report JSON loads); `test_graph.py`, `test_ui_backend.py`,
+    `test_harness.py`, `test_config.py`, `test_parsing_units.py`, `test_parsing_rfps.py`
+    extended; `pipeline_stubs.py` stub takes `hook` and `scope`. Full suite: 415 passed.
+    Frontend: typecheck, 11 Vitest tests, build.
+  - Live checks (`tests/test_vlm_live.py`, `llm` marker): Federal Way p5 came back as
+    the full ERP environment table, 18 rows, every gold row verbatim ("Quadrant |
+    Cashiering | Replace | Yes or Part of ERP Suite"), 129 to 285 words, $0.017, 6 s,
+    no retries. Missouri with the judge and the VLM: p19 and p20 transcribed (19 to 420
+    and 453 words), p12 cleared; the split kept every section. The first Missouri run
+    gained a section ("APPLICANT AFFIDAVIT FOR SOLE-PROPRIETORSHIP OR PARTNERSHIP"):
+    the transcription of p20 carries the outline heading the library text never had,
+    so the splitter could locate the entry. The test asserts no section is lost.
+  - Ablations (`evals/results/ablation_vlm/`, `ablation_vlm_flagged/`, scored on match,
+    problem and cost; `diff_requirements.md` against `baseline`):
+
+    | RFP | baseline recall (n=3) | `--vlm` judged (n=2) | `--vlm` flagged (n=2) | VLM calls, cost per run (judged / flagged) |
+    |---|---|---|---|---|
+    | Federal Way | 81% ± 1 (code only 67%) | 95% ± 1 (84%); all 8 page-5 items matched, GC12 covered | 94% ± 3 (76%) | 1, $0.017 / 3, $0.043 |
+    | Missouri | 91% ± 3 | 92% ± 8 | 93% ± 4 | 2, $0.035 / 3, $0.044 |
+    | Colfax | 99% ± 1 | 100% ± 0 | not run (no flags) | 0 / 0 |
+    | NYESD | 99% ± 1 | 99% ± 1 | not run (no flags) | 0 / 0 |
+
+    Federal Way checklist 8 to 9 → 10 to 11 of 12 (judged), 8 to 12 (flagged). The
+    judged scope stays the default (D42): same recall as flagged at a third of the VLM
+    cost and less spread, and the pages the judge clears (Federal Way p2 contents, p14
+    pricing form; Missouri p12 cost table) came back no better, p14 worse, when
+    re-rendered. Total spend: 12 pipeline runs $1.10, scoring $0.42, live checks $0.10.
+  - Docs: D42; PROMPTS block for `parse_vlm` and two changelog rows; PIPELINE
+    parse-quality section and `RFP_VLM*` rows; USAGE CLI flags, UI checkbox, eval
+    commands; README Parse-tab row, step 1 and a results note; `.env.example`; results
+    README label rows, reproduce commands and the reachable-recall wording; gold README
+    page-5 section; TIMELOG.
 - **Deviations from plan:**
+  - The quality-pass wiring and the VLM module landed in one commit, not two.
+  - `escalate` returns a third value (the outcome) instead of the quality pass
+    re-deriving it; the two S4 hook tests were updated to the outcome type.
+  - The Missouri live check asserts a superset of sections, not equality, after the
+    first run showed the VLM recovering an outline heading.
 - **Open issues:**
+  - A repeated header row printed inside a table (Federal Way p5) is transcribed as a
+    data row; bullet lists inside a cell are joined with semicolons, so GR058 to GR060
+    (multi-row gold quotes) still depend on the judge tier.
+  - `flagged` scope sends contents pages (Federal Way p2) and cleared forms (Missouri
+    p12) to the VLM; the ablation shows it is not worth it (same recall, three times the
+    VLM cost, more spread), so it stays a comparison setting.
+  - One Missouri `flagged` run skipped chunk S75.1 (a transcribed affidavit page):
+    DeepSeek returned no structured output in three attempts and the extractor's
+    existing skip path dropped the chunk. Blank forms transcribed as `Label: ____`
+    lines are poor extraction input; a follow-up could mark transcribed form pages
+    (`page_kind=form`) as narrative so the extractor never sees them.
+  - The transcription is not cached: a rerun of the same PDF pays the VLM again
+    (about $0.02 a page). A content-hash cache under `runs/` would remove that.
 
 ---
 
