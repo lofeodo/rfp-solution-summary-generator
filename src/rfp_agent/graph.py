@@ -51,7 +51,8 @@ from rfp_agent.observability import (
     shutdown_langfuse,
 )
 from rfp_agent.parsing import parse_pdf
-from rfp_agent.parsing.quality import run_quality_pass
+from rfp_agent.parsing.quality import record_only_hook, run_quality_pass
+from rfp_agent.parsing.vlm import get_vlm_model, make_vlm_hook
 from rfp_agent.render import assemble, write_summary
 from rfp_agent.schemas import (
     ParsedDocument,
@@ -229,12 +230,17 @@ def build_pipeline(
     model: BaseChatModel,
     out_dir: Path | None = None,
     on_event: EventCallback | None = None,
+    vlm_model: BaseChatModel | None = None,
 ):
     """Compile the pipeline graph with its runtime objects bound.
 
     ``out_dir`` receives each stage's JSON as it finishes (``None`` writes nothing;
     the final ``summary.json`` and ``summary.md`` are written only when it is set).
+    With ``settings.vlm`` the vision model is built here (or taken from ``vlm_model``),
+    so a missing provider key fails before the run starts, like the generator's.
     """
+    if settings.vlm and vlm_model is None:
+        vlm_model = get_vlm_model(settings)
 
     def title_of(state: PipelineState) -> str:
         return state["parsed"].title or Path(state["pdf_path"]).name
@@ -310,8 +316,27 @@ def build_pipeline(
         return {"parsed": parsed.model_copy(update={"source_path": state["pdf_path"]})}
 
     def parse_quality(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
+        hook = record_only_hook
+        scope: VlmScope = "judged"
+        if settings.vlm and vlm_model is not None:
+            hook = make_vlm_hook(
+                state["pdf_path"],
+                title=title_of(state),
+                page_count=state["parsed"].page_count,
+                model=vlm_model,
+                settings=settings,
+                recorder=recorder,
+                config=config,
+            )
+            scope = settings.vlm_scope
         parsed, report = run_quality_pass(
-            state["parsed"], model=model, settings=settings, recorder=recorder, config=config
+            state["parsed"],
+            model=model,
+            settings=settings,
+            recorder=recorder,
+            config=config,
+            hook=hook,
+            scope=scope,
         )
         return {"parsed": parsed, "quality_report": report}
 
@@ -453,6 +478,9 @@ def run_pipeline(
     full_text_problem: bool | None = None,
     single_call_extraction: bool | None = None,
     max_iterations: int | None = None,
+    vlm: bool | None = None,
+    vlm_scope: VlmScope | None = None,
+    vlm_model: BaseChatModel | None = None,
     on_event: EventCallback | None = None,
 ) -> PipelineResult:
     """Run the whole pipeline on one PDF and write everything under
@@ -468,6 +496,8 @@ def run_pipeline(
         full_text_problem=full_text_problem,
         single_call_extraction=single_call_extraction,
         max_iterations=max_iterations,
+        vlm=vlm,
+        vlm_scope=vlm_scope,
     )
     # Forward slashes whatever the OS, so run logs and samples read the same everywhere.
     pdf_path = Path(pdf).as_posix()
@@ -489,6 +519,7 @@ def run_pipeline(
         model=model,
         out_dir=recorder.run_dir,
         on_event=on_event,
+        vlm_model=vlm_model,
     )
     try:
         with recorder.activate():
