@@ -274,23 +274,9 @@ with `-e`) applies inside the container exactly as it does locally.
 ## Evaluation
 
 `evals/harness/` scores pipeline runs against the gold labels with code checks first and
-a Claude judge second (`RFP_JUDGE_MODEL`, needs `ANTHROPIC_API_KEY`). Per run it
-measures:
-
-- **Requirements:** recall against gold (code match, then the judge for the rest),
-  precision and scope of every extracted item by the judge, and type and strictness
-  accuracy.
-- **Grounding:** every cited claim, assumption and risk is checked against only the text
-  it cites. Code checks IDs, numbers and names; the judge rates each item supported,
-  partially or unsupported.
-- **Problem statement:** checklist coverage of the 12 gold facts.
-- **Solution:** cited and judged coverage of mandatory requirements, plus a rubric for
-  specificity, feasibility and consistency.
-- **Risks:** severity and likelihood re-rated blind, and coverage of the code findings.
-- **Cost and latency:** per stage from the run log, with each retry's cause.
-
-Across runs it reports consistency, a pairwise A/B judge for ablations, and judge
-agreement with a hand-labelled sample.
+a Claude judge second (`RFP_JUDGE_MODEL`, needs `ANTHROPIC_API_KEY`). What it measures,
+why, and how the gold labels were made are in [EVALUATION.md](EVALUATION.md); this
+section only lists the commands.
 
 ```bash
 python -m evals.harness run --label baseline --all --runs 2 --reuse-samples  # paid, ~$0.60
@@ -310,13 +296,9 @@ one judge costs one judge. `diff` prints per-RFP mean ± sd of two labels with t
 (free); `run` takes the same `--full-text-problem`, `--single-call-extraction`, `--vlm`
 and `--vlm-scope` flags as the pipeline CLI.
 
-Baseline (`evals/results/baseline/summary.md`): three runs per RFP, recall 80 to 100%,
-with 61 to 94% matched by code alone. Federal Way's lower figure is its image-only page 5;
-reachable recall is 93 to 96%, and `--vlm` lifts plain recall to 94 to 96% there
-(`evals/results/ablation_vlm/`). Precision is 95 to 99%, checklist coverage 67 to 92%,
-and judged coverage of mandatory requirements 70 to 100% against 100% cited. The judge
-agrees with 34 of 40 hand labels. How to read every column is in
-`evals/results/README.md`.
+Results per label are in `evals/results/<label>/summary.md`, written by `report`; how
+to read every column is in `evals/results/README.md`. To redraw the comparison charts,
+see [EVALUATION.md](EVALUATION.md#results).
 
 Gold labels:
 

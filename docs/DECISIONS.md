@@ -58,8 +58,9 @@ Options: three families; two families; one family for everything.
 Choice: DeepSeek for the whole generation pipeline, Claude as the eval judge and label
 drafter. Cross-family benchmarks are a stretch goal.
 Why: time budget. Two families still keep the judge independent of the generator, which
-is the bias that matters most. Labels are hand-corrected, so the drafter's family
-matters less; the corrected fraction is recorded.
+is the bias that matters most. Labels are corrected item by item by the coding agent
+(not a human expert; see EVALUATION.md), so the drafter's family matters less; the
+corrected fraction is recorded.
 Evidence: the judge agrees with 34 of 40 hand-labelled verdicts
 (`evals/results/baseline/agreement_labels.json`). Judging costs about six times
 generation ($5.14 against $0.84 for the 12 baseline runs), which is why S13 added
