@@ -1,5 +1,7 @@
 # RFP solution-summary generator
 
+**Demo video:** https://www.youtube.com/watch?v=zceK0XxtE74
+
 Drop in an RFP (request for proposal) PDF. A minute or two and a few cents later you get
 the **requirements** it imposes, the **problem** behind it, a proposed **solution** and
 the **risks**. Every claim links back to the paragraph of the RFP it came from, so a bid
@@ -142,6 +144,11 @@ PowerShell and bash unless a line says otherwise.
 Four public RFPs are already loaded as samples and need no key, so the key step can wait
 until you run your own PDF. The CLI, development mode, the API and the evals are in
 [USAGE.md](docs/USAGE.md).
+
+**Examples vs. real usage.** The sample RFPs come with finished solution summaries you can
+browse without any setup. Running the pipeline on a new RFP calls an LLM, so it needs API
+keys. To get keys, email <daniel.lofeodo@gmail.com> and say which company you work for and
+why you need them.
 
 ### Using the UI
 
