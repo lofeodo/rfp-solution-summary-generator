@@ -261,6 +261,21 @@ def create_app(
             )
         raise HTTPException(404, f"no run {run_id!r}")
 
+    @api.delete("/runs/{run_id}", status_code=204)
+    def delete_run(run_id: str) -> None:
+        """Remove a run from the list and from disk. Samples are committed and stay."""
+        loc = store.locate(run_id)
+        if loc is None and registry.get(run_id) is None:
+            raise HTTPException(404, f"no run {run_id!r}")
+        if loc is not None and loc.sample:
+            raise HTTPException(403, f"{run_id!r} is a sample run; samples are read-only")
+        try:
+            registry.delete(run_id)
+        except RunBusy as exc:
+            raise HTTPException(409, str(exc)) from exc
+        except OSError as exc:  # Windows: a file still open (a download in progress)
+            raise HTTPException(409, f"run {run_id} could not be removed: {exc}") from exc
+
     @api.get("/runs/{run_id}/events")
     async def run_events(run_id: str) -> StreamingResponse:
         entry = registry.get(run_id)

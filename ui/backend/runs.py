@@ -22,6 +22,7 @@ and a finished one refined as if this process had started it.
 from __future__ import annotations
 
 import logging
+import shutil
 import threading
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
@@ -71,6 +72,7 @@ class RunEntry:
     resting_before: RunState = "queued"  # where a failed revision returns the run
     base_totals: RunTotals = field(default_factory=RunTotals)  # spent before this job
     job_cursor: int = 0  # index of the first event of the current job
+    deleted: bool = False  # set by ``RunRegistry.delete``; ``begin`` then refuses
 
     @property
     def is_idle(self) -> bool:
@@ -93,6 +95,8 @@ class RunEntry:
         """Start a job: refuse a busy run, remember where it rested, clear the last
         error. Raises ``RunBusy``."""
         with self.cond:
+            if self.deleted:
+                raise RunBusy(f"run {self.run_id} was deleted")
             if not self.is_idle:
                 raise RunBusy(f"run {self.run_id} is {self.status}; wait for it to finish")
             self.resting_before = self.status
@@ -189,6 +193,24 @@ class RunRegistry:
         entry.base_totals = log.totals()
         with self._lock:
             return self._entries.setdefault(run_id, entry)
+
+    def delete(self, run_id: str) -> None:
+        """Forget a run and remove its directory. Raises ``RunBusy`` when it has a job
+        queued or in flight; samples are refused by the caller. The entry is marked
+        deleted under its lock, so a request that fetched it a moment earlier cannot
+        queue a job on a directory that is gone."""
+        loc = self.store.locate(run_id)
+        with self._lock:
+            entry = self._entries.get(run_id)
+        if entry is not None:
+            with entry.cond:
+                if not entry.is_idle:
+                    raise RunBusy(f"run {run_id} is {entry.status}; wait for it to finish")
+                entry.deleted = True
+            with self._lock:
+                self._entries.pop(run_id, None)
+        if loc is not None and not loc.sample:
+            shutil.rmtree(loc.path)
 
     def _build_model(self, model_spec: str | None, max_iterations: int | None = None):
         """Settings and chat model for a job, built in the request thread so a missing key
