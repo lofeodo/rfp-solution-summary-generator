@@ -1,5 +1,7 @@
 # RFP solution-summary generator
 
+**Demo video:** https://www.youtube.com/watch?v=zceK0XxtE74
+
 Drop in an RFP (request for proposal) PDF. A minute or two and a few cents later you get
 the **requirements** it imposes, the **problem** behind it, a proposed **solution** and
 the **risks**. Every claim links back to the paragraph of the RFP it came from, so a bid
