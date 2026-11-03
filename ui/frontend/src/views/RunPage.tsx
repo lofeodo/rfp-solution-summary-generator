@@ -7,6 +7,8 @@ import SourcePanel from "../components/SourcePanel";
 import StageTimeline from "../components/StageTimeline";
 import { SourceContext, type SourceCtx } from "../components/source";
 import { StateBadge } from "../components/ui";
+import Lifecycle from "../components/Lifecycle";
+import { isResting } from "../api/types";
 import { useRun } from "../hooks/useRun";
 import { useRunData } from "../hooks/useRunData";
 import { secs, usd, when } from "../lib/format";
@@ -17,24 +19,40 @@ import RisksView from "./RisksView";
 import ProblemView from "./ProblemView";
 import ParseView from "./ParseView";
 import MetricsView from "./MetricsView";
+import CheckpointView from "./CheckpointView";
+import ReviewView from "./ReviewView";
+import Refinable from "../components/Refinable";
+import { ReviewContext, type ReviewCtx, useReviewer, useRevisionLog } from "../hooks/useReview";
 
 const TABS = [
+  { id: "checkpoint", label: "Checkpoint" },
   { id: "solution", label: "Solution" },
   { id: "requirements", label: "Requirements" },
   { id: "risks", label: "Risks" },
   { id: "problem", label: "Problem" },
+  { id: "review", label: "Review" },
   { id: "parse", label: "Parse & chunks" },
   { id: "metrics", label: "Metrics" },
 ] as const;
 
 export default function RunPage() {
-  const { id = "", tab = "solution" } = useParams();
-  const { status, stages, error } = useRun(id);
+  const params = useParams();
+  const id = params.id ?? "";
+  const { status, stages, error, refresh } = useRun(id);
+  // With no tab in the URL, a run waiting for its reviewer opens on the checkpoint.
+  const tab = params.tab ?? (status?.status === "awaiting_checkpoint" ? "checkpoint" : "solution");
   const data = useRunData(id, status);
   const [stack, setStack] = useState<string[]>([]);
 
   const open = useCallback((target: string) => setStack((s) => (s[s.length - 1] === target ? s : [...s, target])), []);
   const ctx: SourceCtx = useMemo(() => ({ runId: id, index: data.index, open }), [id, data.index, open]);
+  const log = useRevisionLog(id, status);
+  const [reviewer, setReviewer] = useReviewer();
+  // Sample runs are read-only: no review controls at all.
+  const reviewCtx: ReviewCtx | null = useMemo(
+    () => (status && !status.sample ? { runId: id, status, refresh, log, reviewer, setReviewer } : null),
+    [id, status, refresh, log, reviewer, setReviewer],
+  );
 
   if (error)
     return (
@@ -45,7 +63,7 @@ export default function RunPage() {
       </main>
     );
 
-  const live = status?.status === "running" || status?.status === "queued";
+  const live = status !== null && !isResting(status.status);
   const title = data.parsed?.title || status?.source_name.replace(/\.pdf$/i, "") || id;
   const done = status?.artifacts.includes("summary") ?? false;
   const counts: Record<string, number | undefined> = {
@@ -55,6 +73,7 @@ export default function RunPage() {
 
   return (
     <SourceContext.Provider value={ctx}>
+      <ReviewContext.Provider value={reviewCtx}>
       <main className="mx-auto max-w-screen-2xl px-4 pb-24 pt-4 md:px-10">
         <Masthead compact />
 
@@ -105,6 +124,12 @@ export default function RunPage() {
           </div>
         </header>
 
+        {status && !status.sample && (
+          <div className="mb-8">
+            <Lifecycle runId={id} state={status.status} review={status.review} tab={tab} />
+          </div>
+        )}
+
         <div className="grid grid-cols-12 lg:gap-x-10 gap-y-10">
           <aside className="col-span-12 lg:col-span-3">
             <div className="hidden lg:sticky lg:top-6 lg:block">
@@ -147,10 +172,14 @@ export default function RunPage() {
               ))}
             </nav>
             <ErrorBoundary resetKey={tab}>
-            {tab === "solution" && <SolutionView data={data} />}
-            {tab === "requirements" && <RequirementsView data={data} />}
-            {tab === "risks" && <RisksView data={data} />}
-            {tab === "problem" && <ProblemView data={data} />}
+            {tab === "checkpoint" && <CheckpointView runId={id} data={data} status={status} refresh={refresh} />}
+            {tab === "solution" && <Refinable artefact="solution" data={data}>{(d) => <SolutionView data={d} />}</Refinable>}
+            {tab === "requirements" && (
+              <Refinable artefact="requirements" data={data}>{(d) => <RequirementsView data={d} />}</Refinable>
+            )}
+            {tab === "risks" && <Refinable artefact="risks" data={data}>{(d) => <RisksView data={d} />}</Refinable>}
+            {tab === "problem" && <Refinable artefact="problem" data={data}>{(d) => <ProblemView data={d} />}</Refinable>}
+            {tab === "review" && <ReviewView drafted={data.has("solution")} />}
             {tab === "parse" && <ParseView data={data} />}
             {tab === "metrics" && <MetricsView status={status} stages={stages} />}
             </ErrorBoundary>
@@ -163,6 +192,7 @@ export default function RunPage() {
         </div>
       </main>
       <SourcePanel stack={stack} onBack={() => setStack((s) => s.slice(0, -1))} onClose={() => setStack([])} />
+      </ReviewContext.Provider>
     </SourceContext.Provider>
   );
 }

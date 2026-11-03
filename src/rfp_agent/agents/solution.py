@@ -23,18 +23,20 @@ Component IDs ``C01…`` are assigned by code in reply order.
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterable, Sequence
-from typing import TYPE_CHECKING, Literal, TypedDict
+from collections.abc import Callable, Iterable, Sequence
+from typing import TYPE_CHECKING, Any, Literal, TypedDict
 
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph
 from pydantic import create_model, model_validator
 
+from rfp_agent.brief import brief_chunk_ids, format_brief
 from rfp_agent.config import Settings, get_settings
 from rfp_agent.llm import Prompt, get_chat_model, load_prompt, structured_call
 from rfp_agent.observability import current_recorder
 from rfp_agent.schemas import (
     Ambiguity,
+    Brief,
     Claim,
     ComponentDraft,
     Coverage,
@@ -185,13 +187,17 @@ def format_gaps(gaps: Iterable[Gap]) -> str:
     return "\n".join(lines) or NONE
 
 
-def allowed_chunk_ids(requirements: RequirementsOutput, problem: ProblemStatement) -> list[str]:
-    """Every chunk ID the model can see a label for, in first-seen order."""
+def allowed_chunk_ids(
+    requirements: RequirementsOutput, problem: ProblemStatement, brief: Brief | None = None
+) -> list[str]:
+    """Every chunk ID the model can see a label for, in first-seen order: RFP chunks
+    cited by the inputs, then the pursuit-brief chunks (``H1``...) when there is a brief."""
     seen: dict[str, None] = {}
     sources: list[Sequence[str]] = [c.chunk_ids for c in problem.claims()]
     sources += [r.chunk_ids for r in requirements.requirements]
     sources += [a.chunk_ids for a in requirements.ambiguities]
     sources += [g.chunk_ids for g in requirements.gaps]
+    sources.append(brief_chunk_ids(brief))
     for ids in sources:
         for i in ids:
             seen.setdefault(i, None)
@@ -203,6 +209,7 @@ def render_prompt(
     problem: ProblemStatement,
     *,
     title: str,
+    brief: Brief | None = None,
     prompt: Prompt | None = None,
 ) -> str:
     prompt = prompt or load_prompt(PROMPT)
@@ -212,6 +219,7 @@ def render_prompt(
         requirements=format_requirements(requirements.requirements),
         ambiguities=format_ambiguities(requirements.ambiguities),
         gaps=format_gaps(requirements.gaps),
+        brief=format_brief(brief),
     )
 
 
@@ -221,16 +229,23 @@ def render_prompt(
 
 
 def solution_schema(
-    requirement_ids: Iterable[str], chunk_ids: Iterable[str]
+    requirement_ids: Iterable[str],
+    chunk_ids: Iterable[str],
+    *,
+    base: type[SolutionDraft] = SolutionDraft,
+    extra: Callable[[Any], list[str]] | None = None,
 ) -> type[SolutionDraft]:
     """A ``SolutionDraft`` subclass for one call whose validator rejects an empty
     component list, a component citing no requirement, and any requirement or chunk ID
-    outside the inputs. Named ``SolutionDraft`` so the tool name is unchanged."""
+    outside the inputs. Named ``SolutionDraft`` so the tool name is unchanged.
+
+    A revision (ST12b) passes its own ``base`` (components with an optional ``id``) and
+    ``extra`` checks, whose problems are reported with these."""
     allowed_reqs = list(requirement_ids)
     allowed_chunks = list(chunk_ids)
 
     def check(self: SolutionDraft) -> SolutionDraft:
-        problems: list[str] = []
+        problems: list[str] = list(extra(self)) if extra is not None else []
         if not self.components:
             problems.append("components is empty; return at least four components")
         for i, c in enumerate(self.components):
@@ -267,7 +282,7 @@ def solution_schema(
 
     return create_model(
         "SolutionDraft",
-        __base__=SolutionDraft,
+        __base__=base,
         __module__=__name__,
         __validators__={"check_citations": model_validator(mode="after")(check)},
     )
@@ -421,12 +436,15 @@ def build_solution(
     recorder: RunRecorder | None = None,
     config: RunnableConfig | None = None,
     max_iterations: int | None = None,
+    brief: Brief | None = None,
 ) -> SolutionResult:
     """Generate the solution and revise it while mandatory requirements are uncovered.
 
     ``max_iterations`` overrides ``Settings.solution_max_iterations`` (rounds, including
-    the first). Raises ``StructuredOutputError`` when a round cannot be validated within
-    the retry budget; nothing is dropped silently.
+    the first). ``brief`` is the pursuit team's guidance from the checkpoint (ST12): its
+    chunks are shown to the model and may be cited like RFP chunks. Raises
+    ``StructuredOutputError`` when a round cannot be validated within the retry budget;
+    nothing is dropped silently.
     """
     settings = settings or get_settings()
     recorder = recorder or current_recorder()
@@ -436,9 +454,9 @@ def build_solution(
         max_iterations = settings.solution_max_iterations
     title = title or "untitled RFP"
 
-    text = render_prompt(requirements, problem, title=title)
+    text = render_prompt(requirements, problem, title=title, brief=brief)
     schema = solution_schema(
-        requirements.requirement_ids(), allowed_chunk_ids(requirements, problem)
+        requirements.requirement_ids(), allowed_chunk_ids(requirements, problem, brief)
     )
     graph = build_graph(
         model=model,

@@ -27,7 +27,7 @@ describe("stages", () => {
     m = reduceStage(m, ev("problem", "finished"));
     const rows = stageRows(m);
     expect(rows.map((r) => r.id)).toEqual([
-      "parse", "parse_quality", "split", "requirements", "problem", "solution", "risk", "assemble",
+      "parse", "parse_quality", "split", "requirements", "problem", "checkpoint", "solution", "risk", "assemble",
     ]);
     expect(rows.find((r) => r.id === "requirements")!.state).toBe("running");
     expect(rows.find((r) => r.id === "problem")!.state).toBe("finished");
@@ -39,6 +39,19 @@ describe("stages", () => {
     const m = fromList([ev("parse", "finished"), ev("parse_quality", "failed")]);
     expect(stageRows(m)[1].state).toBe("failed");
     expect(stagesDone(m)).toBe(1);
+  });
+
+  it("shows the checkpoint waiting, or skipped on a run that never paused", () => {
+    const waiting = stageRows(fromList([ev("problem", "finished"), ev("checkpoint", "waiting")]));
+    expect(waiting.find((r) => r.id === "checkpoint")!.state).toBe("waiting");
+    expect(waiting.find((r) => r.id === "checkpoint")!.human).toBe(true);
+    const old = stageRows(fromList([ev("problem", "finished"), ev("solution", "finished")]));
+    expect(old.find((r) => r.id === "checkpoint")!.state).toBe("skipped");
+    expect(old.find((r) => r.id === "risk")!.state).toBe("pending");
+  });
+
+  it("does not count revision records as stages", () => {
+    expect(stagesDone(fromList([ev("parse", "finished"), ev("revise", "finished")]))).toBe(1);
   });
 });
 

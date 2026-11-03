@@ -613,7 +613,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `structured_call(node="parse_quality")`, one call per flagged page. `escalate(page,
     flags, judgement, hook)` replaces the S2 stub and applies the attribution rule. The
     VLM hook is a callable `(page, judgement) -> action text`; the default
-    `record_only_hook` returns "would escalate to VLM: <reason>" (ST2 swaps in
+    `record_only_hook` returns `"would escalate to VLM: <reason>"` (ST2 swaps in
     transcription). `run_quality_pass(parsed, ...) -> (ParsedDocument, ParseQualityReport)`
     judges each flagged page, records every escalation on the run recorder, and returns a
     copy of the document holding only confirmed and model-raised flags.
@@ -2429,6 +2429,13 @@ Priority order. Each gets the same entry structure when started.
 | ST9 | Observability dashboard in the UI beyond live progress | S15 | |
 | ST10 | Cloud deployment | S16 | Only with all core and evals done |
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
+| ST12 | Human in the loop: one checkpoint before drafting, instruction-driven refinement, sign-off | S10, S14, S15 | Sub-steps ST12a to ST12e done 2026-11-02 on feature branch `hitl` (PR into `main` pending); see [hitl/ROADMAP.md](hitl/ROADMAP.md) |
+
+### 3.1 ST12. Human in the loop: checkpoint and refine
+
+Moved on 2026-11-02 to its own feature folder: the index (brief, dependency graph,
+tables, step list) is [hitl/ROADMAP.md](hitl/ROADMAP.md), with one file per sub-step
+(ST12a to ST12e) beside it.
 
 ### ST2. VLM transcription of poorly rendered pages
 - **Status:** done (PR #25 into `main`)

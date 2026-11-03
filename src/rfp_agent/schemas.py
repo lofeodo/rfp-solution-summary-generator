@@ -31,7 +31,7 @@ import re
 from collections.abc import Iterable
 from datetime import datetime
 from enum import StrEnum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -46,6 +46,10 @@ AMBIGUITY_ID_RE = r"^A\d{2,}$"
 GAP_ID_RE = r"^G\d{2,}$"
 COMPONENT_ID_RE = r"^C\d{2,}$"
 RISK_ID_RE = r"^K\d{2,}$"
+# Pursuit-brief chunks (ST12): human-supplied evidence, cited like RFP chunks.
+BRIEF_CHUNK_ID_RE = r"^H\d+$"
+# Anything a claim may cite: a split chunk of the RFP or a chunk of the brief.
+EVIDENCE_ID_RE = r"^(S\d+\.\d+|H\d+)$"
 
 _CHUNK_ID = re.compile(CHUNK_ID_RE)
 
@@ -104,6 +108,21 @@ class Likelihood(StrEnum):
 class ClaimKind(StrEnum):
     FACT = "fact"  # stated in the cited chunks
     INFERENCE = "inference"  # derived from the cited chunks, not stated
+
+
+class EvidenceSource(StrEnum):
+    RFP = "rfp"  # a chunk of the RFP text
+    BRIEF = "brief"  # a chunk of the pursuit brief a human wrote at the checkpoint (ST12)
+
+
+class RequirementOrigin(StrEnum):
+    GENERATED = "generated"  # as the extractor produced it
+    REVIEWED = "reviewed"  # strictness or type changed by a human at the checkpoint
+
+
+class DecisionAction(StrEnum):
+    ACCEPT = "accept"
+    REJECT = "reject"
 
 
 class SectionKind(StrEnum):
@@ -365,6 +384,10 @@ class Requirement(StrictModel):
     conflicts_with: list[str] = Field(
         default_factory=list, description="Requirement IDs this one contradicts"
     )
+    origin: RequirementOrigin = Field(
+        default=RequirementOrigin.GENERATED,
+        description="Who last changed this requirement: the extractor or a reviewer (ST12)",
+    )
 
 
 class Ambiguity(StrictModel):
@@ -624,17 +647,247 @@ class RiskAssessmentDraft(StrictModel):
 
 
 # --------------------------------------------------------------------------------------
+# Human in the loop (ST12): the pursuit brief and the checkpoint
+# --------------------------------------------------------------------------------------
+
+
+class BriefChunk(StrictModel):
+    """One paragraph of the pursuit brief, citable as ``H3`` like an RFP chunk."""
+
+    id: str = Field(pattern=BRIEF_CHUNK_ID_RE)
+    text: str = Field(min_length=1)
+
+
+class Brief(StrictModel):
+    """What the pursuit team tells the drafter that the RFP does not: win themes, the
+    bidder's capabilities and constraints, client context, things to avoid."""
+
+    text: str = Field(description="The brief as written")
+    chunks: list[BriefChunk] = Field(min_length=1)
+
+    def chunk_ids(self) -> list[str]:
+        return [c.id for c in self.chunks]
+
+
+class RequirementDecision(StrictModel):
+    """A reviewer's decision on one extracted requirement at the checkpoint. Deterministic
+    row actions only; anything that produces new text goes through the model (ST12b)."""
+
+    requirement_id: str = Field(pattern=REQUIREMENT_ID_RE)
+    action: DecisionAction = DecisionAction.ACCEPT
+    strictness: Strictness | None = Field(default=None, description="New strictness, if changed")
+    type: RequirementType | None = Field(default=None, description="New type, if changed")
+    note: str | None = None
+
+
+class CheckpointRecord(StrictModel):
+    """The checkpoint as confirmed: who, when, how long the run waited, what changed,
+    and the brief. Written to ``checkpoint.json`` and carried into the summary."""
+
+    reviewer: str = Field(min_length=1)
+    confirmed_at: datetime
+    waited_s: float = Field(
+        ge=0, default=0.0, description="Wall time between the pause and the confirmation"
+    )
+    decisions: list[RequirementDecision] = Field(default_factory=list)
+    brief: Brief | None = None
+    note: str | None = None
+
+    def rejected_ids(self) -> list[str]:
+        return [d.requirement_id for d in self.decisions if d.action is DecisionAction.REJECT]
+
+    def edited_ids(self) -> list[str]:
+        return [
+            d.requirement_id
+            for d in self.decisions
+            if d.action is DecisionAction.ACCEPT
+            and (d.strictness is not None or d.type is not None)
+        ]
+
+
+# --------------------------------------------------------------------------------------
+# Human in the loop (ST12b): revisions, versions and sign-off
+# --------------------------------------------------------------------------------------
+
+REVISION_ID_RE = r"^V\d{2,}$"
+
+
+class Artefact(StrEnum):
+    """An artefact a reviewer can revise. The value is the state key of the pipeline."""
+
+    REQUIREMENTS = "requirements"
+    PROBLEM = "problem"
+    SOLUTION = "solution"
+    RISKS = "risks"
+
+
+class RevisionKind(StrEnum):
+    REVISE = "revise"
+    REGENERATE = "regenerate"
+    SIGN_OFF = "sign_off"
+
+
+class RevisionStatus(StrEnum):
+    APPLIED = "applied"
+    FAILED = "failed"
+
+
+# LLM output contract for a requirements revision: a patch, applied and checked by code.
+# New requirement IDs are assigned by code; a new or changed quote must be verbatim in the
+# chunk it names.
+
+
+class RequirementEdit(StrictModel):
+    id: str = Field(pattern=REQUIREMENT_ID_RE, description="The requirement to change")
+    text: str | None = Field(default=None, description="New statement, if it changes")
+    type: RequirementType | None = Field(default=None, description="New type, if it changes")
+    strictness: Strictness | None = Field(default=None, description="New strictness, if it changes")
+    quote: str | None = Field(
+        default=None,
+        description="New verbatim quote, copied character for character from the chunk "
+        "named in chunk_id; omit to keep the current quote",
+    )
+    chunk_id: str | None = Field(
+        default=None, pattern=CHUNK_ID_RE, description="The chunk the new quote is from"
+    )
+
+
+class RequirementsPatch(StrictModel):
+    edits: list[RequirementEdit] = Field(
+        default_factory=list, description="Changes to existing requirements, by ID"
+    )
+    additions: list[CitedRequirement] = Field(
+        default_factory=list, description="New requirements, each quoting a chunk shown"
+    )
+    removals: list[str] = Field(default_factory=list, description="IDs of requirements to remove")
+
+
+# Whole-artefact revision contracts: the draft contracts plus an optional stable ID. An
+# item that keeps its ID is the same item revised; an item without one is new.
+
+
+class ComponentRevision(ComponentDraft):
+    id: str | None = Field(
+        default=None,
+        pattern=COMPONENT_ID_RE,
+        description="The current component's ID when this is a kept or changed one; "
+        "omit for a new component",
+    )
+
+
+class SolutionRevision(SolutionDraft):
+    components: list[ComponentRevision] = Field(default_factory=list)
+
+
+class RiskRevision(RiskDraft):
+    id: str | None = Field(
+        default=None,
+        pattern=RISK_ID_RE,
+        description="The current risk's ID when this is a kept or changed one; omit for a new risk",
+    )
+
+
+class RiskAssessmentRevision(RiskAssessmentDraft):
+    risks: list[RiskRevision] = Field(default_factory=list)
+
+
+class ArtefactVersion(StrictModel):
+    """Where one artefact stands: its current version and whether an upstream change
+    has made it stale."""
+
+    version: int = Field(default=1, ge=1)
+    stale: bool = False
+    stale_because: str | None = None
+    updated_at: datetime | None = None
+
+
+class SignOff(StrictModel):
+    reviewer: str = Field(min_length=1)
+    signed_at: datetime
+    note: str | None = None
+    versions: dict[Artefact, int] = Field(
+        default_factory=dict, description="The version of each artefact signed off"
+    )
+
+
+def _fresh_versions() -> dict[Artefact, ArtefactVersion]:
+    return {a: ArtefactVersion() for a in Artefact}
+
+
+class VersionState(StrictModel):
+    """``current.json``: per-artefact version and stale flag, and the sign-off."""
+
+    artefacts: dict[Artefact, ArtefactVersion] = Field(default_factory=_fresh_versions)
+    signed_off: SignOff | None = None
+
+
+class FieldChange(StrictModel):
+    path: str
+    before: Any = None
+    after: Any = None
+
+
+class DiffSummary(StrictModel):
+    """Code-computed difference between two versions of an artefact: item paths added or
+    removed, and field changes with their before and after values."""
+
+    added: list[str] = Field(default_factory=list)
+    removed: list[str] = Field(default_factory=list)
+    changed: list[FieldChange] = Field(default_factory=list)
+
+    @property
+    def empty(self) -> bool:
+        return not (self.added or self.removed or self.changed)
+
+
+class RevisionRecord(StrictModel):
+    """One entry of the append-only ``revisions.json``."""
+
+    id: str = Field(pattern=REVISION_ID_RE)
+    kind: RevisionKind
+    artefact: Artefact | None = None
+    reviewer: str = Field(min_length=1)
+    instruction: str | None = None
+    note: str | None = None
+    from_version: int | None = None
+    to_version: int | None = None
+    made_stale: list[Artefact] = Field(default_factory=list)
+    model: str | None = None
+    calls: int = 0
+    cost_usd: float = 0.0
+    latency_s: float = 0.0
+    diff: DiffSummary | None = None
+    status: RevisionStatus = RevisionStatus.APPLIED
+    error: str | None = None
+    created_at: datetime
+
+
+class RevisionLog(StrictModel):
+    revisions: list[RevisionRecord] = Field(default_factory=list)
+
+
+class ReviewHistory(StrictModel):
+    """Every human touchpoint of a run, rendered into the summary (ST12)."""
+
+    checkpoint: CheckpointRecord | None = None
+    revisions: list[RevisionRecord] = Field(default_factory=list)
+    sign_off: SignOff | None = None
+
+
+# --------------------------------------------------------------------------------------
 # Final assembly (S9)
 # --------------------------------------------------------------------------------------
 
 
 class ChunkRef(StrictModel):
-    """Enough of a chunk to render a citation as 'section title, page'."""
+    """Enough of a chunk to render a citation as 'section title, page'. A brief chunk
+    (``source = brief``) has no pages."""
 
-    id: str = Field(pattern=CHUNK_ID_RE)
+    id: str = Field(pattern=EVIDENCE_ID_RE)
     section_title: str
-    page_start: int = Field(ge=1)
-    page_end: int = Field(ge=1)
+    page_start: int | None = Field(default=None, ge=1)
+    page_end: int | None = Field(default=None, ge=1)
+    source: EvidenceSource = EvidenceSource.RFP
 
 
 class SolutionSummary(StrictModel):
@@ -652,6 +905,9 @@ class SolutionSummary(StrictModel):
     risks: RiskAssessment
     referenced_documents: list[ReferencedDocument] = Field(default_factory=list)
     flags: list[PageFlag] = Field(default_factory=list)
+    review: ReviewHistory | None = Field(
+        default=None, description="Human touchpoints of the run; None for an unattended run"
+    )
 
 
 # --------------------------------------------------------------------------------------
@@ -695,6 +951,7 @@ class StageStatus(StrEnum):
     STARTED = "started"
     FINISHED = "finished"
     FAILED = "failed"
+    WAITING = "waiting"  # the checkpoint stage while the run waits for a human (ST12)
 
 
 class StageRecord(StrictModel):

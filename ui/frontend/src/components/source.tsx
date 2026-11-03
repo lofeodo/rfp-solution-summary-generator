@@ -25,6 +25,8 @@ const KIND_CLS: Record<IdKind, string> = {
   risk: "border-ink text-ink hover:bg-ink hover:text-paper",
   ambiguity: "border-hair text-muted hover:border-ink hover:text-ink",
   gap: "border-hair text-muted hover:border-ink hover:text-ink",
+  // Human input, set apart from the RFP's own evidence.
+  brief: "border-accent bg-accentsoft text-ink hover:bg-accent hover:text-paper",
 };
 
 export function CiteChip({ id }: { id: string }) {
@@ -40,7 +42,9 @@ export function CiteChip({ id }: { id: string }) {
         ? index.risks.get(id)?.title
         : kind === "component"
           ? index.components.get(id)?.title
-          : undefined;
+          : kind === "brief"
+            ? `Pursuit brief: ${index.brief.get(id)?.text ?? "not in this run"}`
+            : undefined;
   return (
     <button
       type="button"

@@ -18,6 +18,13 @@ Runtime objects (settings, model, recorder, callback) are bound in closures by
 ``build_pipeline``; the graph state holds only the documents and results. The S7
 revision loop stays a function call: ``build_solution`` runs its own compiled graph with
 the same ``config``, so tracing nests it under this run.
+
+The checkpoint (ST12). After ``requirements`` and ``problem`` join, a ``checkpoint`` node
+either passes through (unattended) or records a ``waiting`` stage and routes to ``END``,
+so the run stops with every read-stage file on disk and the worker free. ``resume_pipeline``
+reloads those files into the state (``load_state``), applies the reviewer's record
+(``apply_checkpoint``), continues the same run log and invokes the graph from
+``solution``. No checkpointer: the run directory already is one (D44).
 """
 
 from __future__ import annotations
@@ -38,13 +45,20 @@ from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 from pydantic import BaseModel
 
+from rfp_agent import versions
 from rfp_agent.agents.problem import ProblemResult, build_problem_statement
 from rfp_agent.agents.requirements import RequirementsReport, extract_requirements
 from rfp_agent.agents.risk import RiskResult, build_risks
 from rfp_agent.agents.solution import SolutionResult, build_solution
+from rfp_agent.checkpoint import (
+    CHECKPOINT_FILENAME,
+    CONFIRMED_REQUIREMENTS_FILENAME,
+    apply_checkpoint,
+)
 from rfp_agent.config import RUNS_DIR, Settings, get_settings
 from rfp_agent.llm import get_chat_model
 from rfp_agent.observability import (
+    RUN_LOG_FILENAME,
     RunRecorder,
     langfuse_trace_url,
     make_langfuse_handler,
@@ -55,9 +69,13 @@ from rfp_agent.parsing.quality import record_only_hook, run_quality_pass
 from rfp_agent.parsing.vlm import get_vlm_model, make_vlm_hook
 from rfp_agent.render import assemble, write_summary
 from rfp_agent.schemas import (
+    Artefact,
+    Brief,
+    CheckpointRecord,
     ParsedDocument,
     ParseQualityReport,
     RequirementsOutput,
+    ReviewHistory,
     RunLog,
     RunTotals,
     SolutionSummary,
@@ -91,6 +109,31 @@ STAGES: tuple[str, ...] = (
     RISK,
     ASSEMBLE,
 )
+# The human touchpoint between the read stages and the draft stages (ST12). Not in
+# ``STAGES``: it is a graph node, but not a stage of the machine's work.
+CHECKPOINT = "checkpoint"
+
+# Position of each node in the pipeline; equal positions run in parallel. A graph built
+# with ``start_stage`` holds only the nodes at or after that position.
+_ORDER: dict[str, int] = {
+    PARSE: 0,
+    PARSE_QUALITY: 1,
+    SPLIT: 2,
+    REQUIREMENTS: 3,
+    PROBLEM: 3,
+    CHECKPOINT: 4,
+    SOLUTION: 5,
+    RISK: 6,
+    ASSEMBLE: 7,
+}
+START_STAGES: tuple[str, ...] = (PARSE, SPLIT, REQUIREMENTS, SOLUTION, RISK, ASSEMBLE)
+# A graph built with ``end_stage`` stops after it: regenerating one stage (ST12b) runs
+# that stage alone, never what follows it.
+END_STAGES: tuple[str, ...] = (SOLUTION, RISK, ASSEMBLE)
+
+# A reviewer's revision of an artefact (ST12b). Not a graph node: a stage record and the
+# LLM calls (``revise_*``) are recorded on the same run log by ``rfp_agent.refine``.
+REVISE = "revise"
 
 # LLM node names (``NodeMetrics.node``) that belong to each stage, by prefix.
 STAGE_NODE_PREFIXES: dict[str, tuple[str, ...]] = {
@@ -99,6 +142,7 @@ STAGE_NODE_PREFIXES: dict[str, tuple[str, ...]] = {
     PROBLEM: ("problem_",),
     SOLUTION: ("solution_",),
     RISK: ("risk_",),
+    REVISE: ("revise_",),
 }
 
 # Intermediate files written into the run directory: stage -> (state key, file name).
@@ -113,6 +157,24 @@ STAGE_FILES: dict[str, tuple[tuple[str, str], ...]] = {
     PROBLEM: (("problem", "problem.json"),),
     SOLUTION: (("solution", "solution.json"),),
     RISK: (("risks", "risks.json"),),
+    CHECKPOINT: (
+        ("checkpoint", CHECKPOINT_FILENAME),
+        ("requirements", CONFIRMED_REQUIREMENTS_FILENAME),
+    ),
+}
+
+# How each state key is read back from its file (``load_state``). ``requirements`` is
+# the extractor's output; the confirmed list is applied by ``resume_pipeline``.
+_STATE_MODELS: dict[str, Callable[[str], Any]] = {
+    "parsed": ParsedDocument.model_validate_json,
+    "quality_report": ParseQualityReport.model_validate_json,
+    "split": SplitDocument.model_validate_json,
+    "requirements": RequirementsOutput.model_validate_json,
+    "requirements_report": lambda text: RequirementsReport(**json.loads(text)),
+    "problem": ProblemResult.model_validate_json,
+    "solution": SolutionResult.model_validate_json,
+    "risks": RiskResult.model_validate_json,
+    "checkpoint": CheckpointRecord.model_validate_json,
 }
 
 ERROR_TEXT_LIMIT = 2000
@@ -126,6 +188,9 @@ class PipelineState(TypedDict, total=False):
     requirements: RequirementsOutput
     requirements_report: RequirementsReport
     problem: ProblemResult
+    checkpoint: CheckpointRecord  # set by resume_pipeline (ST12)
+    review: ReviewHistory  # checkpoint, revisions and sign-off, for assemble (ST12b)
+    paused_at: str  # set by the checkpoint node when the run stops there
     solution: SolutionResult
     risks: RiskResult
     summary: SolutionSummary
@@ -160,16 +225,25 @@ class PipelineError(RuntimeError):
         self.cause = cause
 
 
+class PipelineStateError(RuntimeError):
+    """A resume was asked of a run directory that is not waiting at the checkpoint."""
+
+
 @dataclass
 class PipelineResult:
-    summary: SolutionSummary
+    summary: SolutionSummary | None
     run_log: RunLog
     run_dir: Path
     state: PipelineState
+    paused_at: str | None = None  # the node the run stopped at (``CHECKPOINT``) or None
 
     @property
     def output_paths(self) -> dict[str, str]:
         return dict(self.state.get("output_paths", {}))
+
+    @property
+    def paused(self) -> bool:
+        return self.paused_at is not None
 
 
 # --------------------------------------------------------------------------------------
@@ -216,6 +290,49 @@ def write_stage_files(stage: str, updates: dict[str, Any], out_dir: Path) -> dic
     return written
 
 
+def load_state(run_dir: Path, *, confirmed: bool = False) -> PipelineState:
+    """Read a run directory's stage files back into a ``PipelineState`` (ST12).
+
+    Every file a stage wrote is loaded; missing files are skipped, so the state holds
+    exactly what the run got to. ``requirements`` is the extractor's output
+    (``requirements.json``), unless ``confirmed`` is set and the run has a confirmed
+    list (``requirements_confirmed.json``, written at the checkpoint or by a revision
+    while the run waits): then it is that list, the one every later stage works from.
+    """
+    run_dir = Path(run_dir)
+    state: PipelineState = {}
+    paths: dict[str, str] = {}
+    for stage, files in STAGE_FILES.items():
+        for key, filename in files:
+            if stage == CHECKPOINT and key == "requirements":
+                continue
+            path = run_dir / filename
+            if not path.is_file() or key in state:
+                continue
+            loaded = _STATE_MODELS[key](path.read_text(encoding="utf-8"))
+            state[key] = loaded  # type: ignore[literal-required]
+            paths[filename] = str(path)
+    confirmed_path = run_dir / CONFIRMED_REQUIREMENTS_FILENAME
+    if confirmed and confirmed_path.is_file():
+        state["requirements"] = RequirementsOutput.model_validate_json(
+            confirmed_path.read_text(encoding="utf-8")
+        )
+        paths[confirmed_path.name] = str(confirmed_path)
+    if "parsed" in state:
+        state["pdf_path"] = state["parsed"].source_path
+    if paths:
+        state["output_paths"] = paths
+    return state
+
+
+def waiting_checkpoint(log: RunLog) -> StageRecord | None:
+    """The ``waiting`` checkpoint record of a paused run, or ``None``."""
+    for s in reversed(log.stages):
+        if s.stage == CHECKPOINT:
+            return s if s.status == StageStatus.WAITING else None
+    return None
+
+
 # --------------------------------------------------------------------------------------
 # Graph
 # --------------------------------------------------------------------------------------
@@ -230,20 +347,45 @@ def build_pipeline(
     model: BaseChatModel,
     out_dir: Path | None = None,
     on_event: EventCallback | None = None,
+    start_stage: str = PARSE,
+    end_stage: str = ASSEMBLE,
+    pause_at_checkpoint: bool = False,
     vlm_model: BaseChatModel | None = None,
 ):
     """Compile the pipeline graph with its runtime objects bound.
 
     ``out_dir`` receives each stage's JSON as it finishes (``None`` writes nothing;
     the final ``summary.json`` and ``summary.md`` are written only when it is set).
+    ``start_stage`` (one of ``START_STAGES``) builds only the nodes from that stage on,
+    for a resumed run whose earlier state comes from ``load_state``; ``end_stage`` (one
+    of ``END_STAGES``) stops after that stage, so a regeneration (ST12b) runs one stage.
+    ``pause_at_checkpoint`` makes the checkpoint node stop the run (ST12).
     With ``settings.vlm`` the vision model is built here (or taken from ``vlm_model``),
-    so a missing provider key fails before the run starts, like the generator's.
+    so a missing provider key fails before the run starts, like the generator's; only
+    when the parse-quality stage is part of the graph (ST2).
     """
-    if settings.vlm and vlm_model is None:
+    if start_stage not in START_STAGES:
+        raise ValueError(f"start_stage must be one of {START_STAGES}, not {start_stage!r}")
+    if end_stage not in END_STAGES or _ORDER[end_stage] < _ORDER[start_stage]:
+        raise ValueError(
+            f"end_stage must be one of {END_STAGES} and not before {start_stage!r}, "
+            f"not {end_stage!r}"
+        )
+    first = _ORDER[start_stage]
+    last = _ORDER[end_stage]
+
+    def included(name: str) -> bool:
+        return first <= _ORDER[name] <= last
+
+    if settings.vlm and vlm_model is None and included(PARSE_QUALITY):
         vlm_model = get_vlm_model(settings)
 
     def title_of(state: PipelineState) -> str:
         return state["parsed"].title or Path(state["pdf_path"]).name
+
+    def brief_of(state: PipelineState) -> Brief | None:
+        record = state.get("checkpoint")
+        return record.brief if record is not None else None
 
     def emit(event: StageEvent) -> None:
         if on_event is not None:
@@ -367,6 +509,21 @@ def build_pipeline(
         )
         return {"problem": result}
 
+    def checkpoint(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
+        """Unattended: pass through, record nothing. Attended: record that the run is
+        waiting and stop; ``resume_pipeline`` closes the record."""
+        if not pause_at_checkpoint:
+            return {}
+        started_at = datetime.now(UTC)
+        recorder.record_stage(
+            StageRecord(stage=CHECKPOINT, status=StageStatus.WAITING, started_at=started_at)
+        )
+        emit(StageEvent(stage=CHECKPOINT, status=StageStatus.WAITING, started_at=started_at))
+        return {"paused_at": CHECKPOINT}
+
+    def after_checkpoint(state: PipelineState) -> str:
+        return END if state.get("paused_at") else SOLUTION
+
     def solution(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
         result = build_solution(
             state["requirements"],
@@ -377,6 +534,7 @@ def build_pipeline(
             recorder=recorder,
             config=config,
             max_iterations=settings.solution_max_iterations,
+            brief=brief_of(state),
         )
         return {"solution": result}
 
@@ -393,10 +551,12 @@ def build_pipeline(
             settings=settings,
             recorder=recorder,
             config=config,
+            brief=brief_of(state),
         )
         return {"risks": result}
 
     def assemble_stage(state: PipelineState, config: RunnableConfig) -> dict[str, Any]:
+        record = state.get("checkpoint")
         summary = assemble(
             run_id=recorder.run_id,
             model=settings.model,
@@ -407,6 +567,9 @@ def build_pipeline(
             solution=state["solution"].solution,
             risks=state["risks"].assessment,
             strict=True,
+            brief=brief_of(state),
+            review=state.get("review")
+            or (ReviewHistory(checkpoint=record) if record is not None else None),
         )
         updates: dict[str, Any] = {"summary": summary}
         if out_dir is not None:
@@ -414,24 +577,40 @@ def build_pipeline(
             updates["output_paths"] = {json_path.name: str(json_path), md_path.name: str(md_path)}
         return updates
 
+    nodes: dict[str, Callable[..., dict[str, Any]]] = {
+        PARSE: stage(PARSE, parse),
+        PARSE_QUALITY: stage(PARSE_QUALITY, parse_quality),
+        SPLIT: stage(SPLIT, split),
+        REQUIREMENTS: stage(REQUIREMENTS, requirements),
+        PROBLEM: stage(PROBLEM, problem),
+        CHECKPOINT: checkpoint,
+        SOLUTION: stage(SOLUTION, solution),
+        RISK: stage(RISK, risk),
+        ASSEMBLE: stage(ASSEMBLE, assemble_stage),
+    }
+    edges: list[tuple[str, str]] = [
+        (PARSE, PARSE_QUALITY),
+        (PARSE_QUALITY, SPLIT),
+        (SPLIT, REQUIREMENTS),
+        (SPLIT, PROBLEM),
+        (SOLUTION, RISK),
+        (RISK, ASSEMBLE),
+    ]
     graph: StateGraph = StateGraph(PipelineState)
-    graph.add_node(PARSE, stage(PARSE, parse))
-    graph.add_node(PARSE_QUALITY, stage(PARSE_QUALITY, parse_quality))
-    graph.add_node(SPLIT, stage(SPLIT, split))
-    graph.add_node(REQUIREMENTS, stage(REQUIREMENTS, requirements))
-    graph.add_node(PROBLEM, stage(PROBLEM, problem))
-    graph.add_node(SOLUTION, stage(SOLUTION, solution))
-    graph.add_node(RISK, stage(RISK, risk))
-    graph.add_node(ASSEMBLE, stage(ASSEMBLE, assemble_stage))
-    graph.add_edge(START, PARSE)
-    graph.add_edge(PARSE, PARSE_QUALITY)
-    graph.add_edge(PARSE_QUALITY, SPLIT)
-    graph.add_edge(SPLIT, REQUIREMENTS)
-    graph.add_edge(SPLIT, PROBLEM)
-    graph.add_edge([REQUIREMENTS, PROBLEM], SOLUTION)
-    graph.add_edge(SOLUTION, RISK)
-    graph.add_edge(RISK, ASSEMBLE)
-    graph.add_edge(ASSEMBLE, END)
+    for name, fn in nodes.items():
+        if included(name):
+            graph.add_node(name, fn)
+    for name in nodes:
+        if _ORDER[name] == first:
+            graph.add_edge(START, name)
+    for source, target in edges:
+        if included(source) and included(target):
+            graph.add_edge(source, target)
+    if included(REQUIREMENTS):
+        graph.add_edge([REQUIREMENTS, PROBLEM], CHECKPOINT)
+    if included(CHECKPOINT):
+        graph.add_conditional_edges(CHECKPOINT, after_checkpoint, {END: END, SOLUTION: SOLUTION})
+    graph.add_edge(end_stage, END)
     return graph.compile()
 
 
@@ -482,10 +661,14 @@ def run_pipeline(
     vlm_scope: VlmScope | None = None,
     vlm_model: BaseChatModel | None = None,
     on_event: EventCallback | None = None,
+    pause_at_checkpoint: bool = False,
 ) -> PipelineResult:
     """Run the whole pipeline on one PDF and write everything under
     ``<runs_dir>/<run_id>/``: every intermediate, ``summary.json``, ``summary.md`` and
     ``run_log.json`` (the log is written even when a stage fails).
+
+    With ``pause_at_checkpoint`` the run stops after the read stages (ST12): the result
+    has ``paused_at == CHECKPOINT`` and no summary, and ``resume_pipeline`` finishes it.
 
     Raises ``PipelineError`` when a stage fails; ``MissingApiKeyError`` propagates from
     the model factory before anything is written.
@@ -506,10 +689,123 @@ def run_pipeline(
     recorder = RunRecorder.from_settings(
         pdf_path, settings, run_id=run_id, runs_dir=runs_dir or RUNS_DIR
     )
+    return _invoke(
+        {"pdf_path": pdf_path},
+        settings=settings,
+        recorder=recorder,
+        model=model,
+        on_event=on_event,
+        start_stage=PARSE,
+        pause_at_checkpoint=pause_at_checkpoint,
+        vlm_model=vlm_model,
+    )
+
+
+def resume_pipeline(
+    run_dir: str | Path,
+    record: CheckpointRecord,
+    *,
+    settings: Settings | None = None,
+    model: BaseChatModel | None = None,
+    model_spec: str | None = None,
+    max_iterations: int | None = None,
+    on_event: EventCallback | None = None,
+) -> PipelineResult:
+    """Confirm the checkpoint of a paused run and draft the rest (ST12).
+
+    Reloads the read-stage files and the run log from ``run_dir``, applies ``record``
+    (``apply_checkpoint``; a bad record raises ``CheckpointError`` before anything is
+    written), writes ``checkpoint.json`` and ``requirements_confirmed.json``, closes the
+    ``waiting`` checkpoint record with the time the run waited, and invokes the graph
+    from ``solution`` on the same run log, so totals accumulate across the pause.
+
+    When the requirements were revised while the run waited (ST12b), the decisions apply
+    on top of that revised list, and the confirmed list becomes its next version.
+
+    Raises ``PipelineStateError`` when the directory holds no run waiting at the
+    checkpoint.
+    """
+    run_dir = Path(run_dir)
+    log_path = run_dir / RUN_LOG_FILENAME
+    if not log_path.is_file():
+        raise PipelineStateError(f"{run_dir} has no run log")
+    log = RunLog.model_validate_json(log_path.read_text(encoding="utf-8"))
+    waiting = waiting_checkpoint(log)
+    if waiting is None:
+        raise PipelineStateError(f"run {log.run_id} is not waiting at the checkpoint")
+    state = load_state(run_dir, confirmed=True)
+    for key in ("parsed", "split", "requirements", "problem"):
+        if key not in state:
+            raise PipelineStateError(f"run {log.run_id} has no {key} to resume from")
+
+    settings = apply_overrides(
+        settings or get_settings(), model=model_spec, max_iterations=max_iterations
+    )
+    if model is None:
+        model = get_chat_model(settings=settings)
+    confirmed = apply_checkpoint(state["requirements"], record)
+    now = datetime.now(UTC)
+    waited = max(0.0, (now - waiting.started_at).total_seconds())
+    record = record.model_copy(update={"waited_s": waited})
+
+    recorder = RunRecorder.from_log(log, runs_dir=run_dir.parent)
+    closed = StageRecord(
+        stage=CHECKPOINT,
+        status=StageStatus.FINISHED,
+        started_at=waiting.started_at,
+        latency_s=waited,
+    )
+    recorder.log.stages[recorder.log.stages.index(waiting)] = closed
+    paths = write_stage_files(
+        CHECKPOINT, {"checkpoint": record, "requirements": confirmed}, run_dir
+    )
+    if versions.is_versioned(run_dir, Artefact.REQUIREMENTS) and confirmed != state["requirements"]:
+        vstate = versions.load_version_state(run_dir)
+        versions.commit(run_dir, Artefact.REQUIREMENTS, confirmed, vstate)
+        versions.save_version_state(run_dir, vstate)
+    state["requirements"] = confirmed
+    state["checkpoint"] = record
+    state["review"] = versions.review_history(run_dir, record)
+    state["output_paths"] = {**state.get("output_paths", {}), **paths}
+    state.pop("paused_at", None)
+    if on_event is not None:
+        on_event(
+            StageEvent(
+                stage=CHECKPOINT,
+                status=StageStatus.FINISHED,
+                started_at=waiting.started_at,
+                latency_s=waited,
+            )
+        )
+    return _invoke(
+        state,
+        settings=settings,
+        recorder=recorder,
+        model=model,
+        on_event=on_event,
+        start_stage=SOLUTION,
+        pause_at_checkpoint=False,
+    )
+
+
+def _invoke(
+    state: PipelineState,
+    *,
+    settings: Settings,
+    recorder: RunRecorder,
+    model: BaseChatModel,
+    on_event: EventCallback | None,
+    start_stage: str,
+    pause_at_checkpoint: bool,
+    end_stage: str = ASSEMBLE,
+    vlm_model: BaseChatModel | None = None,
+) -> PipelineResult:
+    """Build the graph from ``start_stage`` to ``end_stage``, run it on ``state`` under
+    the recorder and the optional Langfuse handler, and wrap the outcome."""
     handler = make_langfuse_handler(settings)
     config: RunnableConfig = {
         "run_name": f"rfp-run-{recorder.run_id}",
-        "metadata": {"run_id": recorder.run_id, "source": pdf_path},
+        "metadata": {"run_id": recorder.run_id, "source": recorder.log.source_path},
     }
     if handler is not None:
         config["callbacks"] = [handler]
@@ -519,12 +815,15 @@ def run_pipeline(
         model=model,
         out_dir=recorder.run_dir,
         on_event=on_event,
+        start_stage=start_stage,
+        end_stage=end_stage,
+        pause_at_checkpoint=pause_at_checkpoint,
         vlm_model=vlm_model,
     )
     try:
         with recorder.activate():
             try:
-                state: PipelineState = graph.invoke({"pdf_path": pdf_path}, config=config)
+                final: PipelineState = graph.invoke(state, config=config)
             except Exception as exc:
                 failed = [s.stage for s in recorder.log.stages if s.status == StageStatus.FAILED]
                 stage = failed[-1] if failed else "unknown"
@@ -534,6 +833,13 @@ def run_pipeline(
                 recorder.set_trace_url(langfuse_trace_url(handler, settings))
     finally:
         shutdown_langfuse(settings)
+    paused_at = final.get("paused_at")
+    if paused_at is not None:
+        recorder.pause()  # the log says "not finished", with the waiting record in it
     return PipelineResult(
-        summary=state["summary"], run_log=recorder.log, run_dir=recorder.run_dir, state=state
+        summary=final.get("summary"),
+        run_log=recorder.log,
+        run_dir=recorder.run_dir,
+        state=final,
+        paused_at=paused_at,
     )

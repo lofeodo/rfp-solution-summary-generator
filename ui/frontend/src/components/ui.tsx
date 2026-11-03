@@ -33,15 +33,21 @@ export function LevelBadge({ level, label }: { level: Level; label?: string }) {
 const STATE_CLS: Record<RunState, string> = {
   queued: "border-hair text-muted",
   running: "border-accent text-accent",
+  awaiting_checkpoint: "border-accent bg-accentsoft text-ink",
+  drafting: "border-accent text-accent",
   finished: "border-ink text-ink",
+  refining: "border-accent text-accent",
+  signed_off: "bg-ink border-ink text-paper",
   failed: "bg-accent border-accent text-paper",
 };
+
+const BUSY: ReadonlySet<RunState> = new Set<RunState>(["running", "drafting", "refining"]);
 
 export function StateBadge({ state }: { state: RunState }) {
   return (
     <span className={`inline-flex items-center gap-1.5 border px-1.5 py-px font-mono text-[10px] uppercase tracking-wider ${STATE_CLS[state]}`}>
-      {state === "running" && <span className="h-1.5 w-1.5 animate-pulse bg-accent" />}
-      {state}
+      {BUSY.has(state) && <span className="h-1.5 w-1.5 animate-pulse bg-accent" />}
+      {state.replace("_", " ")}
     </span>
   );
 }
