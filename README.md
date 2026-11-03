@@ -10,16 +10,16 @@ team can check it with one click instead of rereading the whole document.
 ## How it works
 
 ```mermaid
-flowchart LR
-    PDF([RFP PDF]) --> A[Parse<br/><small>text, tables, flags</small>]
-    A --> B[Split<br/><small>citable chunks</small>]
-    B --> C[Requirements<br/><small>per chunk, deduped</small>]
-    B --> D[Problem<br/><small>summaries, synthesis</small>]
-    C --> H{{Checkpoint<br/><small>human review</small>}}
+flowchart TB
+    PDF([RFP PDF]) --> A["<b>Parse</b><br/>text, tables, flags"]
+    A --> B["<b>Split</b><br/>citable chunks"]
+    B --> C["<b>Requirements</b><br/>one call per chunk"]
+    B --> D["<b>Problem</b><br/>summaries, then synthesis"]
+    C --> H{{"<b>Checkpoint</b><br/>human review"}}
     D --> H
-    H --> E[Solution<br/><small>until mandatory<br/>reqs are covered</small>]
-    E --> F[Risks<br/><small>from code findings</small>]
-    F --> G([summary.json<br/>summary.md])
+    H --> E["<b>Solution</b><br/>revised until mandatory<br/>requirements are covered"]
+    E --> F["<b>Risks</b><br/>from code-computed<br/>findings"]
+    F --> G(["summary.json<br/>summary.md"])
     classDef code fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
     classDef llm fill:#fff7ed,stroke:#ea580c,color:#431407
     classDef human fill:#ecfdf5,stroke:#059669,color:#064e3b
@@ -40,12 +40,12 @@ diff. Details: [PIPELINE.md](docs/PIPELINE.md) and
 ## Why you can trust a claim
 
 ```mermaid
-flowchart LR
-    S["RFP paragraph<br/><b>S9.1</b> p. 5"] -- verbatim quote --> R["Requirement <b>R017</b><br/><small>mandatory · technical</small>"]
-    R -- addressed by --> C["Solution component <b>C05</b>"]
-    R -- cited by --> K["Risk <b>K01</b><br/><small>high · medium</small>"]
-    C -. click .-> S
-    K -. click .-> S
+flowchart TB
+    S["RFP paragraph<br/><b>S9.1</b> p. 5"] -- "&nbsp;verbatim quote&nbsp;" --> R["Requirement <b>R017</b><br/>mandatory · technical"]
+    R -- "&nbsp;addressed by&nbsp;" --> C["Solution component<br/><b>C05</b>"]
+    R -- "&nbsp;cited by&nbsp;" --> K["Risk <b>K01</b><br/>high · medium"]
+    C -. "&nbsp;click&nbsp;" .-> S
+    K -. "&nbsp;click&nbsp;" .-> S
     classDef src fill:#ecfdf5,stroke:#059669,color:#064e3b
     class S src
 ```
@@ -81,11 +81,11 @@ change is judged by numbers, not by reading a few outputs.
   RFP, not with a procurement specialist.
 
 ```mermaid
-flowchart LR
-    G[Reference labels<br/><small>AI-drafted,<br/>AI-corrected</small>] --> S
-    R[Pipeline runs] --> S[Score<br/><small>code first,<br/>judge second</small>]
-    S --> P[Report +<br/>comparisons]
-    P -- "change a prompt, rerun" --> R
+flowchart TB
+    G["<b>Reference labels</b><br/>AI-drafted,<br/>AI-corrected"] --> S
+    R["<b>Pipeline runs</b>"] --> S["<b>Score</b><br/>code first,<br/>judge second"]
+    S --> P["<b>Report</b><br/>and comparisons"]
+    P -- "&nbsp;change a prompt, rerun&nbsp;" --> R
     classDef code fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
     classDef llm fill:#fff7ed,stroke:#ea580c,color:#431407
     class S,P code
