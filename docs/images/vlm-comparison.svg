@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="880" height="274" viewBox="0 0 880 274" role="img" aria-label="Vision-model option off vs. on, mean per RFP">
+<style>
+.surface { fill: #fcfcfb; }
+.title { fill: #0b0b0b; font-weight: 600; font-size: 15px; }
+.ptitle { fill: #0b0b0b; font-weight: 600; font-size: 13px; }
+.label { fill: #52514e; font-size: 12px; }
+.value { fill: #0b0b0b; font-size: 12px; font-variant-numeric: tabular-nums; }
+.was { fill: #898781; font-size: 12px; font-variant-numeric: tabular-nums; }
+.tick { fill: #898781; font-size: 11px; font-variant-numeric: tabular-nums; }
+.grid { stroke: #e1e0d9; stroke-width: 1; }
+.link { stroke: #c3c2b7; stroke-width: 2; stroke-linecap: round; }
+.a { fill: #86b6ef; stroke: #fcfcfb; stroke-width: 2; }
+.b { fill: #1c5cab; stroke: #fcfcfb; stroke-width: 2; }
+text { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+@media (prefers-color-scheme: dark) {
+  .surface { fill: #1a1a19; }
+  .title, .ptitle, .value { fill: #f0efec; }
+  .label { fill: #c3c2b7; }
+  .grid { stroke: #2c2c2a; }
+  .link { stroke: #383835; }
+  .a { fill: #184f95; stroke: #1a1a19; }
+  .b { fill: #6da7ec; stroke: #1a1a19; }
+}
+</style>
+<rect class="surface" width="880" height="274" rx="8"/>
+<text class="title" x="16" y="30">Vision-model option off vs. on, mean per RFP</text>
+<circle class="a" cx="22" cy="51" r="6"/>
+<text class="label" x="34" y="55">Library parser only (baseline, 3 runs per RFP)</text>
+<circle class="b" cx="383.2" cy="51" r="6"/>
+<text class="label" x="395.2" y="55">With the vision-model option (2 runs per RFP)</text>
+<text class="ptitle" x="16.0" y="90">Recall vs. reference</text>
+<line class="grid" x1="108.0" y1="104" x2="108.0" y2="224"/>
+<text class="tick" x="108.0" y="239" text-anchor="middle">80%</text>
+<line class="grid" x1="163.0" y1="104" x2="163.0" y2="224"/>
+<text class="tick" x="163.0" y="239" text-anchor="middle">85%</text>
+<line class="grid" x1="218.0" y1="104" x2="218.0" y2="224"/>
+<text class="tick" x="218.0" y="239" text-anchor="middle">90%</text>
+<line class="grid" x1="273.0" y1="104" x2="273.0" y2="224"/>
+<text class="tick" x="273.0" y="239" text-anchor="middle">95%</text>
+<line class="grid" x1="328.0" y1="104" x2="328.0" y2="224"/>
+<text class="tick" x="328.0" y="239" text-anchor="middle">100%</text>
+<g><title>Colfax, Recall vs. reference: Library parser only (baseline, 3 runs per RFP) 99%, With the vision-model option (2 runs per RFP) 100%</title>
+<text class="label" x="16.0" y="123.0">Colfax</text>
+<line class="link" x1="316.4" y1="119.0" x2="328.0" y2="119.0"/>
+<circle class="a" cx="316.4" cy="119.0" r="6"/>
+<circle class="b" cx="328.0" cy="119.0" r="6"/>
+<text x="340.0" y="123.0"><tspan class="value">100%</tspan><tspan class="was"> (99%)</tspan></text>
+</g>
+<g><title>Federal Way, Recall vs. reference: Library parser only (baseline, 3 runs per RFP) 81%, With the vision-model option (2 runs per RFP) 95%</title>
+<text class="label" x="16.0" y="153.0">Federal Way</text>
+<line class="link" x1="117.5" y1="149.0" x2="277.1" y2="149.0"/>
+<circle class="a" cx="117.5" cy="149.0" r="6"/>
+<circle class="b" cx="277.1" cy="149.0" r="6"/>
+<text x="340.0" y="153.0"><tspan class="value">95%</tspan><tspan class="was"> (81%)</tspan></text>
+</g>
+<g><title>Missouri, Recall vs. reference: Library parser only (baseline, 3 runs per RFP) 91%, With the vision-model option (2 runs per RFP) 92%</title>
+<text class="label" x="16.0" y="183.0">Missouri</text>
+<line class="link" x1="229.9" y1="179.0" x2="235.0" y2="179.0"/>
+<circle class="a" cx="229.9" cy="179.0" r="6"/>
+<circle class="b" cx="235.0" cy="179.0" r="6"/>
+<text x="340.0" y="183.0"><tspan class="value">92%</tspan><tspan class="was"> (91%)</tspan></text>
+</g>
+<g><title>NYESD, Recall vs. reference: Library parser only (baseline, 3 runs per RFP) 99%, With the vision-model option (2 runs per RFP) 99%</title>
+<text class="label" x="16.0" y="213.0">NYESD</text>
+<line class="link" x1="321.2" y1="209.0" x2="317.8" y2="209.0"/>
+<circle class="a" cx="321.2" cy="209.0" r="6"/>
+<circle class="b" cx="317.8" cy="209.0" r="6"/>
+<text x="340.0" y="213.0"><tspan class="value">99%</tspan><tspan class="was"> (99%)</tspan></text>
+</g>
+<text class="ptitle" x="456.0" y="90">Pipeline cost per run</text>
+<line class="grid" x1="548.0" y1="104" x2="548.0" y2="224"/>
+<text class="tick" x="548.0" y="239" text-anchor="middle">$0.040</text>
+<line class="grid" x1="592.0" y1="104" x2="592.0" y2="224"/>
+<text class="tick" x="592.0" y="239" text-anchor="middle">$0.060</text>
+<line class="grid" x1="636.0" y1="104" x2="636.0" y2="224"/>
+<text class="tick" x="636.0" y="239" text-anchor="middle">$0.080</text>
+<line class="grid" x1="680.0" y1="104" x2="680.0" y2="224"/>
+<text class="tick" x="680.0" y="239" text-anchor="middle">$0.100</text>
+<line class="grid" x1="724.0" y1="104" x2="724.0" y2="224"/>
+<text class="tick" x="724.0" y="239" text-anchor="middle">$0.120</text>
+<line class="grid" x1="768.0" y1="104" x2="768.0" y2="224"/>
+<text class="tick" x="768.0" y="239" text-anchor="middle">$0.140</text>
+<g><title>Colfax, Pipeline cost per run: Library parser only (baseline, 3 runs per RFP) $0.056, With the vision-model option (2 runs per RFP) $0.060</title>
+<text class="label" x="456.0" y="123.0">Colfax</text>
+<line class="link" x1="582.5" y1="119.0" x2="592.2" y2="119.0"/>
+<circle class="a" cx="582.5" cy="119.0" r="6"/>
+<circle class="b" cx="592.2" cy="119.0" r="6"/>
+<text x="780.0" y="123.0"><tspan class="value">$0.060</tspan><tspan class="was"> ($0.056)</tspan></text>
+</g>
+<g><title>Federal Way, Pipeline cost per run: Library parser only (baseline, 3 runs per RFP) $0.047, With the vision-model option (2 runs per RFP) $0.073</title>
+<text class="label" x="456.0" y="153.0">Federal Way</text>
+<line class="link" x1="563.7" y1="149.0" x2="620.9" y2="149.0"/>
+<circle class="a" cx="563.7" cy="149.0" r="6"/>
+<circle class="b" cx="620.9" cy="149.0" r="6"/>
+<text x="780.0" y="153.0"><tspan class="value">$0.073</tspan><tspan class="was"> ($0.047)</tspan></text>
+</g>
+<g><title>Missouri, Pipeline cost per run: Library parser only (baseline, 3 runs per RFP) $0.078, With the vision-model option (2 runs per RFP) $0.129</title>
+<text class="label" x="456.0" y="183.0">Missouri</text>
+<line class="link" x1="631.0" y1="179.0" x2="744.2" y2="179.0"/>
+<circle class="a" cx="631.0" cy="179.0" r="6"/>
+<circle class="b" cx="744.2" cy="179.0" r="6"/>
+<text x="780.0" y="183.0"><tspan class="value">$0.129</tspan><tspan class="was"> ($0.078)</tspan></text>
+</g>
+<g><title>NYESD, Pipeline cost per run: Library parser only (baseline, 3 runs per RFP) $0.101, With the vision-model option (2 runs per RFP) $0.099</title>
+<text class="label" x="456.0" y="213.0">NYESD</text>
+<line class="link" x1="681.1" y1="209.0" x2="676.9" y2="209.0"/>
+<circle class="a" cx="681.1" cy="209.0" r="6"/>
+<circle class="b" cx="676.9" cy="209.0" r="6"/>
+<text x="780.0" y="213.0"><tspan class="value">$0.099</tspan><tspan class="was"> ($0.101)</tspan></text>
+</g>
+</svg>

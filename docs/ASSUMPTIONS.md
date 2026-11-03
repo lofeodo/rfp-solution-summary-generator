@@ -129,8 +129,10 @@ state. Keep entries short; put reasoning in `DECISIONS.md`.
   model family per role, for time reasons; comparing families (Claude vs DeepSeek on
   cost, latency, quality) and using a third family for label drafting are stretch
   goals.
-- Gold labels are drafted by the judge family (Claude) and hand-corrected. The
-  fraction corrected is recorded with the labels.
+- Gold labels are drafted by the judge family (Claude) and corrected by the coding
+  agent, with the author spot-checking; no human expert labelled them. The fraction
+  corrected is recorded with the labels. In a real project a procurement specialist
+  would label them (EVALUATION.md).
 - Keys live only in `.env`. The repo ships `.env.example`. The author hands reviewers a
   low-balance key out of band; no fallback provider is documented.
 - Provider and model are one config setting, so any LangChain-supported chat model can

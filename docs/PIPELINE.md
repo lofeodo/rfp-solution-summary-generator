@@ -262,6 +262,7 @@ No RFP brief came with the assignment, so public US government RFPs stand in
 Federal Way) form the eval set. See `ASSUMPTIONS.md`.
 
 `evals/gold/` holds reference labels for the four RFPs: core requirements and a
-12-fact problem-statement checklist per RFP, drafted by Claude and corrected by hand
-(19 to 26% of drafted requirements corrected). Format, workflow and the correction table
+12-fact problem-statement checklist per RFP, drafted by Claude and corrected by the
+coding agent (19 to 26% of drafted requirements corrected); see
+[EVALUATION.md](EVALUATION.md) for what that means for the scores. Format, workflow and the correction table
 are in `evals/gold/README.md`.

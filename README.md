@@ -1,21 +1,127 @@
 # RFP solution-summary generator
 
-Drop in an RFP (request for proposal) PDF. About 90 seconds and 10 cents later you get
+Drop in an RFP (request for proposal) PDF. A minute or two and a few cents later you get
 the **requirements** it imposes, the **problem** behind it, a proposed **solution** and
-the **risks**. Every claim links back to the paragraph of the RFP it came from, so you
-can check it with one click.
+the **risks**. Every claim links back to the paragraph of the RFP it came from, so a bid
+team can check it with one click instead of rereading the whole document.
 
 ![The UI: a proposed solution, with a cited requirement opened to its source paragraph and PDF page](docs/images/ui-solution.png)
 
-## Open the UI
+## How it works
+
+```mermaid
+flowchart TB
+    PDF([RFP PDF]) --> A["<b>Parse</b><br/>text, tables, flags"]
+    A --> B["<b>Split</b><br/>citable chunks"]
+    B --> C["<b>Requirements</b><br/>one call per chunk"]
+    B --> D["<b>Problem</b><br/>summaries, then synthesis"]
+    C --> H{{"<b>Checkpoint</b><br/>human review"}}
+    D --> H
+    H --> E["<b>Solution</b><br/>revised until mandatory<br/>requirements are covered"]
+    E --> F["<b>Risks</b><br/>from code-computed<br/>findings"]
+    F --> G(["summary.json<br/>summary.md"])
+    classDef code fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
+    classDef llm fill:#fff7ed,stroke:#ea580c,color:#431407
+    classDef human fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class A,B,G code
+    class C,D,E,F llm
+    class H human
+```
+
+Blue stages are plain code; orange stages call the model, and code checks every answer
+(quotes must appear in the source, cited IDs must exist, coverage is counted) before
+anything is kept. At the green checkpoint a pursuit lead confirms the requirement list
+and adds a brief (win themes, capabilities, what the client said outside the RFP), which
+the draft can cite like the RFP itself. After the draft, the lead asks for changes in
+plain words, regenerates what went stale and signs off; every version is kept with its
+diff. Details: [PIPELINE.md](docs/PIPELINE.md) and
+[USAGE.md](docs/USAGE.md#refine-and-sign-off).
+
+## Why you can trust a claim
+
+```mermaid
+flowchart TB
+    S["RFP paragraph<br/><b>S9.1</b> p. 5"] -- "&nbsp;verbatim quote&nbsp;" --> R["Requirement <b>R017</b><br/>mandatory · technical"]
+    R -- "&nbsp;addressed by&nbsp;" --> C["Solution component<br/><b>C05</b>"]
+    R -- "&nbsp;cited by&nbsp;" --> K["Risk <b>K01</b><br/>high · medium"]
+    C -. "&nbsp;click&nbsp;" .-> S
+    K -. "&nbsp;click&nbsp;" .-> S
+    classDef src fill:#ecfdf5,stroke:#059669,color:#064e3b
+    class S src
+```
+
+IDs are assigned by code and stable for a given PDF. The UI turns every ID into a link
+to the cited paragraph, with the quote highlighted and the PDF open at that page, and the
+evaluation counts claims the cited text does not support.
+
+## How it is evaluated
+
+An evaluation harness runs the pipeline on four public RFPs, several times each, and
+scores every output against reference answers. It exists so that a prompt or model
+change is judged by numbers, not by reading a few outputs.
+
+- **What is measured.** Whether it finds the requirements that matter (recall) and lists
+  only real ones (precision), whether the problem statement contains the facts it must,
+  whether each claim is supported by the text it cites, whether the solution covers every
+  mandatory requirement, whether the risks are rated sensibly, and the cost and time of
+  every stage.
+- **How.** Code checks first: quotes are verbatim, so matching and ID checks are exact
+  and free. A judge model handles only what code cannot, such as paraphrases or whether a
+  description really meets a requirement.
+- **Why that judge.** DeepSeek generates and Claude judges, so the judge never grades its
+  own model family. A sample of the judge's verdicts is labelled independently to measure
+  how often it agrees.
+- **Where the ground truth comes from.** Claude drafted the reference labels, code
+  dropped any label whose quote is not in the RFP, and the AI coding agent that built the
+  project corrected every item against the full text; the author spot-checked. The
+  judge-agreement sample was also labelled by the agent. **In a real project a human
+  expert would make these labels**; here the 36-hour budget ruled that out, so the
+  untouched drafts are committed next to the final labels and the correction is a
+  recorded diff. The scores therefore measure agreement with a careful AI reading of each
+  RFP, not with a procurement specialist.
+
+```mermaid
+flowchart TB
+    G["<b>Reference labels</b><br/>AI-drafted,<br/>AI-corrected"] --> S
+    R["<b>Pipeline runs</b>"] --> S["<b>Score</b><br/>code first,<br/>judge second"]
+    S --> P["<b>Report</b><br/>and comparisons"]
+    P -- "&nbsp;change a prompt, rerun&nbsp;" --> R
+    classDef code fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
+    classDef llm fill:#fff7ed,stroke:#ea580c,color:#431407
+    class S,P code
+    class G,R llm
+```
+
+The full method, its limits and every report: [EVALUATION.md](docs/EVALUATION.md).
+
+## Results
+
+Both charts are drawn by the harness from the committed reports; exact figures are in
+[`evals/results/`](evals/results/README.md).
+
+![Old prompts vs. current prompts: recall, precision, judged coverage and cost per RFP](docs/images/prompt-structure-comparison.svg)
+
+Every prompt was rewritten into one documented structure
+([`prompts/README.md`](prompts/README.md)). The effect is neutral to slightly positive:
+recall and judged coverage move by RFP, mostly within run-to-run spread, precision dips,
+mostly because the rewritten judge is stricter, and cost rises a little with longer
+instructions
+([PROMPTS.md](docs/PROMPTS.md#st13-comparison)).
+
+![Vision-model option off vs. on: recall and cost per RFP](docs/images/vlm-comparison.svg)
+
+Federal Way's table of systems to replace is an image the library parser cannot read.
+The vision-model option re-renders such pages, which closes most of that recall gap for
+a few cents more; the other RFPs are unchanged.
+
+## Run it
 
 Run every command from the repository folder. They work the same in Windows `cmd`,
 PowerShell and bash unless a line says otherwise.
 
 **With Docker** (nothing else to install):
 
-1. Make a copy of the file `.env.example`, name it `.env`, and paste your DeepSeek
-   key after `DEEPSEEK_API_KEY=`.
+1. Copy `.env.example` to a new file named `.env` and fill in your DeepSeek key.
 2. `docker build -t rfp-agent .`
 3. Start it, with the line for your shell:
    - Windows `cmd`: `docker run --rm -p 8000:8000 --env-file .env -v "%cd%/runs:/app/runs" rfp-agent`
@@ -28,205 +134,51 @@ PowerShell and bash unless a line says otherwise.
 1. `conda create -n rfp-solution-gen python=3.12 -y`
 2. `conda activate rfp-solution-gen`
 3. `pip install -r requirements.txt`
-4. Make a copy of the file `.env.example`, name it `.env`, and paste your DeepSeek
-   key after `DEEPSEEK_API_KEY=`.
+4. Copy `.env.example` to a new file named `.env` and fill in your DeepSeek key.
 5. `cd ui/frontend`, then `npm ci`, then `npm run build`, then `cd ../..`
 6. `python -m ui.backend`
 7. Open <http://127.0.0.1:8000>
 
-Four public RFPs are already loaded as samples and need no key, so steps 1 and 4
-(the key) can wait until you want to run your own PDF. More ways to run it (CLI, dev
-mode, API, evals) are in [`docs/USAGE.md`](docs/USAGE.md).
+Four public RFPs are already loaded as samples and need no key, so the key step can wait
+until you run your own PDF. The CLI, development mode, the API and the evals are in
+[USAGE.md](docs/USAGE.md).
 
-## Using the UI
+### Using the UI
 
 ![The start page: drop a PDF, pick options, and the list of finished runs](docs/images/ui-home.png)
 
-1. **Drop an RFP PDF** on the start page (or open one of the four samples below it).
-   The options can stay at their defaults. Tick `vlm` if the PDF has tables or forms
-   that are images (Federal Way's page 5): a vision model then re-renders the pages the
-   quality pass escalates, for a few cents more. To clear out an old run, click
-   **Remove** at the end of its row and confirm: its folder under `runs/` is deleted.
-   Samples cannot be removed, nor can a run while a job is queued or running.
-2. **Watch it run.** The left rail shows the eight stages ticking through, with time,
-   calls and cost for each. A run takes one to two minutes.
-3. **Read the result** in six tabs (table below). Start with Solution.
-4. **Click any ID** such as `R017`, `C05`, `K01` or `S9.1`: a panel opens with the
-   cited paragraph, the exact quote highlighted, and the PDF at that page.
-5. **Download** `summary.md` or `summary.json` from the header, or come back later:
-   every run stays in the list.
+1. **Drop an RFP PDF** on the start page, or open one of the four samples. The defaults
+   are fine; tick `vlm` if the PDF has tables or forms that are images. **Remove** at the
+   end of a row deletes one of your runs.
+2. **Review at the checkpoint.** Reject or reclassify requirements, write the pursuit
+   brief, then **Confirm and draft**. Tick "unattended" on upload to skip this.
+3. **Watch it run.** The left rail shows each stage with its time, calls and cost.
+4. **Read the result** in the tabs below, starting with Solution. Click any ID such as
+   `R017`, `C05`, `K01` or `S9.1` to open the cited paragraph and the PDF at that page.
+5. **Refine and sign off.** Each tab has "Suggest edits" and a version bar; the Review
+   tab signs off and shows the whole history.
+6. **Download** `summary.md` or `summary.json` from the header. Every run stays in the
+   list.
 
 | Tab | What you see |
 |---|---|
-| **Solution** | The proposed approach: a summary, the components with the requirements each one addresses, the assumptions made, and how many mandatory requirements are covered. The problem statement sits underneath. |
-| **Requirements** | Every requirement with its type and strictness, filterable by both, plus the ambiguities and the documents the RFP refers to but does not include. |
-| **Risks** | Risks ranked by severity and likelihood, each with a justification and a mitigation, and the code-computed findings the assessor had to address. |
-| **Problem** | What the client is really asking for: situation, goal, success criteria, constraints, each marked fact or inference. |
-| **Parse & chunks** | The RFP as the pipeline read it: pages, flagged pages, sections and the citable chunks. With the `vlm` option on, each page the vision model re-rendered, with the library parser's text and the transcription side by side. |
+| **Solution** | The proposed approach: components, the requirements each addresses, assumptions, and mandatory coverage. |
+| **Requirements** | Every requirement with its type and strictness, plus ambiguities and documents the RFP refers to but does not include. |
+| **Risks** | Risks ranked by severity and likelihood, each with a justification and a mitigation. |
+| **Problem** | What the client is really asking for, each point marked fact or inference. |
+| **Parse & chunks** | The RFP as the pipeline read it: pages, flagged pages, sections and citable chunks. |
 | **Metrics** | Cost, tokens, retries and time per stage and per model call. |
-
-How each tab's content is produced is in [`docs/PIPELINE.md`](docs/PIPELINE.md); the
-CLI, the API and development mode are in [`docs/USAGE.md`](docs/USAGE.md).
-
-## What happens to your PDF
-
-```mermaid
-flowchart LR
-    PDF([RFP PDF]) --> A[Parse<br/><small>text, tables, flags</small>]
-    A --> B[Split<br/><small>citable chunks S3.2</small>]
-    B --> C[Requirements<br/><small>one call per chunk, deduped</small>]
-    B --> D[Problem statement<br/><small>summaries, then synthesis</small>]
-    C --> E[Solution<br/><small>revised until mandatory<br/>requirements are covered</small>]
-    D --> E
-    E --> F[Risks<br/><small>from code-computed findings</small>]
-    C --> F
-    F --> G([summary.json<br/>summary.md])
-    G --> UI[Browser UI<br/><small>live progress, source reveal, metrics</small>]
-    classDef code fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b
-    classDef llm fill:#fff7ed,stroke:#ea580c,color:#431407
-    class A,B,G code
-    class C,D,E,F llm
-```
-
-Blue stages are plain code. Orange stages call the model, but code checks every
-answer: quotes must appear in the source, cited IDs must exist, coverage is counted,
-and a bad answer goes back to the model with the error before anything is kept.
-
-**The checkpoint (human in the loop).** From the command line, a run stops after the
-requirements and the problem statement, before anything is drafted. A pursuit lead
-confirms the requirement list (reject one, change a strictness or a type) and writes a
-pursuit brief: win themes, the bidder's capabilities and constraints, what the client
-said outside the RFP. The brief becomes citable evidence (`H1`, `H2`...), so the
-summary shows which claims rest on the RFP and which on the team, and the reviewer,
-the decisions and the brief are rendered as the summary's review history. After the
-draft, the lead reviews in prose: `revise` applies one instruction to the requirements,
-the problem statement, the solution or the risks, checked by the same rules as the
-stage that produced it (no unknown IDs, verbatim quotes, no mandatory requirement
-dropped from the solution), and keeps every version with a diff and its cost. What
-depends on a change is marked stale and regenerated only on request; `sign-off` is
-refused until nothing is stale, then freezes the run. See
-[docs/USAGE.md](docs/USAGE.md) for the commands and `--unattended` for the one-shot
-run. The backend API takes the same checkpoint, revisions, regenerations and sign-off,
-and an upload through the UI pauses at the checkpoint too: the run page opens on a
-Checkpoint tab with the requirement table (reject, strictness, type per row), an
-instruction box for model edits, the brief with a live preview of its H1, H2...
-paragraphs, and "Confirm and draft" under the reviewer's name. After the draft, each
-artefact tab has a "Suggest edits" panel, a version bar (older versions read-only) and a
-stale banner with Regenerate; the Review tab signs off and shows the whole history with
-each change's diff. Brief citations (H1, H2...) open the reviewer's paragraph.
-
-## Why you can trust a claim
-
-```mermaid
-flowchart LR
-    S["RFP paragraph<br/><b>S9.1</b> p. 5"] -- verbatim quote --> R["Requirement <b>R017</b><br/><small>mandatory · technical</small>"]
-    R -- addressed by --> C["Solution component <b>C05</b>"]
-    R -- cited by --> K["Risk <b>K01</b><br/><small>high · medium</small>"]
-    C -. click .-> S
-    K -. click .-> S
-    classDef src fill:#ecfdf5,stroke:#059669,color:#064e3b
-    class S src
-```
-
-IDs are assigned by code and stable for a given PDF. The UI turns every ID into a
-link that opens the cited paragraph with the quote highlighted and the PDF at that
-page. The evaluation counts claims the cited text does not support.
-
-## How good is it
-
-Measured on four public RFPs against hand-corrected reference labels, three runs
-each, DeepSeek as the generator and Claude as the judge
-([`evals/results/baseline/summary.md`](evals/results/baseline/summary.md)).
-
-| RFP | Requirements found | Recall vs. reference | Precision | Cost per run | Time |
-|---|---|---|---|---|---|
-| Colfax | 120 | 99% | 97% | $0.06 | 85 s |
-| Federal Way | 100 | 81% (96% of readable pages) | 99% | $0.05 | 84 s |
-| Missouri | 122 | 91% | 96% | $0.08 | 121 s |
-| NYESD | 226 | 99% | 97% | $0.10 | 117 s |
-
-Mandatory requirements covered by the solution: 100% cited, 70 to 100% confirmed by
-the judge. The judge agrees with 34 of 40 hand-checked verdicts.
-
-Federal Way's gap is its page 5: the table of systems to replace is an image. With the
-vision-model option (`--vlm`, or the `vlm` checkbox), that page is re-rendered and
-Federal Way's recall rises to 95% with every page-5 item found, for about 2 cents and
-6 seconds more per run; the other three RFPs are unchanged
-([`evals/results/ablation_vlm/summary.md`](evals/results/ablation_vlm/summary.md)).
-
-```mermaid
-flowchart LR
-    G[Reference labels<br/><small>drafted by Claude,<br/>corrected by hand</small>] --> S
-    R[Pipeline runs] --> S[Score<br/><small>code checks first,<br/>judge model second</small>]
-    S --> P[Report + ablation diffs]
-    P -- "fix a prompt, rerun one judge" --> R
-```
-
-### Old prompts vs. new prompts
-
-Every prompt was later rewritten into one documented structure (ST13: role, task,
-context, output, rules, examples, tone, inputs, final checks; see
-[`prompts/README.md`](prompts/README.md)). The full eval was then rerun with the new
-prompts and scored with the rewritten judges.
-
-![Old prompts vs. new prompts: recall, precision, judged coverage and cost per RFP](docs/images/prompt-structure-comparison.svg)
-
-| RFP | Recall | Precision | Mandatory coverage (judge) | Cost per run |
-|---|---|---|---|---|
-| Colfax | 99% → 96% | 97% → 91% | 96% → 98% | $0.056 → $0.059 |
-| Federal Way | 81% → 81% | 99% → 97% | 100% → 98% | $0.047 → $0.050 |
-| Missouri | 91% → 96% | 96% → 96% | 97% → 98% | $0.078 → $0.079 |
-| NYESD | 99% → 99% | 97% → 94% | 78% → 91% | $0.101 → $0.107 |
-
-How to read it:
-- **Recall** is up 5 points on Missouri and flat elsewhere, except a 3-point Colfax dip.
-- **Precision** fell by 0 to 6 points. Most of the drop comes from the judge, not the
-  pipeline: rescoring the *old* outputs with the new judges alone lowers precision by 1
-  to 4 points ([`baseline_rejudged`](evals/results/baseline_rejudged/summary.md)). The
-  new extractor also returns more items on three RFPs. Colfax, at 91% on both runs, is
-  the outlier.
-- **NYESD coverage** rose from 78% to 91%, but an earlier fix (S13, "name what you
-  cite") had already produced most of that gain, so it is not the new structure's.
-- **Cost** rose by up to 6% because the instructions are longer.
-- **Reliability** improved: no dedupe fallback, fewer correction turns, and the judge
-  agrees with 35 of 40 hand-checked verdicts (34 before).
-
-Overall the new structure is neutral to slightly positive on what the evals measure.
-The values are means of three old runs and two new runs per RFP, so differences under
-about 3 points are inside the run-to-run spread. Full numbers are in
-[`evals/results/prompt_structure/`](evals/results/prompt_structure/summary.md) (with
-`diff_*.md` against the baseline) and in the
-[ST13 comparison in `docs/PROMPTS.md`](docs/PROMPTS.md#st13-comparison). To redraw
-the chart from the committed results (free):
-
-```bash
-python -m evals.harness chart baseline prompt_structure \
-  -o docs/images/prompt-structure-comparison.svg \
-  --a-name "Old prompts (baseline, 3 runs per RFP)" \
-  --b-name "New prompts (ST13, 2 runs per RFP)" \
-  --title "Old prompts vs. new prompts (ST13), mean per RFP"
-```
-
-## Repository map
-
-```
-src/rfp_agent/   the pipeline: parsing, splitting, agents, render, graph, CLI
-prompts/         one markdown prompt per agent
-ui/              FastAPI backend and React frontend
-evals/           reference labels, scoring harness, committed results
-runs/samples/    four complete sample runs (no key needed to browse)
-docs/            everything below
-Dockerfile       one image for the UI and the CLI
-```
+| **Checkpoint, Review** | The human review: requirement decisions, the brief, revisions and sign-off. |
 
 ## Read more
 
 | Doc | What it answers |
 |---|---|
-| [`docs/USAGE.md`](docs/USAGE.md) | Every way to run it: CLI and flags, UI dev mode, API, Docker, evals, troubleshooting |
-| [`docs/PIPELINE.md`](docs/PIPELINE.md) | What each stage does, what code checks, settings, observability |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md) | Why it is built this way, with the evidence, and the failure modes hit |
-| [`docs/PROMPTS.md`](docs/PROMPTS.md) | Design notes and changelog for every prompt |
-| [`docs/ASSUMPTIONS.md`](docs/ASSUMPTIONS.md) | Everything the brief did not state |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | How it was built, step by step |
-| [`evals/results/README.md`](evals/results/README.md) | How to read every eval column |
+| [USAGE.md](docs/USAGE.md) | Every way to run it: CLI and flags, UI dev mode, API, Docker, evals, troubleshooting |
+| [PIPELINE.md](docs/PIPELINE.md) | What each stage does, what code checks, settings, observability |
+| [EVALUATION.md](docs/EVALUATION.md) | What is measured, how, the ground truth and its limits, every report |
+| [DECISIONS.md](docs/DECISIONS.md) | Why it is built this way, with the evidence, and the failure modes hit |
+| [PROMPTS.md](docs/PROMPTS.md) | Design notes and changelog for every prompt |
+| [ASSUMPTIONS.md](docs/ASSUMPTIONS.md) | Everything the brief did not state |
+| [REPOSITORY.md](docs/REPOSITORY.md) | Where each part of the code lives |
+| [ROADMAP.md](docs/ROADMAP.md) | How it was built, step by step |
