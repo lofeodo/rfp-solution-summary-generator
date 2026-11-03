@@ -24,7 +24,7 @@ from rfp_agent.parsing.quality import record_only_hook
 from rfp_agent.schemas import SplitDocument
 from ui.backend.app import create_app
 from ui.backend.models import ARTIFACTS
-from ui.backend.runs import RunEntry
+from ui.backend.runs import RunBusy, RunEntry
 
 REVIEW_ARTIFACTS = {"checkpoint", "requirements_confirmed", "current", "revisions"}
 
@@ -835,3 +835,55 @@ def test_a_live_run_without_a_log_cannot_be_refined(make_client, tmp_path):
     r = client.post("/api/runs/nolog/checkpoint", json={"reviewer": "Dana"})
     assert r.status_code == 409 and "no run log" in r.json()["detail"]
     assert client.get("/api/runs/nolog/revisions").json() == {"revisions": []}
+
+
+# --------------------------------------------------------------------------------------
+# Removing runs from the list
+# --------------------------------------------------------------------------------------
+
+
+def test_delete_removes_a_run_from_the_list_and_the_disk(make_client, tmp_path):
+    client = make_client()
+    finished = run_to_end(client)
+    paused = paused_run(client)
+    for run_id in (finished, paused):
+        assert client.delete(f"/api/runs/{run_id}").status_code == 204
+        assert not (tmp_path / "runs" / run_id).exists()
+        assert client.app.state.registry.get(run_id) is None
+        assert client.get(f"/api/runs/{run_id}").status_code == 404
+        assert client.delete(f"/api/runs/{run_id}").status_code == 404
+    assert [i["run_id"] for i in client.get("/api/runs").json()] == ["sample1"]
+    # A deleted paused run cannot be resumed.
+    r = client.post(f"/api/runs/{paused}/checkpoint", json={"reviewer": "Dana"})
+    assert r.status_code == 404
+
+
+def test_delete_after_a_restart_removes_a_run_found_on_disk(make_client, tmp_path):
+    run_id = run_to_end(make_client())
+    fresh = make_client()
+    assert fresh.delete(f"/api/runs/{run_id}").status_code == 204
+    assert not (tmp_path / "runs" / run_id).exists()
+
+
+def test_delete_refuses_samples_and_busy_runs(make_client, chunk_id, samples_dir):
+    stubs = Stubs(chunk_id)
+    gate = Gate(stubs)
+    client = make_client(stubs)
+    r = client.delete("/api/runs/sample1")
+    assert r.status_code == 403 and (samples_dir / "sample1").is_dir()
+    run_id = upload(client).json()["run_id"]
+    assert gate.entered.wait(TIMEOUT)
+    r = client.delete(f"/api/runs/{run_id}")
+    assert r.status_code == 409 and "running" in r.json()["detail"]
+    gate.open()
+    assert entry_of(client, run_id).wait_idle(TIMEOUT)
+    assert client.delete(f"/api/runs/{run_id}").status_code == 204
+
+
+def test_a_deleted_entry_takes_no_new_job(make_client):
+    client = make_client()
+    run_id = run_to_end(client)
+    entry = entry_of(client, run_id)
+    client.app.state.registry.delete(run_id)
+    with pytest.raises(RunBusy, match="deleted"):
+        entry.begin("refining")
