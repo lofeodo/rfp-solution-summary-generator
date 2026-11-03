@@ -85,6 +85,7 @@ original file name and the options.
 | `POST /runs` | multipart: `file` (PDF, required); optional `model` (`provider:model`), `full_text_problem`, `single_call_extraction` (`true`/`false`), `max_iterations` (1 to 10) | 202 `{run_id, status}` | 400 not a PDF, empty, or unknown model; 413 over 50 MB; 422 bad field; 503 provider key missing (the message names the variable) |
 | `GET /runs` | | `RunListItem[]`: own runs newest first, then samples by name | |
 | `GET /runs/{id}` | | `RunStatus` | 404 |
+| `DELETE /runs/{id}` | | 204; the run leaves the registry and its directory is removed | 403 sample; 404; 409 a job is queued or in flight, or a file is still open (Windows) |
 | `GET /runs/{id}/events` | | SSE stream, see below | 404 |
 | `GET /runs/{id}/artifacts/{name}` | `name` from the table above | the JSON file | 404 unknown name or not written yet |
 | `GET /runs/{id}/summary.md` | | `text/markdown` | 404 before `assemble` |

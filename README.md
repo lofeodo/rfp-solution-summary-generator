@@ -45,7 +45,9 @@ mode, API, evals) are in [`docs/USAGE.md`](docs/USAGE.md).
 1. **Drop an RFP PDF** on the start page (or open one of the four samples below it).
    The options can stay at their defaults. Tick `vlm` if the PDF has tables or forms
    that are images (Federal Way's page 5): a vision model then re-renders the pages the
-   quality pass escalates, for a few cents more.
+   quality pass escalates, for a few cents more. To clear out an old run, click
+   **Remove** at the end of its row and confirm: its folder under `runs/` is deleted.
+   Samples cannot be removed, nor can a run while a job is queued or running.
 2. **Watch it run.** The left rail shows the eight stages ticking through, with time,
    calls and cost for each. A run takes one to two minutes.
 3. **Read the result** in six tabs (table below). Start with Solution.

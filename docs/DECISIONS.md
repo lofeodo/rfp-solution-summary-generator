@@ -1259,6 +1259,21 @@ measured effect is in `docs/PROMPTS.md` (ST13 comparison) and in
 `evals/results/baseline_rejudged/` (baseline runs, new judge prompts, agreement with
 the 40 hand labels).
 
+### D52. Removing a run deletes its directory; samples and busy runs are refused
+Context: the home page lists every run under `runs/`, and test uploads pile up. The
+author asked for a way to remove previous runs from that list.
+Options: (a) delete the run directory; (b) hide the run (a flag file or a trash
+folder) and keep its files; (c) a CLI-only cleanup.
+Choice: (a). `DELETE /api/runs/{id}` removes the run from the registry and deletes its
+directory. Samples (committed, read-only) answer 403; a run with a job queued or in
+flight answers 409, because the worker would write into a directory that is gone. The
+registry entry is marked deleted under its own lock before it is dropped, so a request
+that fetched the entry a moment earlier cannot queue a job on it (`begin` refuses). On
+the page, own runs get a two-click Remove control (Remove, then Yes / No); no modal.
+Why: the run directory is the source of truth (D48), so hiding it would need a second
+place that says which runs are hidden. Runs are cheap to reproduce (cents), and
+`runs/` is gitignored scratch space. Two clicks guard against a slip without a dialog.
+
 ---
 
 ## Part 2 — Failure modes hit
