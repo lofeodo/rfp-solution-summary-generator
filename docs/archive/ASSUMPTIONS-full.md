@@ -1,5 +1,7 @@
 # ASSUMPTIONS.md
 
+> Full log, kept verbatim. The short reviewer version is [../ASSUMPTIONS.md](../ASSUMPTIONS.md); new entries go here and get a line there.
+
 Living file. Add an entry whenever a step relies on something the assignment does not
 state. Keep entries short; put reasoning in `DECISIONS.md`.
 

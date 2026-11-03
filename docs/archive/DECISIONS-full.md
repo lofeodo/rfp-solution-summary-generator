@@ -1,5 +1,7 @@
 # DECISIONS.md
 
+> Full log, kept verbatim. The short reviewer version is [../DECISIONS.md](../DECISIONS.md); new entries go here and get a line there.
+
 Trade-offs, failure modes hit, and fixes. Living file; every roadmap step adds to it.
 
 Each decision uses the same shape so it can be defended live:
