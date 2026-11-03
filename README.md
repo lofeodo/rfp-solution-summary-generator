@@ -145,6 +145,11 @@ Four public RFPs are already loaded as samples and need no key, so the key step 
 until you run your own PDF. The CLI, development mode, the API and the evals are in
 [USAGE.md](docs/USAGE.md).
 
+**Examples vs. real usage.** The sample RFPs come with finished solution summaries you can
+browse without any setup. Running the pipeline on a new RFP calls an LLM, so it needs API
+keys. To get keys, email <daniel.lofeodo@gmail.com> and say which company you work for and
+why you need them.
+
 ### Using the UI
 
 ![The start page: drop a PDF, pick options, and the list of finished runs](docs/images/ui-home.png)
