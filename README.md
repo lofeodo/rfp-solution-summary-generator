@@ -152,18 +152,57 @@ Federal Way's recall rises to 95% with every page-5 item found, for about 2 cent
 6 seconds more per run; the other three RFPs are unchanged
 ([`evals/results/ablation_vlm/summary.md`](evals/results/ablation_vlm/summary.md)).
 
-The prompts were later rewritten into one documented structure (ST13, see
-[`prompts/README.md`](prompts/README.md)); the rerun with the new prompts is under
-[`evals/results/prompt_structure/`](evals/results/prompt_structure/summary.md) with
-`diff_*.md` files against this baseline, and the judge agreement after the rewrite is
-35 of 40.
-
 ```mermaid
 flowchart LR
     G[Reference labels<br/><small>drafted by Claude,<br/>corrected by hand</small>] --> S
     R[Pipeline runs] --> S[Score<br/><small>code checks first,<br/>judge model second</small>]
     S --> P[Report + ablation diffs]
     P -- "fix a prompt, rerun one judge" --> R
+```
+
+### Old prompts vs. new prompts
+
+Every prompt was later rewritten into one documented structure (ST13: role, task,
+context, output, rules, examples, tone, inputs, final checks; see
+[`prompts/README.md`](prompts/README.md)). The full eval was then rerun with the new
+prompts and scored with the rewritten judges.
+
+![Old prompts vs. new prompts: recall, precision, judged coverage and cost per RFP](docs/images/prompt-structure-comparison.svg)
+
+| RFP | Recall | Precision | Mandatory coverage (judge) | Cost per run |
+|---|---|---|---|---|
+| Colfax | 99% → 96% | 97% → 91% | 96% → 98% | $0.056 → $0.059 |
+| Federal Way | 81% → 81% | 99% → 97% | 100% → 98% | $0.047 → $0.050 |
+| Missouri | 91% → 96% | 96% → 96% | 97% → 98% | $0.078 → $0.079 |
+| NYESD | 99% → 99% | 97% → 94% | 78% → 91% | $0.101 → $0.107 |
+
+How to read it:
+- **Recall** is up 5 points on Missouri and flat elsewhere, except a 3-point Colfax dip.
+- **Precision** fell by 0 to 6 points. Most of the drop comes from the judge, not the
+  pipeline: rescoring the *old* outputs with the new judges alone lowers precision by 1
+  to 4 points ([`baseline_rejudged`](evals/results/baseline_rejudged/summary.md)). The
+  new extractor also returns more items on three RFPs. Colfax, at 91% on both runs, is
+  the outlier.
+- **NYESD coverage** rose from 78% to 91%, but an earlier fix (S13, "name what you
+  cite") had already produced most of that gain, so it is not the new structure's.
+- **Cost** rose by up to 6% because the instructions are longer.
+- **Reliability** improved: no dedupe fallback, fewer correction turns, and the judge
+  agrees with 35 of 40 hand-checked verdicts (34 before).
+
+Overall the new structure is neutral to slightly positive on what the evals measure.
+The values are means of three old runs and two new runs per RFP, so differences under
+about 3 points are inside the run-to-run spread. Full numbers are in
+[`evals/results/prompt_structure/`](evals/results/prompt_structure/summary.md) (with
+`diff_*.md` against the baseline) and in the
+[ST13 comparison in `docs/PROMPTS.md`](docs/PROMPTS.md#st13-comparison). To redraw
+the chart from the committed results (free):
+
+```bash
+python -m evals.harness chart baseline prompt_structure \
+  -o docs/images/prompt-structure-comparison.svg \
+  --a-name "Old prompts (baseline, 3 runs per RFP)" \
+  --b-name "New prompts (ST13, 2 runs per RFP)" \
+  --title "Old prompts vs. new prompts (ST13), mean per RFP"
 ```
 
 ## Repository map

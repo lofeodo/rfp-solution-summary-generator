@@ -10,6 +10,7 @@
     python -m evals.harness run --label ablation_full_text --all --full-text-problem
     python -m evals.harness score --label baseline --only match        # one judge, merged
     python -m evals.harness diff baseline ablation_full_text --what problem        # free
+    python -m evals.harness chart baseline prompt_structure -o docs/images/x.svg  # free
 
 Eval runs live under ``runs/evals/<label>/<rfp>/<k>/`` (gitignored); scores, summaries,
 judge logs and the agreement files under ``evals/results/<label>/`` (committed).
@@ -420,6 +421,37 @@ def diff(
     typer.echo(md)
     if out:
         out.write_text(md, encoding="utf-8")
+
+
+@app.command()
+def chart(
+    a: Annotated[str, typer.Argument(help="Before label")],
+    b: Annotated[str, typer.Argument(help="After label")],
+    out: Annotated[Path, typer.Option("--out", "-o", help="SVG file to write")],
+    a_name: Annotated[str, typer.Option("--a-name", help="Legend name for A")] = "",
+    b_name: Annotated[str, typer.Option("--b-name", help="Legend name for B")] = "",
+    title: Annotated[str, typer.Option("--title")] = "",
+) -> None:
+    """Before/after SVG of two labels' per-RFP means: recall, precision, coverage, cost (free)."""
+    from evals.harness.chart import render_svg
+
+    summaries = []
+    for label in (a, b):
+        path = _results(label) / "summary.json"
+        if not path.exists():
+            console.print(f"[red]no summary.json for label {label!r}; run report first[/red]")
+            raise typer.Exit(1)
+        summaries.append(LabelSummary.model_validate_json(path.read_text(encoding="utf-8")))
+    svg = render_svg(
+        summaries[0],
+        summaries[1],
+        a_name=a_name or a,
+        b_name=b_name or b,
+        title=title or f"{a} vs. {b}",
+    )
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(svg.encode("utf-8"))
+    console.print(f"wrote {out}", soft_wrap=True)
 
 
 if __name__ == "__main__":
