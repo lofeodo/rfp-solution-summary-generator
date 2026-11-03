@@ -60,6 +60,10 @@ export const api = {
   health: () => getJson<Health>("/health"),
   listRuns: () => getJson<RunListItem[]>("/runs"),
   getRun: (id: string) => getJson<RunStatus>(`/runs/${enc(id)}`),
+  async deleteRun(id: string): Promise<void> {
+    const res = await fetch(`${API}/runs/${enc(id)}`, { method: "DELETE" });
+    if (!res.ok) throw new ApiError(res.status, await errorText(res));
+  },
   artifact: <N extends ArtifactName>(id: string, name: N) =>
     getJson<ArtifactMap[N]>(`/runs/${enc(id)}/artifacts/${name}`),
   chunk: (id: string, chunkId: string) => getJson<Chunk>(`/runs/${enc(id)}/chunks/${enc(chunkId)}`),

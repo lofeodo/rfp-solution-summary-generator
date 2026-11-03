@@ -34,6 +34,11 @@ export default function Home() {
     };
   }, []);
 
+  const removeRun = async (runId: string) => {
+    await api.deleteRun(runId);
+    setRuns((prev) => prev?.filter((r) => r.run_id !== runId) ?? prev);
+  };
+
   const own = runs?.filter((r) => !r.sample) ?? [];
   const samples = runs?.filter((r) => r.sample) ?? [];
 
@@ -61,7 +66,7 @@ export default function Home() {
             <p className="kicker">Loading…</p>
           ) : (
             <div className="space-y-12">
-              {own.length > 0 && <RunList runs={own} />}
+              {own.length > 0 && <RunList runs={own} onRemove={removeRun} />}
               <div>
                 <p className="kicker mb-3">Committed samples · no API key needed</p>
                 <RunList runs={samples} />
