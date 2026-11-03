@@ -34,6 +34,17 @@ def test_render_svg_has_one_dumbbell_per_rfp_and_panel():
     assert "Old 78%" in nyesd and "New 91%" in nyesd
 
 
+def test_render_svg_drops_panels_a_label_was_not_scored_on():
+    # ablation_vlm was scored on match and cost only: two panels, laid out in one row.
+    svg = render_svg(
+        _load("baseline"), _load("ablation_vlm"), a_name="Off", b_name="On", title="VLM"
+    )
+    root = ET.fromstring(svg)
+    titles = [t.text for t in root.iter(f"{SVG}text") if t.get("class") == "ptitle"]
+    assert titles == ["Recall vs. reference", "Pipeline cost per run"]
+    assert float(root.get("height")) < 300
+
+
 def test_chart_command_writes_the_file(tmp_path):
     out = tmp_path / "chart.svg"
     result = CliRunner().invoke(

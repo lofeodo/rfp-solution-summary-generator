@@ -96,6 +96,13 @@ def render_svg(
     rfps = [c.rfp for c in a.consistency if any(d.rfp == c.rfp for d in b.consistency)]
     if not rfps:
         raise ValueError("the two labels share no RFP")
+    # A label scored on fewer sections (an ablation) leaves some metrics empty: drop
+    # those panels before layout so the grid has no holes.
+    panels = [
+        p
+        for p in panels
+        if any(r in _means(a, p.metric) and r in _means(b, p.metric) for r in rfps)
+    ]
 
     width, cols, gutter, margin = 880, 2, 32, 16
     pw = (width - 2 * margin - gutter) / cols
