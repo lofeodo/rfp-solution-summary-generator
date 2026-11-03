@@ -145,6 +145,7 @@ def test_prompt_placeholders():
         "requirements",
         "ambiguities",
         "gaps",
+        "brief",
     }
 
 

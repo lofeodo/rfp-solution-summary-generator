@@ -1,5 +1,7 @@
 import type {
   Ambiguity,
+  BriefChunk,
+  CheckpointRecord,
   Chunk,
   Gap,
   Requirement,
@@ -12,11 +14,12 @@ import type {
 } from "../api/types";
 
 // What a citation chip can point at. Chunk IDs look like S3.2, requirements R001,
-// components C01, risks K01, ambiguities A01, gaps G01.
-export type IdKind = "chunk" | "requirement" | "component" | "risk" | "ambiguity" | "gap";
+// components C01, risks K01, ambiguities A01, gaps G01, pursuit brief paragraphs H1.
+export type IdKind = "chunk" | "requirement" | "component" | "risk" | "ambiguity" | "gap" | "brief";
 
 export function idKind(id: string): IdKind | null {
   if (/^S\d+\.\d+$/.test(id)) return "chunk";
+  if (/^H\d+$/.test(id)) return "brief";
   if (/^R\d+$/.test(id)) return "requirement";
   if (/^C\d+$/.test(id)) return "component";
   if (/^K\d+$/.test(id)) return "risk";
@@ -40,6 +43,9 @@ export interface RunIndex {
   risks: Map<string, Risk>;
   // requirement ID -> component IDs that address it
   addressedBy: Map<string, string[]>;
+  // pursuit brief paragraphs (H1...), written by the reviewer at the checkpoint
+  brief: Map<string, BriefChunk>;
+  briefBy: string | null;
 }
 
 export interface IndexInputs {
@@ -47,9 +53,10 @@ export interface IndexInputs {
   requirements?: RequirementsOutput | null;
   solution?: SolutionResult | null;
   risks?: RiskResult | null;
+  checkpoint?: CheckpointRecord | null;
 }
 
-export function buildIndex({ split, requirements, solution, risks }: IndexInputs): RunIndex {
+export function buildIndex({ split, requirements, solution, risks, checkpoint }: IndexInputs): RunIndex {
   const chunks = new Map<string, IndexedChunk>();
   for (const s of split?.sections ?? [])
     for (const c of s.chunks) chunks.set(c.id, { ...c, section_title: s.title });
@@ -65,5 +72,7 @@ export function buildIndex({ split, requirements, solution, risks }: IndexInputs
     components: new Map(components.map((c) => [c.id, c])),
     risks: new Map((risks?.assessment.risks ?? []).map((r) => [r.id, r])),
     addressedBy,
+    brief: new Map((checkpoint?.brief?.chunks ?? []).map((h) => [h.id, h])),
+    briefBy: checkpoint?.reviewer ?? null,
   };
 }

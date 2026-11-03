@@ -9,7 +9,7 @@ every time a prompt changes.
 - One file per agent under `prompts/`, loaded by `load_prompt(name)` in
   `src/rfp_agent/llm.py`; `{{name}}` variables are substituted by code and a missing or
   unused variable is an error, so a prompt cannot silently lose an input.
-- Every prompt follows the structure in `prompts/README.md` (ST12): Role, Task,
+- Every prompt follows the structure in `prompts/README.md` (ST13): Role, Task,
   Context, Output, Rules, Examples (optional), Tone, input blocks, Final checks.
   `tests/test_prompt_structure.py` enforces the heading order, the placeholder sets,
   the phrases the scripted judge recognises each judge prompt by, and the definitions
@@ -29,7 +29,7 @@ every time a prompt changes.
   in through variables, and every prompt that states facts about the RFP must cite
   chunk or requirement IDs that code then validates.
 
-## Structure and principles (ST12)
+## Structure and principles (ST13)
 
 The structure in `prompts/README.md` applies these prompt-engineering principles. Each
 is a reason a section exists, not a style preference.
@@ -59,17 +59,17 @@ is a reason a section exists, not a style preference.
   rule draws; they were already in several prompts, scattered through the prose.
 - **Tone as a section, not a bullet.** Register, audience, banned meta-references ("the
   inputs", "the evidence", "the findings"), no hedging or marketing language, no
-  markdown inside string fields. Before ST12 the F6 leak rule lived in two prompts.
+  markdown inside string fields. Before ST13 the F6 leak rule lived in two prompts.
 - **Data last, in tagged blocks with a legend.** The instruction prefix is identical
   across calls and the provider caches it; each block says its line format once.
 - **A self-check next to the answer.** Final checks list the three to five things a
   reviewer would check first (IDs exist, counts in range, quotes verbatim, no ID twice,
   one entry per ID shown). The dedupe prompt's "check that no ID appears twice"
-  fixed its double grouping in S5; ST12 makes it a standing section.
+  fixed its double grouping in S5; ST13 makes it a standing section.
 
 Personas and what moved per prompt:
 
-| Prompt | Persona | What moved or was added in ST12 |
+| Prompt | Persona | What moved or was added in ST13 |
 |---|---|---|
 | `requirements_extract` | senior requirements analyst seconded to a bid team | Output section (fields were implied by Rules), Context carries `{{unit}}` and what code checks, Examples gathered, Tone and Final checks added |
 | `requirements_dedupe` | senior requirements analyst consolidating a register | Rules section (the prompt was prose), Examples, Final checks (the one-ID-once rule is stated twice on purpose) |
@@ -77,6 +77,7 @@ Personas and what moved per prompt:
 | `problem_synthesis` | senior proposal manager writing the opening page | evidence moved after the instructions; claim fields split out; Examples and Final checks added |
 | `solution` | senior solution architect leading public-sector bids | Context says what code computes and rejects; "assumptions are positions" became a rule; Examples and Final checks added |
 | `risk` | senior bid risk manager | scales moved under `severity` and `likelihood`; "use the full scale" copied from the judge; Examples and Final checks added |
+| `revise_*` (ST12b, restructured at the merge) | the persona of the stage each one revises | opening prose split into Role, Task and Context (what code checks and refuses); "What to return" became Output; the tone bullet became a Tone section; Final checks added; rules kept word for word |
 | `parse_quality` | document-processing quality specialist | flag glossary became Context; Output and Rules moved before the page text; Final checks added |
 | `parse_vlm` (ST2, restructured at the merge) | document-processing specialist | `{{reason}}` moved into a "Quality check" input block; transcription rules bold-named; Examples and Final checks added |
 | `gold_requirements`, `gold_checklist` | senior procurement analyst building an answer key | Output and Rules split out; document last; Examples (checklist) and Final checks added |
@@ -85,7 +86,7 @@ Personas and what moved per prompt:
 ## Design notes
 
 Every prompt in `prompts/` has one block below, in this shape (the layout itself is
-the ST12 structure above; the notes record the content choices):
+the ST13 structure above; the notes record the content choices):
 
 ```
 ### prompts/<name>.md
@@ -158,7 +159,7 @@ is what the gold quotes look like ("Quadrant | Cashiering | Replace | ..."). The
 text is passed as a labelled reference because it is usually right about spelling and
 numbers in the clean parts of a page; the image wins on any conflict. `[illegible]`
 instead of guessing keeps the quote-verification contract honest. At the merge with
-ST12 the prompt was put into the shared structure with the document-processing persona;
+ST13 the prompt was put into the shared structure with the document-processing persona;
 `{{reason}}` moved from the opening sentence into its own "Quality check" input block,
 and the table, form and illegible rules became bold-named Rules with Examples and Final
 checks. Not re-measured live after the restructure.
@@ -250,12 +251,15 @@ they satisfy, and the assumptions the design rests on (D32).
 Inputs it receives: `{{title}}`, `{{problem}}` (the four claim lists, each claim with
 its chunk IDs and an `(inference)` mark), `{{requirements}}` (mandatory, desired and
 optional blocks, one line per item `ID [strictness, type] text (chunk IDs)`, then the
-submission items under "context, do not address"), `{{ambiguities}}`, `{{gaps}}`. No
-RFP text and no quotes.
+submission items under "context, do not address"), `{{ambiguities}}`, `{{gaps}}`,
+`{{brief}}` (ST12: the pursuit team's guidance as `H1: text` lines, one per paragraph
+of the brief written at the checkpoint, or "None provided."). No RFP text and no
+quotes.
 Output contract (schema): `SolutionDraft`; a per-call subclass rejects empty components,
-a component with no requirement IDs, and unknown requirement or chunk IDs. Code assigns
-`C01…`, computes coverage, and feeds the uncovered mandatory IDs back in a revision
-round (same conversation) while any remain, up to the round cap.
+a component with no requirement IDs, and unknown requirement or chunk IDs; the brief's
+`H` IDs are among the known chunk IDs when a brief exists. Code assigns `C01…`,
+computes coverage, and feeds the uncovered mandatory IDs back in a revision round
+(same conversation) while any remain, up to the round cap.
 Why it is written this way: the coverage rule is explicit and says that code computes
 it and that misses become risks, so the model has a reason to cite completely rather
 than describe elegantly; legal, insurance and reporting obligations are named as things
@@ -270,7 +274,12 @@ so the provider prefix cache serves repeated rounds. S13 added "name what you ci
 a description must mention each cited obligation and what meets it, because the S12
 coverage judge found bulk-cited legal and contractual clauses that no component
 described (NYESD judged coverage 78% against 100% cited); the rule lets a compliance
-component exceed the five-sentence guide so the two rules do not fight.
+component exceed the five-sentence guide so the two rules do not fight. ST12 added the
+"Pursuit team guidance" block and rule: the guidance steers design choices (stack,
+phasing, emphasis) and must be cited (`H2`) wherever a component rests on it, so a
+reviewer can tell the team's input from the RFP's; it never waives a mandatory
+requirement, and a conflict becomes an assumption citing both, because the compliance
+matrix outranks the win strategy (D45).
 Known weaknesses: proposal-process obligations that S5 typed `timeline` or
 `budget_pricing` rather than `submission` are in scope, so the revision round makes the
 model add a commercial or submission-flavoured component to cite them (Missouri R007,
@@ -286,7 +295,8 @@ documents not in the PDF, pages whose text could not be parsed, the budget-requi
 count), `{{solution}}` (summary, components as `ID Title (requirement IDs)` with their
 description and claims, assumptions, the coverage line), `{{problem}}`,
 `{{requirements}}` (as S7, but the submission block is headed "how and when the proposal
-is delivered", not "do not address"), `{{ambiguities}}`, `{{gaps}}`. No RFP text.
+is delivered", not "do not address"), `{{ambiguities}}`, `{{gaps}}`, `{{brief}}` (ST12,
+as in the solution prompt). No RFP text.
 Output contract (schema): `RiskAssessmentDraft`; a per-call subclass rejects fewer than
 3 or more than 15 risks, unknown requirement or chunk IDs, and a draft in which an
 uncovered mandatory requirement is cited by no risk. Code sorts by severity then
@@ -300,16 +310,53 @@ contrast stops requirement restatements; `chunk_ids` may be empty for a flagged 
 a missing document because those have no chunk; mitigation is asked to be an action (a
 question before the deadline, a stated assumption, a contingency), not "monitor"; the F6
 tone rule is carried over with "the findings" added to the banned phrases; instructions
-come first for the prefix cache.
+come first for the prefix cache. ST12 added the "Pursuit team guidance" block and rule:
+a risk that rests on something the team set or learned (a constraint, an informal
+client statement, a design choice) cites its `H` ID, and a risk the guidance creates has
+`source` `solution`, so commercial and team risks are traceable to the brief (D45).
 Known weaknesses: the count runs to the top of the range or one over (F12); severity
 clusters at high and medium (no `low` severity and one `low` likelihood in 50 risks on
 the tuned prompt), so the scales separate less than they could; `source` can flip
 between runs for the same risk (NYESD's MWBE goals: `rfp`, then `solution`), which
 S12's judge should sample.
 
+### prompts/revise_requirements.md, revise_problem.md, revise_solution.md, revise_risk.md (ST12b)
+Purpose: apply one reviewer instruction to one artefact after (or, for requirements and
+the problem statement, before) the checkpoint (D46).
+Inputs it receives: all four get `{{title}}` and `{{instruction}}` near the top, then the
+current artefact, then the context the producing stage's prompt showed:
+`revise_requirements` the current list (`ID [strictness, type] text — "quote" (chunks)`)
+and `{{chunks}}`, every chunk's own text with its ID, section and pages, so a new quote
+can be copied; `revise_problem` the statement, `{{evidence_kind}}` and `{{evidence}}` as
+the synthesis saw them (summaries, or the full text) and `{{brief}}`; `revise_solution`
+the solution as the risk prompt formats it plus problem, requirements, ambiguities, gaps
+and brief; `revise_risk` the current risks (`ID [severity/likelihood, source] title
+(requirement IDs; chunk IDs)` with description, justification, mitigation), the findings
+recomputed by code, and the risk prompt's other blocks.
+Output contract (schema): `RequirementsPatch` (edits by ID with only the changed fields,
+additions with quote and chunk ID, removals); `ProblemStatement`; `SolutionDraft` with an
+optional `id` per component (`SolutionRevision`); `RiskAssessmentDraft` with an optional
+`id` per risk (`RiskAssessmentRevision`). The tool names are the stage's, and the
+per-call validators are the stage's own plus ID checks and, for the solution, a refusal
+of any coverage regression.
+Why it is written this way: "only what the instruction asks; everything else exactly as
+it is now" is the first rule of each, because the diff is the audit trail and an
+unasked rewording is noise in it; requirements return a patch because the list is too
+long to return whole (D46, F16) and the patch explains how to merge and split with
+edit, add and remove; the quote rule says code checks every quote, and an empty patch is
+named as the right answer when the RFP does not support the instruction, so the model is
+not pushed to invent a requirement; the solution prompt states that code refuses a
+coverage regression, so the model keeps mandatory IDs instead of learning it from a
+retry; the guidance rules are the same as in the drafting prompts (cite `H` IDs, never
+waive a mandatory requirement); "never mention the instruction or the reviewer" keeps
+the deliverable free of meta-talk.
+Known weaknesses: the requirements prompt shows every chunk (about 11k tokens of text on
+Missouri), which is the price of letting an addition quote anywhere; whole-artefact
+revisions can still reword untouched text slightly, which the diff shows as changes.
+
 ### Judge prompts (S12): shared design
 The seven `judge_*` prompts are run by the eval harness on the judge model
-(`Settings.judge_model`, effort `medium`), never by the pipeline. They follow the ST12
+(`Settings.judge_model`, effort `medium`), never by the pipeline. They follow the ST13
 structure like the agent prompts: the Role is an independent reviewer, the Task names
 what is graded (and carries the phrase the scripted judge in `tests/test_harness.py`
 recognises the prompt by), Context says what is hidden from the judge and that code
@@ -424,7 +471,7 @@ Known weaknesses: one live comparison so far (Missouri, hierarchical won both or
 the two answers' reasons cited different strengths, so ties will be common on close
 pairs.
 
-### ST12 comparison
+### ST13 comparison
 
 Two result sets separate the judge change from the generator change.
 
@@ -447,7 +494,7 @@ Reading: recall is up on Missouri and flat elsewhere within the spread except a
 3-point Colfax dip; the extractor returns more items on three RFPs, which with the
 stricter judge explains most of the precision drop (Colfax is the outlier, 91% on both
 runs). NYESD judged coverage rose from 78% to 91%, which the S13 "name what you cite"
-fix had already moved (94% in `fix_solution_naming`), so that gain is not ST12's. The
+fix had already moved (94% in `fix_solution_naming`), so that gain is not ST13's. The
 problem-statement checklist moved by about one fact either way on each RFP, within the
 baseline's own spread (sd up to 1.7). Pipeline cost rose by up to 6% from the longer
 instruction prefix. Grounding on Federal Way run 1 is missing one batch (F17).
@@ -463,12 +510,16 @@ One line per change. Newest first.
 
 | Date | Prompt | What changed | Why (observed failure or eval result) |
 |---|---|---|---|
-| 2026-11-02 | requirements_dedupe | Examples no longer group a general duty with a specific one; "when unsure, leave apart"; Final checks for mixed values and false conflicts | First ST12 pass: fallback in 2 of 8 runs (baseline 0 of 12), NYESD fuzzy merges 52 and 131 (baseline 27 to 41), Missouri conflicts 4 and 9 (baseline 2). Final pass: 0 fallbacks, correction turns 2 of 8 (baseline 6 of 12) |
-| 2026-11-02 | requirements_extract | Context says surplus is cheap and a miss is lost; Final checks ask that every imposing sentence has an item | First ST12 pass: NYESD 226 to 210 extracted, recall 99% to 93% (scope statement, fax/email rule and MWBE plan missed). Final pass: NYESD 226 extracted, recall 99% |
-| 2026-11-02 | judge_requirements | The three questions are answered separately; a changed modal verb is strictness, not a support failure | First ST12 wording: hand-label agreement 32 of 40 (precision 8 of 12). After: 35 of 40 (precision 11 of 12); baseline 34 of 40 |
-| 2026-11-02 | all prompts | Rewritten into the ST12 structure (16 at the time; `parse_vlm` from ST2 joined at the merge with `main`): Role (Big Four persona), Task, Context, Output, Rules, Examples, Tone, input blocks, Final checks; rule content kept | See "ST12 comparison" below |
+| 2026-11-03 | revise_requirements, revise_problem, revise_solution, revise_risk | Rewritten into the ST13 structure at the merge with `main` (ST12 human in the loop): Role per stage persona, Task, Context, Output, Rules unchanged, Tone, input blocks unchanged, Final checks | The structure test covers every prompt in `prompts/`; no eval was rerun (the revise prompts have no eval set and the rules are unchanged) |
+| 2026-11-03 | solution, risk | ST12a's "Pursuit team guidance" rule and input block carried into the ST13 structure (block before Final checks) and a final check that guidance-based items cite their `H` ID | Merge of `main` into `prompt-structure`; with no brief the block renders "None provided.", so the `prompt_structure` eval numbers still describe unattended runs |
+| 2026-11-02 | requirements_dedupe | Examples no longer group a general duty with a specific one; "when unsure, leave apart"; Final checks for mixed values and false conflicts | First ST13 pass: fallback in 2 of 8 runs (baseline 0 of 12), NYESD fuzzy merges 52 and 131 (baseline 27 to 41), Missouri conflicts 4 and 9 (baseline 2). Final pass: 0 fallbacks, correction turns 2 of 8 (baseline 6 of 12) |
+| 2026-11-02 | requirements_extract | Context says surplus is cheap and a miss is lost; Final checks ask that every imposing sentence has an item | First ST13 pass: NYESD 226 to 210 extracted, recall 99% to 93% (scope statement, fax/email rule and MWBE plan missed). Final pass: NYESD 226 extracted, recall 99% |
+| 2026-11-02 | judge_requirements | The three questions are answered separately; a changed modal verb is strictness, not a support failure | First ST13 wording: hand-label agreement 32 of 40 (precision 8 of 12). After: 35 of 40 (precision 11 of 12); baseline 34 of 40 |
+| 2026-11-02 | all prompts | Rewritten into the ST13 structure (16 at the time; `parse_vlm` from ST2 joined at the merge with `main`): Role (Big Four persona), Task, Context, Output, Rules, Examples, Tone, input blocks, Final checks; rule content kept | See "ST13 comparison" below |
 | 2026-11-02 | parse_vlm | Created (ST2) | First version; live Federal Way p5 returned the full ERP environment table (18 rows, every gold row verbatim), Missouri p19/p20 forms at 420 and 453 words with their exhibit headings |
 | 2026-11-02 | parse_quality | One line describing the `garbled_text` flag and its false alarm | ST2 added the flag for undecodable fonts; the judge must know what it means |
+| 2026-11-02 | revise_requirements, revise_problem, revise_solution, revise_risk | Created (ST12b) | First version; instruction-driven revision of one artefact under the producing stage's validators (D46); first live results in `docs/hitl/ST12b-revise.md` |
+| 2026-11-02 | solution, risk | "Pursuit team guidance" input block (`{{brief}}`, `H1: text` lines or "None provided.") and a rule: follow it for design choices, cite `H` IDs for anything that rests on it, never waive a mandatory requirement (solution); cite `H` IDs for risks that rest on it, `source` `solution` for risks it creates (risk) | ST12 checkpoint: the brief written by the pursuit lead must reach the drafter and stay traceable (D45); unattended runs render "None provided." so their output is unchanged |
 | 2026-10-30 | solution | Rule "Name what you cite": the description names each cited obligation and what meets it; a compliance component may exceed five sentences | S12 coverage judge: bulk-cited legal clauses no component described, NYESD judged coverage 78% against 100% cited; 94% after (Colfax 96 → 99%, Missouri 97 → 96%, Federal Way 100 → 98%), descriptions 30 to 50% longer |
 | 2026-10-30 | judge_match | Rule: a candidate that omits the gold item's key value does not match unless another listed candidate supplies it, with two Missouri examples | Judge-tier matches accepted items missing the gold date or standard (F14); baseline match tier rescored: Missouri combined recall 99 / 100 / 94% → 93 / 93 / 87%, other RFPs within one point |
 | 2026-10-30 | judge_grounding, judge_risks | Grounding: an `assumption` kind judged as a position (facts it states, and whether the gap is real); risks: the judge no longer sees the pipeline's levels or justification, "use the full scale" | First Federal Way scoring: assumptions graded as facts (4 unsupported, 11 partially of 22 solution items) and 100% level agreement while the levels were shown; 0 / 7 and 92% / 58% after |

@@ -903,48 +903,6 @@ sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
 data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
 host (50 calls, $0.050, 85 s) as the non-root user.
 
-### D43. One prompt structure for every prompt (ST12)
-Context: the 16 prompts were written step by step and shared only a loose shape (a
-role sentence, sometimes `## What to return`, `## Rules`, data blocks), applied
-unevenly: the gold and parse-quality prompts put the data before the output
-contract, the extractor had no output section, the dedupe prompt had no rules
-section, the personas were generic ("You extract requirements"), tone was one bullet
-in two prompts, and no prompt told the model what to check before answering. The
-author asked for one structure grounded in prompt-engineering practice, applied to
-every prompt and written down.
-Options: (a) one fixed section order inside the single human message, no code change;
-(b) the same plus a system message carrying the persona and tone, which means a new
-message layout in six call sites and two hashes per prompt; (c) data first and
-instructions last, which Anthropic recommends for long documents.
-Choice: (a). Fixed `##` headings in a fixed order: Role, Task, Context, Output, Rules,
-Examples (optional), Tone, one heading per input block, Final checks. The persona is
-a role at a Big Four advisory practice named by function (proposal manager, solution
-architect, bid risk manager, procurement analyst, independent reviewer), never a real
-firm. Instructions stay first and data last. The structure is documented in
-`prompts/README.md` and enforced by `tests/test_prompt_structure.py`, which also pins
-the placeholder sets, the judge recognition phrases the scripted judge depends on,
-and the definitions shared between prompts (the D31 scope, the risk scales).
-Why: (a) changes nothing about how prompts are loaded, hashed, cached or tested, and
-a persona inside the human message reaches DeepSeek and Claude alike. (b) would buy a
-cleaner separation at the cost of touching every call site and the run-log hash
-contract for a difference no eval measures. (c) would defeat the DeepSeek prefix cache
-(S5: about 74% of extractor input tokens were cache reads) and break the tests that
-look for `## Rules` before the data; the judge inputs are short enough that the
-long-document advice does not apply. Final checks come after the data on purpose:
-the self-check sits next to the answer, which is where the dedupe prompt's ad hoc
-"check that no ID appears twice" already worked. Content that evals had tuned (the
-include/exclude scope, F6, F8 to F10, F12, F14 rules) is kept verbatim; only its place
-and framing changed, so a score movement reads as the structure's effect.
-Evidence: 73 structure checks and the 227 existing prompt-dependent tests pass. The
-measured effect is in `docs/PROMPTS.md` (ST12 comparison) and in
-`evals/results/prompt_structure/` (fresh runs, new prompts) and
-`evals/results/baseline_rejudged/` (baseline runs, new judge prompts, agreement with
-the 40 hand labels).
-
----
-
----
-
 ### D42. Vision-model transcription replaces the page, gated by the judge, off by default (ST2)
 Context: the S4 pass escalated confirmed-bad pages to a hook that only recorded "would
 escalate to VLM". Federal Way's page 5 (the systems-to-replace table, an image) never
@@ -992,6 +950,314 @@ of one or two ($0.043 against $0.017 on Federal Way), with more run-to-run sprea
 worse page 14 than the library's (the pricing form's title cell came back tripled
 across three columns). The judge was right to clear those pages; `judged` stays the
 default and `flagged` stays a setting for comparison.
+
+### D43. Human in the loop as a pursuit lead would use it: one checkpoint before drafting, one sign-off after, instruction-driven refinement between
+Context: the author asked for a human-in-the-loop design for a financial-services
+deployment, chosen from the chair of an RFP pursuit lead rather than from the shape of
+the pipeline. A pursuit runs: read the RFP, sign the compliance matrix, storyboard the
+win strategy with SMEs, draft, review in rounds (pink, red, gold team), sign off.
+Options: (a) fully automatic run with edit requests afterwards; (b) a gate after every
+stage, each with its own approval; (c) one checkpoint after the read stages where the
+lead confirms the requirements and briefs the drafter, then an unattended draft, then
+instruction-driven refinement, then a named sign-off.
+Choice: (c), as stretch goal ST12 on the `hitl` branch. ST12a builds the checkpoint;
+ST12b the refinement loop; ST12c to e the backend and the UI.
+Why: only two human inputs change what gets built: the confirmed requirement list and
+the brief. The requirement list is the compliance matrix, and a missed mandatory
+requirement is a non-compliant bid, so nothing is drafted before a named reviewer
+confirms it. The brief carries what the RFP never contains (win themes, credentials,
+alliances, constraints, what the client said informally), written at the moment the
+lead has just read the requirements and knows what to steer. Everything after that is
+review rounds in prose, which is how red-team reviews happen; nobody approves section 3
+before section 4 exists. (a) wastes the most expensive stage on unconfirmed
+requirements and makes the coverage number meaningless; (b) is friction without extra
+protection. The guards, in priority order: non-compliance, ungrounded or over-promising
+claims, generic solutions, silent regressions from edits, no audit trail, cost
+blindness. Unattended runs (`--unattended`, the eval harness, CI) keep today's
+behaviour exactly, so the evals stay comparable with the S13 baseline.
+Evidence: ST12a: the unattended run records no checkpoint and its run log holds the
+same eight stages as before; the paused run stops with every read-stage file on disk
+and a `waiting` record; the resumed run drafts on the same log with the time waited
+recorded as the checkpoint's latency (`tests/test_graph_checkpoint.py`).
+
+### D44. Pause and resume through the run directory, not a LangGraph checkpointer (D1 extended)
+Context: a checkpoint needs the run to stop with its state kept, possibly for days, and
+to continue later, possibly after the backend restarted; the backend runs one pipeline
+at a time on a single worker thread (D35).
+Options: LangGraph `interrupt()` with `MemorySaver`; `interrupt()` with a SQLite
+checkpointer; reload the stage JSON the run directory already holds and invoke the
+graph from a later start node.
+Choice: the run directory. The `checkpoint` node records a `waiting` stage and routes
+to `END`; `load_state` reads the stage files back into the typed state; `build_pipeline`
+takes a `start_stage` and holds only the nodes from there on; `resume_pipeline`
+continues the same run log (`RunRecorder.from_log`), closes the waiting record with the
+time waited, and invokes from `solution`. The log of a paused run has no `finished_at`.
+Why: every stage already writes its JSON as it finishes (D34), so a checkpointer would
+store a second copy of the same state and D1's reason for not having one still holds.
+`MemorySaver` dies with the process, and a review can sit for days. A SQLite
+checkpointer couples the pipeline to a store whose only job is this pause, and
+`interrupt()` would hold the single worker thread (or need one per run) while a human
+thinks; ending the first invoke frees it. The same mechanism gives the CLI a resume and,
+in ST12b, regeneration from any stage.
+Evidence: `load_state` round-trips every stage file of a finished run to equal models;
+a graph built from `solution` holds exactly `solution`, `risk`, `assemble`; a second
+resume of the same run is refused as "not waiting"; a bad record is refused before any
+file is written (`tests/test_graph_checkpoint.py`).
+
+### D45. The pursuit brief is citable evidence; row actions are deterministic; the reviewer is a name
+Context: the brief tells the drafter things the RFP does not, and the traceability rule
+(every factual claim cites an ID that code checks) must survive human input. At the
+checkpoint the reviewer also acts on individual requirements. There is no
+authentication in this project (ASSUMPTIONS, UI).
+Options: inject the brief as plain instruction text and label claims from it as
+inferences; or split it into chunks with their own IDs and let the agents cite them.
+For row actions: edit text by hand; or deterministic actions plus model-applied edits.
+For identity: none, a timestamp only; or a required free-text name.
+Choice: the brief is split by paragraph into chunks `H1`, `H2`... (headings attach to
+the paragraph that follows), appended to the IDs the solution and risk validators
+accept, shown in a "Pursuit team guidance" block of both prompts, and added to the
+summary's chunk index with `source = brief` and no pages, so the renderer cites
+`(Pursuit brief [H2])`. Row actions at the checkpoint are accept, reject, change
+strictness, change type: deterministic, no LLM, validated by `apply_checkpoint`
+(unknown or duplicate IDs refused; a rejection also strips the ID from `conflicts_with`
+and ambiguity references so nothing dangles; an edit sets `origin = reviewed`).
+Anything that produces new text waits for ST12b and goes through the model with the
+extractor's validators. The extractor's `requirements.json` is kept untouched next to
+`requirements_confirmed.json`. The reviewer is a required name in the record and in the
+summary header; a real deployment would take it from SSO.
+Why: a red-team reviewer's first question about any claim is "where did we say that?".
+With `H` chunks the answer is in the citation, and the rule that code checks every ID
+needs no exception for humans. Hand-editing JSON is not how a pursuit lead works, and a
+deterministic reject or strictness change needs no model call. Keeping the extractor's
+output beside the confirmed list keeps the evals honest and makes the edit count per
+run a quality signal for the extractor.
+Evidence: a draft citing `H1` passes the solution validator only when a brief is
+present; the assembler raises `CitationError` on `H1` without the brief and resolves
+it with one; the rendered summary shows the brief citation and a "Review history"
+section with reviewer, time waited, rejected and edited IDs and the brief
+(`tests/test_checkpoint.py`).
+
+### D46. Revision by instruction: a patch for requirements, the whole artefact for the rest, the producing stage's validators either way
+Context: after the checkpoint, review happens in prose ("merge R014 and R022", "add a
+component for accessibility", "the timeline risk is overstated"). ST12b needed one
+primitive that applies such an instruction to any artefact without weakening the
+traceability and compliance guards (D43). D40 rejected a free revision loop; this is
+not one: the target of each revision is a human instruction, applied once, and nothing
+loops on a model's judgment of its own output.
+Options: (a) the model returns the whole revised artefact for everything; (b) a patch
+(edit, add, remove by ID) for everything; (c) a patch for the requirement list, the whole
+artefact for the problem statement, the solution and the risks.
+Choice: (c), asked of the author at planning. Requirements: `RequirementsPatch` (edits by
+ID with only the changed fields, additions quoting a chunk, removals); the per-call
+validator refuses unknown or duplicate IDs, empty edits, a quote without its chunk and a
+quote not found verbatim in the chunk it names (the extractor's rule, now inside the
+retry loop), and `apply_patch` assigns fresh IDs (`max+1`, never reused), sets
+`origin = reviewed`, and strips removed IDs from conflicts and ambiguities
+(`strip_references`, shared with the checkpoint). Problem, solution and risks: the model
+returns the whole artefact through the stage's own per-call schema (`problem_schema`,
+`solution_schema`, `risk_schema`, which gained `base` and `extra` hooks), with an
+optional `id` on components and risks: a kept item keeps its ID, a new one gets the next
+free, an ID the artefact does not have is refused. A solution revision that uncovers a
+mandatory requirement covered today is refused with the IDs named (code-computed, the
+S7 coverage rule); coverage and the risk findings are recomputed by code. Every
+revision's diff is computed by code and stored.
+Why: the confirmed list runs past a hundred requirements on Missouri and NYESD; a whole
+rewrite would hit the output cap (F16) and could drop or reword items silently, which
+is exactly the regression guard D43 lists. A patch also makes the audit trail exact:
+the diff is the patch. The other three artefacts are small, their validators already
+exist, and a patch over claims that have no IDs (the problem statement) would need its
+own matching rules for no gain. Stable IDs keep a version-to-version diff readable and
+keep citations elsewhere in the summary valid. Refusing a coverage regression makes the
+compliance guard survive human edits: an instruction cannot quietly drop a mandatory
+obligation.
+Evidence: `tests/test_revise.py` (patch refusals, quote check against the named chunk,
+retry after a bad quote, stable and next-free IDs, unknown IDs and coverage regression
+refused, the count band and must-cite still enforced on risks, brief IDs accepted only
+with a brief); the live Missouri run in `docs/hitl/ST12b-revise.md`.
+
+### D47. Versions, stale flags and sign-off live in the run directory; assembly always re-runs, LLM stages never do on their own
+Context: refinement needs versions to diff and roll back to, a way to tell the reviewer
+that the risks no longer match a revised solution, an audit trail with cost, and a final
+freeze. The run directory is already the state store (D44), and the backend (ST12c) must
+recover all of it after a restart.
+Options: a version field inside each stage file; a database; copies next to the live
+files plus two small index files. For staleness: regenerate downstream automatically;
+flag it and let the reviewer decide.
+Choice: the live files stay where every reader expects them (`requirements_confirmed.json`,
+`problem.json`, `solution.json`, `risks.json`), and each change keeps a copy
+`<stem>.vN.json` (v1 taken just before the first change, so an unrevised run gains no
+files). `current.json` holds each artefact's version and stale flag and the sign-off;
+`revisions.json` is append-only (reviewer, instruction, versions, diff, what went stale,
+calls, cost, status). A change to the requirements or the problem makes the solution and
+the risks stale; a change to the solution makes the risks stale; a revision or
+regeneration of an artefact clears its own flag. `regenerate` re-runs one stage through
+the graph (`build_pipeline` gained `end_stage`) and never cascades. Assembly is code
+only, so it re-runs after every change and the summary always shows the current
+versions and the review history. Requirements can be revised while the run waits at the
+checkpoint: the first revision starts `requirements_confirmed.json` from the extractor's
+file (which never changes) and the checkpoint applies its decisions on top. A failed
+revision is a `failed` record, never a failed stage of the run. Sign-off is refused
+while anything is stale and freezes the run.
+Why: the readers of the live files (load_state, renderer, backend, frontend) stay as
+they are. Automatic regeneration would throw away a reviewer's revision of the risks
+whenever the solution changed, and spend money without being asked (cost blindness is
+one of D43's guards); a stale flag puts that call in the reviewer's hands and sign-off
+makes them settle it. A failed stage record would make the backend show a finished run
+as failed for a revision that changed nothing.
+Evidence: `tests/test_versions.py`; `tests/test_graph_refine.py` (v1 and v2 files,
+stale risks after a solution revision, `revise` then `assemble` records on the same log,
+a waiting run that stays waiting with the extractor's file byte-identical, removal of
+a requirement realigns solution and risks so the strict assembler passes, regenerating
+one stage leaves the other untouched, a failed revision leaves files and stages as they
+were, sign-off refused while stale and then final).
+
+### D48. The backend runs every human-loop step as a job on the one worker; state is read from the run directory
+Context: the UI must drive the checkpoint, revisions, regenerations and sign-off that
+ST12a and ST12b built for the CLI, show where a run stands, and survive a restart (a
+paused run can wait for days).
+Options: one state field with a single `finished`, or new states per touchpoint; a
+second worker (or a thread per request) for refinement jobs; a job table persisted
+apart from the run directory; sign-off queued like the rest or run in the request.
+Choice: eight states, `queued → running → awaiting_checkpoint → drafting → finished ⇄
+refining → signed_off`, and `failed`. `finished` stays the resting state of a drafted
+run open to refinement, so unattended runs and the S15 frontend read as before. Uploads
+pause at the checkpoint unless `unattended=true` (the CLI's default since ST12a; the
+samples and the eval harness stay unattended). Every LLM job (new run, drafting,
+revision, regeneration) goes through the existing single worker, and its state is set
+when it is queued, so a run reads busy at once and refuses a second job with 409 while
+the first waits its turn. Sign-off calls no model (one re-assembly) and runs in the
+request. A failed revision or regeneration returns the run to where it rested, with the
+error, never to `failed`; on disk, a run that has assembled once reads `finished`
+whatever failed later. The run's state is derived from its files (`run_log.json`'s
+waiting checkpoint record, `current.json`'s sign-off, a finished `assemble` record), so
+no job table exists: after a restart the backend adopts a run on its first request. The
+backend computes `review.allowed` (what the run takes now) and the frontend shows only
+that, so the state rules live in one place. SSE gains `event: state`; a stream closes
+when the run rests and the client subscribes again after each action.
+Why: one worker keeps provider rate limits and spend predictable (D43's cost-blindness
+guard), at the price of a revision waiting behind another run's pipeline (rare with one
+reviewer). Setting the state at queue time closes the window where two clicks would
+queue two jobs on one run. Deriving state from files keeps D44's "the run directory is
+the state store" and makes restart recovery free. A failed revision is not a failed run
+because the artefact is unchanged (D47); showing the run as failed would hide a usable
+draft.
+Evidence: `tests/test_ui_backend.py` (default pause; checkpoint with a brief and
+decisions drafts the rest; 400/403/409/422 refusals, including a second checkpoint while
+the first is queued; revise, versions, stale, regenerate, sign-off and the frozen run;
+failed revise and failed regenerate leave the run `finished`, also when read back by a
+fresh app; a paused and revised run confirmed from a fresh app); the live Missouri loop
+in `docs/hitl/ST12c-backend.md`.
+
+### D49. The checkpoint is a tab on the run page; the draft lives in the browser until confirmed; the brief is previewed as the server will split it
+Context: ST12d puts the checkpoint in the UI. The reviewer may spend a while on it (the
+live run waited 2 minutes; a real one can wait days), may steer with model instructions
+in between, and must see what the drafter will cite before confirming.
+Options: a full-page takeover while the run waits, or a tab; row decisions sent one by
+one to the server, or held in the browser and sent with the confirmation; the brief as
+five fixed fields, or one text box; the H-chunk split shown only after drafting, or
+previewed from a client-side copy of `parse_brief`, or from a new preview endpoint.
+Choice: a **Checkpoint tab**, first, opened by default while the run waits and showing
+the confirmed record afterwards, under a **lifecycle banner** (Read, Checkpoint, Draft,
+Refine, Sign-off) that says what happens next. Row actions (reject, strictness, type)
+are a **browser-side draft**: only rows that differ from the list are kept, a rejection
+carries no edits, and the draft is **pruned** whenever a revision changes the list (a
+removed requirement's row goes, a change the model already made stops being a change).
+The draft, the brief and the note sit in `localStorage` per run, and the reviewer's name
+globally, so a reload or a backend restart loses nothing; nothing is sent until
+"Confirm and draft". The brief is **one text box** with an "insert template" button and
+a **live H1..Hn preview** from a TypeScript port of `parse_brief`, tested on the Python
+cases; the template's own headings left empty are dropped before sending, the
+reviewer's own headings never are. The instruction box revises requirements or the
+problem (what `review.allowed` lists at the checkpoint) and shows each revision as one
+line grouped by item (removed R005, changed R001, A01); the full diff is ST12e's. Once
+a confirmed list exists, every view reads it instead of the extracted one.
+Why: a tab keeps the RFP outputs (problem, parse) one click away while checking, which
+the reviewer needs to judge a requirement. Holding decisions client-side matches the
+server contract (one checkpoint record, validated whole by `validate_checkpoint`) and
+keeps the server free of half-made decisions; pruning keeps that record valid after a
+revision, which ST12c found to be a 400 trap otherwise. The preview is the guard against
+"ungrounded claims" from the reviewer's side: they see exactly which paragraphs become
+H1, H2 before the drafter cites them. A port over an endpoint avoids a round trip per
+keystroke; the risk of drift is bounded by mirrored tests and by the server re-splitting
+whatever is sent.
+Evidence: `ui/frontend/src/lib/review.test.ts` (brief split mirrors
+`tests/test_checkpoint.py`, template dropping, draft to decisions, pruning, counts,
+lifecycle, diff grouping); the live Missouri checkpoint through the UI in
+`docs/hitl/ST12d-frontend-checkpoint.md`.
+
+### D50. Refine controls sit on each artefact tab; the Review tab holds sign-off and history; diffs are the stored ones; old versions are read-only
+Context: ST12e puts the refine loop and the sign-off in the UI. The backend already
+records every revision with a code-computed diff, keeps every version on disk and says
+which actions are allowed (D47, D48). The reviewer needs to change an artefact while
+reading it, see what a change did, notice what went stale, and sign off knowing what is
+frozen.
+Options: one central Review tab with an artefact picker, or controls on each artefact
+tab; a client-side diff between any two versions, or the stored diff of each revision;
+version browsing or none; brief citations as plain text, or chips.
+Choice: each artefact tab (Solution, Requirements, Risks, Problem) is wrapped, once the
+run has a draft, in a **version bar** (v1..vN; picking an old one swaps it in read-only
+and hides the edit panel), a **stale banner** with the reason and **Regenerate**
+(solution and risks; requirements and the problem are never stale), and a **"Suggest
+edits" panel** (instruction, what the change sets off downstream, this artefact's
+revisions). A **Review tab** holds the **sign-off** form, which lists its blockers
+(mirroring the server's refusals, the server re-checks), or the signed-off record, plus
+a versions table with regenerate and the **whole history** (checkpoint, revisions,
+regenerations, sign-off) with each **stored diff** as before → after per field. The
+lifecycle banner says "Stale: …" or "Ready to sign off" with a link. The views stay
+unaware of review: a wrapper swaps in the version. The reviewer's name is shared by
+every form through one context. Brief IDs (`H1`) are chips that open the paragraph,
+marked as human input.
+Why: editing next to the text being read is how a pursuit lead works, and keeps the
+instruction concrete; the Review tab is where the "can I sign?" question is answered in
+one place. The stored diff is what code computed when the change was applied, on the
+reviewer-visible part, so the UI shows exactly what the audit trail records rather than
+a second, possibly different, diff (guard: silent regressions). Read-only old versions
+answer "what did it say before" without a restore operation the backend does not have.
+The chips make claims that rest on the reviewer's word visibly distinct (guard:
+ungrounded claims).
+Evidence: `ui/frontend/src/lib/refine.test.ts`; the live loop on the Missouri run in
+`docs/hitl/ST12e-frontend-refine.md` (revise, stale, regenerate, v1 view, sign-off;
+$0.020).
+
+---
+
+### D51. One prompt structure for every prompt (ST13)
+Context: the 16 prompts were written step by step and shared only a loose shape (a
+role sentence, sometimes `## What to return`, `## Rules`, data blocks), applied
+unevenly: the gold and parse-quality prompts put the data before the output
+contract, the extractor had no output section, the dedupe prompt had no rules
+section, the personas were generic ("You extract requirements"), tone was one bullet
+in two prompts, and no prompt told the model what to check before answering. The
+author asked for one structure grounded in prompt-engineering practice, applied to
+every prompt and written down.
+Options: (a) one fixed section order inside the single human message, no code change;
+(b) the same plus a system message carrying the persona and tone, which means a new
+message layout in six call sites and two hashes per prompt; (c) data first and
+instructions last, which Anthropic recommends for long documents.
+Choice: (a). Fixed `##` headings in a fixed order: Role, Task, Context, Output, Rules,
+Examples (optional), Tone, one heading per input block, Final checks. The persona is
+a role at a Big Four advisory practice named by function (proposal manager, solution
+architect, bid risk manager, procurement analyst, independent reviewer), never a real
+firm. Instructions stay first and data last. The structure is documented in
+`prompts/README.md` and enforced by `tests/test_prompt_structure.py`, which also pins
+the placeholder sets, the judge recognition phrases the scripted judge depends on,
+and the definitions shared between prompts (the D31 scope, the risk scales).
+Why: (a) changes nothing about how prompts are loaded, hashed, cached or tested, and
+a persona inside the human message reaches DeepSeek and Claude alike. (b) would buy a
+cleaner separation at the cost of touching every call site and the run-log hash
+contract for a difference no eval measures. (c) would defeat the DeepSeek prefix cache
+(S5: about 74% of extractor input tokens were cache reads) and break the tests that
+look for `## Rules` before the data; the judge inputs are short enough that the
+long-document advice does not apply. Final checks come after the data on purpose:
+the self-check sits next to the answer, which is where the dedupe prompt's ad hoc
+"check that no ID appears twice" already worked. Content that evals had tuned (the
+include/exclude scope, F6, F8 to F10, F12, F14 rules) is kept verbatim; only its place
+and framing changed, so a score movement reads as the structure's effect.
+Evidence: 73 structure checks and the 227 existing prompt-dependent tests pass. The
+measured effect is in `docs/PROMPTS.md` (ST13 comparison) and in
+`evals/results/prompt_structure/` (fresh runs, new prompts) and
+`evals/results/baseline_rejudged/` (baseline runs, new judge prompts, agreement with
+the 40 hand labels).
 
 ---
 
@@ -1225,7 +1491,7 @@ Before/after: 0 of 1 Missouri runs finished at the default cap; 8 of 8 at 16k, n
 ---
 
 ### F17. Grounding judge runs away inside a `reason` string
-Where:     ST12 scoring, `judge_grounding`: NYESD run 3 of the rejudged baseline, NYESD
+Where:     ST13 scoring, `judge_grounding`: NYESD run 3 of the rejudged baseline, NYESD
            run 1 of the first `prompt_structure` pass, and Federal Way run 1 of the
            final `prompt_structure` pass (the same batch on the first pass and the
            retry).
@@ -1234,17 +1500,17 @@ Observed:  `output truncated by the token cap; not retrying` at the full 32,000-
            well-formed JSON up to one `reason` field that degenerates into a repeated
            token ("ESD. ESD. ESD.", "'.'.'.'", "mixed.mixed.mixed") until the cap.
 Cause:     a sampling loop in the judge model inside a free-text field, not thinking
-           volume as in F13: the inputs were 5k to 14k tokens. The ST12
+           volume as in F13: the inputs were 5k to 14k tokens. The ST13
            `judge_grounding` prompt is longer than the S12 one (Context, Examples,
            Tone, Final checks). No batch looped in the 12 baseline runs scored with
-           the S12 prompt; four did in about 30 runs' worth of batches under the ST12
+           the S12 prompt; four did in about 30 runs' worth of batches under the ST13
            prompt, one of them twice on the same input. That is likely, not proven,
            to be the prompt.
 Fix:       NYESD was rescored with `score --only grounding --rfp NYESD` and ran clean
            on both labels. The Federal Way run 1 batch failed again on retry and is
            left unscored: its items are absent from that run's grounding counts and
-           the cost table shows the judge failure. Open issue on ST12: a one-shot
+           the cost table shows the judge failure. Open issue on ST13: a one-shot
            retry at a different temperature in `Judge.call`, or a hard reason cap
            ("at most 20 words, then stop") tested against the 40 hand labels.
-Before/after: 4 truncated batches in the ST12 passes; 3 recovered by one retry pass,
+Before/after: 4 truncated batches in the ST13 passes; 3 recovered by one retry pass,
            1 not.

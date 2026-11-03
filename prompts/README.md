@@ -12,6 +12,10 @@ One markdown file per agent, named after the agent that uses it:
 | `problem_synthesis.md` | S6 | synthesis into the problem statement |
 | `solution.md` | S7 | solution generator |
 | `risk.md` | S8 | risk assessor |
+| `revise_requirements.md` | ST12b | reviewer instruction applied to the requirement list, as a patch |
+| `revise_problem.md` | ST12b | reviewer instruction applied to the problem statement |
+| `revise_solution.md` | ST12b | reviewer instruction applied to the solution |
+| `revise_risk.md` | ST12b | reviewer instruction applied to the risks |
 | `gold_requirements.md` | S11 | drafts gold requirements for the eval set (judge model) |
 | `gold_checklist.md` | S11 | drafts the problem-statement checklist for the eval set (judge model) |
 | `judge_match.md` | S12 | eval: matches gold requirements code could not pair (judge model) |
@@ -24,7 +28,7 @@ One markdown file per agent, named after the agent that uses it:
 
 ## The structure
 
-Every prompt follows one structure (ST12): the same `##` headings in the same order.
+Every prompt follows one structure (ST13): the same `##` headings in the same order.
 `tests/test_prompt_structure.py` enforces it, so a new prompt that breaks the order
 fails CI. The order puts everything that is the same on every call first and the
 data last, which is what the provider prefix cache needs (S5 measured about three
@@ -47,7 +51,8 @@ Section by section:
 
 - **Role.** One paragraph. A persona with seniority and practice, and the standard it
   holds. A specific persona sets the register and the default judgment once, at the
-  top. Families: generator prompts (`requirements_*`, `problem_*`, `solution`, `risk`)
+  top. Families: generator prompts (`requirements_*`, `problem_*`, `solution`, `risk`,
+  `revise_*`)
   are a senior proposal professional at a Big Four advisory practice (analyst,
   proposal manager, solution architect, bid risk manager); gold prompts are a senior
   procurement analyst building an answer key; judge prompts are a senior reviewer in

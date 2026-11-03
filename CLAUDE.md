@@ -9,7 +9,9 @@ half-build.**
 ## Memory model
 
 - Context is cleared between steps. **`docs/ROADMAP.md` is the only memory.** Read it
-  first in every session. Do not re-read the whole codebase; the roadmap's "what was
+  first in every session. Feature work that has its own folder keeps its index and one
+  file per step there: human in the loop (ST12) is `docs/hitl/ROADMAP.md`, read that
+  index and then the step file being worked on. Do not re-read the whole codebase; the roadmap's "what was
   done" sections must be specific enough to continue from and to write a PR description.
 - Living docs, all under `docs/`: `ROADMAP.md`, `DECISIONS.md`, `ASSUMPTIONS.md`,
   `TIMELOG.md`, `PROMPTS.md` (prompt change notes). Prompts themselves live in

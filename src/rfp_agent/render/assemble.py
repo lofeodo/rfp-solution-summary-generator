@@ -9,12 +9,15 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
+from rfp_agent.brief import brief_chunk_refs
 from rfp_agent.schemas import (
+    Brief,
     ChunkRef,
     Claim,
     ParsedDocument,
     ProblemStatement,
     RequirementsOutput,
+    ReviewHistory,
     RiskAssessment,
     Solution,
     SolutionSummary,
@@ -56,21 +59,28 @@ def assemble(
     risks: RiskAssessment,
     generated_at: datetime | None = None,
     strict: bool = True,
+    brief: Brief | None = None,
+    review: ReviewHistory | None = None,
 ) -> SolutionSummary:
-    """Build the JSON source of truth. Raises ``CitationError`` on dangling IDs if strict."""
+    """Build the JSON source of truth. Raises ``CitationError`` on dangling IDs if strict.
+
+    ``brief`` (ST12) adds the pursuit-brief chunks to the citable index, so ``H``
+    citations resolve; ``review`` is the run's human touchpoints, rendered as history.
+    """
     summary = SolutionSummary(
         run_id=run_id,
         source_path=parsed.source_path,
         document_title=parsed.title,
         generated_at=generated_at or datetime.now(UTC),
         model=model,
-        chunks=chunk_refs(split),
+        chunks=chunk_refs(split) + brief_chunk_refs(brief),
         requirements=requirements,
         problem_statement=problem_statement,
         solution=solution,
         risks=risks,
         referenced_documents=parsed.referenced_documents,
         flags=parsed.flags,
+        review=review,
     )
     if strict and (dangling := dangling_citations(summary)):
         raise CitationError(dangling)

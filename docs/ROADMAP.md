@@ -613,7 +613,7 @@ one-line note in the step's "What was done" so merges are easy to resolve.
     `structured_call(node="parse_quality")`, one call per flagged page. `escalate(page,
     flags, judgement, hook)` replaces the S2 stub and applies the attribution rule. The
     VLM hook is a callable `(page, judgement) -> action text`; the default
-    `record_only_hook` returns "would escalate to VLM: <reason>" (ST2 swaps in
+    `record_only_hook` returns `"would escalate to VLM: <reason>"` (ST2 swaps in
     transcription). `run_quality_pass(parsed, ...) -> (ParsedDocument, ParseQualityReport)`
     judges each flagged page, records every escalation on the run recorder, and returns a
     copy of the document holding only confirmed and model-raised flags.
@@ -2429,10 +2429,17 @@ Priority order. Each gets the same entry structure when started.
 | ST9 | Observability dashboard in the UI beyond live progress | S15 | |
 | ST10 | Cloud deployment | S16 | Only with all core and evals done |
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
-| ST12 | One prompt structure: every prompt in `prompts/` rewritten into one documented section order (role, task, context, output, rules, examples, tone, input blocks, final checks), full eval rerun against the baseline | S13 | Done 2026-11-02 on branch `prompt-structure`; PR into `main` waits for the author |
+| ST12 | Human in the loop: one checkpoint before drafting, instruction-driven refinement, sign-off | S10, S14, S15 | Sub-steps ST12a to ST12e done 2026-11-02 on feature branch `hitl` (PR #32 merged into `main`); see [hitl/ROADMAP.md](hitl/ROADMAP.md) |
+| ST13 | One prompt structure: every prompt in `prompts/` rewritten into one documented section order (role, task, context, output, rules, examples, tone, input blocks, final checks), full eval rerun against the baseline | S13 | Done 2026-11-02; merged into `main` 2026-11-03 (PR #27) |
 
-### ST12. One prompt structure
-- **Status:** done (PR into `main` open, waiting for the author)
+### 3.1 ST12. Human in the loop: checkpoint and refine
+
+Moved on 2026-11-02 to its own feature folder: the index (brief, dependency graph,
+tables, step list) is [hitl/ROADMAP.md](hitl/ROADMAP.md), with one file per sub-step
+(ST12a to ST12e) beside it.
+
+### ST13. One prompt structure
+- **Status:** done (PR #27 merged into `main`)
 - **Goal:** every prompt in `prompts/` follows one documented structure grounded in
   prompt-engineering practice: a specific persona, the task in one or two sentences,
   the context the model works in (what it sees, what code does with the answer), the
@@ -2472,7 +2479,7 @@ Priority order. Each gets the same entry structure when started.
      section, a skeleton, the shared rule names, the personas, the test-coupled
      phrases); `docs/PROMPTS.md` gets a principles section, a persona line per design
      note, the rewritten judge layout note, and changelog lines with the measured
-     before and after; `docs/DECISIONS.md` D43; `docs/TIMELOG.md`; this entry.
+     before and after; `docs/DECISIONS.md` D51; `docs/TIMELOG.md`; this entry.
   5. **Evaluate.** `evals.harness run --label prompt_structure --all --runs 2`, scored
      in full with the new judge prompts, then `diff baseline prompt_structure` for the
      problem, requirements and solution column sets. To read the judge change alone,
@@ -2482,8 +2489,8 @@ Priority order. Each gets the same entry structure when started.
 - **What was done:**
   - **Structure.** `prompts/README.md` documents the nine sections, their purpose,
     the personas per family, the shared rule names and the conventions;
-    `docs/PROMPTS.md` gains "Structure and principles (ST12)" (the principle behind
-    each section and a per-prompt table of what moved) and an "ST12 comparison".
+    `docs/PROMPTS.md` gains "Structure and principles (ST13)" (the principle behind
+    each section and a per-prompt table of what moved) and an "ST13 comparison".
   - **Prompts.** All 16 rewritten, one commit per family. Rule content tuned by
     earlier evals (D31 scope, F6, F8 to F10, F12, F14) kept word for word; the
     `{{unit}}`, `{{mode_rules}}` and `{{evidence_kind}}` splices, the literal lines
@@ -2497,8 +2504,8 @@ Priority order. Each gets the same entry structure when started.
     agreement 35 of 40 against 34 of 40) and `evals/results/prompt_structure/` (two
     fresh runs per RFP with the final prompts, scored in full), each with
     `diff_requirements.md`, `diff_problem.md`, `diff_solution.md` against the
-    baseline. Numbers in `docs/PROMPTS.md` (ST12 comparison).
-  - **Docs.** D43, F17, `evals/results/README.md` label table, README results
+    baseline. Numbers in `docs/PROMPTS.md` (ST13 comparison).
+  - **Docs.** D51, F17, `evals/results/README.md` label table, README results
     pointer, timelog.
 - **Deviations from plan:**
   - The first eval pass found three content regressions introduced by the rewrite,
@@ -2508,11 +2515,19 @@ Priority order. Each gets the same entry structure when started.
     was then deleted and regenerated with the final prompts, so it holds no mixed
     prompt versions; the first-pass numbers live in the changelog.
   - The rejudged baseline's precision section was rescored after the
-    `judge_requirements` fix; its other sections use the first ST12 judge wording,
+    `judge_requirements` fix; its other sections use the first ST13 judge wording,
     which differs only in that prompt.
+  - Renumbered on merge (2026-11-03): this step was written as ST12 with decision
+    D43 while human in the loop took the same numbers on `hitl`; it became ST13 and
+    D51 when `main` (with ST12) was merged in. `solution.md` and `risk.md` keep the
+    new structure and gain ST12a's "Pursuit team guidance" rule and input block
+    (placed before Final checks) plus a final check that guidance-based items cite
+    their `H` ID. The `prompt_structure` eval runs predate that block; with no brief
+    the prompts render "None provided.", so those numbers still describe unattended
+    runs.
 - **Open issues:**
   - F17: the grounding judge loops inside a `reason` string on some batches under
-    the ST12 prompt (4 events, 1 not recovered: Federal Way run 1 of
+    the ST13 prompt (4 events, 1 not recovered: Federal Way run 1 of
     `prompt_structure` is missing one grounding batch). Candidate fixes: a one-shot
     retry at another temperature in `Judge.call`, or a hard reason cap, checked
     against the hand labels.
@@ -2631,7 +2646,7 @@ Priority order. Each gets the same entry structure when started.
     (single-row quotes), GR058 to GR060 maybe not (multi-row quotes); Colfax and NYESD
     unchanged (no flags). Known risk of the flagged scope: Federal Way p2 is a contents
     page whose dot leaders `is_toc_page` relies on.
-  - **Docs:** DECISIONS D43 (trigger policy, model, whole page, replace not append),
+  - **Docs:** DECISIONS D51 (trigger policy, model, whole page, replace not append),
     PROMPTS block and changelog, TIMELOG, README results and flag, USAGE, PIPELINE,
     `.env.example`, results README label rows, gold README page-5 section.
 - **What was done:** (branch `st2-vlm-transcription`, PR into `main`)
@@ -2704,11 +2719,11 @@ Priority order. Each gets the same entry structure when started.
     | NYESD | 99% ± 1 | 99% ± 1 | not run (no flags) | 0 / 0 |
 
     Federal Way checklist 8 to 9 → 10 to 11 of 12 (judged), 8 to 12 (flagged). The
-    judged scope stays the default (D43): same recall as flagged at a third of the VLM
+    judged scope stays the default (D51): same recall as flagged at a third of the VLM
     cost and less spread, and the pages the judge clears (Federal Way p2 contents, p14
     pricing form; Missouri p12 cost table) came back no better, p14 worse, when
     re-rendered. Total spend: 12 pipeline runs $1.10, scoring $0.42, live checks $0.10.
-  - Docs: D43; PROMPTS block for `parse_vlm` and two changelog rows; PIPELINE
+  - Docs: D51; PROMPTS block for `parse_vlm` and two changelog rows; PIPELINE
     parse-quality section and `RFP_VLM*` rows; USAGE CLI flags, UI checkbox, eval
     commands; README Parse-tab row, step 1 and a results note; `.env.example`; results
     README label rows, reproduce commands and the reachable-recall wording; gold README

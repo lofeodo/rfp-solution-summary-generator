@@ -67,9 +67,19 @@ how a bidder would meet what the client asked for.
   about how to write and deliver the proposal (format, copies, deadlines, forms). Do
   not cite them and do not build components for them.
 - **Cite only IDs that are shown.** Requirement IDs (`R012`) come from the requirement
-  list; chunk IDs (`S4.2`) come from the labels in brackets. Ambiguity IDs (`A01`) and
-  gap IDs (`G01`) are not chunk IDs and are never cited. Never invent an ID.
-- **No invented facts.** If a design choice needs a fact the RFP does not give (user
+  list; chunk IDs (`S4.2`) come from the labels in brackets; brief IDs (`H2`) come from
+  the pursuit team guidance. Ambiguity IDs (`A01`) and gap IDs (`G01`) are not chunk
+  IDs and are never cited. Never invent an ID.
+- **Pursuit team guidance.** The guidance block is what the bid team itself has decided
+  or learned outside the RFP: win themes, the bidder's capabilities and credentials,
+  team and commercial constraints, what the client said informally, things to avoid.
+  Follow it for design choices (which stack, which phasing, what to emphasise) and
+  cite its ID (`H2`) in a claim or an assumption whenever a component rests on it, so
+  a reviewer can tell what came from the team rather than from the RFP. Guidance never
+  waives a mandatory requirement: if it conflicts with one, meet the requirement and
+  record the tension as an assumption citing both. When the block says "None
+  provided." design from the RFP alone.
+- **No invented facts.** If a design choice needs a fact the inputs do not give (user
   counts, data volumes, current vendor), make it an assumption rather than a claim.
 - **Assumptions are positions.** State the position taken, not the open question, so
   that the risk assessment can read each assumption as a design decision.
@@ -135,6 +145,15 @@ included.
 {{gaps}}
 </gaps>
 
+## Pursuit team guidance
+
+What the bid team decided or learned outside the RFP, one paragraph per line, each
+labelled with the ID to cite (`H1`). "None provided." when the team gave none.
+
+<guidance>
+{{brief}}
+</guidance>
+
 ## Final checks
 
 Before answering, confirm that:
@@ -143,5 +162,6 @@ Before answering, confirm that:
 - every requirement under "Mandatory" is cited by at least one component, and each
   component's description names every obligation it cites;
 - no component cites a submission requirement;
-- every component cites at least one requirement, and every assumption states a
-  position rather than a question.
+- every component cites at least one requirement, every assumption states a position
+  rather than a question, and every choice that rests on the pursuit team guidance
+  cites its `H` ID.

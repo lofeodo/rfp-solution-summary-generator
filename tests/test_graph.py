@@ -180,6 +180,21 @@ def test_vlm_option_without_the_provider_key_fails_before_the_run(tmp_path, monk
     assert not any(tmp_path.iterdir())
 
 
+def test_vlm_model_is_not_built_for_a_graph_without_the_quality_stage(monkeypatch, chunk_id):
+    # A resume after the checkpoint or a regeneration (ST12) starts after parse_quality, so
+    # it must not need the vision model's key even when the VLM is on (ST2).
+    from rfp_agent.observability import RunRecorder
+
+    Stubs(chunk_id).install(monkeypatch)
+    settings = SETTINGS.model_copy(update={"vlm": True, "anthropic_api_key": None})
+    recorder = RunRecorder.from_settings(PDF, settings)
+    graph_mod.build_pipeline(
+        settings=settings, recorder=recorder, model=ScriptedChatModel(), start_stage=SOLUTION
+    )
+    with pytest.raises(MissingApiKeyError):
+        graph_mod.build_pipeline(settings=settings, recorder=recorder, model=ScriptedChatModel())
+
+
 def test_defaults_come_from_settings(tmp_path, monkeypatch, chunk_id):
     stubs = Stubs(chunk_id).install(monkeypatch)
     settings = SETTINGS.model_copy(
@@ -342,6 +357,7 @@ def test_cli_run_prints_stages_and_paths(tmp_path, monkeypatch, chunk_id):
             "--single-call-extraction",
             "--max-iterations",
             "1",
+            "--unattended",
         ],
     )
     assert result.exit_code == 0, result.output
@@ -358,7 +374,7 @@ def test_cli_run_reports_failed_stage_with_exit_1(tmp_path, monkeypatch, chunk_i
     Stubs(chunk_id, fail_at=RISK).install(monkeypatch)
     monkeypatch.setattr(graph_mod, "get_chat_model", lambda **kw: ScriptedChatModel())
     monkeypatch.setattr(graph_mod, "get_settings", lambda: SETTINGS)
-    result = CliRunner().invoke(app, ["run", str(PDF), "--runs-dir", str(tmp_path)])
+    result = CliRunner().invoke(app, ["run", str(PDF), "--runs-dir", str(tmp_path), "--unattended"])
     assert result.exit_code == 1
     assert "failed" in result.output and "risk" in result.output
     assert "risk boom" in result.output

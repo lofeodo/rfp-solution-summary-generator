@@ -15,8 +15,8 @@ columns are code-only, shown as `–`), plus a `diff_*.md` against the baseline:
 | `fix_solution_naming/` | `prompts/solution.md` "name what you cite" rule | solution | D40 |
 | `ablation_vlm/` | `--vlm` (ST2): pages the judge confirms bad are re-rendered by `anthropic:claude-sonnet-5-5` and the transcription replaces the library text; all four RFPs, two runs | match, problem, cost; `diff_requirements.md` against baseline | D42 |
 | `ablation_vlm_flagged/` | `--vlm --vlm-scope flagged` (ST2): every heuristically flagged page goes to the VLM, no judge call; Federal Way and Missouri only (the other two have no flags) | match, problem, cost | D42 |
-| `prompt_structure/` | ST12: every prompt rewritten into the shared structure (`prompts/README.md`); two fresh runs per RFP, scored in full with the new judge prompts; `diff_*.md` against the baseline | all | D43 |
-| `baseline_rejudged/` | ST12: the baseline run directories rescored with the new judge prompts only, plus `agree` against the baseline's 40 hand labels, so the judge change is read apart from the generator change | all | D43 |
+| `prompt_structure/` | ST13: every prompt rewritten into the shared structure (`prompts/README.md`); two fresh runs per RFP, scored in full with the new judge prompts; `diff_*.md` against the baseline | all | D51 |
+| `baseline_rejudged/` | ST13: the baseline run directories rescored with the new judge prompts only, plus `agree` against the baseline's 40 hand labels, so the judge change is read apart from the generator change | all | D51 |
 
 | File | What it is |
 |---|---|

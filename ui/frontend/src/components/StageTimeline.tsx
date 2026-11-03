@@ -9,6 +9,8 @@ function Marker({ state }: { state: StageState }) {
     running: "bg-accent animate-pulse",
     finished: "bg-ink",
     failed: "bg-accent",
+    waiting: "border-2 border-accent bg-accentsoft",
+    skipped: "border border-dashed border-hair",
   }[state];
   return (
     <span className={`mt-2 inline-flex h-3 w-3 shrink-0 items-center justify-center ${cls}`} aria-label={state}>
@@ -53,8 +55,8 @@ export default function StageTimeline({
             <li
               key={r.id}
               className={`hair flex gap-3 py-2.5 ${r.parallel ? "border-l-2 border-l-accent pl-2" : ""} ${
-                r.state === "pending" ? "text-muted" : ""
-              }`}
+                r.state === "pending" || r.state === "skipped" ? "text-muted" : ""
+              } ${r.state === "waiting" ? "bg-accentsoft" : ""}`}
             >
               <Marker state={r.state} />
               <div className="min-w-0 flex-1">
@@ -63,10 +65,16 @@ export default function StageTimeline({
                     <span className="mr-1.5 font-mono text-[10px] font-normal text-muted">{i + 1}</span>
                     {r.label}
                   </span>
-                  <span className="font-mono text-xs tabular-nums">{r.state === "pending" ? "" : secs(elapsed)}</span>
+                  <span className="font-mono text-xs tabular-nums">
+                    {r.state === "pending" || r.state === "skipped" ? "" : r.state === "waiting" ? "waiting" : secs(elapsed)}
+                  </span>
                 </div>
                 <div className="font-mono text-[10px] text-muted">
-                  {r.state === "finished" && ev && ev.calls > 0
+                  {r.state === "skipped"
+                    ? "No checkpoint on this run"
+                    : r.state === "waiting"
+                      ? "Waiting for a reviewer"
+                      : r.state === "finished" && ev && ev.calls > 0
                     ? `${ev.calls} calls · ${tokens(ev.totals.input_tokens + ev.totals.output_tokens)} tok · ${usd(ev.totals.cost_usd)}`
                     : r.parallel && r.state !== "finished"
                       ? `${r.what} · parallel`
