@@ -6,10 +6,11 @@ wants) and per session (how the work actually happened).
 **How these were measured.** Hours are the author's wall-clock time, not agent time.
 Step times come from the git history (from the plan commit, or the previous merge, to
 the step's merge), rounded to the quarter hour, and were then checked with the author:
-gaps between steps were breaks and are not counted. Several steps ran at the same time
+gaps between steps were breaks and are not counted, except two on 2026-11-02 that were
+human-in-the-loop design and planning (git only shows when an agent commits). Several steps ran at the same time
 in parallel agents; those share one row and one time window, so the rows add up to the
 real total. An earlier version of this file estimated each step on its own and came to
-42.75 h; that overcounted parallel work and breaks by more than half.
+42.75 h; that overcounted parallel work and breaks by nearly half.
 
 ## Per deliverable
 
@@ -24,8 +25,8 @@ real total. An earlier version of this file estimated each step on its own and c
 | 6. Demo | 0.5 | Recording, from the script in docs/AUTHOR.md |
 | UI (part of 1, tracked separately) | 0.5 | S14 backend and S15 frontend, shared window with S12 |
 | **Core total** | **13.75** | S0 to S16 plus the demo, well inside the 36 h framing |
-| Stretch (after core) | 5.75 | ST2 vision-model transcription, ST13 prompt structure and ST12a checkpoint in parallel 1.0; ST12b to ST12e human in the loop and branch sync 2.75; merges into `main` 0.75; remove runs 0.25; README chart and reshape 1.0 |
-| **Total** | **19.5** | |
+| Stretch (after core) | 8.5 | Human-in-the-loop design 1.0; ST2 vision-model transcription, ST13 prompt structure and ST12a checkpoint in parallel 1.0; ST12b to ST12e human in the loop (with 1.75 of ST12b planning) and branch sync 4.5; merges into `main` 0.75; remove runs 0.25; README chart and reshape 1.0. Human in the loop alone is about 6 to 6.5 |
+| **Total** | **22.25** | |
 
 ## Per session
 
@@ -45,8 +46,9 @@ real total. An earlier version of this file estimated each step on its own and c
 | 2026-10-30 | S13 | 18:22–19:51 | 1.5 | 2, 3 | Harness `--only` rescoring and `diff`; F14 judge_match rule and baseline rescore; full-text and single-call ablations (16 runs); solution "name what you cite" rule on 8 fresh runs; D39, D40, F16 (about $4.3) |
 | 2026-10-30 | S16 | 20:23–20:43 | 0.5 | 5 | Two-stage Dockerfile built and smoke-tested, four samples regenerated ($0.29), README status, Docker, demo script and live-change rehearsals, PROMPTS management notes, D41, PR `core` → `main` |
 | 2026-11-02 | S16 follow-up | to 09:03 | 0.5 | 5 | README rewrite (GUI-first, diagrams, screenshot, results table), docs/PIPELINE.md, docs/USAGE.md, docs/AUTHOR.md; shell-neutral run steps; `core` merged into `main` |
-| 2026-11-02 | ST2, ST13, ST12a (parallel) | to 11:38 | 1.0 | Stretch | Human-in-the-loop design (D43); ST2 VLM transcription of escalated pages, 15 tests, two ablations ($1.0), D42; ST13 one structure for all prompts, structure test, baseline rejudged and new-prompt eval runs (about $12 judge), D51, F17; ST12a checkpoint in the pipeline, pause and resume, CLI `checkpoint`, 24 tests, D44, D45 |
-| 2026-11-02 | ST12b | 13:24–14:10 | 0.75 | Stretch | Revise primitive and versioning: versions module, four revise agents and prompts, refine orchestration, CLI `revise`/`regenerate`/`sign-off`/`history`, 31 tests, live Missouri loop fixed a stale-flag bug, roadmap moved to `docs/hitl/`, D46, D47 |
+| 2026-11-02 | ST12 design | 09:03–10:11 | 1.0 | Stretch | Human-in-the-loop design from the pursuit lead's chair: three rounds (two modes, then one mode), roadmap entry with five sub-steps, D43 |
+| 2026-11-02 | ST2, ST13, ST12a (parallel) | 10:11–11:38 | 1.0 | Stretch | ST2 VLM transcription of escalated pages, 15 tests, two ablations ($1.0), D42; ST13 one structure for all prompts, structure test, baseline rejudged and new-prompt eval runs (about $12 judge), D51, F17; ST12a checkpoint in the pipeline, pause and resume, CLI `checkpoint`, 24 tests, D44, D45 |
+| 2026-11-02 | ST12b | 11:38–14:10 | 2.5 | Stretch | Planning the revise loop 1.75, then the revise primitive and versioning: versions module, four revise agents and prompts, refine orchestration, CLI `revise`/`regenerate`/`sign-off`/`history`, 31 tests, live Missouri loop fixed a stale-flag bug, roadmap moved to `docs/hitl/`, D46, D47 |
 | 2026-11-02 | ST12c | 14:10–14:48 | 0.5 | Stretch | Backend for the human loop: eight run states, checkpoint/revise/regenerate/sign-off endpoints, SSE state events, restart adoption, 9 tests, live loop through the API, D48 |
 | 2026-11-02 | ST12d | 14:48–15:17 | 0.5 | Stretch | Frontend checkpoint: Checkpoint tab, brief preview, lifecycle banner, versioned refetch, 16 Vitest tests, live checkpoint through the UI, D49 |
 | 2026-11-02 | ST12e | 15:17–15:56 | 0.75 | Stretch | Frontend refine and sign-off: Suggest edits panel, version bar and stale banner, Review tab with history and diffs, 9 Vitest tests, live loop with Playwright, D50 |
