@@ -1,57 +1,61 @@
 # TIMELOG.md
 
-Rough hours per part, as the assignment asks. Two views: per deliverable (what the
-reviewer wants) and per roadmap step (how the work actually happened). Update both at
-the end of every step. Times are estimates to the nearest half hour.
+Hours per part, as the assignment asks. Two views: per deliverable (what the reviewer
+wants) and per session (how the work actually happened).
+
+**How these were measured.** Hours are the author's wall-clock time, not agent time.
+Step times come from the git history (from the plan commit, or the previous merge, to
+the step's merge), rounded to the quarter hour, and were then checked with the author:
+gaps between steps were breaks and are not counted, except two on 2026-11-02 that were
+human-in-the-loop design and planning (git only shows when an agent commits). Several steps ran at the same time
+in parallel agents; those share one row and one time window, so the rows add up to the
+real total. An earlier version of this file estimated each step on its own and came to
+42.75 h; that overcounted parallel work and breaks by nearly half.
 
 ## Per deliverable
 
 | Deliverable | Hours | Notes |
 |---|---|---|
-| 0. Reading, research, planning | 4.0 | 3.0 assignment + public RFPs + brainstorming; 1.0 input inspection, roadmap, working rules |
-| 1. Working app (pipeline, parsing, agents, CLI) | 12.5 | S0 scaffold: env, config, schemas, tests, CI; S1 LLM layer; S9 assembler and renderer; S2 parsing 2.0; S4 parse-quality pass 1.0; S3 splitting 1.5; S6 problem statement 1.0; S5 requirements extractor 2.0; S7 solution generator with coverage loop 1.0; S10 pipeline graph, CLI, four live runs 1.0 |
-| 2. Prompt assets and notes | 4.5 | S11 gold drafting prompts and notes; S4 parse_quality prompt and notes; S6 problem prompts, live runs and notes; S5 extraction and dedupe prompts, one tuning round, notes 1.0; S7 solution prompt, live runs on four RFPs, one tuning round, notes 1.0; S12 seven judge prompts, one tuning round, notes 0.5; S13 judge_match and solution rules with before/after runs 0.5 |
-| 3. Evaluation harness and sample results | 6.5 | S11 gold labels: format, labelling script, drafts, correction of 265 items; S12 harness, scripted-judge tests, 8 fresh runs, 12 judged runs, hand-labelled agreement sample 2.25; S13 partial rescoring and diff commands, two ablations (16 runs), fix label (8 runs), spot checks 1.75 |
-| 4. Observability | 1.75 | S1 run recorder, cost, Langfuse handler; S10 stage records, stage events, per-stage cost 0.5; S12 retry cause in the run log (F7), judge cost logs 0.25 |
-| 5. DECISIONS.md and other docs | 5.5 | S0 plan, decisions, README skeleton; S9 plan and D16; S6 plan, D28, F6, F7; S7 plan, D32, F10, F11 0.5; S10 plan, D34, README run section 0.5; S12 plan, D36, D37, F13, F14, results README 0.5; S13 plan, D39, D40, F16, results README 0.5; S16 Dockerfile with build and smoke tests, README status, key location, Docker and live-change sections, PROMPTS management notes, evidence for seven decisions, D41, regenerated samples 1.5; S16 follow-up: README rewritten as a short visual public page, PIPELINE/USAGE/AUTHOR docs split out 0.5 |
-| 6. Demo | 0.5 | S16 demo script (now in docs/AUTHOR.md), walked once against the UI served from the image. The recording itself is the author's time and is added here when it is made. |
-| UI (part of 1, tracked separately) | 3.5 | S14 backend: API, run queue, SSE, tests, live run, API contract, D35; S15 frontend: views, source reveal, live timeline, Playwright passes, live run, D38 2.0 |
-| Stretch ST2 (VLM transcription) | 4.0 | After the core total: pipeline and UI 2.25 (vlm module, quality-pass wiring, graph, CLI, harness, backend fields, frontend checkbox and side-by-side view, tests); prompt and notes 0.25; two ablations, 12 runs and scoring 0.5; D42, roadmap, PIPELINE, USAGE, README, results and gold READMEs 1.0 |
-| **Total** | **42.75** | Core (S0 to S16) was 38.75 h, 2.75 h over the 36 h framing, all of it in S16's documentation and packaging; the pipeline, evals and UI were done at 36.25 h. ST2 adds 4.0 h of stretch work on top. |
+| 0. Reading, research, planning | 4.0 | 2.0 assignment, public RFPs and brainstorming; 2.0 input inspection, roadmap, working rules and living docs |
+| 1. Working app (pipeline, parsing, agents, CLI) | 3.5 | S0 scaffold 0.5; S1, S2, S9 LLM layer, parsing, renderer 0.25; S3, S4 splitting and parse-quality pass 0.5; S5, S6 requirements and problem statement 0.75; S7 solution generator 0.25; S8 risk assessor 0.75; S10 pipeline graph, CLI and live runs 0.5 |
+| 2. Prompt assets and notes | 1.75 | Prompt writing, live runs and tuning rounds inside S5, S6 (0.5), S7 (0.25), S8 (0.5); S13 judge_match and solution rules with before/after runs 0.5 |
+| 3. Evaluation harness and sample results | 2.0 | S11 gold labels 0.5; S12 harness, baseline judged runs and agreement sample 0.5 (shared window with S14, S15); S13 rescoring, diff, two ablations and fix runs 1.0 |
+| 4. Observability | 0.5 | S1 run recorder, cost, Langfuse handler 0.25; S10 stage records, stage events, per-stage cost 0.25 |
+| 5. DECISIONS.md and other docs | 1.0 | S16 Dockerfile, regenerated samples, README, demo script 0.5; S16 follow-up README rewrite and PIPELINE/USAGE/AUTHOR docs 0.5. Step docs and decisions were written inside each step and are counted there |
+| 6. Demo | 0.5 | Recording, from the script in docs/AUTHOR.md |
+| UI (part of 1, tracked separately) | 0.5 | S14 backend and S15 frontend, shared window with S12 |
+| **Core total** | **13.75** | S0 to S16 plus the demo, well inside the 36 h framing |
+| Stretch (after core) | 8.5 | Human-in-the-loop design 1.0; ST2 vision-model transcription, ST13 prompt structure and ST12a checkpoint in parallel 1.0; ST12b to ST12e human in the loop (with 1.75 of ST12b planning) and branch sync 4.5; merges into `main` 0.75; remove runs 0.25; README chart and reshape 1.0. Human in the loop alone is about 6 to 6.5 |
+| **Total** | **22.25** | |
 
-## Per step
+## Per session
 
-| Date | Step | Hours | Deliverable | Notes |
-|---|---|---|---|---|
-| 2026-10-29 | — | 3.0 | 0 | Read assignment, studied public RFPs, brainstormed the solution |
-| 2026-10-30 | Planning | 1.0 | 0 | Inspected the four RFPs, surfaced assignment points, wrote ROADMAP, CLAUDE.md, living docs |
-| 2026-10-30 | S0 | 1.5 | 1, 5 | Scaffold: conda env, pins, config, schemas, tests, CI, README skeleton, docs |
-| 2026-10-30 | S1 | 2.0 | 1, 4 | LLM factory, structured_call with retry, prompt loader, run recorder, Langfuse, live DeepSeek fix (thinking mode) |
-| 2026-10-30 | S9 | 1.5 | 1, 5 | Assembler with citation check, markdown renderer, golden tests, D16 |
-| 2026-10-30 | S2 | 2.0 | 1 | PDF parsing: inspection of the four RFPs, normaliser, header strip, flags, references, tests, docs |
-| 2026-10-30 | S11 | 3.0 | 2, 3 | Gold format and script, Claude drafts ($1.6), F4/F5 fixes, correction of all four RFPs, Federal Way image table by hand |
-| 2026-10-30 | S4 | 1.5 | 1, 2 | Parse-quality judge, attribution rule, VLM hook, fake-model tests, live run on four RFPs ($0.005), D24 |
-| 2026-10-30 | S3 | 1.5 | 1 | Splitting: outline located in text, heading promotion, 300-word chunks with overlap, kind tags, invariant and golden tests, D25 to D27 |
-| 2026-10-30 | S6 | 2.0 | 1, 2, 5 | Problem statement: per-chunk summaries in a thread pool, schema-validated citations, full-text baseline, debug CLI, live runs on four RFPs in both modes ($0.25), .gitattributes LF fix, D28 |
-| 2026-10-30 | S5 | 3.0 | 1, 2 | Requirements extractor: verified calls with feedback, exact and LLM-grouped dedupe with sanitised fallback, single-call mode, concurrency, 23 fake-model tests, two prompts tuned after a live run, five live runs on the four RFPs ($0.25), D29 to D31, F8, F9 |
-| 2026-10-30 | S7 | 2.5 | 1, 2, 5 | Solution generator: no RFP text, citations checked in the schema, code-computed coverage, LangGraph generate/check/revise loop with a round cap, debug CLI, 23 fake-model tests, live runs on four RFPs twice (first prompt and tuned prompt, $0.45 including S5 and S6 inputs), D32, F10, F11 |
-| 2026-10-30 | S8 | 2.5 | 1, 2, 5 | Risk assessor: code-computed findings block, must-cite and count band in the schema, sort-then-number, debug CLI with the S4 pass, 18 fake-model tests, live runs on four RFPs twice ($0.08), D33, F12 |
-| 2026-10-30 | S10 | 2.0 | 1, 4, 5 | Pipeline graph with the S5/S6 fan-out, stage wrappers with events and stage records, run CLI with ablation flags, 13 stubbed-stage tests, live runs on four RFPs, committed samples, D34 |
-| 2026-10-30 | S14 | 1.5 | UI, 5 | UI backend: FastAPI app over run_pipeline, one-worker queue, condition-backed SSE, samples served as runs, stubs shared with the graph tests, 27 tests, one live run through the API ($0.05), API contract, D35 |
-| 2026-10-30 | S12 | 3.5 | 2, 3, 4, 5 | Eval harness: code-then-judge gold matching, per-item precision, grounding (entity check plus cited-text judge), checklist, solution rubric and judged coverage, risk levels and findings, consistency, pairwise, agreement; F7 fix; 30 scripted-judge tests; 8 fresh runs and 12 judged runs ($0.56 generation, about $6.1 judge including the calibration rescore); 40 hand labels; D36, D37, F13, F14 |
-| 2026-10-30 | S13 | 2.75 | 2, 3, 5 | Ablations and fixes: harness `--only` rescoring with merged judge logs, `diff`, run flags, 10 tests; F14 judge_match rule and baseline rescore; full-text and single-call ablations (16 runs, judged on the changed sections, 4 pairwise); solution "name what you cite" rule on 8 fresh runs; D39, D40, F16 (about $4.3 of API spend) |
-| 2026-10-30 | S15 | 2.0 | UI, 5 | UI frontend: Vite/React/TS/Tailwind app over the S14 API, live SSE timeline, six output tabs, citation chips with a source slide-over (quote highlight, PDF at page), 11 Vitest tests on real sample data, CI job, four Playwright MCP passes at desktop and phone width, one live run through the UI ($0.06), D38, F15 |
-| 2026-10-31 | S16 | 2.0 | 5, 6 | Docs, Dockerfile, demo script: two-stage image built and smoke-tested (unkeyed UI, pytest inside the image, one keyed CLI run through the container, $0.05); four samples regenerated with the current prompts ($0.29); README status, key location, Docker, demo script and three live-change rehearsals, each rehearsed once (Haiku swap $0.05, risk-prompt edit and single-stage rerun $0.01); PROMPTS management notes; evidence for D1 to D4, D6, D7, D13; D41; PR `core` → `main` opened |
-| 2026-11-02 | S16 follow-up | 0.5 | 5 | README rewrite (GUI-first, diagrams, screenshot, results table), docs/PIPELINE.md, docs/USAGE.md, docs/AUTHOR.md; editable-install fix and troubleshooting |
-| 2026-11-02 | ST2 | 4.0 | 1, 2, 3, 5 | VLM transcription of escalated pages: `parsing/vlm.py`, `parse_vlm` prompt, outcome-returning hook with markdown replacement and a `flagged` scope, `garbled_text` heuristic, `--vlm` through CLI, harness and the run form, Parse-tab comparison; 15 fake-model tests and two live checks ($0.10); `ablation_vlm` (8 runs, $0.72 + $0.28 judge) and `ablation_vlm_flagged` (4 runs); D42; PR into `main` |
-| 2026-11-02 | ST12 plan | 0.75 | 5 | Human-in-the-loop design from the pursuit lead's chair: three rounds (two modes, then one mode), roadmap entry with five sub-steps, D43 |
-| 2026-11-02 | ST12a | 2.5 | 1, 4, 5 | Checkpoint in the pipeline: schemas, brief as H chunks, checkpoint applier, agents and prompts, graph pause and resume from the run directory, run-log continuation, renderer, CLI `checkpoint`; 24 new fake-model tests; one live run through the checkpoint ($0.07); D44, D45 |
-| 2026-11-02 | ST12b | 3.0 | 1, 4, 5 | Revise primitive and versioning: revision schemas, versions module (files, stale flags, revision log, structural diff), graph end stage and confirmed-list load, four revise agents and prompts (requirements as a validated patch, the rest whole with stable IDs and no coverage regression), refine orchestration, CLI `revise`/`regenerate`/`sign-off`/`history`, review-history rendering; 31 new fake-model tests; live Missouri loop ($0.11) found and fixed a stale-flag bug; ST12 roadmap moved to `docs/hitl/`; D46, D47 |
-| 2026-11-02 | ST12c | 2.0 | UI, 4, 5 | Backend for the human loop: eight run states derived from the run directory, one-worker job model, checkpoint/revise/regenerate/sign-off endpoints, revisions and versions endpoints, SSE state events, restart adoption; 9 new stubbed tests; live Missouri loop through the API with a backend restart ($0.12); D48 |
-| 2026-11-02 | ST12d | 1.5 | UI, 5 | Frontend checkpoint: review types and client, stream kept open through drafting and refining, versioned refetch, Checkpoint tab (row actions, instruction box, brief with H-chunk preview, confirm, record), lifecycle banner, unattended upload option; 16 new Vitest tests; live Missouri checkpoint through the UI with Playwright and a backend restart ($0.085); D49 |
-| 2026-11-02 | ST12e | 1.5 | UI, 5 | Frontend refine and sign-off: regenerate, sign-off and version client; Suggest edits panel, version bar with read-only old versions and stale banner with regenerate on each artefact tab; Review tab with sign-off, versions and full history with stored diffs; brief citation chips; 9 new Vitest tests; live loop on the ST12d Missouri run with Playwright ($0.020); D50 |
-| 2026-11-02 | ST13 | 3.0 | 2, 5 | One prompt structure for all 16 prompts, structure test, docs (prompts/README.md, PROMPTS.md principles and comparison, D51, F17); two eval passes: baseline rejudged (12 runs) and new prompts (8 first-pass and 8 final runs), three content fixes from the first pass (about $0.6 pipeline twice and about $12 judge) |
-| 2026-11-03 | ST13 merge | 0.25 | 5 | Merged `main` (ST12 human in the loop) into `prompt-structure`: pursuit-guidance rule and block carried into the restructured solution and risk prompts, step renumbered ST12 to ST13 and D43 to D51 |
-| 2026-11-03 | ST13 README | 0.5 | 5 | Old vs. new prompts in the README: `evals.harness chart` (hand-written SVG dumbbell chart from two summaries, light and dark), chart and table under "How good is it", 3 tests |
-| 2026-11-03 | Remove runs | 0.5 | UI | `DELETE /api/runs/{id}` (samples 403, busy 409, deleted entries refuse new jobs) and a two-click Remove control on own runs in the home list; 4 new backend tests; checked in the built UI with Playwright; D52 |
-| 2026-11-03 | README reshape | 1.0 | 5 | README reshaped with the readme-writing skill for reviewers: what/why, how it works (checkpoint in the diagram), trust, a new evaluation section (what, how, why, AI-made ground truth and its limits), generated charts only (new vision-model chart; the chart drops panels a label was not scored on, 1 test), run and UI usage kept in the README; new docs/EVALUATION.md and docs/REPOSITORY.md; "corrected by hand" wording fixed to "corrected by the coding agent" |
+| Date | Step(s) | Window | Hours | Deliverable | Notes |
+|---|---|---|---|---|---|
+| 2026-10-29 | Reading | — | 2.0 | 0 | Read assignment, studied public RFPs, brainstormed the solution |
+| 2026-10-30 | Planning | to 08:40 | 2.0 | 0 | Inspected the four RFPs, surfaced assignment points, wrote ROADMAP, CLAUDE.md, living docs |
+| 2026-10-30 | S0 | 08:40–09:16 | 0.5 | 1 | Scaffold: conda env, pins, config, schemas, tests, CI, README skeleton, docs |
+| 2026-10-30 | S1, S2, S9 (parallel) | 09:20–09:51 | 0.5 | 1, 4 | S1 LLM factory, structured_call with retry, run recorder, Langfuse, DeepSeek thinking-mode fix; S2 PDF parsing, normaliser, header strip, flags, tests; S9 assembler with citation check, markdown renderer, golden tests, D16 |
+| 2026-10-30 | S11 | 10:03–10:32 | 0.5 | 3 | Gold format and script, Claude drafts ($1.6), F4/F5 fixes, correction of all four RFPs, Federal Way image table |
+| 2026-10-30 | S3, S4 (parallel) | 10:32–11:03 | 0.5 | 1, 2 | S3 outline-located headings, 300-word chunks with overlap, kind tags, invariant and golden tests, D25 to D27; S4 parse-quality judge, attribution rule, VLM hook, live run on four RFPs ($0.005), D24 |
+| 2026-10-30 | S5, S6 (parallel) | 11:03–12:23 | 1.25 | 1, 2 | S5 requirements extractor with verified quotes, dedupe with fallback, single-call mode, 23 fake-model tests, two prompts tuned, five live runs ($0.25), D29 to D31, F8, F9; S6 problem statement with per-chunk summaries, full-text baseline, live runs in both modes ($0.25), .gitattributes LF fix, D28 |
+| 2026-10-30 | S7 | 13:24–13:55 | 0.5 | 1, 2 | Solution generator: code-computed coverage, LangGraph generate/check/revise loop, 23 fake-model tests, live runs on four RFPs twice ($0.45), D32, F10, F11 |
+| 2026-10-30 | S8 | 13:55–15:14 | 1.25 | 1, 2 | Risk assessor: code-computed findings block, must-cite and count band, 18 fake-model tests, live runs on four RFPs twice ($0.08), D33, F12 |
+| 2026-10-30 | S10 | 15:14–16:03 | 0.75 | 1, 4 | Pipeline graph with the S5/S6 fan-out, stage records and events, run CLI with ablation flags, 13 stubbed-stage tests, live runs, committed samples, D34 |
+| 2026-10-30 | S12, S14, S15 (parallel) | 16:03–17:06 | 1.0 | 3, UI | S12 eval harness (gold matching, precision, grounding, checklist, rubric, risks, consistency, pairwise, agreement), 30 scripted-judge tests, 12 judged runs (about $6.7), 40 hand labels, D36, D37, F13, F14; S14 FastAPI backend, run queue, SSE, 27 tests, API contract, D35; S15 Vite/React frontend, live timeline, citation chips with source slide-over, 11 Vitest tests, Playwright passes, D38, F15 |
+| 2026-10-30 | S13 | 18:22–19:51 | 1.5 | 2, 3 | Harness `--only` rescoring and `diff`; F14 judge_match rule and baseline rescore; full-text and single-call ablations (16 runs); solution "name what you cite" rule on 8 fresh runs; D39, D40, F16 (about $4.3) |
+| 2026-10-30 | S16 | 20:23–20:43 | 0.5 | 5 | Two-stage Dockerfile built and smoke-tested, four samples regenerated ($0.29), README status, Docker, demo script and live-change rehearsals, PROMPTS management notes, D41, PR `core` → `main` |
+| 2026-11-02 | S16 follow-up | to 09:03 | 0.5 | 5 | README rewrite (GUI-first, diagrams, screenshot, results table), docs/PIPELINE.md, docs/USAGE.md, docs/AUTHOR.md; shell-neutral run steps; `core` merged into `main` |
+| 2026-11-02 | ST12 design | 09:03–10:11 | 1.0 | Stretch | Human-in-the-loop design from the pursuit lead's chair: three rounds (two modes, then one mode), roadmap entry with five sub-steps, D43 |
+| 2026-11-02 | ST2, ST13, ST12a (parallel) | 10:11–11:38 | 1.0 | Stretch | ST2 VLM transcription of escalated pages, 15 tests, two ablations ($1.0), D42; ST13 one structure for all prompts, structure test, baseline rejudged and new-prompt eval runs (about $12 judge), D51, F17; ST12a checkpoint in the pipeline, pause and resume, CLI `checkpoint`, 24 tests, D44, D45 |
+| 2026-11-02 | ST12b | 11:38–14:10 | 2.5 | Stretch | Planning the revise loop 1.75, then the revise primitive and versioning: versions module, four revise agents and prompts, refine orchestration, CLI `revise`/`regenerate`/`sign-off`/`history`, 31 tests, live Missouri loop fixed a stale-flag bug, roadmap moved to `docs/hitl/`, D46, D47 |
+| 2026-11-02 | ST12c | 14:10–14:48 | 0.5 | Stretch | Backend for the human loop: eight run states, checkpoint/revise/regenerate/sign-off endpoints, SSE state events, restart adoption, 9 tests, live loop through the API, D48 |
+| 2026-11-02 | ST12d | 14:48–15:17 | 0.5 | Stretch | Frontend checkpoint: Checkpoint tab, brief preview, lifecycle banner, versioned refetch, 16 Vitest tests, live checkpoint through the UI, D49 |
+| 2026-11-02 | ST12e | 15:17–15:56 | 0.75 | Stretch | Frontend refine and sign-off: Suggest edits panel, version bar and stale banner, Review tab with history and diffs, 9 Vitest tests, live loop with Playwright, D50 |
+| 2026-11-02 | ST12 sync | 15:56–16:15 | 0.25 | Stretch | Renumbered ST12 decisions to D43–D50 and merged `main` (ST2) into `hitl` |
+| 2026-11-03 | Merges into `main` | 08:15–08:51 | 0.75 | Stretch | `hitl` merged into `main`; `main` merged into `prompt-structure` (pursuit-guidance rule carried into the restructured prompts, ST12 renumbered ST13, D43 to D51) and merged |
+| 2026-11-03 | ST13 README | 08:51–09:24 | 0.5 | Stretch | `evals.harness chart` (SVG dumbbell chart, light and dark), old vs. new prompts chart and table in the README, 3 tests |
+| 2026-11-03 | Remove runs | 09:24–09:39 | 0.25 | Stretch | `DELETE /api/runs/{id}` and a two-click Remove control on own runs, 4 backend tests, Playwright check, D52 |
+| 2026-11-03 | README reshape | to 13:45 | 0.5 | Stretch | README reshaped for reviewers with the readme-writing skill, vision-model chart, docs/EVALUATION.md and docs/REPOSITORY.md |
+| 2026-11-03 | Demo | — | 0.5 | 6 | Demo recorded |
+| 2026-11-03 | Time log | — | — | 5 | This file rewritten from git timestamps after an interview with the author |
