@@ -152,6 +152,12 @@ Federal Way's recall rises to 95% with every page-5 item found, for about 2 cent
 6 seconds more per run; the other three RFPs are unchanged
 ([`evals/results/ablation_vlm/summary.md`](evals/results/ablation_vlm/summary.md)).
 
+The prompts were later rewritten into one documented structure (ST13, see
+[`prompts/README.md`](prompts/README.md)); the rerun with the new prompts is under
+[`evals/results/prompt_structure/`](evals/results/prompt_structure/summary.md) with
+`diff_*.md` files against this baseline, and the judge agreement after the rewrite is
+35 of 40.
+
 ```mermaid
 flowchart LR
     G[Reference labels<br/><small>drafted by Claude,<br/>corrected by hand</small>] --> S

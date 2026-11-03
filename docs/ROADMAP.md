@@ -2429,13 +2429,112 @@ Priority order. Each gets the same entry structure when started.
 | ST9 | Observability dashboard in the UI beyond live progress | S15 | |
 | ST10 | Cloud deployment | S16 | Only with all core and evals done |
 | ST11 | Observability extras: retry and validation-failure counts per node, escalation events, cache tokens, prompt/config hash, code-computed quality signals per run | S1 | Lowest priority; not planned for implementation |
-| ST12 | Human in the loop: one checkpoint before drafting, instruction-driven refinement, sign-off | S10, S14, S15 | Sub-steps ST12a to ST12e done 2026-11-02 on feature branch `hitl` (PR into `main` pending); see [hitl/ROADMAP.md](hitl/ROADMAP.md) |
+| ST12 | Human in the loop: one checkpoint before drafting, instruction-driven refinement, sign-off | S10, S14, S15 | Sub-steps ST12a to ST12e done 2026-11-02 on feature branch `hitl` (PR #32 merged into `main`); see [hitl/ROADMAP.md](hitl/ROADMAP.md) |
+| ST13 | One prompt structure: every prompt in `prompts/` rewritten into one documented section order (role, task, context, output, rules, examples, tone, input blocks, final checks), full eval rerun against the baseline | S13 | Done 2026-11-02; merged into `main` 2026-11-03 (PR #27) |
 
 ### 3.1 ST12. Human in the loop: checkpoint and refine
 
 Moved on 2026-11-02 to its own feature folder: the index (brief, dependency graph,
 tables, step list) is [hitl/ROADMAP.md](hitl/ROADMAP.md), with one file per sub-step
 (ST12a to ST12e) beside it.
+
+### ST13. One prompt structure
+- **Status:** done (PR #27 merged into `main`)
+- **Goal:** every prompt in `prompts/` follows one documented structure grounded in
+  prompt-engineering practice: a specific persona, the task in one or two sentences,
+  the context the model works in (what it sees, what code does with the answer), the
+  output contract field by field, bold-named rules, optional contrastive examples, an
+  explicit tone section, the input blocks last, and a short list of final checks. The
+  structure is written down in `prompts/README.md` and enforced by a unit test. The
+  full eval harness is rerun with the new prompts and compared with the baseline.
+- **Depends on:** S13 (baseline results and the hand-labelled agreement sample)
+- **Parallel with:** ST1, ST9, ST10
+- **Detailed plan:** (written 2026-11-02; author's answers: generic Big Four persona
+  wording with no real firm name; one branch `prompt-structure` off `main` with one PR
+  into `main` left for the author; full eval rerun and comparison with the baseline)
+  1. **Structure.** Fixed `##` headings in a fixed order: `Role`, `Task`, `Context`,
+     `Output`, `Rules`, `Examples` (optional), `Tone`, one heading per input block
+     (`Document`, `Requirements`, `Sources`, ...), `Final checks`. Instructions first
+     and data last so the provider prefix cache keeps serving the instruction prefix
+     (S5 measured about 74% cache reads). Personas per family: generator prompts, a
+     senior proposal professional at a Big Four advisory practice; gold prompts, a
+     senior procurement analyst building an answer key; judge prompts, an independent
+     quality assessor; `parse_quality`, a document-processing QA specialist.
+  2. **Rewrite the 16 prompts** one family per commit (requirements, problem,
+     solution and risk, parse quality, gold, judges). Every placeholder set, ID format,
+     schema field name, definition, scale, count and rule that code, tests or another
+     prompt depend on is kept: the `{{unit}}` sentence and the `{{mode_rules}}` bullet
+     spliced by `agents/requirements.py`, the `{{evidence_kind}}` sentence from
+     `agents/problem.py`, the literal `Title:`, `Chunk:`, `Section:`, `Pages:` and
+     `Page N of M` lines, the `## Images on this page` heading and the tagged blocks the
+     tests look for, the phrase each judge prompt is recognised by in the scripted judge
+     of `tests/test_harness.py`, the D31 scope shared by the gold, extract and
+     requirements-judge prompts, and the risk scales shared by `risk.md` and
+     `judge_risks.md`.
+  3. **Enforce.** `tests/test_prompt_structure.py` reads every prompt and asserts the
+     heading order, that every prompt has the required sections, that placeholders
+     appear only in input blocks (plus the two spliced ones), and that no `###` heading
+     is used (code-built input uses that level).
+  4. **Docs.** `prompts/README.md` carries the structure (purpose and content of each
+     section, a skeleton, the shared rule names, the personas, the test-coupled
+     phrases); `docs/PROMPTS.md` gets a principles section, a persona line per design
+     note, the rewritten judge layout note, and changelog lines with the measured
+     before and after; `docs/DECISIONS.md` D51; `docs/TIMELOG.md`; this entry.
+  5. **Evaluate.** `evals.harness run --label prompt_structure --all --runs 2`, scored
+     in full with the new judge prompts, then `diff baseline prompt_structure` for the
+     problem, requirements and solution column sets. To read the judge change alone,
+     the baseline run directories are rescored with the new judge prompts under label
+     `baseline_rejudged` and checked against the 40 hand labels with `agree`. Both
+     result sets are committed under `evals/results/` and listed in its README.
+- **What was done:**
+  - **Structure.** `prompts/README.md` documents the nine sections, their purpose,
+    the personas per family, the shared rule names and the conventions;
+    `docs/PROMPTS.md` gains "Structure and principles (ST13)" (the principle behind
+    each section and a per-prompt table of what moved) and an "ST13 comparison".
+  - **Prompts.** All 16 rewritten, one commit per family. Rule content tuned by
+    earlier evals (D31 scope, F6, F8 to F10, F12, F14) kept word for word; the
+    `{{unit}}`, `{{mode_rules}}` and `{{evidence_kind}}` splices, the literal lines
+    and tags the tests read, and the judge recognition phrases kept.
+  - **Test.** `tests/test_prompt_structure.py` (73 checks): heading order, required
+    sections non-empty, bold-named rules, one-paragraph Role and Task, placeholders
+    only in input blocks (plus the three spliced ones), LF endings, each judge phrase
+    in its Task and in no other judge prompt, the risk scales and requirement scope
+    identical across the prompts that share them, the README lists every prompt.
+  - **Evals.** `evals/results/baseline_rejudged/` (baseline outputs, new judges;
+    agreement 35 of 40 against 34 of 40) and `evals/results/prompt_structure/` (two
+    fresh runs per RFP with the final prompts, scored in full), each with
+    `diff_requirements.md`, `diff_problem.md`, `diff_solution.md` against the
+    baseline. Numbers in `docs/PROMPTS.md` (ST13 comparison).
+  - **Docs.** D51, F17, `evals/results/README.md` label table, README results
+    pointer, timelog.
+- **Deviations from plan:**
+  - The first eval pass found three content regressions introduced by the rewrite,
+    each fixed with its own commit and changelog line: `judge_requirements`
+    (agreement fell to 32 of 40), `requirements_extract` (NYESD recall 93%) and
+    `requirements_dedupe` (fallback in 2 of 8 runs). The `prompt_structure` label
+    was then deleted and regenerated with the final prompts, so it holds no mixed
+    prompt versions; the first-pass numbers live in the changelog.
+  - The rejudged baseline's precision section was rescored after the
+    `judge_requirements` fix; its other sections use the first ST13 judge wording,
+    which differs only in that prompt.
+  - Renumbered on merge (2026-11-03): this step was written as ST12 with decision
+    D43 while human in the loop took the same numbers on `hitl`; it became ST13 and
+    D51 when `main` (with ST12) was merged in. `solution.md` and `risk.md` keep the
+    new structure and gain ST12a's "Pursuit team guidance" rule and input block
+    (placed before Final checks) plus a final check that guidance-based items cite
+    their `H` ID. The `prompt_structure` eval runs predate that block; with no brief
+    the prompts render "None provided.", so those numbers still describe unattended
+    runs.
+- **Open issues:**
+  - F17: the grounding judge loops inside a `reason` string on some batches under
+    the ST13 prompt (4 events, 1 not recovered: Federal Way run 1 of
+    `prompt_structure` is missing one grounding batch). Candidate fixes: a one-shot
+    retry at another temperature in `Judge.call`, or a hard reason cap, checked
+    against the hand labels.
+  - Colfax precision 91% on both fresh runs (baseline 97%); the judge-only effect
+    explains 2 points of it. Worth a look at which Colfax items the judge rejects.
+  - Two fresh runs per RFP; differences under about 3 points are inside the
+    run-to-run spread.
 
 ### ST2. VLM transcription of poorly rendered pages
 - **Status:** done (PR #25 into `main`)
@@ -2547,7 +2646,7 @@ tables, step list) is [hitl/ROADMAP.md](hitl/ROADMAP.md), with one file per sub-
     (single-row quotes), GR058 to GR060 maybe not (multi-row quotes); Colfax and NYESD
     unchanged (no flags). Known risk of the flagged scope: Federal Way p2 is a contents
     page whose dot leaders `is_toc_page` relies on.
-  - **Docs:** DECISIONS D42 (trigger policy, model, whole page, replace not append),
+  - **Docs:** DECISIONS D51 (trigger policy, model, whole page, replace not append),
     PROMPTS block and changelog, TIMELOG, README results and flag, USAGE, PIPELINE,
     `.env.example`, results README label rows, gold README page-5 section.
 - **What was done:** (branch `st2-vlm-transcription`, PR into `main`)
@@ -2620,11 +2719,11 @@ tables, step list) is [hitl/ROADMAP.md](hitl/ROADMAP.md), with one file per sub-
     | NYESD | 99% ± 1 | 99% ± 1 | not run (no flags) | 0 / 0 |
 
     Federal Way checklist 8 to 9 → 10 to 11 of 12 (judged), 8 to 12 (flagged). The
-    judged scope stays the default (D42): same recall as flagged at a third of the VLM
+    judged scope stays the default (D51): same recall as flagged at a third of the VLM
     cost and less spread, and the pages the judge clears (Federal Way p2 contents, p14
     pricing form; Missouri p12 cost table) came back no better, p14 worse, when
     re-rendered. Total spend: 12 pipeline runs $1.10, scoring $0.42, live checks $0.10.
-  - Docs: D42; PROMPTS block for `parse_vlm` and two changelog rows; PIPELINE
+  - Docs: D51; PROMPTS block for `parse_vlm` and two changelog rows; PIPELINE
     parse-quality section and `RFP_VLM*` rows; USAGE CLI flags, UI checkbox, eval
     commands; README Parse-tab row, step 1 and a results note; `.env.example`; results
     README label rows, reproduce commands and the reachable-recall wording; gold README

@@ -1221,6 +1221,46 @@ $0.020).
 
 ---
 
+### D51. One prompt structure for every prompt (ST13)
+Context: the 16 prompts were written step by step and shared only a loose shape (a
+role sentence, sometimes `## What to return`, `## Rules`, data blocks), applied
+unevenly: the gold and parse-quality prompts put the data before the output
+contract, the extractor had no output section, the dedupe prompt had no rules
+section, the personas were generic ("You extract requirements"), tone was one bullet
+in two prompts, and no prompt told the model what to check before answering. The
+author asked for one structure grounded in prompt-engineering practice, applied to
+every prompt and written down.
+Options: (a) one fixed section order inside the single human message, no code change;
+(b) the same plus a system message carrying the persona and tone, which means a new
+message layout in six call sites and two hashes per prompt; (c) data first and
+instructions last, which Anthropic recommends for long documents.
+Choice: (a). Fixed `##` headings in a fixed order: Role, Task, Context, Output, Rules,
+Examples (optional), Tone, one heading per input block, Final checks. The persona is
+a role at a Big Four advisory practice named by function (proposal manager, solution
+architect, bid risk manager, procurement analyst, independent reviewer), never a real
+firm. Instructions stay first and data last. The structure is documented in
+`prompts/README.md` and enforced by `tests/test_prompt_structure.py`, which also pins
+the placeholder sets, the judge recognition phrases the scripted judge depends on,
+and the definitions shared between prompts (the D31 scope, the risk scales).
+Why: (a) changes nothing about how prompts are loaded, hashed, cached or tested, and
+a persona inside the human message reaches DeepSeek and Claude alike. (b) would buy a
+cleaner separation at the cost of touching every call site and the run-log hash
+contract for a difference no eval measures. (c) would defeat the DeepSeek prefix cache
+(S5: about 74% of extractor input tokens were cache reads) and break the tests that
+look for `## Rules` before the data; the judge inputs are short enough that the
+long-document advice does not apply. Final checks come after the data on purpose:
+the self-check sits next to the answer, which is where the dedupe prompt's ad hoc
+"check that no ID appears twice" already worked. Content that evals had tuned (the
+include/exclude scope, F6, F8 to F10, F12, F14 rules) is kept verbatim; only its place
+and framing changed, so a score movement reads as the structure's effect.
+Evidence: 73 structure checks and the 227 existing prompt-dependent tests pass. The
+measured effect is in `docs/PROMPTS.md` (ST13 comparison) and in
+`evals/results/prompt_structure/` (fresh runs, new prompts) and
+`evals/results/baseline_rejudged/` (baseline runs, new judge prompts, agreement with
+the 40 hand labels).
+
+---
+
 ## Part 2 — Failure modes hit
 
 Observed during development or evaluation. Format:
@@ -1447,3 +1487,30 @@ Fix:       the ablation was rerun with `RFP_MAX_OUTPUT_TOKENS=16000` for that la
            per-chunk path's does not.
 Before/after: 0 of 1 Missouri runs finished at the default cap; 8 of 8 at 16k, no
            retries, 18 to 36 s per call.
+
+---
+
+### F17. Grounding judge runs away inside a `reason` string
+Where:     ST13 scoring, `judge_grounding`: NYESD run 3 of the rejudged baseline, NYESD
+           run 1 of the first `prompt_structure` pass, and Federal Way run 1 of the
+           final `prompt_structure` pass (the same batch on the first pass and the
+           retry).
+Observed:  `output truncated by the token cap; not retrying` at the full 32,000-token
+           cap (F13's cap), about 138 s per call, $0.33 each. The logged completion is
+           well-formed JSON up to one `reason` field that degenerates into a repeated
+           token ("ESD. ESD. ESD.", "'.'.'.'", "mixed.mixed.mixed") until the cap.
+Cause:     a sampling loop in the judge model inside a free-text field, not thinking
+           volume as in F13: the inputs were 5k to 14k tokens. The ST13
+           `judge_grounding` prompt is longer than the S12 one (Context, Examples,
+           Tone, Final checks). No batch looped in the 12 baseline runs scored with
+           the S12 prompt; four did in about 30 runs' worth of batches under the ST13
+           prompt, one of them twice on the same input. That is likely, not proven,
+           to be the prompt.
+Fix:       NYESD was rescored with `score --only grounding --rfp NYESD` and ran clean
+           on both labels. The Federal Way run 1 batch failed again on retry and is
+           left unscored: its items are absent from that run's grounding counts and
+           the cost table shows the judge failure. Open issue on ST13: a one-shot
+           retry at a different temperature in `Judge.call`, or a hard reason cap
+           ("at most 20 words, then stop") tested against the 40 hand labels.
+Before/after: 4 truncated batches in the ST13 passes; 3 recovered by one retry pass,
+           1 not.
