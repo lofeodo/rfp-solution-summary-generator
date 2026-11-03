@@ -1,0 +1,1534 @@
+# DECISIONS.md
+
+> Full log, kept verbatim. The short reviewer version is [../DECISIONS.md](../DECISIONS.md); new entries go here and get a line there.
+
+Trade-offs, failure modes hit, and fixes. Living file; every roadmap step adds to it.
+
+Each decision uses the same shape so it can be defended live:
+
+```
+### D<n>. <title>
+Context:   what forced the choice
+Options:   what was considered
+Choice:    what was picked
+Why:       the reasoning, in two or three sentences
+Evidence:  eval numbers, run logs, or "none yet" (update when evidence exists)
+```
+
+Failure modes go in the second section with the same discipline: observed, not
+hypothetical, each with the fix and a before/after number where one exists.
+
+---
+
+## Part 1 — Decisions
+
+### D1. LangGraph as the orchestration framework
+Context: the assignment requires a genuine agentic workflow (tools, steps, multi-agent)
+and names LangGraph/CrewAI, n8n and Flowise as options.
+Options: LangGraph; CrewAI; hand-rolled asyncio pipeline; n8n/Flowise (no-code).
+Choice: LangGraph.
+Why: the pipeline is a DAG with one fan-out (requirements and problem statement in
+parallel) and bounded retry loops; LangGraph expresses that explicitly, streams
+per-node events for the UI, and integrates with Langfuse through the LangChain callback.
+A hand-rolled pipeline would be less to defend but would re-implement streaming and
+checkpointing. No-code tools make the eval harness and typed schemas awkward.
+Evidence: the fan-out and the two bounded loops are what the UI timeline shows live
+(S10 stage events streamed over S14's SSE). The solution loop reached 100% cited
+coverage of mandatory requirements on 12 of 12 baseline runs in one or two rounds
+(D32). Checkpointing was never needed: every stage writes its JSON as it finishes
+(D34), which is what the UI and the debug CLI reuse.
+
+### D2. Hosted paid APIs instead of local models
+Context: the assignment encourages free/open tooling (Ollama is named) and says no paid
+cloud is required.
+Options: Ollama with a small local model; hosted APIs; both with a switch.
+Choice: hosted APIs, provider and model as a single config setting. No local fallback
+in core.
+Why: every stage depends on reliable long-context structured output, which small local
+models do not deliver, and reviewers cannot be assumed to have GPUs. The author hands
+reviewers a low-balance key out of band. The config switch keeps the door open to any
+LangChain-supported model.
+Evidence: baseline (`evals/results/baseline/summary.md`): $0.046 to $0.101 and 79 to
+132 s per RFP on DeepSeek Flash, $0.84 for 12 runs; every live run of the whole
+project together cost under $10 of generation. The model-family benchmark is still
+ST7.
+
+### D3. DeepSeek generates, Claude judges; single family per role
+Context: the original plan benchmarked Claude vs DeepSeek and used three model families
+(generator, judge, label drafter) to avoid self-preference in judging.
+Options: three families; two families; one family for everything.
+Choice: DeepSeek for the whole generation pipeline, Claude as the eval judge and label
+drafter. Cross-family benchmarks are a stretch goal.
+Why: time budget. Two families still keep the judge independent of the generator, which
+is the bias that matters most. Labels are corrected item by item by the coding agent
+(not a human expert; see EVALUATION.md), so the drafter's family matters less; the
+corrected fraction is recorded.
+Evidence: the judge agrees with 34 of 40 hand-labelled verdicts
+(`evals/results/baseline/agreement_labels.json`). Judging costs about six times
+generation ($5.14 against $0.84 for the 12 baseline runs), which is why S13 added
+`score --only` to rerun one judge at a time. Gold drafts needed 19 to 26% correction
+per RFP (`evals/gold/README.md`).
+
+### D4. Chunk-ID citations instead of retrieval-based grounding
+Context: the assignment lists "RAG grounding on provided data" as a stretch; outputs must
+be checkable against the RFP.
+Options: vector retrieval with a lookup tool for the agents; deterministic chunk IDs
+carried through every schema; no grounding.
+Choice: deterministic chunk IDs (`S3.2` style) assigned by the splitter; every factual
+claim cites a chunk ID or requirement ID; inferences are labelled; code validates that
+cited IDs exist and that numbers, dates, amounts and proper nouns appear in the source.
+Why: the documents fit in one context window, so retrieval buys nothing for coverage,
+while citations make "unsupported claim" a countable eval metric and let the UI show
+the source paragraph for any claim. Cheap to implement: an ID field in a few schemas
+and one rule in three prompts.
+Evidence: 0 dangling IDs on every scored run (baseline, both ablations, the fix label),
+because the schemas reject an unknown ID inside the retry. Grounding is a countable
+column: on the baseline 4 to 10 of 25 to 32 problem claims per run are judged
+unsupported by the text they cite, the rest supported or partial. The UI's source
+reveal (D38) and the cited-text judge (D37) both rest on the IDs.
+
+### D5. Exhaustive per-chunk extraction, no RAG in extraction
+Context: requirement extraction must not miss requirements.
+Options: per-chunk extraction over every chunk; retrieval of "requirement-like" chunks;
+single full-document call.
+Choice: per-chunk extraction over every chunk, with a single-call full-document
+baseline as an eval ablation (all four RFPs fit in one call: 4k to 10k words).
+Why: retrieval introduces a recall ceiling the eval cannot easily see. The single-call
+baseline is cheap to add and tells us whether chunking is worth its cost.
+Evidence: S13 ablation (D39): the single call matches per-chunk recall within 2 pp on
+the four RFPs at 30 to 45% less cost, but truncates at the default output cap on
+Missouri (F16) and drops whole obligations rather than details; per-chunk stays the
+default for scale.
+
+### D6. Fuzzy dedupe by one LLM grouping pass, not embeddings
+Context: per-chunk extraction produces near-duplicate requirements across chunks.
+Options: embedding similarity with a threshold; one LLM call returning groups of
+duplicate IDs; no fuzzy dedupe.
+Choice: exact dedupe in code, then one LLM pass that returns groups; code merges groups,
+keeps all quotes and chunk IDs, keeps the stricter strictness, and asserts every ID
+lands in exactly one group. Conflicting requirements are flagged, not merged.
+Why: at tens of requirements per document, embeddings are overkill and need a tuned
+threshold; a grouping call is one request and its output is checkable by assertion.
+Evidence: the regenerated samples' `requirements_report.json` (S16): 122 to 259 items
+before dedupe per RFP, 3 to 7 exact merges, 22 to 31 fuzzy merges, 0 to 3 conflicts
+flagged, the grouping answer fed back once on two of four RFPs and the sanitised
+fallback never used; every quote verified (0 unverified, at most one fix-up turn). The
+contract violations the check catches are real (F8, D30: an ID in three groups on
+Missouri's first run). Baseline precision 95 to 99% suggests the merges are not
+hiding distinct requirements.
+
+### D7. Hierarchical summarisation for the problem statement, no boilerplate removal
+Context: the problem statement must capture why the client is buying, not just what.
+Options: one full-text call; hierarchical per-chunk summaries then synthesis;
+boilerplate stripping before either.
+Choice: hierarchical as the production path, full-text as an eval baseline. No
+boilerplate removal.
+Why: hierarchical scales past the context window and yields per-chunk citations
+naturally. Boilerplate detection is untrustworthy: Missouri's "boilerplate" IT
+standards section contains hard technical constraints.
+Evidence: S13's full-text ablation (D39): checklist coverage within one sd of the
+hierarchical path on all four RFPs, pipeline cost 10 to 25% lower, pairwise preference
+split two RFPs to one with one tie. Hierarchical is kept for the per-chunk summaries
+the UI's chunk view and the grounding judge use, and for documents that do not fit one
+call. No boilerplate removal: Missouri's IT-standards section, boilerplate by name,
+supplied several of its top risks (D33).
+
+### D8. Markdown rendered by code from JSON
+Context: the deliverable is a structured summary; the UI and download need markdown.
+Options: ask the LLM for markdown; render from JSON in code.
+Choice: JSON is the source of truth; code renders markdown and turns citations into
+"section title, page" references.
+Why: one model-free step less to evaluate, and the rendered citations are guaranteed to
+match the JSON.
+Evidence: n/a.
+
+### D9. Parsing: library first, heuristics flag, LLM judges flagged pages, VLM is stretch
+Context: layout-aware parsing is needed for tables; some pages are images.
+Options: VLM-transcribe everything; library only; library plus escalation.
+Choice: pymupdf4llm for text and tables; code heuristics flag suspicious pages (low
+word count, large image blocks, broken tables); an LLM judges only flagged pages; a
+clean hook escalates confirmed-bad pages to a VLM (stretch). Whether code or the LLM
+triggered an escalation is logged.
+Why: all four test RFPs are text-native and pymupdf4llm renders their tables
+correctly. Missouri's only image pages are blank affidavit forms, so a VLM would not
+change its output; Federal Way's page-5 image table is real content, which gives the
+VLM stretch a measurable eval payoff.
+Evidence: structural inspection of the four PDFs (2026-10-30), see ASSUMPTIONS.md.
+
+### D10. Referenced documents are recorded, never fetched
+Context: RFPs point at attachments, appendices and web pages outside the PDF.
+Options: crawler/fetcher; record and flag; ignore.
+Choice: extract every hyperlink and attachment reference with its section into a
+`referenced_documents` list; the extractor treats a referenced-but-absent document as
+a gap; the risk assessor can surface it. Fetching is a stretch goal.
+Why: fetching is open-ended and a security and scope sink; the gap is itself a useful
+finding (Colfax's requirements are in Attachments F and G, not provided).
+Evidence: n/a.
+
+### D11. Observability: Langfuse cloud plus a local JSON run log
+Context: the assignment wants token, latency and cost tracing; Langfuse is named.
+Options: Langfuse only; local log only; both.
+Choice: both. Langfuse via the LangChain callback handler for per-node traces; a local
+JSON run log per run with per-node tokens, latency and cost from a pricing table in
+config. The eval harness and the UI read the JSON log.
+Why: nothing should depend on the hosted UI being up during the demo or review.
+Langfuse cloud free tier avoids a Docker dependency; tracing is a no-op without keys.
+Evidence: n/a.
+
+### D12. Repo layout and branch model
+Context: several agents may work in parallel; context is cleared between steps.
+Choice: living docs under `docs/`, prompts under `prompts/`, `CLAUDE.md` at root; one
+long-lived `core` branch, one short-lived branch and PR per roadmap step, stretch goals
+on branches off `main`. `docs/ROADMAP.md` is the only memory between sessions.
+Why: the roadmap's dependency table lets independent steps run concurrently without
+file conflicts; the docs folder keeps the reviewer-facing files in one place.
+Evidence: n/a.
+
+### D13. Model ids and pricing source
+Context: the scaffold fixes the default generator and judge and a pricing table for
+cost accounting. DeepSeek's documented API ids changed: `deepseek-chat` is no longer on
+the pricing page; the current ids are `deepseek-flash` (V4.1 Flash) and `deepseek-v4-pro`.
+Options: deepseek-flash vs deepseek-v4-pro as generator; claude-opus-5-5 vs
+claude-sonnet-5-5 as judge; peak vs off-peak DeepSeek rates in the table.
+Choice: `deepseek:deepseek-flash` generator, `anthropic:claude-sonnet-5-5` judge (author
+decisions, 2026-10-30); DeepSeek peak rates in `PRICING` as the upper bound, Claude
+first-party rates (opus 5.5 $4/$20, sonnet 5.5 $2/$10, haiku 5.5 $0.10/$0.50 per 1M).
+Why: Flash is the cheapest model with a 1M context, enough for structured extraction over
+documents that fit one window; the model is one env var away if evals show it is too
+weak. Sonnet halves judge cost against Opus and keeps the judge in a different family
+from the generator (D3). Peak pricing never under-reports cost.
+Evidence: baseline cost per RFP $0.046 to $0.101 at peak rates, with 68 to 73% of
+input tokens served from the prefix cache (S10). Sonnet as judge costs $0.34 to $0.63
+per run. Flash was never swapped out: recall 80 to 100% and precision 95 to 99% on the
+baseline (D36), and the one failure mode traced to the model was a truncated single
+call at the default output cap (F16), fixed by a setting.
+
+### D14. Schema conventions
+Context: `schemas.py` is the contract between every step and the thing most likely to be
+changed live in the follow-up interview.
+Choice: every model forbids extra fields; closed sets are `StrEnum`s; IDs are
+regex-checked strings (`S3.2`, `R001`, `A01`, `G01`, `C01`, `K01`); `Claim` is the one
+citation unit (`text`, `kind` fact|inference, `chunk_ids` at least one); `Requirement`
+carries the verbatim quote, `quote_verified`, `merged_from` and `conflicts_with`;
+`Coverage` is a separate model so code, not the LLM, fills it; `RunLog.totals()` sums
+per-node metrics. Requirement types: 8 values; strictness: mandatory/desired/optional;
+risk severity and likelihood: low/medium/high.
+Why: `extra="forbid"` makes a hallucinated field a validation error that the
+structured-call retry can feed back, instead of silent data loss. Regex IDs make a bad
+citation fail at parse time. Three-level scales are easier for a judge to agree with
+than numeric ones. Adding a requirement type is a one-line enum change, which is the
+planned live-change rehearsal.
+Evidence: n/a.
+
+### D15. Install and config mechanics
+Context: one env for the author, reviewers and CI; config must be one setting for
+provider and model.
+Choice: `requirements.txt` pins every direct dependency and ends with `-e .`, so one
+`pip install -r requirements.txt` yields an importable `rfp_agent`; `pyproject.toml`
+holds no dependency list. Config is pydantic-settings with an `RFP_` prefix for app
+settings and the providers' own names for keys; the model spec is `provider:model_id`,
+the format LangChain's `init_chat_model` accepts.
+Why: a single install command and a single source of pins; no `PYTHONPATH` tricks.
+pydantic-settings keeps validation (ranges, types) in the same library as the schemas.
+Evidence: CI runs the same install.
+
+### D16. Markdown layout, citation format, strict assembly
+Context: S9 turns the JSON into the markdown a reviewer reads, and is the last place a
+broken citation can be caught before it ships.
+Options: citations as "section, page" only vs with the chunk ID; requirements as one
+table vs grouped lists; assembler that annotates vs raises on dangling IDs; snapshot
+tests vs assertion-only tests.
+Choice: citations render as `(Section title, p. 4 [S3.2])`, grouping IDs that share a
+section and page range; requirements grouped by type with the verbatim quote as a
+blockquote; risks as a table sorted by severity then likelihood, then per-risk details;
+`assemble()` raises `CitationError` listing every dangling ID with its location unless
+`strict=False`, while the renderer prints a bare `[S9.9]` for an unknown ID and never
+raises; one golden-file test over a fixture that hits every render branch, refreshed
+with `pytest --update-golden` (author decisions, 2026-10-30).
+Why: the chunk ID keeps the markdown traceable to the JSON and the UI's source reveal,
+at the cost of a few characters. Quotes are long and break table rows, so a list keeps
+them inline. Raising by default means a citation bug fails the run loudly instead of
+shipping an unverifiable claim; the non-strict path exists so the eval harness can still
+score a run with a bad citation and count it. A golden file makes any render change
+show up as a reviewable diff.
+Evidence: `tests/fixtures/summary_sample.md`.
+
+### D17. Structured output: provider-native mode inside a code-owned retry loop
+Context: every agent emits a Pydantic schema; providers differ in how they enforce one.
+DeepSeek silently turns JSON-schema mode into tool calling, returns `parsed=None` with no
+error when the model makes no tool call, and in thinking mode (its default) rejects forced
+tool choice. Current Claude models reject forced tool choice but support native JSON-schema
+output.
+Options: provider-native `with_structured_output` per provider; one code-side path (schema
+in the prompt, parse JSON text in code) for every provider.
+Choice: provider-native (author decision), method picked per model by
+`structured_method`: Anthropic `json_schema`; DeepSeek forced tool calling with thinking
+off (default), JSON mode with the schema in the prompt when thinking is on. Around it,
+code owns the loop: on a validation error or missing output the model's reply and the
+error go back into the conversation (as tool results when the reply made tool calls),
+bounded by `RFP_MAX_STRUCTURED_RETRIES`; a reply truncated by the output cap is not
+retried; exhaustion raises with every attempt.
+Why: native modes give the strongest guarantee each provider offers (forced tool calling
+and Claude's JSON-schema output rarely fail validation), while the loop gives one uniform
+failure contract for every agent. `extra="forbid"` on the schemas means hallucinated
+fields reach the loop as errors instead of being dropped.
+Evidence: live smoke tests on DeepSeek Flash pass with thinking off (389 in / 80 out
+tokens, 0.9 s) and on (251 in / 115 out, 1.4 s), no retries; unit tests cover every retry
+path. Thinking on vs off quality is open for S13.
+
+### D18. Observability recording: explicit recorder in a context variable
+Context: per-node tokens, latency and cost must land in a local JSON run log without
+threading a logger through every agent and graph state.
+Options: a LangChain callback that aggregates usage by `langgraph_node`; an explicit
+recorder that `structured_call` writes to.
+Choice: `RunRecorder` holds the `RunLog`; `RunRecorder.activate()` puts it in a context
+variable for the duration of a run, and `structured_call` and `load_prompt` record into
+whichever recorder is active. One `NodeMetrics` per logical call (retries summed into it,
+recorded on failure too), aggregated per node in code. Langfuse rides alongside as a
+LangChain callback, built only when both keys are set.
+Why: explicit recording is testable without a graph, keeps retries and validation
+failures attached to the call that caused them, and does not depend on callback
+propagation details. Per-call entries keep the latency distribution visible for the eval
+tables and the UI. Langfuse is lazy-imported and its trace-URL lookup is guarded because
+without keys it raises.
+Evidence: unit tests write and re-read the run log; live smoke test writes one.
+
+### D19. Sampling and cost settings per provider
+Context: one temperature setting for every provider; Claude Sonnet 5.5 rejects a
+non-default temperature (LangChain raises before sending), DeepSeek accepts one.
+Choice: the factory sends `RFP_TEMPERATURE` to every provider except Anthropic, which runs
+at its default with adaptive thinking left at the model default. Cost is an upper bound:
+DeepSeek peak rates, cache reads at the cached rate, cache writes at the input rate,
+unknown models cost 0 with one warning (author decision).
+Why: a judge must run with whatever sampling its model allows; determinism for the
+generator comes from temperature 0 on DeepSeek. A clock-dependent DeepSeek price would make
+the same run cost different amounts depending on when it ran, which muddies eval tables.
+Evidence: factory unit tests; live smoke test cost matches the table.
+
+### D20. Parsing: layout path with OCR off, flag thresholds as constants
+Context: pymupdf4llm 1.28.2 ships a layout model (`pymupdf.layout`) that returns page
+boxes (text, section-header, table, picture, page-header, page-footer) and turns OCR on
+by default when Tesseract is installed. S4 needs flags on suspicious pages.
+Options: OCR on (default); OCR off with flags; flags from layout boxes or from pymupdf
+directly.
+Choice: `use_ocr=False`; flags from four code rules with thresholds set by inspecting
+the four RFPs: fewer than 50 words; an image covering at least 25% of the page; a table
+whose rows have different column counts or that collapsed to one column with
+`<br>`-merged cells; at least 6 prose lines of at most 2 words making up half the prose.
+Image sizes come from `get_image_info()`, not the layout boxes.
+Why: with OCR on, output would depend on whether the machine has Tesseract, so CI and a
+reviewer's laptop could disagree; image pages are what the S4 judge and the VLM hook
+exist for. The thresholds separate the known cases: Missouri's affidavit forms (54% of
+the page) and Federal Way's image table (42%) from cover logos (8% to 14%).
+Evidence: four-RFP tests; flagged pages listed in the S2 roadmap entry.
+
+### D21. Running headers and footers are stripped only when they repeat
+Context: running headers ("City of Federal Way, WA - RFP for ERP Software 5 | Page") and
+footers ("Page 6 of 22", bare numbers) pollute chunks and quotes. The layout model
+classes most of them, but sometimes calls one ordinary text, merges it with the heading
+below, or splits it in two.
+Options: keep everything; drop every box the model calls header/footer; drop only
+text that repeats.
+Choice: a box is a candidate if the model classed it header/footer or it sits in the top
+or bottom 12% of the page; a candidate is removed if its text, with digits and markup
+removed, recurs as a header/footer on at least 3 pages or is empty (a page number). A
+repeated header merged with a heading loses only the header prefix; a header-classed
+fragment of a repeated header is removed.
+Why: repetition is what makes a line a running header, so a one-off sentence the model
+misclassified survives. The author chose stripping over keeping everything.
+Evidence: Missouri, NYESD and Colfax word counts unchanged by the prefix and fragment
+cases; Federal Way pages 7, 9, 11 each lose exactly the 14-word header (F3).
+
+### D22. A referenced document is present only if its section has a body
+Context: RFPs name attachments and exhibits; some are in the PDF, some are cover pages
+saying "separate document", some are image-only forms.
+Options: present when a matching heading exists; heading plus a minimum body; always
+false in S2.
+Choice: present when a heading titled with the reference name (e.g. "ATTACHMENT F: ...")
+is followed by at least 40 words before the next heading of the same or higher level
+(author decision). References are matched by regex: keyword (attachment, appendix,
+exhibit, schedule, addendum) plus a single capital letter or number, so "Schedule of"
+and "Addendum to" do not match. Each reference keeps its first occurrence outside a
+table of contents and that line's section.
+Why: Colfax Attachment F holds the software requirements but its page only says the
+spreadsheet is provided separately; a heading-only rule would call it present and hide
+the most important gap in that RFP.
+Evidence: Colfax A-D present, E-G absent; Missouri Exhibits absent; Federal Way Exhibits
+present (tests).
+
+### D23. Gold labels: core-only scope, Claude drafts, agent corrects, diff is the record
+Context: S12 needs reference requirements and problem-statement facts for four RFPs.
+Hand-labelling ~250 requirements from scratch would take most of a day; an unchecked model
+draft would grade the pipeline against another model's opinion.
+Options: exhaustive gold (every shall-sentence, boilerplate tagged); core-only gold;
+judge-only evaluation with no gold.
+Choice: core-only gold (author decision): requirements that change how a bidder designs,
+staffs, prices, schedules or submits; generic contract boilerplate, standard state
+certifications and post-award compliance reporting are out. Claude Sonnet 5.5 drafts
+from S2's parsed text (pages marked `[page N]`), items whose quote is not in the text are
+dropped by code, the coding agent corrects every item against the full text, the author
+spot-checks the diff in the PR. The untouched draft is committed next to the final file.
+Gold has its own IDs (`GR`, `GC`) and no chunk IDs, so it survives re-chunking.
+Why: recall against a core set measures what matters for the solution; precision against
+a core set would punish correct extraction of boilerplate, so S12 judges precision per
+item instead. Keeping the draft makes the human contribution measurable rather than
+asserted.
+Evidence: 19 to 26% of drafted requirements corrected per RFP, almost all removals for
+scope; 5 type or strictness edits in 265 drafted items; 0 drafted quotes failed
+verification (evals/gold/README.md).
+
+### D24. Parse quality: two-boolean verdict, attribution by match, flags replaced
+Context: S2's heuristics flag 12 pages across the four RFPs; most are covers, contents
+pages and short attachment dividers. Downstream steps (S8 risks, S9 parse-flags table)
+should see only real damage, and the roadmap asks that every escalation records whether
+code or the model triggered it.
+Options: a single `usable` boolean; ok/degraded/unusable scale; two booleans. Keep S2's
+flags and add a report beside them; or replace them with judged flags. Judge with the
+generator or with Claude.
+Choice (author decisions): one generator-model call per flagged page (all flags on the
+page in one call) returning `PageJudgement`: `text_usable` (the text represents the page),
+`content_missing` (the page holds content the text lacks, typically in an image),
+`page_kind`, `confirmed_flags`, one-sentence `reason`. Code decides: not bad clears the
+page (`code`, `confirmed_bad=False`); bad with at least one confirmed heuristic flag keeps
+those flags and calls the VLM hook (`code`); bad with no confirmed flag replaces the
+page's flags with an `other` flag carrying the reason (`model`). `confirmed_flags` is
+intersected with the page's real flags, so an invented flag name cannot survive. The pass
+returns a copy of the `ParsedDocument` holding only surviving flags plus a
+`ParseQualityReport`; every escalation also goes on the run log. A judge call that fails
+after retries keeps the page's flags. The VLM hook is a `(page, judgement) -> action`
+callable; core records "would escalate to VLM", ST2 swaps in transcription.
+Why: a single boolean conflates "the text is garbled" with "the text is fine but a table
+is in an image" (Federal Way p5), which the two booleans separate; the decision rule lives
+in code so the attribution is auditable and testable without a model. Replacing flags
+keeps later steps simple; the report and run log keep the full audit. Failing safe means
+a flaky judge can hide nothing. The generator judges because it is a pipeline node; the
+Claude judge stays reserved for evaluation (D3).
+Evidence: live on DeepSeek Flash, 12 pages judged, 0 retries, $0.0047 and 4 to 8 s per
+document; 9 false alarms cleared (Colfax p1, p2, p3, p20, p21, p22; Federal Way p2, p14;
+Missouri p12) and 3 escalated (Missouri p19, p20; Federal Way p5), matching the manual
+inspection in S2 exactly. The `model` path is exercised only by unit tests so far.
+
+### D25. Section boundaries: the outline located in the text, then markdown, then promotion
+Context: citations print "section title, page", so sections must follow the RFP's own
+structure. pymupdf4llm renders only about half of Missouri's 64 outline entries as `#`
+headings; the rest are bold labels that open a paragraph (`**(A) Services:** The Offeror
+shall ...`). Documents without an outline have headings the renderer missed (Federal Way
+"SECTION 4", NYESD "A." and "iii.").
+Options: markdown headings only; outline entries anchored at the top of their page; the
+outline located in the text; an LLM pass to find headings.
+Choice: (1) with an outline, each entry is searched by normalised title on its page, then
+the next, after the previous match, never in a table row or on a contents page; it may
+match a `#` heading, a leading bold run (the line stays in the body, since the rest of it
+is content) or a title split over two lines; entries not found are dropped. Markdown
+headings missing from the outline nest one level under the entry in effect. (2) `#`
+lines over 20 words, ending in a period, or not starting like a title are paragraphs; a
+short label heading followed by a same-level heading is one split title ("SECTION (1):"
++ "GENERAL DESCRIPTION ..."); a colon-ended heading with no numbering ("Name of
+Respondent:") is a form label. (3) Without an outline only, a whole-bold line whose
+numbering scheme (SECTION n, (A), 4.2, IV., iv., A., Task/Tab/Exhibit n) is used by a
+detected heading is promoted at that heading's level (author decision). Every heading is
+a section; levels come from the path, which never skips; a contents heading never parents
+what follows. Text before the first heading is a "Front matter" section.
+Why: the outline is the author's own structure and is free; locating it in the text
+keeps cut points exact without an LLM. Promotion is limited to documents without an
+outline because in outlined ones the bold numbered lines are sub-items the outline chose
+not to list.
+Evidence: Missouri 63/64 outline entries located (the miss, "Expenses", is a table cell);
+Colfax 29/29; Federal Way SECTION 1 to 7 at one level; NYESD X. has i to xiv (tests).
+
+### D26. Chunks: 300-word cap, cut at paragraphs, tables atomic, one sentence of overlap
+Context: chunks are the unit every claim cites and the unit S5 extracts from. The LLM can
+read the whole document at once, so chunk size is about citation precision and
+per-chunk extraction cost, not context limits.
+Options: one chunk per section; fixed-size windows with overlap; paragraph packing up to
+a cap.
+Choice: blocks are paragraphs and whole tables; blocks are packed greedily up to 300
+words (`count_words`); a paragraph over the cap is cut at sentence ends; a table is never
+cut; a last piece under 50 words joins the previous chunk; each chunk after the first
+repeats the previous chunk's last sentence (author decision; not after a table, not if
+over 60 words). IDs: `S<n>` numbers sections in document order and `S<n>.<k>` chunks
+within a section, so the same PDF always yields the same IDs. Section kind is a separate
+cheap tag (D27).
+Why: paragraph cuts keep a requirement's sentence whole; the one-sentence overlap lets a
+requirement that straddles a cut be quoted verbatim from one chunk, which S5's quote
+check needs. Atomic tables keep schedules and pricing grids readable. Words stand in for
+tokens (about 1.3 tokens per word), which avoids a tokenizer dependency.
+Evidence: chunks per RFP 67 / 70 / 40 / 21 (Missouri, NYESD, Colfax, Federal Way), mean
+82 to 178 words; every word of every page lands in exactly one chunk or heading line
+once the overlap is removed; only two chunks exceed 300 words of their own text, both a
+single table (Missouri contents, 330; Federal Way proposal format, 353) (tests).
+
+### D27. Section kind: any obligation cue makes a section requirement-bearing
+Context: the roadmap asks for a narrative vs requirement-bearing tag by cheap heuristics.
+Options: cue density per hundred words with a threshold; any obligation cue; an LLM label.
+Choice: requirement-bearing when the section's own text contains "shall", "must",
+"required", "mandatory", "no later than" (and similar) or a line opening with an
+instruction ("Describe", "Include", "Provide", ...); "will" and "should" do not count.
+Why: a density threshold (tried first, at 1.5 cues per 100 words) tagged long legal
+clauses that say "shall" once as narrative (17 of Missouri's 25 agreement clauses
+requirement-bearing) and was an arbitrary number to defend. The tag is a hint: S5 still
+extracts from every chunk, so a false positive costs nothing and a false negative hides
+nothing. Imperative lines catch proposal-content lists ("- Describe how your
+organization ...") that use no modal verb.
+Evidence: Missouri agreement clauses 21/25 requirement-bearing (the four left say "may"
+or "encouraged"); Colfax 1.1 and Federal Way Section 2 background narrative; NYESD
+"C. Project Plan" requirement-bearing (tests).
+
+### D28. Problem statement: code-owned chunk IDs in stage one, schema-validated citations in stage two
+Context: the problem statement is the output where unsupported claims are most tempting
+(the model is asked to say why the client is buying), and the traceability rule says every
+fact cites a chunk ID that exists.
+Options: let the model echo chunk IDs in both stages and check them afterwards; group
+several chunks per stage-one call; check citations in code after the call and drop bad
+ones; check citations inside the structured-output retry loop and fail on exhaustion.
+Choice: stage one is one call per chunk with the chunk ID attached by code, so there is
+nothing to validate; synthesis sees only the relevant summaries, labelled with their IDs,
+and its output schema is a per-call subclass of `ProblemStatement` whose validator rejects
+an empty list or an ID outside the evidence. `structured_call` feeds the message back and
+retries; after the budget the node raises. Stage one runs in a thread pool
+(`RFP_LLM_CONCURRENCY`, default 4). The full-text baseline is the same synthesis prompt
+over the own text of every chunk with the same labels.
+Why: an ID the model never writes cannot be wrong, and one call per chunk keeps that
+property at the cost of about seventy cheap calls per RFP ($0.01 to $0.04 on DeepSeek
+Flash, 30 to 60 s with four workers). Putting the citation check in the schema reuses the
+one retry mechanism the pipeline has (the F4 pattern) and gives the model a precise
+correction ("constraints cites chunk IDs that are not in the evidence: ['S45.3']") rather
+than a silent drop that evals would never see. Failing on exhaustion is deliberate: a
+problem statement with an unverifiable claim is worse than no problem statement, and the
+run log records the spend. Keeping the baseline's prompt identical makes the S13 comparison
+about hierarchy alone.
+Evidence: four RFPs, both modes: every citation resolves, no stage-one failure, the
+validator retried once in 2 of 4 NYESD runs and succeeded; rough checklist coverage 12/12
+hierarchical, 11 to 12/12 full text (ROADMAP S6 table). S13's judged comparison (D39):
+checklist coverage and grounding within one sd of each other, pairwise split 2 to 1
+with one tie; hierarchy is kept for the per-chunk citations and scale, not quality.
+### D29. Quote verification: one feedback turn, then keep the item as unverified
+Context: every requirement carries a verbatim quote that code must be able to find in
+the cited chunk (traceability rule); models paraphrase, fix typos and join table cells.
+Options: drop items whose quote is not found; keep them silently; retry with the failing
+quotes named, then drop; retry, then keep flagged.
+Choice: after the schema-valid reply, code checks each quote with `find_quote` (the S11
+normaliser, now in `rfp_agent.textmatch`). If any fails, the model gets one more turn
+with the failing quotes listed; the retry is kept only if it has no more problems than
+the first reply. Items still unverified stay in the output with `quote_verified=False`.
+Why: a sloppy quote does not make the obligation disappear, and dropping it would hide
+a real requirement from the solution step; flagging it keeps the evidence honest and
+lets the renderer and the eval treat it differently. The "no worse" rule stops a second
+turn from regressing a mostly-good first reply. One turn is enough in practice (below)
+and bounds the cost at two calls per chunk.
+Evidence: on the four RFPs (198 chunks) one feedback turn fired and fixed its quote;
+zero unverified items shipped. The check also catches table-cell joins
+(`"Submission of Proposals(date and time)|October 1,2025<br>by2:00 PM ET"` verifies
+because the normaliser strips pipes and tags).
+
+### D30. Grouping contract checked by code, violations fed back once, then sanitised
+Context: D6 chose one LLM grouping pass for fuzzy dedupe and demanded that every ID land
+in exactly one group. Models put an ID in two groups, invent IDs, or list the
+representative among its members.
+Options: trust the grouping; assert and abort; retry until clean; retry once, then make
+the answer valid in code.
+Choice: `check_groups` lists violations in plain sentences; the model gets one feedback
+turn; whatever comes back goes through `sanitise_groups` (unknown IDs dropped, first
+membership wins, a conflicting member leaves the group, empty groups vanish) so the
+merge step only ever sees a valid grouping. The report records the violations and
+whether the fallback was used. Conflicts are never merged: the pair is marked on both
+items and surfaced as an ambiguity.
+Why: the invariant must hold for S7's coverage arithmetic, and it is cheaper to hold it
+by construction than by looping. "First membership wins" loses at most a merge, never a
+requirement. The feedback turn is worth its one extra call: on three of four RFPs the
+first grouping violated the contract and the second was clean.
+Evidence: first Missouri run: `R030 appears in group 6 and group 9`, `... group 10`,
+`R031 ...`, `R127 ...` on both turns, fallback used, output still valid (the 60-round
+random-grouping test asserts the invariant). After the dedupe prompt gained "an ID may
+appear once across the whole answer", all four reruns were clean after at most one turn.
+
+### D31. Extraction scope mirrors the gold scope; everything else is left to S12
+Context: the gold labels are core-only (D23). An extractor that lists every clause of
+Missouri's 24-clause agreement section would bury S7 in boilerplate, and an extractor
+that is stricter than gold loses recall S12 cannot see.
+Options: extract everything and filter later; extract core-only with the gold prompt's
+include/exclude rule; two passes (all, then classify).
+Choice: the extraction prompt carries the gold prompt's include/exclude list verbatim,
+with the boilerplate examples expanded after the first live run (assignment,
+independent-contractor status, audit rights, transparency reporting, one item per form
+rather than per field). Every chunk is still sent (D5); only the prompt's notion of
+"requirement" narrows.
+Why: recall against gold becomes like for like, and S7 reads a list a bidder would
+recognise. Precision is judged per item in S12, so a kept boilerplate clause costs
+nothing in the score; the surplus (90 to 216 items against 46 to 71 gold) is a quality
+question for S13, not a correctness one.
+Evidence: Missouri 144 → 131 requirements after the expanded exclusions (legal 33 → 20),
+crude recall 89% → 86% (within run-to-run noise: the "lost" items are the same
+requirements with different spans). Four-RFP table in the roadmap, S5.
+
+### D32. Solution coverage computed by code, revised in a capped LangGraph loop
+Context: the solution generator is where a model most easily writes a confident
+approach that silently skips half the obligations. The roadmap demands that coverage of
+mandatory requirements be computable by code, and the assignment grades agentic depth.
+Options: one call and report whatever coverage results; ask the model to self-report
+coverage; a code-checked feedback turn (the S5 `verified_call` pattern); a LangGraph
+loop that revises while uncovered requirements remain, with a round cap.
+Choice: the model sees the problem statement, the requirements (one line each, no
+quote), the ambiguities and the gaps, never the RFP text, and returns a `SolutionDraft`
+whose components cite requirement IDs. A per-call schema subclass rejects an empty
+component list, a component citing nothing, and any requirement or chunk ID outside the
+inputs inside the `structured_call` retry (D28). `compute_coverage` counts the mandatory
+requirements cited by at least one component, with type `submission` excluded (the
+author's call: proposal format and copies are context, not scope). A three-node
+LangGraph (`generate` → `check` → `revise` → `generate`) feeds the uncovered IDs with
+their text back in the same conversation while any remain and the round cap
+(`RFP_SOLUTION_MAX_ITERATIONS`, default 3) is not reached; the draft with the fewest
+uncovered requirements is kept, and what is still uncovered is listed for the risk
+assessor. Component IDs are assigned by code.
+Why: coverage is the one solution metric code can own, so it drives the only loop. The
+loop is LangGraph rather than a hand-written `for` so S10 nests it as a subgraph and the
+Langfuse trace shows each round as a node; the cap keeps cost bounded and the
+best-draft rule makes a bad revision harmless. Sending no chunk text keeps the solution
+honest about its sources: everything it can say about the client is already a cited
+claim or requirement, so a fact it needs and does not have must become a labelled
+assumption. Quotes were left out because the normalised text is already verified and
+the block would double in size for no design signal.
+Evidence: Missouri, DeepSeek Flash: round one covered 74 of 76 in-scope mandatory
+requirements, the revision covered 76 of 76; two calls, $0.017, 44 s summed latency, no
+validator retry. The two IDs the revision added (R007, R019) are proposal-process
+obligations typed `timeline` by S5, so the model wrapped them in a commercial
+component; see S7 open issues. Four-RFP table in the roadmap, S7.
+
+### D33. Risks: findings computed by code, must-address checked in the schema, one call
+Context: the risk assessor is the last agent and the one most tempted to write generic
+project risks. The roadmap lists what it must cover (timelines, vague or conflicting
+requirements, missing budget, referenced-but-absent documents, flagged pages, risks the
+solution creates), asks that code validate IDs, and leaves the scales to this step.
+Options: send the RFP text again; let the model find everything; a code-detected
+findings block the model must address; a generate → check → revise loop as in S7.
+Choice: no RFP text (the S7 rule). Code computes a findings block before the call: the
+mandatory requirements S7 left uncovered, the conflict pairs S5 flagged, the referenced
+documents the parser marked absent (hyperlinks excluded), the parse flags that survived
+the S4 judge, and the count of budget requirements. The model sees it first, then the
+solution (components with their requirement IDs and claims, assumptions, coverage), the
+problem statement, all requirements (submission items under a plain heading, since
+deadlines are risks), ambiguities and gaps. A per-call `RiskAssessmentDraft` subclass
+rejects fewer than 3 or more than 15 risks, unknown requirement or chunk IDs, and a
+draft in which an uncovered mandatory requirement is cited by no risk (the author's
+call: only the finding with a citable ID is enforced; conflicts, documents and pages are
+advice). One call, no loop; the retry is the feedback loop. Scales: severity is impact
+(`high`: the project fails, a contractual date is missed or the budget overruns by more
+than a quarter; `medium`: rework or cost contingency absorbs; `low`: normal delivery);
+likelihood is judged given the RFP and the solution as written (`high`: expected unless
+someone acts; `medium`: turns on facts the RFP does not settle; `low`: an unusual
+event). Code sorts by severity then likelihood and numbers `K01…`, so the JSON order is
+the rendered table order.
+Why: the findings block turns the step from "think of risks" into "explain these facts
+and add what they imply", which is where a 20k-token context earns its keep; the model
+still brings judgment code cannot (Missouri's IS-approval gate on the proof of concept,
+NYESD's 250-versus-400 participant floor). Enforcing only the uncovered IDs keeps the
+validator honest: it can check an ID, it cannot check that a page was "considered". No
+loop was built because nothing in a risk list is computable the way coverage is; the
+count band and the must-cite rule are the whole contract, and one call costs a cent.
+Three-level scales with written definitions give S12's judge something to agree with
+(D14).
+Evidence: four RFPs, DeepSeek Flash, one call each, 0 validator retries, $0.007 to
+$0.011 and 19 to 22 s; 12 to 13 risks per RFP; every code finding surfaced as a risk
+(table in the roadmap, S8). No uncovered mandatory requirement reached S8 because S7's
+loop closed them all, so the must-cite rule is exercised by the unit tests only.
+
+### D34. One LangGraph graph of thin stage wrappers; runtime objects in closures, outputs on disk per stage
+Context: S2 to S9 each ship a function that takes `settings`, `recorder` and a LangChain
+`config`; the S8 debug CLI already chains them by hand. S10 must make that one graph
+with the S5/S6 fan-out, per-stage observability and a progress surface for the UI, and
+produce the first end-to-end outputs.
+Options: (a) a `StateGraph` whose nodes are the existing functions, called directly;
+(b) nest S7's compiled loop as a subgraph and move every agent's internals into graph
+nodes; (c) no graph, a plain function calling the stages in order with a thread for the
+fan-out. For progress: LangGraph stream modes (`updates`, `debug`) versus a callback
+from the node wrappers. For where intermediates live: in memory only, or written as
+each stage finishes.
+Choice: (a). Eight nodes (`parse`, `parse_quality`, `split`, `requirements`, `problem`,
+`solution`, `risk`, `assemble`); `split` fans out to `requirements` and `problem`, which
+join at `solution`. Every node is the same wrapper around a stage function: it emits a
+`StageEvent` (started / finished / failed, wall time, the stage's LLM calls and cost) to
+an optional callback, records a `StageRecord` on the run recorder (`RunLog.stages`, an
+additive change to the S1 schema), and writes the stage's output JSON into the run
+directory before returning. Settings, the one shared chat model, the recorder and the
+callback are bound in closures by `build_pipeline`; the state carries only documents
+and results. S7's revision loop stays a function call, since `build_solution` already
+runs its compiled graph with the same `config`, so tracing nests it. A stage's LLM
+calls are found by node-name prefix (`requirements_`, `problem_`, ...), so per-stage
+cost needs no second accounting. The CLI maps a failure to exit 1 with the stage named,
+and `activate()` writes the run log on the way out either way.
+Why: the agents' internals are already tested at their own level, so wrapping them
+keeps the graph small enough to explain in a minute and keeps S14's job to
+"subscribe to the callback and serve the files". A callback works from the executor
+threads the fan-out runs on, and it costs nothing when absent; parsing LangGraph's
+stream formats in the UI would couple S14 to LangGraph's event shapes. Writing
+intermediates per stage makes a failed run diagnosable (the log says which stage and
+why, the earlier outputs are on disk) and gives the UI and the evals one place to read
+from. Reading the recorder from the contextvar inside nodes would also have worked
+(LangGraph copies the context into its executor threads) but explicit binding does not
+depend on that.
+Evidence: first end-to-end runs on the four RFPs, one each, DeepSeek Flash: every
+stage finished, $0.048 to $0.101 and 79 to 110 s wall per RFP ($0.28 and 6.3 minutes in
+all), 0 to 1 structured-output retry per run, all mandatory requirements in scope
+covered, every citation resolving under strict assembly. The requirements and
+problem-statement branches took 21 to 48 s each and overlapped, so the middle of the
+run costs one branch's time. A stubbed-stage test holds both branches at a barrier to
+prove they run concurrently, and a forced failure in the solution stage leaves the
+log with the stage marked failed, the error text, and the requirements and problem
+JSON on disk. Table in the roadmap, S10; samples under `runs/samples/`.
+
+### D35. UI backend: a thin FastAPI layer over `run_pipeline`, one worker, events through a condition variable
+Context: S15 needs to start a run, watch it live with per-stage metrics, and read every
+intermediate output, the summary and the cited chunks. S10 already writes each stage's
+JSON as it finishes and calls back with `StageEvent`s from LangGraph's executor threads.
+Options: for execution, one worker thread, a thread per run, or refusing uploads while
+busy (409). For streaming, per-subscriber `asyncio.Queue`s fed by
+`loop.call_soon_threadsafe`, or one event list under a `threading.Condition` read with a
+cursor from `asyncio.to_thread`. For SSE, `sse-starlette` or a hand-written
+`StreamingResponse`. For run status, track it in memory only, or read it from
+`run_log.json` once the run ends.
+Choice: `ui/backend/` is a FastAPI app built by `create_app`. A
+`ThreadPoolExecutor(max_workers=1)` runs one pipeline at a time, and later uploads wait
+as `queued`. Each run's registry entry holds the events in a list under a `Condition`.
+The pipeline callback appends and notifies. An SSE reader calls `wait(cursor, 15 s)`
+on a worker thread and yields what came after its cursor, a keepalive comment when
+nothing came, and `done` at the end. The SSE is about 20 lines over
+`StreamingResponse`. The chat model is built when the upload is accepted, so a missing
+key is a 503 before anything is written. Once a run ends, its status comes from
+`run_log.json`, the same path that serves the committed samples and runs from earlier
+processes. Artifacts are served from disk with `FileResponse`. Only `split.json` is
+parsed, and it is cached, for chunk lookup. The four samples resolve as runs, so the
+UI and the demo work with no key. `rfp_agent` gains no web dependency.
+Why: one worker keeps rate limits and spend predictable, since a run already makes up
+to eight concurrent LLM calls. Queueing is friendlier than a 409 and costs one line.
+The single cursor-indexed list makes replay and live delivery one code path. A client
+that connects mid-run gets every earlier event and no duplicates. The worker thread
+needs no event-loop reference, which is exactly what S10's thread-safe-callback
+contract asks for. The cost is one blocked thread per open stream for at most 15 s,
+which does not matter for a single-user tool. Reading status from the log means a
+finished live run, a sample and a run from yesterday look the same to the frontend.
+Hand-written SSE and plain `uvicorn` avoid two dependencies for about 20 lines of code.
+Not done: cancel and delete, because LangGraph threads cannot be stopped cleanly; auth,
+because this is a local tool; and resuming runs across restarts.
+Evidence: 27 tests with the LLM stages stubbed. A run held at a gate proves queueing
+and a mid-run subscription that receives the replayed and live events and closes on
+`done`. A forced failure keeps the earlier outputs. One live Federal Way run through
+the API cost $0.050 over 82 s. `curl -N` printed every stage as it happened, with
+keepalives during the 32 s solution stage and the two branches starting together.
+Details in the roadmap, S14.
+
+### D36. Evals: code first, judge second; recall against gold, precision judged per item
+Context: S12 must score requirements against gold (S11), and gold is core-only (D23):
+a correct boilerplate clause is absent from gold but is not an error. Requirement
+wording differs freely between gold and the extractor, and one gold item can be split
+into several extracted items or merged with others. The judge (Claude Sonnet 5.5) costs
+money per call; the pipeline makes 90 to 235 requirements per run.
+Options: (a) embed and match by similarity; (b) ask the judge to match everything;
+(c) code match first (quote containment either way after `normalise`, the statement
+containing the gold quote, quote word overlap at least 0.5), the judge only for the gold
+items code could not pair, shown only the extracted items cited on nearby pages. For
+precision: count unmatched extracted items as false positives, or judge every item.
+For judge configuration: default effort, or a lower one.
+Choice: (c), many-to-many. Recall over all gold and over reachable gold (quote in the
+parsed text), and code-only recall as the lower bound. Precision judged on every
+extracted item against its cited chunk (supported, a real obligation), with an in-scope
+flag reported separately. The judge runs at effort `medium` with a 32,000-token cap
+(F13), through S1's `structured_call`, with a per-call schema that demands exactly one
+verdict per ID shown, so a dropped or invented ID is sent back as a validation error
+(the F4 pattern). Each run's judge calls are recorded in their own run log
+(`evals/results/<label>/judge_logs/`), so the eval's cost is observable the same way as
+the pipeline's.
+Why: quotes are verbatim spans of the same parsed text, so code matching is exact,
+free and explainable, and it settles 61 to 94% of gold before any call. The judge
+handles the paraphrase cases code cannot, on a small candidate list. Counting surplus
+as error would punish the extractor for the gold scope rule; the in-scope share is the
+honest measure of surplus. Medium effort keeps thinking tokens down on hundreds of
+classification-like calls.
+Evidence: baseline, 12 runs: recall 80 to 100% (code-only 61 to 94%, reachable 93 to
+100%), precision 95 to 99%, in-scope share 83 to 96%. Judge cost $0.33 to $0.63 per run,
+$5.14 for the 12; zero failed batches after the cap fix. The hand-labelled sample agrees
+with the judge on 11 of 12 precision verdicts. Judge-tier matches are lenient (F14), so
+true recall sits between the two recall columns.
+
+### D37. Grounding: code heuristics plus a judge that sees only what is cited
+Context: every factual claim cites chunk or requirement IDs, and assembly already proves
+that every cited ID exists. Nothing yet checked that the cited text says what the claim
+says. The roadmap asked for code checks on numbers, dates, amounts and proper nouns,
+plus a judge that sees only the claim and the cited chunk.
+Options: show the judge the whole RFP, or only the cited text; judge assumptions and
+risks like facts, or by kind; show the risk judge the pipeline's levels or not.
+Choice: code computes dangling IDs and "entity misses" (a number or capitalised name in
+the claim that is absent from the cited text: dotted numbers kept whole, separators
+stripped, month and day names skipped, section headings included in the chunk text). The
+judge sees each claim with only its cited text, in batches of ten, and returns
+supported, partially or unsupported. Assumptions are judged as positions: only the facts
+they state about the RFP must be supported, and the judge says whether the cited text
+shows the gap they resolve. Risks are judged on the facts they rest on. The risk-level
+judge sees each risk's description and mitigation but not the pipeline's levels or
+justification.
+Why: judging against only the cited text tests the citation, not the claim's truth
+somewhere in the RFP, which is what the traceability rule promises. The first Federal
+Way scoring showed assumptions graded as facts (4 unsupported, 11 partially of 22
+solution items) and risk agreement at 100% while the levels were visible; both were
+artefacts of the setup, and both changed when the setup did (0 unsupported, 7 partially;
+severity agreement 92%, likelihood 58%). The entity check is cheap and finds real
+citation misses (Missouri's commission named but cited to chunks that do not name it),
+but over-flags style capitals, so it is reported as a pointer, not a score.
+Evidence: baseline, 12 runs: 0 dangling IDs; partially or unsupported items 4 to 10 of
+25 to 32 problem claims, 4 to 16 of 20 to 38 solution items, 2 to 11 of 12 to 13 risks;
+13 to 33 items with an entity miss per run. Judge agreement on grounding: 10 of 12
+sampled verdicts.
+
+### D38. UI frontend: views built from per-stage artifacts, source reveal in a slide-over, the browser's PDF viewer
+Context: S15 must show a run live, every intermediate output, and the source of any
+cited claim, on top of the S14 API. The author chose a React view built from JSON over
+rendering `summary.md`, and the browser's PDF viewer over pdf.js.
+Options: for data, read `summary.json` once the run ends, or each stage's artifact as it
+appears. For source reveal, navigate to a source page, use a modal, or use a
+slide-over that keeps the reading position. For highlighting, mark the quote on the PDF
+(pdf.js text layer), or in the chunk text beside the PDF. For state, use a store
+library, or hooks and one context.
+Choice: each tab reads the artifact of the stage that writes it, fetched as soon as it
+appears in `status.artifacts`. A run index (chunks from `split.json`, requirements,
+components, risks, ambiguities, gaps) is rebuilt from whatever exists. Every ID renders
+as a chip that opens a right-hand slide-over with a history stack. The panel shows the
+item, its cited chunks and the quote highlighted in the chunk text, and the PDF in an
+iframe at `#page=N`. Quote matching folds case, curly quotes, dashes, whitespace and
+`*` and maps back to the original indices. Live progress is one `EventSource` feeding
+a latest-event-per-stage reducer, which is idempotent, so reconnects and disk replays
+need no special case. There is no store library: two hooks and a `SourceContext`.
+Why: per-stage artifacts make the live run useful before it ends. Requirements are
+readable 30 s in, while the solution is still being written. They also let the
+backend's chunk text come from one 90 kB file instead of one request per click. The
+slide-over keeps the user's place in a long table, which matters for 120 to 223
+requirements. Highlighting in text works the same in every browser and is testable on
+real data. Highlighting on the PDF would need pdf.js and coordinate matching for a
+small gain. A latest-event reducer matches the API's replay-then-live contract exactly.
+Not done: pdf.js highlighting, cancel and delete (the API has none), an SSE stream for
+the run list (polling while busy), and visual polish beyond four Playwright passes
+(ST1).
+Evidence: 11 Vitest tests, including quote highlighting for at least 95% of Missouri's
+verified quotes in a cited chunk, and the index built from the committed sample.
+Playwright MCP passes at 1440 px and 390 px fixed 13 issues, among them a 456 px
+overflow on phones and a blank page from F15. One live Colfax upload through the UI
+cost $0.0556 over 83 s, and the timeline and every tab filled in without a reload.
+Details in the roadmap, S15.
+
+### D39. Ablations: hierarchy and chunking are kept for scale and traceability, not for quality the evals can see
+Context: D5 chose per-chunk extraction and D28 the two-stage problem statement, each
+with a cheaper single-call baseline behind a flag, and both deferred the comparison to
+the evals. S13 ran each ablation twice on every RFP (`evals/results/ablation_full_text/`,
+`evals/results/ablation_single_call/`) against the three baseline runs, scored only the
+sections the flag changes, and compared the problem statements pairwise with the order
+swapped.
+Options: keep both defaults; switch either default to its single-call path; keep the
+defaults and state what they buy.
+Choice: keep both defaults, and say plainly that on these four RFPs the evals do not
+show a quality gain from either. Per-chunk extraction is kept because the single call
+fails outright at the provider's default output cap on the largest RFP (Missouri, 8k
+tokens; F16) and would fail on any RFP longer than the ones here, and because its
+misses are whole obligations rather than details. The hierarchical problem statement is
+kept because its per-chunk summaries are what the UI's chunk view and the per-claim
+citations rest on, and because it is the path that still works when a document does not
+fit one call. Both flags stay one setting away for the demo.
+Why: the cheaper path should win unless the numbers or the failure modes say otherwise,
+and here the failure modes do. Single-call extraction: combined recall within 2 pp of
+per-chunk on every RFP (Colfax 99 → 97%, Federal Way 81 → 79%, Missouri 91 → 89%,
+NYESD 99 → 99%), 33 to 129 fewer items, in-scope share up 6 to 8 pp on three RFPs,
+pipeline cost down 30 to 45% and wall time down 6 to 36 s; but code-only recall falls
+7 to 8 pp on Colfax and Missouri, the items it drops are complete obligations from the
+middle of the document (Missouri's page-5 description rules, MBE/WBE participation,
+royalty-free reuse, annual library review), and the one call needs 5 to 10k output
+tokens, which is past the default cap on Missouri and NYESD. Full-text problem
+statement: checklist coverage 9.0 → 10.5 (Colfax), 8.3 → 8.5 (Federal Way), 10.3 →
+11.0 (Missouri), 10.3 → 9.5 (NYESD) of 12, all within one sd of the baseline;
+unsupported problem claims 5 to 9 either way; pipeline cost down 10 to 25%; the
+pairwise judge preferred full text on Colfax and Missouri, hierarchical on Federal Way,
+and tied with position bias on NYESD, so S12's single Missouri smoke result (hierarchical
+preferred both ways) did not replicate across runs. Two runs per arm is enough to see
+that the differences sit inside run-to-run variance, not enough to rank the arms.
+Evidence: `diff_requirements.md` and `diff_problem.md` under each label, the four
+`pairwise_*_problem.json` files, and the spot-checked unmatched gold items in the
+single-call score files. D5 and D28 point here.
+
+### D40. No critic or free revision loop: the evals show prompt-shaped faults, and the one revision loop with a code-computed target already exists
+Context: the roadmap kept a critic agent, a general revision loop and ReAct on the back
+burner, to be added only if the evals showed a weakness they would fix. S13 had the
+S12 baseline, the two ablations and one prompt fix to judge that by.
+Options: a critic that reviews each output and sends it back; a revision loop over the
+problem statement or risks like S7's coverage loop; neither, with a stated threshold.
+Choice: neither. The S7 generate/check/revise loop (D32) stays the only revision loop,
+because it has what a loop needs: a target computed by code (uncovered mandatory IDs)
+that the model cannot talk its way past.
+Why: the failure modes the evals exposed were each fixed by a rule in a prompt or a
+judge, and each fix was measured in one judge rerun: judge-tier recall leniency (F14,
+Missouri 99 → 93%), bulk-cited clauses no component described (`solution.md` "name
+what you cite": NYESD judged coverage 78 → 94%, Colfax 96 → 99%, Missouri and Federal
+Way within 2 pp, descriptions 30 to 50% longer, specificity on NYESD 4 → 3 from
+unnamed cohort sizes and stipends the baseline also lacked). What is left is not the
+kind of fault a critic catches: precision is 96 to 99% by construction (quotes verified
+by code), unsupported claims are 5 to 10 per output and mostly `partially` (a detail
+the cited chunk does not carry), checklist coverage is capped by an image-only page
+(GC12) and by compound gold facts, and risk level agreement is bounded by the judge's
+own consistency (D37). A critic would be a second judgment on top of a first, with no
+code-computed ground truth to anchor it, at one more call per output; the run-to-run
+variance the consistency block shows (checklist Jaccard 0.74 to 0.88) would swallow
+its effect. The threshold for revisiting: a metric a code check can compute, the way
+coverage is, that sits well below 90% after prompt work; today none does.
+Evidence: `evals/results/baseline/summary.md` (precision, unsupported, consistency),
+`fix_solution_naming/diff_solution.md`, F14's before/after, D39.
+
+### D41. One Docker image for the UI and the CLI, keys from the host's `.env`
+Context: the scope assumption promised a Dockerfile for a local run (ASSUMPTIONS,
+Scope). S16 adds it once the CLI, the backend and the frontend exist, so the reviewer's
+question "does it run" has a one-command answer on a machine with nothing but Docker.
+Options: one multi-stage image that serves the UI by default and runs the CLI when the
+command is overridden; the same plus a `docker-compose.yml`; a CLI-only image without
+the frontend; a published image on a registry.
+Choice: one `Dockerfile`. A `node:22-alpine` stage builds the frontend (the Node CI
+uses), a `python:3.12-slim` stage installs the pinned `requirements.txt`, copies the
+prompts, the default input, the public RFPs, the committed samples, the evals and the
+tests, runs as a non-root user and starts `python -m ui.backend --host 0.0.0.0` on
+port 8000. Keys are passed at run time with `--env-file .env`; `runs/` is a mounted
+volume. No compose file, no registry.
+Why: `docker build` plus one `docker run` covers the UI, the CLI, the tests and the
+evals from the same image, and the CLI is one command override away. A compose file
+would save a line of flags and add a file to explain. The frontend is built inside
+the image so `dist` stays out of git (D38). The image never holds a key: `.env` is in
+`.dockerignore`, `pydantic-settings` treats the missing in-image `.env` as optional and
+reads the variables `--env-file` sets. The backend's default bind is `127.0.0.1`, which
+a container cannot publish, so the image passes `--host 0.0.0.0` and the README keeps
+the local default unchanged. The samples are copied in so the unkeyed UI works from the
+image alone.
+Evidence: the image is about 900 MB and builds in about four minutes cold, under
+fifteen seconds warm. Inside it `pytest -q` passes 388 tests. Without a key the UI answers
+`/api/health`, lists the four samples, serves the built index, a sample chunk and a
+sample PDF. With `--env-file .env` and `runs/` mounted, `python -m rfp_agent run
+data/rfps/federal_way.pdf` inside the container wrote the full run directory to the
+host (50 calls, $0.050, 85 s) as the non-root user.
+
+### D42. Vision-model transcription replaces the page, gated by the judge, off by default (ST2)
+Context: the S4 pass escalated confirmed-bad pages to a hook that only recorded "would
+escalate to VLM". Federal Way's page 5 (the systems-to-replace table, an image) never
+reached the extractors: eight gold requirements and one checklist fact were unreachable
+and Federal Way's recall was capped at 81% against 93 to 96% on its readable pages. The
+author asked for the VLM to cover both image content and poorly rendered text, tables
+above all.
+Options: (a) transcribe only the image regions; (b) render the whole page and replace
+its markdown; (c) append the transcription after the library text; trigger by (i) the
+judge's verdict, (ii) every heuristic flag, or (iii) both as a setting; model: Sonnet
+5.5 (the eval judge), Opus 5.5, Haiku 5.5; on or off by default.
+Choice: (b) whole page, replacing the markdown, with the library text passed to the
+model as a labelled reference and the image as the truth. The judge's two verdicts
+already separate the author's two triggers (`text_usable=false` for broken tables and
+garbled layout, `content_missing=true` for images), so the judge gates the VLM by
+default and `RFP_VLM_SCOPE=flagged` sends every heuristically flagged page without a
+judge call, so the two policies can be compared. `anthropic:claude-sonnet-5-5`, the
+same model as the judge, since the DeepSeek generator takes no images. Off by default
+(`--vlm`, `RFP_VLM=true`, or the run-form checkbox). A fifth heuristic, `garbled_text`,
+catches undecodable fonts (`(cid:NN)`, U+FFFD, symbol soup) that none of the public
+RFPs has. The page's flags are cleared once it is transcribed (it is parsed now; a
+"transcribed" flag would reach the risk agent's unparsed-pages list), and
+`quality.json` keeps the library and VLM markdown side by side.
+Why: `ImageBlock` stores no bounding box, and one whole-page path covers an image table
+and a merged-cell table alike; replacing keeps the splitter, the quote verification and
+the citations unchanged (a chunk on page 5 now holds the table rows verbatim), where
+appending would duplicate the clean prose and leave the broken table in place. The
+judge gate keeps the cost to the pages that need it: the judge clears 9 of 12 flagged
+pages on the four RFPs, and a transcription costs about ten times a judge call. Off by
+default so the baseline, the keyless UI and the samples stay reproducible; the ablation
+is the evidence for flipping it.
+Evidence (`evals/results/ablation_vlm/`, two runs per RFP, judge-gated): Federal Way
+recall 81% → 95% (code-only 67% → 84%), all eight page-5 gold items matched in both
+runs, checklist 8 to 9 → 10 to 11 of 12 with GC12 covered; Colfax, Missouri and NYESD
+within run-to-run noise (recall 100, 92, 99%). The VLM ran once per Federal Way run
+($0.017, 6 s, 3.6k in / 1k out tokens, no retries) and twice per Missouri run (p19 and
+p20, $0.035, 15 s); never on Colfax (six flagged pages, all cleared) or NYESD (no
+flags). Pipeline cost per run: Federal Way $0.05 → $0.07, Missouri $0.08 → $0.13 (the
+two transcribed affidavits add about 850 words of chunks to extract). The `flagged`
+scope (`evals/results/ablation_vlm_flagged/`, Federal Way and Missouri, two runs each)
+re-rendered every flagged page (Federal Way p2, p5, p14; Missouri p12, p19, p20): the
+same recall (Federal Way 94% ± 3, Missouri 93% ± 4) for three VLM calls per run instead
+of one or two ($0.043 against $0.017 on Federal Way), with more run-to-run spread
+(code-only recall 76% ± 10 against 84% ± 7, checklist 83% ± 24 against 88% ± 6) and a
+worse page 14 than the library's (the pricing form's title cell came back tripled
+across three columns). The judge was right to clear those pages; `judged` stays the
+default and `flagged` stays a setting for comparison.
+
+### D43. Human in the loop as a pursuit lead would use it: one checkpoint before drafting, one sign-off after, instruction-driven refinement between
+Context: the author asked for a human-in-the-loop design for a financial-services
+deployment, chosen from the chair of an RFP pursuit lead rather than from the shape of
+the pipeline. A pursuit runs: read the RFP, sign the compliance matrix, storyboard the
+win strategy with SMEs, draft, review in rounds (pink, red, gold team), sign off.
+Options: (a) fully automatic run with edit requests afterwards; (b) a gate after every
+stage, each with its own approval; (c) one checkpoint after the read stages where the
+lead confirms the requirements and briefs the drafter, then an unattended draft, then
+instruction-driven refinement, then a named sign-off.
+Choice: (c), as stretch goal ST12 on the `hitl` branch. ST12a builds the checkpoint;
+ST12b the refinement loop; ST12c to e the backend and the UI.
+Why: only two human inputs change what gets built: the confirmed requirement list and
+the brief. The requirement list is the compliance matrix, and a missed mandatory
+requirement is a non-compliant bid, so nothing is drafted before a named reviewer
+confirms it. The brief carries what the RFP never contains (win themes, credentials,
+alliances, constraints, what the client said informally), written at the moment the
+lead has just read the requirements and knows what to steer. Everything after that is
+review rounds in prose, which is how red-team reviews happen; nobody approves section 3
+before section 4 exists. (a) wastes the most expensive stage on unconfirmed
+requirements and makes the coverage number meaningless; (b) is friction without extra
+protection. The guards, in priority order: non-compliance, ungrounded or over-promising
+claims, generic solutions, silent regressions from edits, no audit trail, cost
+blindness. Unattended runs (`--unattended`, the eval harness, CI) keep today's
+behaviour exactly, so the evals stay comparable with the S13 baseline.
+Evidence: ST12a: the unattended run records no checkpoint and its run log holds the
+same eight stages as before; the paused run stops with every read-stage file on disk
+and a `waiting` record; the resumed run drafts on the same log with the time waited
+recorded as the checkpoint's latency (`tests/test_graph_checkpoint.py`).
+
+### D44. Pause and resume through the run directory, not a LangGraph checkpointer (D1 extended)
+Context: a checkpoint needs the run to stop with its state kept, possibly for days, and
+to continue later, possibly after the backend restarted; the backend runs one pipeline
+at a time on a single worker thread (D35).
+Options: LangGraph `interrupt()` with `MemorySaver`; `interrupt()` with a SQLite
+checkpointer; reload the stage JSON the run directory already holds and invoke the
+graph from a later start node.
+Choice: the run directory. The `checkpoint` node records a `waiting` stage and routes
+to `END`; `load_state` reads the stage files back into the typed state; `build_pipeline`
+takes a `start_stage` and holds only the nodes from there on; `resume_pipeline`
+continues the same run log (`RunRecorder.from_log`), closes the waiting record with the
+time waited, and invokes from `solution`. The log of a paused run has no `finished_at`.
+Why: every stage already writes its JSON as it finishes (D34), so a checkpointer would
+store a second copy of the same state and D1's reason for not having one still holds.
+`MemorySaver` dies with the process, and a review can sit for days. A SQLite
+checkpointer couples the pipeline to a store whose only job is this pause, and
+`interrupt()` would hold the single worker thread (or need one per run) while a human
+thinks; ending the first invoke frees it. The same mechanism gives the CLI a resume and,
+in ST12b, regeneration from any stage.
+Evidence: `load_state` round-trips every stage file of a finished run to equal models;
+a graph built from `solution` holds exactly `solution`, `risk`, `assemble`; a second
+resume of the same run is refused as "not waiting"; a bad record is refused before any
+file is written (`tests/test_graph_checkpoint.py`).
+
+### D45. The pursuit brief is citable evidence; row actions are deterministic; the reviewer is a name
+Context: the brief tells the drafter things the RFP does not, and the traceability rule
+(every factual claim cites an ID that code checks) must survive human input. At the
+checkpoint the reviewer also acts on individual requirements. There is no
+authentication in this project (ASSUMPTIONS, UI).
+Options: inject the brief as plain instruction text and label claims from it as
+inferences; or split it into chunks with their own IDs and let the agents cite them.
+For row actions: edit text by hand; or deterministic actions plus model-applied edits.
+For identity: none, a timestamp only; or a required free-text name.
+Choice: the brief is split by paragraph into chunks `H1`, `H2`... (headings attach to
+the paragraph that follows), appended to the IDs the solution and risk validators
+accept, shown in a "Pursuit team guidance" block of both prompts, and added to the
+summary's chunk index with `source = brief` and no pages, so the renderer cites
+`(Pursuit brief [H2])`. Row actions at the checkpoint are accept, reject, change
+strictness, change type: deterministic, no LLM, validated by `apply_checkpoint`
+(unknown or duplicate IDs refused; a rejection also strips the ID from `conflicts_with`
+and ambiguity references so nothing dangles; an edit sets `origin = reviewed`).
+Anything that produces new text waits for ST12b and goes through the model with the
+extractor's validators. The extractor's `requirements.json` is kept untouched next to
+`requirements_confirmed.json`. The reviewer is a required name in the record and in the
+summary header; a real deployment would take it from SSO.
+Why: a red-team reviewer's first question about any claim is "where did we say that?".
+With `H` chunks the answer is in the citation, and the rule that code checks every ID
+needs no exception for humans. Hand-editing JSON is not how a pursuit lead works, and a
+deterministic reject or strictness change needs no model call. Keeping the extractor's
+output beside the confirmed list keeps the evals honest and makes the edit count per
+run a quality signal for the extractor.
+Evidence: a draft citing `H1` passes the solution validator only when a brief is
+present; the assembler raises `CitationError` on `H1` without the brief and resolves
+it with one; the rendered summary shows the brief citation and a "Review history"
+section with reviewer, time waited, rejected and edited IDs and the brief
+(`tests/test_checkpoint.py`).
+
+### D46. Revision by instruction: a patch for requirements, the whole artefact for the rest, the producing stage's validators either way
+Context: after the checkpoint, review happens in prose ("merge R014 and R022", "add a
+component for accessibility", "the timeline risk is overstated"). ST12b needed one
+primitive that applies such an instruction to any artefact without weakening the
+traceability and compliance guards (D43). D40 rejected a free revision loop; this is
+not one: the target of each revision is a human instruction, applied once, and nothing
+loops on a model's judgment of its own output.
+Options: (a) the model returns the whole revised artefact for everything; (b) a patch
+(edit, add, remove by ID) for everything; (c) a patch for the requirement list, the whole
+artefact for the problem statement, the solution and the risks.
+Choice: (c), asked of the author at planning. Requirements: `RequirementsPatch` (edits by
+ID with only the changed fields, additions quoting a chunk, removals); the per-call
+validator refuses unknown or duplicate IDs, empty edits, a quote without its chunk and a
+quote not found verbatim in the chunk it names (the extractor's rule, now inside the
+retry loop), and `apply_patch` assigns fresh IDs (`max+1`, never reused), sets
+`origin = reviewed`, and strips removed IDs from conflicts and ambiguities
+(`strip_references`, shared with the checkpoint). Problem, solution and risks: the model
+returns the whole artefact through the stage's own per-call schema (`problem_schema`,
+`solution_schema`, `risk_schema`, which gained `base` and `extra` hooks), with an
+optional `id` on components and risks: a kept item keeps its ID, a new one gets the next
+free, an ID the artefact does not have is refused. A solution revision that uncovers a
+mandatory requirement covered today is refused with the IDs named (code-computed, the
+S7 coverage rule); coverage and the risk findings are recomputed by code. Every
+revision's diff is computed by code and stored.
+Why: the confirmed list runs past a hundred requirements on Missouri and NYESD; a whole
+rewrite would hit the output cap (F16) and could drop or reword items silently, which
+is exactly the regression guard D43 lists. A patch also makes the audit trail exact:
+the diff is the patch. The other three artefacts are small, their validators already
+exist, and a patch over claims that have no IDs (the problem statement) would need its
+own matching rules for no gain. Stable IDs keep a version-to-version diff readable and
+keep citations elsewhere in the summary valid. Refusing a coverage regression makes the
+compliance guard survive human edits: an instruction cannot quietly drop a mandatory
+obligation.
+Evidence: `tests/test_revise.py` (patch refusals, quote check against the named chunk,
+retry after a bad quote, stable and next-free IDs, unknown IDs and coverage regression
+refused, the count band and must-cite still enforced on risks, brief IDs accepted only
+with a brief); the live Missouri run in `docs/hitl/ST12b-revise.md`.
+
+### D47. Versions, stale flags and sign-off live in the run directory; assembly always re-runs, LLM stages never do on their own
+Context: refinement needs versions to diff and roll back to, a way to tell the reviewer
+that the risks no longer match a revised solution, an audit trail with cost, and a final
+freeze. The run directory is already the state store (D44), and the backend (ST12c) must
+recover all of it after a restart.
+Options: a version field inside each stage file; a database; copies next to the live
+files plus two small index files. For staleness: regenerate downstream automatically;
+flag it and let the reviewer decide.
+Choice: the live files stay where every reader expects them (`requirements_confirmed.json`,
+`problem.json`, `solution.json`, `risks.json`), and each change keeps a copy
+`<stem>.vN.json` (v1 taken just before the first change, so an unrevised run gains no
+files). `current.json` holds each artefact's version and stale flag and the sign-off;
+`revisions.json` is append-only (reviewer, instruction, versions, diff, what went stale,
+calls, cost, status). A change to the requirements or the problem makes the solution and
+the risks stale; a change to the solution makes the risks stale; a revision or
+regeneration of an artefact clears its own flag. `regenerate` re-runs one stage through
+the graph (`build_pipeline` gained `end_stage`) and never cascades. Assembly is code
+only, so it re-runs after every change and the summary always shows the current
+versions and the review history. Requirements can be revised while the run waits at the
+checkpoint: the first revision starts `requirements_confirmed.json` from the extractor's
+file (which never changes) and the checkpoint applies its decisions on top. A failed
+revision is a `failed` record, never a failed stage of the run. Sign-off is refused
+while anything is stale and freezes the run.
+Why: the readers of the live files (load_state, renderer, backend, frontend) stay as
+they are. Automatic regeneration would throw away a reviewer's revision of the risks
+whenever the solution changed, and spend money without being asked (cost blindness is
+one of D43's guards); a stale flag puts that call in the reviewer's hands and sign-off
+makes them settle it. A failed stage record would make the backend show a finished run
+as failed for a revision that changed nothing.
+Evidence: `tests/test_versions.py`; `tests/test_graph_refine.py` (v1 and v2 files,
+stale risks after a solution revision, `revise` then `assemble` records on the same log,
+a waiting run that stays waiting with the extractor's file byte-identical, removal of
+a requirement realigns solution and risks so the strict assembler passes, regenerating
+one stage leaves the other untouched, a failed revision leaves files and stages as they
+were, sign-off refused while stale and then final).
+
+### D48. The backend runs every human-loop step as a job on the one worker; state is read from the run directory
+Context: the UI must drive the checkpoint, revisions, regenerations and sign-off that
+ST12a and ST12b built for the CLI, show where a run stands, and survive a restart (a
+paused run can wait for days).
+Options: one state field with a single `finished`, or new states per touchpoint; a
+second worker (or a thread per request) for refinement jobs; a job table persisted
+apart from the run directory; sign-off queued like the rest or run in the request.
+Choice: eight states, `queued → running → awaiting_checkpoint → drafting → finished ⇄
+refining → signed_off`, and `failed`. `finished` stays the resting state of a drafted
+run open to refinement, so unattended runs and the S15 frontend read as before. Uploads
+pause at the checkpoint unless `unattended=true` (the CLI's default since ST12a; the
+samples and the eval harness stay unattended). Every LLM job (new run, drafting,
+revision, regeneration) goes through the existing single worker, and its state is set
+when it is queued, so a run reads busy at once and refuses a second job with 409 while
+the first waits its turn. Sign-off calls no model (one re-assembly) and runs in the
+request. A failed revision or regeneration returns the run to where it rested, with the
+error, never to `failed`; on disk, a run that has assembled once reads `finished`
+whatever failed later. The run's state is derived from its files (`run_log.json`'s
+waiting checkpoint record, `current.json`'s sign-off, a finished `assemble` record), so
+no job table exists: after a restart the backend adopts a run on its first request. The
+backend computes `review.allowed` (what the run takes now) and the frontend shows only
+that, so the state rules live in one place. SSE gains `event: state`; a stream closes
+when the run rests and the client subscribes again after each action.
+Why: one worker keeps provider rate limits and spend predictable (D43's cost-blindness
+guard), at the price of a revision waiting behind another run's pipeline (rare with one
+reviewer). Setting the state at queue time closes the window where two clicks would
+queue two jobs on one run. Deriving state from files keeps D44's "the run directory is
+the state store" and makes restart recovery free. A failed revision is not a failed run
+because the artefact is unchanged (D47); showing the run as failed would hide a usable
+draft.
+Evidence: `tests/test_ui_backend.py` (default pause; checkpoint with a brief and
+decisions drafts the rest; 400/403/409/422 refusals, including a second checkpoint while
+the first is queued; revise, versions, stale, regenerate, sign-off and the frozen run;
+failed revise and failed regenerate leave the run `finished`, also when read back by a
+fresh app; a paused and revised run confirmed from a fresh app); the live Missouri loop
+in `docs/hitl/ST12c-backend.md`.
+
+### D49. The checkpoint is a tab on the run page; the draft lives in the browser until confirmed; the brief is previewed as the server will split it
+Context: ST12d puts the checkpoint in the UI. The reviewer may spend a while on it (the
+live run waited 2 minutes; a real one can wait days), may steer with model instructions
+in between, and must see what the drafter will cite before confirming.
+Options: a full-page takeover while the run waits, or a tab; row decisions sent one by
+one to the server, or held in the browser and sent with the confirmation; the brief as
+five fixed fields, or one text box; the H-chunk split shown only after drafting, or
+previewed from a client-side copy of `parse_brief`, or from a new preview endpoint.
+Choice: a **Checkpoint tab**, first, opened by default while the run waits and showing
+the confirmed record afterwards, under a **lifecycle banner** (Read, Checkpoint, Draft,
+Refine, Sign-off) that says what happens next. Row actions (reject, strictness, type)
+are a **browser-side draft**: only rows that differ from the list are kept, a rejection
+carries no edits, and the draft is **pruned** whenever a revision changes the list (a
+removed requirement's row goes, a change the model already made stops being a change).
+The draft, the brief and the note sit in `localStorage` per run, and the reviewer's name
+globally, so a reload or a backend restart loses nothing; nothing is sent until
+"Confirm and draft". The brief is **one text box** with an "insert template" button and
+a **live H1..Hn preview** from a TypeScript port of `parse_brief`, tested on the Python
+cases; the template's own headings left empty are dropped before sending, the
+reviewer's own headings never are. The instruction box revises requirements or the
+problem (what `review.allowed` lists at the checkpoint) and shows each revision as one
+line grouped by item (removed R005, changed R001, A01); the full diff is ST12e's. Once
+a confirmed list exists, every view reads it instead of the extracted one.
+Why: a tab keeps the RFP outputs (problem, parse) one click away while checking, which
+the reviewer needs to judge a requirement. Holding decisions client-side matches the
+server contract (one checkpoint record, validated whole by `validate_checkpoint`) and
+keeps the server free of half-made decisions; pruning keeps that record valid after a
+revision, which ST12c found to be a 400 trap otherwise. The preview is the guard against
+"ungrounded claims" from the reviewer's side: they see exactly which paragraphs become
+H1, H2 before the drafter cites them. A port over an endpoint avoids a round trip per
+keystroke; the risk of drift is bounded by mirrored tests and by the server re-splitting
+whatever is sent.
+Evidence: `ui/frontend/src/lib/review.test.ts` (brief split mirrors
+`tests/test_checkpoint.py`, template dropping, draft to decisions, pruning, counts,
+lifecycle, diff grouping); the live Missouri checkpoint through the UI in
+`docs/hitl/ST12d-frontend-checkpoint.md`.
+
+### D50. Refine controls sit on each artefact tab; the Review tab holds sign-off and history; diffs are the stored ones; old versions are read-only
+Context: ST12e puts the refine loop and the sign-off in the UI. The backend already
+records every revision with a code-computed diff, keeps every version on disk and says
+which actions are allowed (D47, D48). The reviewer needs to change an artefact while
+reading it, see what a change did, notice what went stale, and sign off knowing what is
+frozen.
+Options: one central Review tab with an artefact picker, or controls on each artefact
+tab; a client-side diff between any two versions, or the stored diff of each revision;
+version browsing or none; brief citations as plain text, or chips.
+Choice: each artefact tab (Solution, Requirements, Risks, Problem) is wrapped, once the
+run has a draft, in a **version bar** (v1..vN; picking an old one swaps it in read-only
+and hides the edit panel), a **stale banner** with the reason and **Regenerate**
+(solution and risks; requirements and the problem are never stale), and a **"Suggest
+edits" panel** (instruction, what the change sets off downstream, this artefact's
+revisions). A **Review tab** holds the **sign-off** form, which lists its blockers
+(mirroring the server's refusals, the server re-checks), or the signed-off record, plus
+a versions table with regenerate and the **whole history** (checkpoint, revisions,
+regenerations, sign-off) with each **stored diff** as before → after per field. The
+lifecycle banner says "Stale: …" or "Ready to sign off" with a link. The views stay
+unaware of review: a wrapper swaps in the version. The reviewer's name is shared by
+every form through one context. Brief IDs (`H1`) are chips that open the paragraph,
+marked as human input.
+Why: editing next to the text being read is how a pursuit lead works, and keeps the
+instruction concrete; the Review tab is where the "can I sign?" question is answered in
+one place. The stored diff is what code computed when the change was applied, on the
+reviewer-visible part, so the UI shows exactly what the audit trail records rather than
+a second, possibly different, diff (guard: silent regressions). Read-only old versions
+answer "what did it say before" without a restore operation the backend does not have.
+The chips make claims that rest on the reviewer's word visibly distinct (guard:
+ungrounded claims).
+Evidence: `ui/frontend/src/lib/refine.test.ts`; the live loop on the Missouri run in
+`docs/hitl/ST12e-frontend-refine.md` (revise, stale, regenerate, v1 view, sign-off;
+$0.020).
+
+---
+
+### D51. One prompt structure for every prompt (ST13)
+Context: the 16 prompts were written step by step and shared only a loose shape (a
+role sentence, sometimes `## What to return`, `## Rules`, data blocks), applied
+unevenly: the gold and parse-quality prompts put the data before the output
+contract, the extractor had no output section, the dedupe prompt had no rules
+section, the personas were generic ("You extract requirements"), tone was one bullet
+in two prompts, and no prompt told the model what to check before answering. The
+author asked for one structure grounded in prompt-engineering practice, applied to
+every prompt and written down.
+Options: (a) one fixed section order inside the single human message, no code change;
+(b) the same plus a system message carrying the persona and tone, which means a new
+message layout in six call sites and two hashes per prompt; (c) data first and
+instructions last, which Anthropic recommends for long documents.
+Choice: (a). Fixed `##` headings in a fixed order: Role, Task, Context, Output, Rules,
+Examples (optional), Tone, one heading per input block, Final checks. The persona is
+a role at a Big Four advisory practice named by function (proposal manager, solution
+architect, bid risk manager, procurement analyst, independent reviewer), never a real
+firm. Instructions stay first and data last. The structure is documented in
+`prompts/README.md` and enforced by `tests/test_prompt_structure.py`, which also pins
+the placeholder sets, the judge recognition phrases the scripted judge depends on,
+and the definitions shared between prompts (the D31 scope, the risk scales).
+Why: (a) changes nothing about how prompts are loaded, hashed, cached or tested, and
+a persona inside the human message reaches DeepSeek and Claude alike. (b) would buy a
+cleaner separation at the cost of touching every call site and the run-log hash
+contract for a difference no eval measures. (c) would defeat the DeepSeek prefix cache
+(S5: about 74% of extractor input tokens were cache reads) and break the tests that
+look for `## Rules` before the data; the judge inputs are short enough that the
+long-document advice does not apply. Final checks come after the data on purpose:
+the self-check sits next to the answer, which is where the dedupe prompt's ad hoc
+"check that no ID appears twice" already worked. Content that evals had tuned (the
+include/exclude scope, F6, F8 to F10, F12, F14 rules) is kept verbatim; only its place
+and framing changed, so a score movement reads as the structure's effect.
+Evidence: 73 structure checks and the 227 existing prompt-dependent tests pass. The
+measured effect is in `docs/PROMPTS.md` (ST13 comparison) and in
+`evals/results/prompt_structure/` (fresh runs, new prompts) and
+`evals/results/baseline_rejudged/` (baseline runs, new judge prompts, agreement with
+the 40 hand labels).
+
+### D52. Removing a run deletes its directory; samples and busy runs are refused
+Context: the home page lists every run under `runs/`, and test uploads pile up. The
+author asked for a way to remove previous runs from that list.
+Options: (a) delete the run directory; (b) hide the run (a flag file or a trash
+folder) and keep its files; (c) a CLI-only cleanup.
+Choice: (a). `DELETE /api/runs/{id}` removes the run from the registry and deletes its
+directory. Samples (committed, read-only) answer 403; a run with a job queued or in
+flight answers 409, because the worker would write into a directory that is gone. The
+registry entry is marked deleted under its own lock before it is dropped, so a request
+that fetched the entry a moment earlier cannot queue a job on it (`begin` refuses). On
+the page, own runs get a two-click Remove control (Remove, then Yes / No); no modal.
+Why: the run directory is the source of truth (D48), so hiding it would need a second
+place that says which runs are hidden. Runs are cheap to reproduce (cents), and
+`runs/` is gitignored scratch space. Two clicks guard against a slip without a dialog.
+
+---
+
+## Part 2 — Failure modes hit
+
+Observed during development or evaluation. Format:
+
+```
+### F<n>. <title>
+Where:     node/prompt and the RFP that triggered it
+Observed:  what happened (quote the bad output if short)
+Cause:     best understanding
+Fix:       what changed (link the prompt changelog line or commit)
+Before/after: metric, if one exists
+```
+
+### F1. DeepSeek thinking mode rejects forced tool choice
+Where: `structured_call` on `deepseek:deepseek-flash`, S1 live smoke test.
+Observed: `400 - Thinking mode does not support this tool_choice`.
+Cause: thinking mode is on by default for DeepSeek's current models, and LangChain's
+tool-calling `with_structured_output` forces the tool.
+Fix: `RFP_DEEPSEEK_THINKING` (default off) sets `extra_body.thinking`; with thinking off
+the forced tool call works, with thinking on `structured_call` switches DeepSeek to JSON
+mode with the schema in the prompt (D17).
+Before/after: live smoke test failed, then passed in both modes.
+
+### F2. Mangled plain-text URLs duplicated real links
+Where:     S2 hyperlink extraction, NYESD.
+Observed:  39 links where the document has 32; e.g. both
+           `.../file-your-vendor-responsibility-questionnaire` (annotation) and
+           `.../file-your-vendor-responsibilityquestionnaire` (text layer).
+Cause:     the text layer drops hyphens and inserts spaces where long URLs wrap; the
+           plain-text URL only differed from an annotation on another page.
+Fix:       compare URLs on letters and digits only, against every annotation in the
+           document, and drop a plain-text URL that equals or prefixes one.
+Before/after: 39 to 32 NYESD links; test asserts no two links share a key.
+
+### F3. Running header survived on three Federal Way pages
+Where:     S2 header/footer stripping, Federal Way p7, p9, p11.
+Observed:  "City of Federal Way, WA - RFP for ERP Software 7 | P a g e **SECTION 4..."
+           left in the page markdown.
+Cause:     the layout model merged the header with the heading below into one box (p7,
+           p9; on p9 classed as text and extending below the margin band) or split it in
+           two header boxes (p11), so the whole-box repeat rule did not match.
+Fix:       strip a repeated header as a prefix of a box that starts in the top band, and
+           strip header-classed boxes whose text is a fragment of a repeated header.
+Before/after: 3 pages with the header to 0; other documents' word counts unchanged.
+
+### F4. Judge returned 3 checklist facts instead of 8 to 12
+Where:     S11 `gold_checklist` prompt, Missouri and NYESD (first draft run).
+Observed:  3 facts each (who, need, goal) although the prompt asks for 8 to 12; Colfax
+           and Federal Way returned 12.
+Cause:     the count was only an instruction; nothing in the schema or code enforced it, so
+           structured_call accepted the short list.
+Fix:       a field validator on the draft model (not minItems in the JSON schema, which
+           provider structured output supports unevenly) rejects a list outside 8 to 12;
+           structured_call feeds the error back and retries. Test added.
+Before/after: 3 to 12 facts for Missouri and NYESD on redraft.
+
+### F5. NYESD requirements draft truncated at 16,000 output tokens
+Where:     S11 `gold_requirements` on NYESD (redraft), Claude Sonnet 5.5.
+Observed:  `StructuredOutputError: output truncated by the token cap; not retrying`.
+Cause:     the longest RFP (10k words) plus adaptive thinking, which counts toward
+           max_tokens, exceeded 16,000.
+Fix:       drafting cap raised to 32,000 with a 600 s timeout (drafting only; pipeline
+           settings unchanged).
+Before/after: failed to 61 requirements drafted.
+
+### F6. Synthesis claims spoke of "the evidence" instead of the RFP
+Where:     S6 `problem_synthesis` prompt, first live run on the four RFPs.
+Observed:  three of four hierarchical statements contained a constraint such as "The RFP
+           refers to documents not included in the evidence that bidders must obtain" and
+           Federal Way's client situation said the systems were "not reproduced in the
+           summarized text".
+Cause:     the prompt names its input "evidence" and told the model to cite only evidence
+           IDs; the model carried the framing into the claims, which a bid team cannot
+           use.
+Fix:       one rule added to the prompt: write about "the RFP", never "the evidence", "the
+           summaries" or "the chunks", and do not speculate about what the RFP may say
+           elsewhere.
+Before/after: 3 of 4 outputs affected to 0 of 2 re-runs (NYESD, Federal Way).
+
+### F7. Citation validator retry with no recorded cause
+Where:     S6 `problem_synthesis` on NYESD, 2 of 4 live runs.
+Observed:  `retries = 1` in the node metrics; the INFO line read "attempt 1 failed: 1
+           validation error for ProblemStatement" and was cut at 200 characters before
+           the list name and the offending IDs; the two later runs did not retry.
+Cause:     `structured_call` logs the error truncated and `NodeMetrics` stores the retry
+           count only; DeepSeek Flash is not deterministic at temperature 0, so the
+           retry could not be reproduced on demand (60 to 63 relevant chunks across runs).
+Fix:       not fixed in S6 (the schema is S1's). Fixed in S12: `NodeMetrics.last_error`
+           (optional, additive) holds the last failed attempt's error, capped like the
+           feedback; the eval harness lists every retried node with it.
+Before/after: n/a in S6; from S12 every new run log names the cause of each retry
+           (logs written earlier show it as unknown).
+
+### F8. Extractor reported other sections of the same RFP as ambiguities and gaps
+Where:     S5 `requirements_extract` prompt, Missouri (first live run).
+Observed:  105 ambiguities and 39 gaps for 144 requirements. Typical: "The specific
+           data items required are in paragraph (B), which is not included in this
+           chunk"; gap "Section (3), paragraph I ... is referenced but not included in
+           this chunk"; blank affidavit forms that are in the PDF listed as gaps.
+Cause:     the chunk-local prompt said "work only from the text you are given", and the
+           model took "not in this chunk" as "missing from the RFP". The gap definition
+           ("a document referred to but not included here") invited it.
+Fix:       ambiguities and gaps each got a "not this" list: content defined in another
+           part of the same RFP (other chunks are handled separately) and ordinary lack
+           of detail are neither; gaps are documents outside the RFP only; "most chunks
+           have none". Boilerplate exclusions expanded at the same time (D31).
+Before/after: Missouri 144 / 105 / 39 (requirements / ambiguities / gaps) to
+           131 / 53 / 12; crude recall 89% to 86% (same items, different spans).
+
+### F9. NYESD gaps listed every form twice, by name and by URL
+Where:     S5 `requirements_extract` prompt, NYESD (63 hyperlinks, most to forms).
+Observed:  50 gaps; "Executive Order 16 Certification" (G12) and
+           "https://esd.ny.gov/sites/default/files/EO16-certification.pdf" (G29) are
+           the same document; code dedupes by normalised name, so neither folded.
+Cause:     `referenced_document` was described as "the name as written (or the link
+           text)", and link text in NYESD is the URL.
+Fix:       prompt: "the document's name as written, never its URL; a document named
+           once with its link is one gap". Code: gaps whose names are prefixes of each
+           other at a word boundary fold ("Attachment F" with
+           "ATTACHMENT F: SOFTWARE ABILITIES AND REQUIREMENTS", a Colfax pair).
+Before/after: NYESD 50 to 38 gaps (the rest are distinct forms the RFP really links).
+
+### F10. Solution assumptions cited ambiguity and gap IDs as chunk IDs
+Where:     S7 `solution` prompt, `solution_generate`, Colfax and Federal Way (not
+           Missouri or NYESD).
+Observed:  `assumptions cites chunk IDs that are not shown in the inputs: ['A02', 'A03',
+           ..., 'G06', 'G07', ...]` on attempt one; attempt two, with the validator's
+           message fed back, cited the chunk IDs and passed.
+Cause:     the prompt said "`chunk_ids` copied from the ambiguity or gap it resolves",
+           and the nearest ID on that line is the ambiguity's own `A02`.
+Fix:       prompt: `chunk_ids` holds the chunk IDs `(S4.2)` listed in parentheses after
+           the ambiguity or gap; ambiguity and gap IDs are never cited (changelog
+           2026-10-30). The validator already made the output safe; the fix saves the
+           retry.
+Before/after: 2 of 4 first runs needed the retry; four-RFP rerun on the tuned prompt in
+           the roadmap, S7.
+
+### F11. DeepSeek returned no tool call on a revision turn
+Where:     S7 `solution_revise`, Federal Way, the revision round (history: prompt, the
+           model's own 6k-token answer, the coverage feedback).
+Observed:  `attempt 1 failed: No structured output was returned. Reply with exactly one
+           output that matches the required schema.`; attempt two returned the tool
+           call and passed.
+Cause:     not known; a plain-text reply instead of the forced tool call on a long
+           multi-turn history. Seen once in eight solution calls.
+Fix:       none needed: `structured_call` already treats a missing tool call as a
+           retryable attempt and feeds the instruction back. Noted so S12's retry
+           counts have a known cause.
+Before/after: one retry, $0.01.
+
+---
+
+### F12. Risk count ran over the asked range on every RFP
+Where:     S8 `risk_assess`, all four RFPs, first prompt.
+Observed:  13 risks on each of the four RFPs against "six to twelve risks" in the
+           "What to return" line; inside the validator band (3 to 15), so no retry.
+Cause:     the count sat in a field description while the Rules section said each
+           finding "deserves a risk"; with 7 to 10 code findings plus the model's own,
+           the rules outweighed the range.
+Fix:       a **Count** rule under Rules ("at most twelve; merge or drop; code rejects
+           more than fifteen"). Partial: Missouri and Federal Way returned 12, NYESD and
+           Colfax still 13. The band in the schema stays the contract; the range is
+           advice. S13 can tighten the band if the judge finds the tail risks weak.
+Before/after: 13, 13, 13, 13 → 12, 13, 13, 12; cost and latency unchanged ($0.04 for
+           the rerun).
+
+---
+
+### F13. Judge output truncated by the token cap
+Where:     S12 `judge_grounding`, Colfax run 1, one batch of ten claims.
+Observed:  `output truncated by the token cap; not retrying`; the batch's verdicts were
+           missing and the run reported one judge failure.
+Cause:     the judge cap was 16,000 tokens and Claude's thinking counts toward it (the
+           same cause as F5 in gold drafting); a batch of long risk texts with long cited
+           chunks used it up.
+Fix:       `JUDGE_MAX_TOKENS = 32000`; the run was rescored. Failed batches are counted
+           in `JudgeCost.failures` and shown in the cost table, so a gap is visible.
+Before/after: 1 failed batch in 12 runs → 0; Colfax run 1 rescored for $0.42.
+
+---
+
+### F14. Judge-tier gold matches accept a missing key value
+Where:     S12 `judge_match`, most visibly Missouri (9 judge-tier matches per run).
+Observed:  in about 4 of Missouri run 1's 9 judge-tier matches the extracted item lacks
+           the gold item's key value: an interim presentation "by 9/15/2025" matched to
+           "near the mid-point", the Missouri accessibility standard matched to WCAG 2.1
+           AA. The code tier had no such cases (3 of 61 pairs below containment, all true
+           matches).
+Cause:     the prompt rejects a *different* value but says nothing about a *missing*
+           one, and asks for "every candidate that states a material part".
+Fix:       S13: the rule "missing values do not match either" with the two Missouri
+           examples, then `score --label baseline --only match` (the new `--only`
+           re-runs one judge and merges the file and log; $0.40 instead of $5).
+Before/after: combined recall per run, Missouri 99 / 100 / 94% → 93 / 93 / 87%
+           (judge-tier matches 9 / 7 / 9 → 5 / 2 / 4); Colfax, Federal Way and NYESD
+           within one point of before (NYESD-1 96 → 98%, Federal Way-3 80 → 81%: judge
+           noise). The four Missouri items now unmatched each turn on a date the
+           candidate omits (7/17/2024, 9/15/2025, 4/25/2025, 7/25/2025); the state
+           accessibility standard is still matched to WCAG 2.1 AA (the RFP defines it
+           so). Recall stays reported next to its code-only bound.
+
+### F15. Vite's dev transform dropped an exported function named `displayName`
+Where:     S15 frontend, `RunList.tsx`, in the dev server only (`npm run build` was fine).
+Observed:  a blank home page; console `ReferenceError: displayName is not defined`.
+           The served module called `displayName(...)` but no longer defined it.
+Cause:     React Fast Refresh treats `displayName` as a component property, and the
+           dev transform did not keep a module-level function with that name.
+Fix:       renamed to `prettySource` in `lib/format.ts`, with a unit test, and added
+           error boundaries so a render error shows a message instead of a blank page.
+Before/after: blank page, then the run list rendered.
+
+### F16. Single-call extraction truncated at the provider's default output cap
+Where:     S13 ablation `ablation_single_call`, `requirements_extract_single`, Missouri
+           run 1 (the first RFP attempted).
+Observed:  `output truncated by the token cap; not retrying` from `structured_call`
+           (the F5 guard), so the run failed in the requirements stage.
+Cause:     `RFP_MAX_OUTPUT_TOKENS` is unset, so DeepSeek's default cap (about 8k)
+           applies; one call over the whole document needs 5 to 10k output tokens
+           (Missouri 8.0 to 8.3k, NYESD 9.7 to 10.4k with the cap raised). Per-chunk
+           calls never come near it.
+Fix:       the ablation was rerun with `RFP_MAX_OUTPUT_TOKENS=16000` for that label
+           only, and the finding is recorded in D39 as the reason the single-call path
+           stays an ablation: its output budget scales with the document, the
+           per-chunk path's does not.
+Before/after: 0 of 1 Missouri runs finished at the default cap; 8 of 8 at 16k, no
+           retries, 18 to 36 s per call.
+
+---
+
+### F17. Grounding judge runs away inside a `reason` string
+Where:     ST13 scoring, `judge_grounding`: NYESD run 3 of the rejudged baseline, NYESD
+           run 1 of the first `prompt_structure` pass, and Federal Way run 1 of the
+           final `prompt_structure` pass (the same batch on the first pass and the
+           retry).
+Observed:  `output truncated by the token cap; not retrying` at the full 32,000-token
+           cap (F13's cap), about 138 s per call, $0.33 each. The logged completion is
+           well-formed JSON up to one `reason` field that degenerates into a repeated
+           token ("ESD. ESD. ESD.", "'.'.'.'", "mixed.mixed.mixed") until the cap.
+Cause:     a sampling loop in the judge model inside a free-text field, not thinking
+           volume as in F13: the inputs were 5k to 14k tokens. The ST13
+           `judge_grounding` prompt is longer than the S12 one (Context, Examples,
+           Tone, Final checks). No batch looped in the 12 baseline runs scored with
+           the S12 prompt; four did in about 30 runs' worth of batches under the ST13
+           prompt, one of them twice on the same input. That is likely, not proven,
+           to be the prompt.
+Fix:       NYESD was rescored with `score --only grounding --rfp NYESD` and ran clean
+           on both labels. The Federal Way run 1 batch failed again on retry and is
+           left unscored: its items are absent from that run's grounding counts and
+           the cost table shows the judge failure. Open issue on ST13: a one-shot
+           retry at a different temperature in `Judge.call`, or a hard reason cap
+           ("at most 20 words, then stop") tested against the 40 hand labels.
+Before/after: 4 truncated batches in the ST13 passes; 3 recovered by one retry pass,
+           1 not.

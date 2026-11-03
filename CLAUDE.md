@@ -30,7 +30,9 @@ half-build.**
 4. Write the detailed plan into the step's "Detailed plan" section. Commit it.
 5. Implement. Each unit of progress is one commit.
 6. Update the step's "What was done", "Deviations from plan", "Open issues".
-7. Add entries to `docs/DECISIONS.md` (trade-offs, failure modes hit, fixes) and
+7. Add entries to `docs/archive/DECISIONS-full.md` (trade-offs, failure modes hit,
+   fixes) and an index line in the short reviewer-facing `docs/DECISIONS.md` (same for
+   assumptions: full entry in `docs/archive/ASSUMPTIONS-full.md`), and
    `docs/TIMELOG.md` (hours, mapped to the deliverable). If a prompt changed, add a
    line to `docs/PROMPTS.md` saying what changed and why.
 8. Update `README.md` if behaviour or how-to-run changed.
