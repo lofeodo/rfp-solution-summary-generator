@@ -105,8 +105,8 @@ Issues live in this repo's GitHub Issues, via the `gh` CLI. See `docs/agents/iss
 
 ### Triage labels
 
-The five default triage labels, unchanged (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). See `docs/agents/triage-labels.md`.
+The five default triage labels, unchanged. See `docs/agents/triage-labels.md`.
 
 ### Domain docs
 
-Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root, plus the earlier decisions in `docs/DECISIONS.md`. See `docs/agents/domain.md`.
+Single-context: `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
