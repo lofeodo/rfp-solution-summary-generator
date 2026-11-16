@@ -93,6 +93,9 @@ logged, PR merged into `core`, step branch deleted.
 
 ## Communication with the author
 
+- The author is a layman in RFPs and procurement. Explain every industry term in plain
+  words the first time it appears in a conversation (e.g. "boilerplate clause"), and
+  give the background a point depends on before making the point.
 - Batch questions at planning time. Give a recommendation with each question.
 - Report outcomes faithfully: if tests fail, say so with the output.
 - Keep PR descriptions derivable from the roadmap's "what was done".
