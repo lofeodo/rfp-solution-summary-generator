@@ -351,6 +351,8 @@ PCT_COLUMNS = {
 
 def _is_pct(column: str) -> bool:
     return column in PCT_COLUMNS or column.partition(".")[0] in PCT_COLUMNS
+
+
 COLUMN_DIGITS = {"cost_usd": 3, "wall_s": 0, "judge_cost_usd": 3}
 
 
