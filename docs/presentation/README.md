@@ -12,4 +12,4 @@ Traceability comes first because the other two rest on it: the evals count unsup
 
 **Colour key in the diagrams:** black boxes are code (deterministic, free), orange boxes are a language model.
 
-Diagrams are Mermaid: they render on GitHub and in the VS Code Markdown preview (with a Mermaid extension).
+Written for Obsidian. Detail sections are folded callouts (`> [!note]- Title`; click to open). Diagrams are Mermaid, which Obsidian renders natively. Dollar signs are escaped (`\$`) so Obsidian does not read them as maths. On GitHub the diagrams and tables also render, but the folded callouts show as plain quote blocks with a visible `[!note]-` marker.

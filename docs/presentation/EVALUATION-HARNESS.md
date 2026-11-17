@@ -17,7 +17,7 @@ Current prompts, 2 runs on each of 4 RFPs (`evals/results/prompt_structure/`).
 | **Problem-statement facts** | **8–10 of 12** (+2–4 partial)       | Key facts any correct summary must contain (issuer, budget, dates…)                                                                                                                  |
 | **Dangling citations**      | **0** on every scored run           | No claim points at an ID that does not exist                                                                                                                                         |
 | **Judge vs hand labels**    | **34 / 40** (85%)                   | How often the judge agrees with an independent labelling                                                                                                                             |
-| **Cost per RFP**            | **$0.05–0.11**, 67–113 s            | Judging costs ~**6×** that ($0.35–0.70 per run)                                                                                                                                      |
+| **Cost per RFP**            | **\$0.05–0.11**, 67–113 s            | Judging costs ~**6×** that (\$0.35–0.70 per run)                                                                                                                                      |
 
 **Recall by strictness**: same runs, range over the 2 runs per RFP.
 
@@ -60,18 +60,16 @@ flowchart LR
 - Code goes first: a requirement quote is a verbatim span of the parsed text, so matching by quote is exact and costs nothing.
 - The judge only gets the leftovers: paraphrases, "does this text really meet that requirement?", "does the cited text say this?".
 
-<details>
-<summary>Glossary for this page</summary>
-
-- **RFP** (request for proposal): the document a buyer publishes asking companies to bid for a job.
-- **Requirement**: something the bidder must or should do or provide ("shall submit by 4 p.m.").
-- **Strictness**: how binding a requirement is. **Mandatory** = "must" or "shall", **desired** = "should" (scores points if met), **optional** = "may".
-- **Mandatory requirement**: a "must", not a "should". In *coverage*, submission logistics (deadline, file format, where to send the bid) are left out; in *recall* they count.
-- **Boilerplate**: standard legal clauses that appear in every contract (insurance, non-discrimination). They rarely change how you design a bid.
-- **Gold labels / reference answers**: the answers the pipeline's output is compared against.
-- **Recall**: of the reference requirements, how many the pipeline found. **Precision**: of what the pipeline found, how much is correct.
-- **Judge**: a second language model asked to grade the output.
-</details>
+> [!note]- Glossary for this page
+>
+> - **RFP** (request for proposal): the document a buyer publishes asking companies to bid for a job.
+> - **Requirement**: something the bidder must or should do or provide ("shall submit by 4 p.m.").
+> - **Strictness**: how binding a requirement is. **Mandatory** = "must" or "shall", **desired** = "should" (scores points if met), **optional** = "may".
+> - **Mandatory requirement**: a "must", not a "should". In *coverage*, submission logistics (deadline, file format, where to send the bid) are left out; in *recall* they count.
+> - **Boilerplate**: standard legal clauses that appear in every contract (insurance, non-discrimination). They rarely change how you design a bid.
+> - **Gold labels / reference answers**: the answers the pipeline's output is compared against.
+> - **Recall**: of the reference requirements, how many the pipeline found. **Precision**: of what the pipeline found, how much is correct.
+> - **Judge**: a second language model asked to grade the output.
 
 ---
 
@@ -185,7 +183,7 @@ flowchart LR
 
 | Experiment | Result | Decision |
 |---|---|---|
-| **Vision model for image-only pages** | Federal Way recall **81% → 95%** (mandatory 81% → 95%), all 8 page-5 items found; +$0.02 per run | Kept as an option, off by default (D42) |
+| **Vision model for image-only pages** | Federal Way recall **81% → 95%** (mandatory 81% → 95%), all 8 page-5 items found; +\$0.02 per run | Kept as an option, off by default (D42) |
 | **One call for all requirements** (instead of one per chunk) | Recall within 2 pts, 30–45% cheaper… but **truncates on long RFPs** and drops whole obligations | Rejected (D39) |
 | **Problem statement from full text** | Within run-to-run noise, 10–25% cheaper | Rejected: the UI and the per-claim citations rely on the per-chunk path (D39) |
 | **Prompt rewrite** to one shared structure | Neutral to slightly positive | Adopted (D51) |
@@ -213,70 +211,60 @@ Vision model off vs. on:
 
 ---
 
-<details>
-<summary><b>Detail:</b> commands (run, score, report, check the judge)</summary>
+> [!note]- Detail: commands (run, score, report, check the judge)
+>
+> ```bash
+> python -m evals.harness run --label baseline --all --runs 2 --reuse-samples
+> python -m evals.harness score --label baseline
+> python -m evals.harness score --label baseline --no-judge
+> python -m evals.harness report --label baseline
+> python -m evals.harness sample --label baseline
+> python -m evals.harness agree --label baseline
+> python -m evals.harness diff baseline ablation_vlm --what requirements
+> python -m evals.harness chart baseline prompt_structure -o docs/images/x.svg
+> ```
+>
+> - `run` is paid (~\$0.60 for 8 runs). `score` with the judge is paid (~\$4–5). `--no-judge`, `report`, `diff` and `chart` are free.
+> - `score --only match` re-runs one judge and merges into the existing scores (~\$0.40 instead of \$5).
+> - `score` skips runs already scored, so an interrupted scoring run resumes.
 
-```bash
-python -m evals.harness run --label baseline --all --runs 2 --reuse-samples
-python -m evals.harness score --label baseline
-python -m evals.harness score --label baseline --no-judge
-python -m evals.harness report --label baseline
-python -m evals.harness sample --label baseline
-python -m evals.harness agree --label baseline
-python -m evals.harness diff baseline ablation_vlm --what requirements
-python -m evals.harness chart baseline prompt_structure -o docs/images/x.svg
-```
+> [!note]- Detail: where things live
+>
+> | Path | What |
+> |---|---|
+> | `evals/harness/` | Harness code: `match.py` (code tier), `judge.py`, `grounding.py`, `agreement.py`, `consistency.py`, `pairwise.py`, `report.py`, `chart.py` |
+> | `evals/gold/<rfp>.json` | Reference answers; `<rfp>.draft.json` is the untouched model draft |
+> | `evals/results/<label>/summary.md` | The report: start here |
+> | `evals/results/<label>/scores/` | Every verdict with the item's text and the judge's reason |
+> | `evals/results/<label>/judge_logs/` | The judge's own cost log, same format as the pipeline's |
+> | `prompts/judge_*.md` | One prompt per judge |
+> | `evals/results/README.md` | How to read every column |
 
-- `run` is paid (~$0.60 for 8 runs). `score` with the judge is paid (~$4–5). `--no-judge`, `report`, `diff` and `chart` are free.
-- `score --only match` re-runs one judge and merges into the existing scores (~$0.40 instead of $5).
-- `score` skips runs already scored, so an interrupted scoring run resumes.
-</details>
+> [!note]- Detail: judge configuration
+>
+> - Model `anthropic:claude-sonnet-5-5`, effort `medium` (hundreds of classification-like calls; keeps thinking tokens down).
+> - 32,000-token output cap: an earlier cap truncated judge replies (F13).
+> - Calls go through the same `structured_call` as the pipeline, so retries, cost and latency are logged the same way.
+> - Per-call schema demands exactly one verdict per ID shown. A dropped or invented ID goes back as a validation error (the F4 fix: the judge once returned 3 checklist facts instead of 12).
+> - Grounding is judged in batches of 10. Assumptions are judged as *positions*: only the facts they state about the RFP must be supported.
+> - An A/B pairwise judge (`compare`) runs both orders to expose position bias.
 
-<details>
-<summary><b>Detail:</b> where things live</summary>
+> [!note]- Detail: per-RFP results, current prompts
+>
+> | RFP | Recall | Code-only | Precision | Judged coverage | Checklist | Cost | Time |
+> |---|---|---|---|---|---|---|---|
+> | Colfax | 95–97% | 89% | 91% | 98% | 9–10 (+2–3) | \$0.06 | 80 s |
+> | Federal Way | 81% (96% readable) | 69–74% | 96–97% | 95–100% | 9 (+2–3) | \$0.05 | 73 s |
+> | Missouri | 96% | 92–94% | 96% | 97–99% | 8–10 (+2–4) | \$0.08 | 90 s |
+> | NYESD | 98–100% | 83–87% | 93–96% | 91% | 9 (+3) | \$0.11 | 108 s |
+>
+> Run-to-run overlap of matched requirements (Jaccard): 0.94–0.98.
 
-| Path | What |
-|---|---|
-| `evals/harness/` | Harness code: `match.py` (code tier), `judge.py`, `grounding.py`, `agreement.py`, `consistency.py`, `pairwise.py`, `report.py`, `chart.py` |
-| `evals/gold/<rfp>.json` | Reference answers; `<rfp>.draft.json` is the untouched model draft |
-| `evals/results/<label>/summary.md` | The report: start here |
-| `evals/results/<label>/scores/` | Every verdict with the item's text and the judge's reason |
-| `evals/results/<label>/judge_logs/` | The judge's own cost log, same format as the pipeline's |
-| `prompts/judge_*.md` | One prompt per judge |
-| `evals/results/README.md` | How to read every column |
-</details>
-
-<details>
-<summary><b>Detail:</b> judge configuration</summary>
-
-- Model `anthropic:claude-sonnet-5-5`, effort `medium` (hundreds of classification-like calls; keeps thinking tokens down).
-- 32,000-token output cap: an earlier cap truncated judge replies (F13).
-- Calls go through the same `structured_call` as the pipeline, so retries, cost and latency are logged the same way.
-- Per-call schema demands exactly one verdict per ID shown. A dropped or invented ID goes back as a validation error (the F4 fix: the judge once returned 3 checklist facts instead of 12).
-- Grounding is judged in batches of 10. Assumptions are judged as *positions*: only the facts they state about the RFP must be supported.
-- An A/B pairwise judge (`compare`) runs both orders to expose position bias.
-</details>
-
-<details>
-<summary><b>Detail:</b> per-RFP results, current prompts</summary>
-
-| RFP | Recall | Code-only | Precision | Judged coverage | Checklist | Cost | Time |
-|---|---|---|---|---|---|---|---|
-| Colfax | 95–97% | 89% | 91% | 98% | 9–10 (+2–3) | $0.06 | 80 s |
-| Federal Way | 81% (96% readable) | 69–74% | 96–97% | 95–100% | 9 (+2–3) | $0.05 | 73 s |
-| Missouri | 96% | 92–94% | 96% | 97–99% | 8–10 (+2–4) | $0.08 | 90 s |
-| NYESD | 98–100% | 83–87% | 93–96% | 91% | 9 (+3) | $0.11 | 108 s |
-
-Run-to-run overlap of matched requirements (Jaccard): 0.94–0.98.
-</details>
-
-<details>
-<summary><b>Detail:</b> decisions behind this harness</summary>
-
-- [D36](../archive/DECISIONS-full.md#d36-evals-code-first-judge-second-recall-against-gold-precision-judged-per-item): code first, judge second; recall against gold, precision per item
-- [D37](../archive/DECISIONS-full.md#d37-grounding-code-heuristics-plus-a-judge-that-sees-only-what-is-cited): grounding judge sees only the cited text
-- [D23](../archive/DECISIONS-full.md#d23-gold-labels-core-only-scope-claude-drafts-agent-corrects-diff-is-the-record): gold labels, core-only, draft kept as the record
-- [D3](../archive/DECISIONS-full.md#d3-deepseek-generates-claude-judges-single-family-per-role): DeepSeek generates, Claude judges
-- [D39](../archive/DECISIONS-full.md#d39-ablations-hierarchy-and-chunking-are-kept-for-scale-and-traceability-not-for-quality-the-evals-can-see): ablations
-- Failure modes hit: F4 (judge fact count), F13 (judge truncated), F14 (lenient matches), F17 (open)
-</details>
+> [!note]- Detail: decisions behind this harness
+>
+> - [D36](../archive/DECISIONS-full.md#d36-evals-code-first-judge-second-recall-against-gold-precision-judged-per-item): code first, judge second; recall against gold, precision per item
+> - [D37](../archive/DECISIONS-full.md#d37-grounding-code-heuristics-plus-a-judge-that-sees-only-what-is-cited): grounding judge sees only the cited text
+> - [D23](../archive/DECISIONS-full.md#d23-gold-labels-core-only-scope-claude-drafts-agent-corrects-diff-is-the-record): gold labels, core-only, draft kept as the record
+> - [D3](../archive/DECISIONS-full.md#d3-deepseek-generates-claude-judges-single-family-per-role): DeepSeek generates, Claude judges
+> - [D39](../archive/DECISIONS-full.md#d39-ablations-hierarchy-and-chunking-are-kept-for-scale-and-traceability-not-for-quality-the-evals-can-see): ablations
+> - Failure modes hit: F4 (judge fact count), F13 (judge truncated), F14 (lenient matches), F17 (open)

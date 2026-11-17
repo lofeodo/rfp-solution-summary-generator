@@ -8,9 +8,9 @@
 
 | Calls | Cost | Wall time | Input tokens | Served from cache | Output tokens | Retries |
 |---|---|---|---|---|---|---|
-| **144** | **$0.079** | **1 m 41 s** | 290k | **215k (74%)** | 46k | **1**, with its cause logged |
+| **144** | **\$0.079** | **1 m 41 s** | 290k | **215k (74%)** | 46k | **1**, with its cause logged |
 
-Across the eval runs: **$0.05–0.11 and 67–113 s per RFP**. The eval's own judge is logged the same way: ~**6×** the pipeline's cost.
+Across the eval runs: **\$0.05–0.11 and 67–113 s per RFP**. The eval's own judge is logged the same way: ~**6×** the pipeline's cost.
 
 ---
 
@@ -141,7 +141,7 @@ flowchart TB
 | **Local JSON log + optional Langfuse** | Langfuse only | Nothing depends on a hosted UI being reachable during a demo or a review (D11) |
 | **Explicit recorder** that `structured_call` writes to | LangChain callback aggregating by node | Testable without a graph. Retries and validation errors stay attached to their call. No dependence on callback propagation (D18) |
 | **Cost from a pricing table in config** | Provider billing API | Per-call, immediate and offline. A model with no price logs a warning instead of guessing |
-| **The judge logs like the pipeline** | Separate eval accounting | The cost of *measuring* is on record too: $3.80 judge vs $0.59 pipeline for the 8 current runs |
+| **The judge logs like the pipeline** | Separate eval accounting | The cost of *measuring* is on record too: \$3.80 judge vs \$0.59 pipeline for the 8 current runs |
 
 ---
 
@@ -154,68 +154,58 @@ flowchart TB
 
 ---
 
-<details>
-<summary><b>Detail:</b> cost is an upper bound</summary>
+> [!note]- Detail: cost is an upper bound
+>
+> - DeepSeek is priced at peak rates.
+> - Cache reads are priced at the cached rate. Cache writes are priced at the normal input rate, but Anthropic bills them at 1.25×, so Claude cost is slightly **under**-counted on calls that write the cache.
+>
+> | Model | Input \$/M tok | Cached \$/M tok | Output \$/M tok |
+> |---|---|---|---|
+> | deepseek-flash (generator) | 0.30 | 0.006 | 1.20 |
+> | claude-sonnet-5-5 (judge, VLM) | 2.00 | 0.20 | 10.00 |
+>
+> Source: the pricing table in `src/rfp_agent/config.py`.
 
-- DeepSeek is priced at peak rates.
-- Cache reads are priced at the cached rate. Cache writes are priced at the normal input rate, but Anthropic bills them at 1.25×, so Claude cost is slightly **under**-counted on calls that write the cache.
+> [!note]- Detail: where it lives in code
+>
+> | What | Where |
+> |---|---|
+> | `structured_call`: retry loop, truncation check, recording | `src/rfp_agent/llm.py` |
+> | `RunRecorder`, cost estimate, Langfuse handler | `src/rfp_agent/observability.py` |
+> | `RunLog`, `NodeMetrics`, `StageRecord` schemas | `src/rfp_agent/schemas.py` |
+> | Pricing table | `src/rfp_agent/config.py` |
+> | Metrics tab | `ui/frontend/src/views/MetricsView.tsx` |
+> | Judge logs | `evals/results/<label>/judge_logs/` |
 
-| Model | Input $/M tok | Cached $/M tok | Output $/M tok |
-|---|---|---|---|
-| deepseek-flash (generator) | 0.30 | 0.006 | 1.20 |
-| claude-sonnet-5-5 (judge, VLM) | 2.00 | 0.20 | 10.00 |
+> [!note]- Detail: how a stage maps to its calls
+>
+> A stage's calls are the nodes whose name starts with its prefix:
+>
+> | Stage | Nodes |
+> |---|---|
+> | Parse quality | `parse_quality`, `parse_quality_vlm` |
+> | Requirements | `requirements_extract` (one per chunk), `requirements_dedupe` |
+> | Problem | `problem_chunk` (one per chunk), `problem_synthesis` |
+> | Solution | `solution_generate`, `solution_revise` |
+> | Risks | `risk_assess` |
+>
+> Σ latency adds call latencies, so it exceeds wall time where calls run concurrently (`RFP_LLM_CONCURRENCY`, default 4).
 
-Source: the pricing table in `src/rfp_agent/config.py`.
-</details>
+> [!note]- Detail: settings that affect what is logged
+>
+> | Variable | Default | Effect |
+> |---|---|---|
+> | `RFP_MAX_STRUCTURED_RETRIES` | 2 | Validation retries per call, counted in `retries` |
+> | `RFP_LLM_TRANSPORT_RETRIES` | 2 | SDK retries on 429, 5xx and connection errors (not counted as validation retries) |
+> | `RFP_REQUEST_TIMEOUT_S` | 120 | Per-request timeout |
+> | `RFP_LLM_CONCURRENCY` | 4 | Parallel calls in per-chunk stages |
+> | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST` | unset | Turn tracing on; the trace URL is saved in the run log and linked from the UI |
+>
+> The committed sample runs were made without Langfuse keys, so their Metrics tab says "No Langfuse trace for this run".
 
-<details>
-<summary><b>Detail:</b> where it lives in code</summary>
-
-| What | Where |
-|---|---|
-| `structured_call`: retry loop, truncation check, recording | `src/rfp_agent/llm.py` |
-| `RunRecorder`, cost estimate, Langfuse handler | `src/rfp_agent/observability.py` |
-| `RunLog`, `NodeMetrics`, `StageRecord` schemas | `src/rfp_agent/schemas.py` |
-| Pricing table | `src/rfp_agent/config.py` |
-| Metrics tab | `ui/frontend/src/views/MetricsView.tsx` |
-| Judge logs | `evals/results/<label>/judge_logs/` |
-</details>
-
-<details>
-<summary><b>Detail:</b> how a stage maps to its calls</summary>
-
-A stage's calls are the nodes whose name starts with its prefix:
-
-| Stage | Nodes |
-|---|---|
-| Parse quality | `parse_quality`, `parse_quality_vlm` |
-| Requirements | `requirements_extract` (one per chunk), `requirements_dedupe` |
-| Problem | `problem_chunk` (one per chunk), `problem_synthesis` |
-| Solution | `solution_generate`, `solution_revise` |
-| Risks | `risk_assess` |
-
-Σ latency adds call latencies, so it exceeds wall time where calls run concurrently (`RFP_LLM_CONCURRENCY`, default 4).
-</details>
-
-<details>
-<summary><b>Detail:</b> settings that affect what is logged</summary>
-
-| Variable | Default | Effect |
-|---|---|---|
-| `RFP_MAX_STRUCTURED_RETRIES` | 2 | Validation retries per call, counted in `retries` |
-| `RFP_LLM_TRANSPORT_RETRIES` | 2 | SDK retries on 429, 5xx and connection errors (not counted as validation retries) |
-| `RFP_REQUEST_TIMEOUT_S` | 120 | Per-request timeout |
-| `RFP_LLM_CONCURRENCY` | 4 | Parallel calls in per-chunk stages |
-| `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST` | unset | Turn tracing on; the trace URL is saved in the run log and linked from the UI |
-
-The committed sample runs were made without Langfuse keys, so their Metrics tab says "No Langfuse trace for this run".
-</details>
-
-<details>
-<summary><b>Detail:</b> decisions behind this harness</summary>
-
-- [D11](../archive/DECISIONS-full.md#d11-observability-langfuse-cloud-plus-a-local-json-run-log): Langfuse plus a local JSON run log
-- [D18](../archive/DECISIONS-full.md#d18-observability-recording-explicit-recorder-in-a-context-variable): explicit recorder in a context variable
-- [D17](../archive/DECISIONS-full.md#d17-structured-output-provider-native-mode-inside-a-code-owned-retry-loop): retry loop owned by code
-- [D13](../archive/DECISIONS-full.md#d13-model-ids-and-pricing-source): model IDs and pricing source
-</details>
+> [!note]- Detail: decisions behind this harness
+>
+> - [D11](../archive/DECISIONS-full.md#d11-observability-langfuse-cloud-plus-a-local-json-run-log): Langfuse plus a local JSON run log
+> - [D18](../archive/DECISIONS-full.md#d18-observability-recording-explicit-recorder-in-a-context-variable): explicit recorder in a context variable
+> - [D17](../archive/DECISIONS-full.md#d17-structured-output-provider-native-mode-inside-a-code-owned-retry-loop): retry loop owned by code
+> - [D13](../archive/DECISIONS-full.md#d13-model-ids-and-pricing-source): model IDs and pricing source
