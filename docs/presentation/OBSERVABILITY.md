@@ -59,18 +59,18 @@ Requirements and problem statement run **in parallel**. Times from the Missouri 
 ```mermaid
 gantt
     title Missouri sample run, seconds from start
-    dateFormat X
+    dateFormat HH:mm:ss
     axisFormat %M:%S
     section Code
-    Parse PDF            :0, 6
-    Split into chunks    :10, 11
-    Assemble and render  :101, 102
+    Parse PDF            :c1, 00:00:00, 00:00:06
+    Split into chunks    :c2, 00:00:10, 00:00:11
+    Assemble and render  :c3, 00:01:41, 00:01:42
     section LLM
-    Parse quality check  :6, 10
-    Requirements · 70 calls :10, 46
-    Problem statement · 68 calls :10, 44
-    Solution · 2 rounds   :46, 85
-    Risks · 1 call        :85, 101
+    Parse quality check  :l1, 00:00:06, 00:00:10
+    Requirements · 70 calls :l2, 00:00:10, 00:00:46
+    Problem statement · 68 calls :l3, 00:00:10, 00:00:44
+    Solution · 2 rounds   :l4, 00:00:46, 00:01:25
+    Risks · 1 call        :l5, 00:01:25, 00:01:41
 ```
 
 ## 4 · Where money goes
