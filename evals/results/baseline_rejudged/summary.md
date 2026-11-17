@@ -19,6 +19,25 @@
 | NYESD-2 | 219 | 54 | 98% | 83% | 98% | 8 | 96% | 84% | 96% | 75% |
 | NYESD-3 | 235 | 54 | 98% | 85% | 98% | 7 | 94% | 84% | 96% | 75% |
 
+### Recall by strictness
+
+Recall over the gold requirements of each strictness (the gold label's), matched at either tier; matched / gold in brackets.
+
+| run | mandatory | desired | optional |
+|---|---|---|---|
+| colfax-1 | 100% (48/48) | 100% (15/15) | – |
+| colfax-2 | 100% (48/48) | 93% (14/15) | – |
+| colfax-3 | 98% (47/48) | 100% (15/15) | – |
+| federal_way-1 | 81% (35/43) | 100% (8/8) | 33% (1/3) |
+| federal_way-2 | 81% (35/43) | 88% (7/8) | 33% (1/3) |
+| federal_way-3 | 79% (34/43) | 100% (8/8) | 33% (1/3) |
+| missouri-1 | 91% (50/55) | 93% (14/15) | 100% (1/1) |
+| missouri-2 | 89% (49/55) | 100% (15/15) | 100% (1/1) |
+| missouri-3 | 84% (46/55) | 87% (13/15) | 100% (1/1) |
+| NYESD-1 | 95% (38/40) | 100% (14/14) | – |
+| NYESD-2 | 98% (39/40) | 100% (14/14) | – |
+| NYESD-3 | 98% (39/40) | 100% (14/14) | – |
+
 ## Problem statement and grounding
 
 | run | checklist | claims p/s/r | unsupported p/s/r | dangling IDs | entity misses |
@@ -80,6 +99,9 @@ Mean ± sample sd (min–max) over each RFP's runs.
 | recall | 99% ± 1 (98–100) | 80% ± 1 (80–81) | 89% ± 4 (85–92) | 98% ± 1 (96–98) |
 | recall (code only) | 93% ± 1 (92–94) | 67% ± 6 (61–72) | 86% ± 4 (82–90) | 83% ± 3 (80–85) |
 | recall (reachable) | 99% ± 1 (98–100) | 94% ± 1 (93–96) | 89% ± 4 (85–92) | 98% ± 1 (96–98) |
+| recall, mandatory | 99% ± 1 (98–100) | 81% ± 1 (79–81) | 88% ± 4 (84–91) | 97% ± 1 (95–98) |
+| recall, desired | 98% ± 4 (93–100) | 96% ± 7 (88–100) | 93% ± 7 (87–100) | 100% ± 0 (100–100) |
+| recall, optional | – | 33% ± 0 (33–33) | 100% ± 0 (100–100) | – |
 | precision | 95% ± 3 (93–98) | 95% ± 1 (94–96) | 97% ± 0 (97–97) | 95% ± 1 (94–96) |
 | in-scope share | 87% ± 2 (85–88) | 94% ± 2 (92–96) | 84% ± 3 (81–87) | 84% ± 1 (84–85) |
 | type accuracy | 83% ± 5 (79–89) | 87% ± 3 (84–91) | 82% ± 2 (80–85) | 96% ± 0 (96–96) |

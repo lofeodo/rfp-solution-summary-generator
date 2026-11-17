@@ -9,15 +9,25 @@
 
 Current prompts, 2 runs on each of 4 RFPs (`evals/results/prompt_structure/`).
 
-| | Result | What it means |
-|---|---|---|
-| **Requirement recall** | **95–100%** (Federal Way 81%) | Share of the reference requirements the pipeline found. Federal Way's 8 missing items sit on an image-only page; 96% of what the parser can read |
-| **Precision** | **91–97%** | Extracted items the judge confirms are real obligations, supported by the cited text |
-| **Mandatory coverage** | **100%** cited · **91–100%** judged | Every must-do requirement is answered by a solution component, and the judge agrees the text really meets it |
-| **Problem-statement facts** | **8–10 of 12** (+2–4 partial) | Key facts any correct summary must contain (issuer, budget, dates…) |
-| **Dangling citations** | **0** on every scored run | No claim points at an ID that does not exist |
-| **Judge vs hand labels** | **34 / 40** (85%) | How often the judge agrees with an independent labelling |
-| **Cost per RFP** | **$0.05–0.11**, 67–113 s | Judging costs ~**6×** that ($0.35–0.70 per run) |
+|                             | Result                              | What it means                                                                                                                                                                        |
+| --------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Requirement recall**      | **95–100%** (Federal Way 81%)       | Share of all 242 core reference requirements the pipeline found, whatever their strictness. Federal Way's 8 missing items sit on an image-only page; 96% of what the parser can read |
+| **Precision**               | **91–97%**                          | Extracted items the judge confirms are real obligations, supported by the cited text                                                                                                 |
+| **Mandatory coverage**      | **100%** cited · **91–100%** judged | Every must-do requirement is answered by a solution component, and the judge agrees the text really meets it                                                                         |
+| **Problem-statement facts** | **8–10 of 12** (+2–4 partial)       | Key facts any correct summary must contain (issuer, budget, dates…)                                                                                                                  |
+| **Dangling citations**      | **0** on every scored run           | No claim points at an ID that does not exist                                                                                                                                         |
+| **Judge vs hand labels**    | **34 / 40** (85%)                   | How often the judge agrees with an independent labelling                                                                                                                             |
+| **Cost per RFP**            | **$0.05–0.11**, 67–113 s            | Judging costs ~**6×** that ($0.35–0.70 per run)                                                                                                                                      |
+
+**Recall by strictness**: same runs, range over the 2 runs per RFP.
+
+| Strictness (reference items) | Colfax     | Federal Way  | Missouri    | NYESD       |
+| ---------------------------- | ---------- | ------------ | ----------- | ----------- |
+| **Mandatory: "must"** (186)  | **94–96%** | **81–84%**   | **95–96%**  | **98–100%** |
+| Desired: "should" (52)       | 100%       | 100%         | 93–100%     | 100%        |
+| Optional: "may" (4)          | –          | 0–33% (of 3) | 100% (of 1) | –           |
+
+The reference set is **core**, not mandatory-only: 77% of it is mandatory. Federal Way's gap is mostly in **mandatory** items: 6 of the 8 items on the image-only page are mandatory (the existing systems the new software must replace or connect to). With the vision model on, Federal Way mandatory recall is **95%**.
 
 ---
 
@@ -55,7 +65,8 @@ flowchart LR
 
 - **RFP** (request for proposal): the document a buyer publishes asking companies to bid for a job.
 - **Requirement**: something the bidder must or should do or provide ("shall submit by 4 p.m.").
-- **Mandatory requirement**: a "must", not a "should". Pure submission logistics are excluded from coverage.
+- **Strictness**: how binding a requirement is. **Mandatory** = "must" or "shall", **desired** = "should" (scores points if met), **optional** = "may".
+- **Mandatory requirement**: a "must", not a "should". In *coverage*, submission logistics (deadline, file format, where to send the bid) are left out; in *recall* they count.
 - **Boilerplate**: standard legal clauses that appear in every contract (insurance, non-discrimination). They rarely change how you design a bid.
 - **Gold labels / reference answers**: the answers the pipeline's output is compared against.
 - **Recall**: of the reference requirements, how many the pipeline found. **Precision**: of what the pipeline found, how much is correct.
@@ -174,7 +185,7 @@ flowchart LR
 
 | Experiment | Result | Decision |
 |---|---|---|
-| **Vision model for image-only pages** | Federal Way recall **81% → 95%**, all 8 page-5 items found; +$0.02 per run | Kept as an option, off by default (D42) |
+| **Vision model for image-only pages** | Federal Way recall **81% → 95%** (mandatory 81% → 95%), all 8 page-5 items found; +$0.02 per run | Kept as an option, off by default (D42) |
 | **One call for all requirements** (instead of one per chunk) | Recall within 2 pts, 30–45% cheaper… but **truncates on long RFPs** and drops whole obligations | Rejected (D39) |
 | **Problem statement from full text** | Within run-to-run noise, 10–25% cheaper | Rejected: the UI and the per-claim citations rely on the per-chunk path (D39) |
 | **Prompt rewrite** to one shared structure | Neutral to slightly positive | Adopted (D51) |

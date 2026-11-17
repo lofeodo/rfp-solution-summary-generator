@@ -19,6 +19,31 @@ from evals.harness.schemas import RunScores
 
 Metric = Callable[[RunScores], float | None]
 
+STRICTNESS_ORDER = ("mandatory", "desired", "optional")
+
+
+def recall_by_strictness(s: RunScores) -> dict[str, tuple[int, int]]:
+    """``{strictness: (matched, gold)}`` over the gold requirements, by the gold label's
+    strictness, in ``STRICTNESS_ORDER`` (any other value after). A gold item counts as
+    matched at either tier, as in ``recall``."""
+    counts: dict[str, list[int]] = {}
+    for m in s.requirements.matches:
+        c = counts.setdefault(m.gold_strictness, [0, 0])
+        c[0] += m.tier != "none"
+        c[1] += 1
+    order = [k for k in STRICTNESS_ORDER if k in counts] + sorted(
+        k for k in counts if k not in STRICTNESS_ORDER
+    )
+    return {k: (counts[k][0], counts[k][1]) for k in order}
+
+
+def _recall_for(strictness: str) -> Metric:
+    def metric(s: RunScores) -> float | None:
+        matched, gold = recall_by_strictness(s).get(strictness, (0, 0))
+        return matched / gold if gold else None
+
+    return metric
+
 
 def _unsupported(output: str) -> Metric:
     return lambda s: (
@@ -39,6 +64,9 @@ METRICS: dict[str, Metric] = {
         s.requirements.matched_by_code / s.requirements.gold if s.requirements.gold else None
     ),
     "recall_reachable": lambda s: s.requirements.recall_reachable,
+    "recall_mandatory": _recall_for("mandatory"),
+    "recall_desired": _recall_for("desired"),
+    "recall_optional": _recall_for("optional"),
     "precision": lambda s: s.requirements.precision,
     "in_scope_share": lambda s: s.requirements.in_scope_share,
     "type_accuracy": lambda s: s.requirements.type_accuracy,

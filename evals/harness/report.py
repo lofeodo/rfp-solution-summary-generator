@@ -8,7 +8,14 @@ from collections.abc import Sequence
 
 from pydantic import BaseModel, Field
 
-from evals.harness.consistency import Consistency, Stats, consistency, stats
+from evals.harness.consistency import (
+    STRICTNESS_ORDER,
+    Consistency,
+    Stats,
+    consistency,
+    recall_by_strictness,
+    stats,
+)
 from evals.harness.schemas import RunScores
 from rfp_agent.schemas import RunTotals
 
@@ -25,6 +32,11 @@ class Row(BaseModel):
     recall: float
     recall_code: float = Field(description="Code-tier matches only: the lower bound")
     recall_reachable: float
+    recall_by_strictness: dict[str, float] = Field(
+        default_factory=dict, description="Recall over the gold items of each strictness"
+    )
+    gold_by_strictness: dict[str, int] = Field(default_factory=dict)
+    matched_by_strictness: dict[str, int] = Field(default_factory=dict)
     matched_by_judge: int
     precision: float | None
     in_scope_share: float | None
@@ -58,7 +70,11 @@ class Row(BaseModel):
 
 def row(s: RunScores) -> Row:
     g = s.grounding.by_output
+    by_strictness = recall_by_strictness(s)
     return Row(
+        recall_by_strictness={k: m / n for k, (m, n) in by_strictness.items() if n},
+        gold_by_strictness={k: n for k, (_, n) in by_strictness.items()},
+        matched_by_strictness={k: m for k, (m, _) in by_strictness.items()},
         key=s.key,
         rfp=s.rfp,
         run=s.run,
@@ -157,6 +173,9 @@ METRIC_LABELS = {
     "recall": ("recall", 0, True),
     "recall_code": ("recall (code only)", 0, True),
     "recall_reachable": ("recall (reachable)", 0, True),
+    "recall_mandatory": ("recall, mandatory", 0, True),
+    "recall_desired": ("recall, desired", 0, True),
+    "recall_optional": ("recall, optional", 0, True),
     "precision": ("precision", 0, True),
     "in_scope_share": ("in-scope share", 0, True),
     "type_accuracy": ("type accuracy", 0, True),
@@ -184,6 +203,14 @@ def _stat(s, digits: int, is_pct: bool) -> str:
     return f"{s.mean:.{digits}f} ± {s.sd:.{digits}f} ({s.min:.{digits}f}–{s.max:.{digits}f})"
 
 
+def _recall_cell(r: Row, strictness: str) -> str:
+    n = r.gold_by_strictness.get(strictness, 0)
+    if not n:
+        return "–"
+    m = r.matched_by_strictness.get(strictness, 0)
+    return f"{pct(r.recall_by_strictness.get(strictness))} ({m}/{n})"
+
+
 def render_markdown(summary: LabelSummary) -> str:
     rows = summary.rows
     out = [f"# Eval results: `{summary.label}`", ""]
@@ -206,6 +233,21 @@ def render_markdown(summary: LabelSummary) -> str:
             ],
         )
     )  # fmt: skip
+    levels = [k for k in STRICTNESS_ORDER if any(k in r.gold_by_strictness for r in rows)]
+    levels += sorted({k for r in rows for k in r.gold_by_strictness} - set(levels))
+    if levels:
+        out += ["", "### Recall by strictness", ""]
+        out.append(
+            "Recall over the gold requirements of each strictness (the gold label's), "
+            "matched at either tier; matched / gold in brackets."
+        )
+        out += ["", table(
+            ["run", *levels],
+            [
+                [r.key, *(_recall_cell(r, k) for k in levels)]
+                for r in rows
+            ],
+        )]  # fmt: skip
     out += ["", "## Problem statement and grounding", ""]
     out.append(
         table(
@@ -290,6 +332,7 @@ def render_markdown(summary: LabelSummary) -> str:
 DIFF_COLUMNS: dict[str, list[str]] = {
     "problem": ["checklist_covered", "checklist_partial", "unsupported.problem", "cost_usd"],
     "requirements": ["requirements", "recall", "recall_code", "precision", "in_scope_share"],
+    "strictness": [f"recall_by_strictness.{k}" for k in STRICTNESS_ORDER],
     "solution": [
         "judged_coverage",
         "cited_coverage",
@@ -302,8 +345,12 @@ DIFF_COLUMNS: dict[str, list[str]] = {
 PCT_COLUMNS = {
     "recall", "recall_code", "recall_reachable", "precision", "in_scope_share",
     "type_accuracy", "strictness_accuracy", "cited_coverage", "judged_coverage",
-    "severity_agreement", "likelihood_agreement",
+    "severity_agreement", "likelihood_agreement", "recall_by_strictness",
 }  # fmt: skip
+
+
+def _is_pct(column: str) -> bool:
+    return column in PCT_COLUMNS or column.partition(".")[0] in PCT_COLUMNS
 COLUMN_DIGITS = {"cost_usd": 3, "wall_s": 0, "judge_cost_usd": 3}
 
 
@@ -349,6 +396,8 @@ def _column_label(column: str) -> str:
     """The consistency table's label where one exists (``unsupported.problem`` ->
     "unsupported, problem", ``rubric.specificity`` -> "rubric: specificity")."""
     head, _, sub = column.partition(".")
+    if head == "recall_by_strictness":
+        head = "recall"
     for key in (f"{head}_{sub}", sub, head):
         if key and key in METRIC_LABELS:
             return METRIC_LABELS[key][0]
@@ -358,7 +407,7 @@ def _column_label(column: str) -> str:
 def _mean_sd(s: Stats | None, column: str) -> str:
     if s is None:
         return "–"
-    is_pct = column in PCT_COLUMNS
+    is_pct = _is_pct(column)
     digits = COLUMN_DIGITS.get(column, 1)
     mean = f"{100 * s.mean:.0f}%" if is_pct else f"{s.mean:.{digits}f}"
     if s.n < 2:
@@ -370,7 +419,7 @@ def _mean_sd(s: Stats | None, column: str) -> str:
 def _delta(d: float | None, column: str) -> str:
     if d is None:
         return "–"
-    if column in PCT_COLUMNS:
+    if _is_pct(column):
         return f"{100 * d:+.0f} pp"
     return f"{d:+.{COLUMN_DIGITS.get(column, 1)}f}"
 

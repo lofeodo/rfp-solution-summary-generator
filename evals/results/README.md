@@ -89,6 +89,13 @@ with `unsupported.problem` or `rubric.specificity` for the dict columns.
   the vision-model option (`--vlm`, ST2); they stay in plain recall so the parsing gap
   shows. With `--vlm` all eight are matched (`ablation_vlm/`), so plain recall meets
   reachable recall there; the reachable column keeps its library-parser definition.
+- *recall by strictness* (its own table, plus `recall, mandatory/desired/optional` in the
+  consistency table): the same recall over the gold items of one strictness, by the gold
+  label's strictness (`mandatory`, `desired`, `optional`), matched at either tier, with
+  matched / gold in brackets. Gold is core-only, not mandatory-only: 186 of the 242 gold
+  items are mandatory. `diff --what strictness` compares it between labels. Labels that
+  did not re-run the match judge (`--only` without `match`) show their existing tier, as
+  the plain recall column does.
 - *precision*: share of extracted items the judge finds both supported by their cited
   chunk and a real requirement (an obligation, constraint, deadline, limit or
   deliverable). Every extracted quote is already verified against its chunk by code
