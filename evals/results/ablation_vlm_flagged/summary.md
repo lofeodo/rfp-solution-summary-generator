@@ -11,6 +11,17 @@
 | missouri-1 | 124 | 71 | 90% | 86% | 90% | 3 | – | – | 84% | 86% |
 | missouri-2 | 134 | 71 | 96% | 87% | 96% | 6 | – | – | 81% | 87% |
 
+### Recall by strictness
+
+Recall over the gold requirements of each strictness (the gold label's), matched at either tier; matched / gold in brackets.
+
+| run | mandatory | desired | optional |
+|---|---|---|---|
+| federal_way-1 | 93% (40/43) | 100% (8/8) | 67% (2/3) |
+| federal_way-2 | 95% (41/43) | 100% (8/8) | 100% (3/3) |
+| missouri-1 | 89% (49/55) | 93% (14/15) | 100% (1/1) |
+| missouri-2 | 95% (52/55) | 100% (15/15) | 100% (1/1) |
+
 ## Problem statement and grounding
 
 | run | checklist | claims p/s/r | unsupported p/s/r | dangling IDs | entity misses |
@@ -48,6 +59,9 @@ Mean ± sample sd (min–max) over each RFP's runs.
 | recall | 94% ± 3 (93–96) | 93% ± 4 (90–96) |
 | recall (code only) | 76% ± 10 (69–83) | 87% ± 1 (86–87) |
 | recall (reachable) | 95% ± 2 (93–96) | 93% ± 4 (90–96) |
+| recall, mandatory | 94% ± 2 (93–95) | 92% ± 4 (89–95) |
+| recall, desired | 100% ± 0 (100–100) | 97% ± 5 (93–100) |
+| recall, optional | 83% ± 24 (67–100) | 100% ± 0 (100–100) |
 | precision | – | – |
 | in-scope share | – | – |
 | type accuracy | 88% ± 0 (88–88) | 83% ± 2 (81–84) |

@@ -512,6 +512,30 @@ def test_diff_cells_and_table(fw_judged):
     assert "| unsupported, problem |" in md
 
 
+def test_recall_by_strictness(fw_judged):
+    s, _, _ = fw_judged
+    summary = summarise("t", [s])
+    r = summary.rows[0]
+    assert sum(r.gold_by_strictness.values()) == r.gold
+    assert sum(r.matched_by_strictness.values()) == sum(
+        m.tier != "none" for m in s.requirements.matches
+    )
+    assert list(r.gold_by_strictness)[0] == "mandatory"
+    for k, n in r.gold_by_strictness.items():
+        assert r.recall_by_strictness[k] == pytest.approx(r.matched_by_strictness[k] / n)
+    assert cell(r, "recall_by_strictness.mandatory") == r.recall_by_strictness["mandatory"]
+    assert summary.consistency[0].metrics["recall_mandatory"].mean == pytest.approx(
+        r.recall_by_strictness["mandatory"]
+    )
+    md = render_markdown(summary)
+    m, n = r.matched_by_strictness["mandatory"], r.gold_by_strictness["mandatory"]
+    assert "### Recall by strictness" in md and f"({m}/{n})" in md
+    assert "| recall, mandatory |" in md
+    rows = diff(summary, summary, ["recall_by_strictness.mandatory"])
+    out = render_diff(summary, summary, rows)
+    assert "| recall, mandatory |" in out and "+0 pp" in out
+
+
 def test_report_renders_every_section(fw_judged):
     s, _, _ = fw_judged
     summary = summarise("t", [s], {"items": 1, "agree": 1, "rate": 1.0, "by_kind": {
